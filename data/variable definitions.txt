@@ -1,0 +1,47 @@
+Ecosystem Indicator Definitions:
+1. Year_Juv	
+
+2. SEAKCatch	
+
+3. NSEICatch	
+
+4. CPUEcal
+  a) standardized catch based on a 20min trawl set.  Vessel specific fishing power coefficients have been                    estimated from side-by-side trawling experiments.
+  b) CPUEcal is complicated as one of the primary trawl vessels, F/V Northwest Explorer, has not been calibrated and       it is assumed to have the same fishing power as the Chellissa. Other approaches could work, like treating vessel      as a factor and modeling the vessel effect, or simply using average speed
+
+5. CPUEcal_loc	
+  a) Two transects are used to index the abundance of juvenile pink salmon:  Icy Strait and Upper Chatham transects.       The two transects have different means, and stations within the Icy Strait transect have different mean catches.      Sampling effort has been inconsistent over time. If we use the average of transect means (CPUEcal_loc) rather         than the overall mean of all stations, each transect is weighted equally, and standardizes sampling effort over       time.
+
+6. CPUEcal_loc1	
+  a) CPUEcal_loc1 uses 3:2 weight for Icy Strait:UpperChatham transect means, which has been a more common sampling        strategy in recent years.
+
+7. ISTI	
+  a) Average temperature in the upper 20m during MayAug at 8 stations in Icy Strait (Icy Strait and Upper Chatham          transects)
+
+8. ERSSTMAMJJ	
+  a) (Nov-Mar) http://www.esrl.noaa.gov/psd/enso/mei/table.html
+
+9. MAMJJA	
+
+10. Temp
+  a) (average of ERSST and ISTI)
+
+11. July24Size	
+  a)  estimated size on July24. Estimated from average size and date of capture from June and July SECM surveys.
+
+12. Condition	
+  a) average residual of length weight regression model
+  
+13. MEI_win	
+  a) (Nov-Mar) http://www.esrl.noaa.gov/psd/enso/mei/table.html
+
+14. PDO_sum	
+  a) (June, July, August) http://jisao.washington.edu/pdo/PDO.latest
+
+15. PDO_win
+  a) Nov, Dec, Jan, Feb, March
+
+16. CPUEttd
+  a) catch of juvenile pink salmon divided by the distance over ground between the start and end positions of the            trawl haul
+  b) Complicated by tidal currents as distance over ground is not the same as distance through the water. There have      been errors in the calculation of this index over time.  Additional work with this index is needed before we can      consider it at a viable alternative to CPUEcal.
+
