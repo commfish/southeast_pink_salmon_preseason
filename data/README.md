@@ -1,1 +1,0 @@
-Preseason data will be updated and placed in the appropriate yyyy folder.

@@ -1,1 +1,0 @@
-Preseason figures will be updated and placed in the appropriate yyyy folder.
