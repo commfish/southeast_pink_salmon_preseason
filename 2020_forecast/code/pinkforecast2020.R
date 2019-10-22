@@ -1,27 +1,22 @@
-#####################################
 # SECM Pink salmon forecast models
-#  
-#  Jim Murphy updated: 10/18/19
-########################################
+# Script written by Jim Murphy updated: 10/18/19
 
-#################
-# Libraries
-################
+# load----
 library(gam)
 library(MASS)
 library(MuMIn)
-#################
-#  Data
-################
-# Read data
-SECM2019<-read.csv('c:\\datafiles.new\\SECMcatch2019.csv')
-variables<-read.csv('c:\\datafiles.new\\SECMvar2019.csv')
-variables$CPUE<-variables$CPUEcal#Use CPUEcal as CPUE index
-n<-dim(variables)[1]#number of years including forecast year
 
-# subset data by Peak month and generate list of catch by year
-cal.data<-SECM2019[SECM2019$Pink_Peak,]
-cal.data<-split(cal.data$Pink,cal.data$Year)
+# data----
+SECM2019<-read.csv("2020_forecast/data/SECMcatch2019.csv")
+variables<-read.csv("2020_forecast/data/SECMvar2019.csv")
+
+# analysis----
+variables$CPUE<-variables$CPUEcal #Use CPUEcal as CPUE index
+n <- dim(variables)[1] #number of years including forecast year
+
+# subset data by peak month and generate list of catch by year
+cal.data <- SECM2019[SECM2019$Pink_Peak,]
+cal.data <- split(cal.data$Pink,cal.data$Year)
 
 #####################################################
 #  Analysis: 2020 SE Pink salmon harvest models
