@@ -13,6 +13,7 @@ library(here)
 library(fs)
 library(tidyverse)
 library(knitr)
+library(ggplot2)
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE, error=FALSE)
 #radio_fates_analysis. R code has the figure code
 ```
@@ -25,26 +26,30 @@ fs::dir_ls(here::here('2020_forecast/results'), regexp = "\\.csv$") %>%
   map(read_csv) -> tbls_seak
 
 ```
+
 #Objective
 To forecast the Southeast Alaska (SEAK) pink salmon harvest in 2020.
 
-#Model Selection
+#Analysis
 Three hierarchical models were investigated. The full model was:
 $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2}$$
 
-The regression coefficients cpue and temperature (ISTI_MJJ) are significant in the first two models. The interaction term in not signifciant (Table 4). Therefore, only the first two models will be considered).
+where ${X_1}$ was cpue and ${X_2}$ was the average temperature in Icy Strait in May, June, and July.
+The regression coefficients cpue and temperature (ISTI_MJJ) are significant in the first two models. The interaction term in not significant (Table 1). Therefore, only the first two models will be considered.
 
 ```{r coefficients}
 tbls_seak$model_summary_table4 %>% 
    knitr::kable(format = 'pandoc', caption = 'Parameter estimates')
 ```
 
-The model summary results using the metrics AIC, BIC, MAPE (mean absolute percent error),  MEAPE (median absolute percent error), and MASE (mean absoluate scaled error) (Hyndman and Kohler 2006) suggest that model two is the preferred model (Table 2 and Table 3).
+The model summary results using the metrics AIC, BIC, MAPE (mean absolute percent error),  MEAPE (median absolute percent error), and MASE (mean absoluate scaled error) (Hyndman and Kohler 2006) are shown in Tables 2 and 3. For all these metrics, the smallest value is the preferred model. These metrics suggest that model two is the preferred model.
+
 
 ```{r model_summary}
 tbls_seak$model_summary_table2 %>% 
    knitr::kable(format = 'pandoc', caption = 'Summary of model outputs')
 ```
+
 
 ```{r MASE}
 tbls_seak$model_summary_table3 %>% 
@@ -54,19 +59,19 @@ tbls_seak$model_summary_table3 %>%
 # Model Diagnostics
 ## Residuals vs. Fitted Plot
 The characteristics of a well-behaved residual vs. fits plot and what they suggest about the appropriateness of the simple linear regression model:
-1)The residuals "bounce randomly" around the 0 line. This suggests that the assumption that the relationship is linear is reasonable.
+  1)The residuals "bounce randomly" around the 0 line. This suggests that the assumption that the relationship is linear is reasonable.
 2) The residuals roughly form a "horizontal band" around the 0 line. This suggests that the variances of the error terms are equal.
 3) No one residual "stands out" from the basic random pattern of residuals. This suggests that there are no outliers.
 Source: https://newonlinecourses.science.psu.edu/stat462/node/117/
-
+  
 The one point that stands out is juvenile year 2012 when the SEAK catch was 94.7. 
 
-## Residuals vs. Predictor Plots
-The interpretation of a "residuals vs. predictor plot" is identical to that for a "residuals vs. fits plot." That is, a well-behaved plot will bounce randomly and form a roughly horizontal band around the residual = 0 line. And, no data points will stand out from the basic random pattern of the other residuals.
+```{r fitted, fig.cap="The percent of the run that will be missed at a given risk level, e.g., 11\\% of the run will be missed 5\\% of the time using a five day 1\\% rule for the Chilkoot River."}
+knitr::include_graphics(here("2020_forecast/results/figs/fitted.png"))
+```
 
-# References
 
-\pagebreak
+
 ```{r sess_info, echo=FALSE}
 #sessionInfo()
 ```

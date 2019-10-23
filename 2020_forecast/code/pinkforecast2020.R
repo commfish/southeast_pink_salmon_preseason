@@ -14,6 +14,7 @@ library(rpart)
 library(mda)
 library(tidyverse)
 library(dLagM) #MASE calc
+library(ggplot2)
 source('2020_forecast/code/functions.r')
 
 # data----
@@ -110,16 +111,6 @@ predict(fit.avg,variables[23,])
 #plot with prediction error
 
 # Diagnostics: test model assumptions (normality, linearity, residuals)
-variables %>% #outer verus maturity
-  ggplot(aes(x=CPUE, y=SEAKCatch)) +
-  geom_point() + 
-  geom_ribbon(data=new.data, aes(y=fit, ymin=ymin, ymax=ymax), alpha=0.5) + 
-  geom_line(data=new.data, aes(y=fit)) + 
-  labs(x="CPUE", y="SEAKCatch") + 
-  scale_x_continuous(breaks = c(0, 0.1, 0.2, 0.3, 0.4,0.5), limits = c(0, 0.5)) +
-  scale_y_continuous(breaks = c(0, 0.2, 0.4, 0.6, 0.8,1.0), limits = c(0, 1.0)) +
-  geom_text(aes(x = 0, y = 0.98, label="c)"),family="Times New Roman", colour="black", size=5)-> plot3
-
 lm_out_seak %>% #  residuals against covariate
   augment(m2) %>% 
   mutate(resid = (.resid))%>% 
@@ -143,6 +134,9 @@ lm_out_seak %>% #  residuals against covariate
   geom_smooth(aes(colour = ISTI_MJJ, fill = ISTI_MJJ), colour="black") +
   labs(y = "Residuals", x =  "ISTI_MJJ") +
   geom_text(aes(x = 7, y = 45, label="b)"),family="Times New Roman", colour="black", size=5) -> plot2
+cowplot::plot_grid(plot1, plot2
+                   ,  align = "vh", nrow = 1, ncol=2)
+ggsave("2020_forecast/results/figs/predicted.png", dpi = 500, height = 5, width = 6, units = "in")
 
 lm_out_seak %>% #residuals against fitted
   augment(m2) %>% 
@@ -156,6 +150,9 @@ lm_out_seak %>% #residuals against fitted
   geom_hline(yintercept = 0, lty=2) + 
   labs(y = "Residuals", x =  "Fitted values") +
   geom_text(aes(x = 0, y = 45, label="c)", hjust = 1),family="Times New Roman", colour="black", size=5)-> plot3
+cowplot::plot_grid(plot3
+                   ,  align = "vh", nrow = 1, ncol=1)
+ggsave("2020_forecast/results/figs/fitted.png", dpi = 500, height = 4, width = 4, units = "in")
 
 lm_out_seak %>% #Cook's distance plot
   augment(m2) %>% 
