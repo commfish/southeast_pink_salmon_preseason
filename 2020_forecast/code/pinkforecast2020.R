@@ -12,6 +12,7 @@ library(broom)
 library(caret)
 library(rpart)
 library(mda)
+library(tidyverse)
 source('2020_forecast/code/functions.r')
 
 # data----
@@ -42,12 +43,12 @@ model.formulas<-c(SEAKCatch ~ CPUE,
 seak.model.summary <- model.summary(harvest=variables$SEAKCatch,variables=variables, model.formulas=model.formulas,model.names=model.names)
 seak.boot.summary <- boot.summary(cpuedata=cal.data,variables=variables,model.formulas=model.formulas,model.names=model.names)
 
-# summary of model fits
+# summary of model fits (i.e., coefficients, p-value)
 variables %>% 
-  filter(JYear<2019) %>% 
+  dplyr::filter(JYear<2019) %>% 
   do(m1 = lm(SEAKCatch ~ CPUE, data = variables),
      m2 = lm(SEAKCatch ~ CPUE + ISTI_MJJ, data = variables),
-     m3 = lm(SEAKCatch ~ CPUE+ISTI_MJJ+CPUE*ISTI_MJJ, data = variables)) -> lm_out_seak
+     m3 = lm(SEAKCatch ~ CPUE*ISTI_MJJ, data = variables)) -> lm_out_seak
 lm_out_seak %>% 
   tidy(m1) -> m1
 lm_out_seak %>% 
@@ -57,9 +58,9 @@ lm_out_seak %>%
 
 x <- rbind(m1, m2) #combine data for all zones
 x <- rbind(x, m3)
-write_csv(x, "2020_forecast/results/lm_out_seak.csv")
+write.csv(x, "2020_forecast/results/lm_out_seak.csv")
 
-# leave one out cross validation
+# leave one out cross validation (verify seak.model.summary)
 # https://stats.stackexchange.com/questions/27351/compare-models-loccv-implementation-in-r
 # https://machinelearningmastery.com/how-to-estimate-model-accuracy-in-r-using-the-caret-package/
 variables %>% 
@@ -70,11 +71,11 @@ model_m1 <- train(SEAKCatch ~ CPUE, data = variables, method='lm',
 
 model_m2 <- train(SEAKCatch ~ CPUE + ISTI_MJJ, data = variables, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
-                  metric = c("RMSE","MAPE"))
+                  metric = c("MAPE"))
 
 model_m3 <- train(SEAKCatch ~ CPUE * ISTI_MJJ, data = variables, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
-                  metric = c("RMSE","MAPE"))
+                  metric = c("MAPE"))
 
 # model average
 fit.avg<-model.avg(seak.model.summary[[1]])
