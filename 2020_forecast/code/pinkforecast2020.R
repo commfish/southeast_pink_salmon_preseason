@@ -1,6 +1,7 @@
 # SECM Pink salmon forecast models
 # Script written by Jim Murphy updated: 10/18/19
 
+#need to add MASE metric from Hundman paper***
 # load----
 library(gam)
 library(MASS)
