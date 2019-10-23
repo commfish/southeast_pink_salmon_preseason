@@ -41,8 +41,6 @@ model.summary<-function(harvest,variables,model.formulas,model.names){
   row.names(model.results)<-model.names
   dimnames(model.results)[[2]][1:3]<-c('Fit','LCI','UCI')
   list(fit.out,model.results)}
-
-
 # Bootstrap Functions
    # boostraplm function
        # cpuedata: a list of individual catch observations by year
@@ -77,4 +75,15 @@ boot.summary<-function(cpuedata,variables,model.formulas,model.names,quantiles=c
                           probs=quantiles))
   row.names(boot.summary)<-model.names
   boot.summary
+}
+
+mape <- function(actual, predicted){
+  mean(abs((actual - predicted)/actual))}
+
+mape_summary <- function (data,
+                            lev = NULL,
+                            model = NULL) {
+  out <- mape((data$obs),(data$pred))  
+  names(out) <- "MAPE"
+  out
 }
