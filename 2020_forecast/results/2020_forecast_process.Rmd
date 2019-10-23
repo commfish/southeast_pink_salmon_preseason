@@ -1,0 +1,72 @@
+---
+title: "2020 Preseason Pink Salmon Forecast"
+author: "Sara Miller"
+date: "October 2019"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+---
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
+library(here)
+library(fs)
+library(tidyverse)
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE, error=FALSE)
+#radio_fates_analysis. R code has the figure code
+```
+
+```{r data}
+
+fs::dir_ls(here::here('2020_forecast/results'), regexp = "\\.csv$") %>% 
+  set_names(nm = (basename(.) %>% 
+                    tools::file_path_sans_ext())) %>%
+  map(read_csv) -> tbls_seak
+
+```
+#Objective
+To forecast the Southeast Alaska (SEAK) pink salmon harvest in 2020.
+
+#Model Selection
+Three hierarchical models were investigated. The full model was:
+$$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2}$$
+
+The regression coefficients cpue and temperature (ISTI_MJJ) are significant in the first two models. The interaction term in not signifciant (Table 4). Therefore, only the first two models will be considered).
+
+```{r coefficients}
+tbls_seak$model_summary_table4 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Parameter estimates')
+```
+
+The model summary results using the metrics AIC, BIC, MAPE (mean absolute percent error),  MEAPE (median absolute percent error), and MASE (mean absoluate scaled error) (Hyndman and Kohler 2006) suggest that model two is the preferred model (Table 2 and Table 3).
+
+```{r model_summary}
+tbls_seak$model_summary_table2 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Summary of model outputs')
+```
+
+```{r MASE}
+tbls_seak$model_summary_table3 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Forecast error measures')
+```
+
+# Model Diagnostics
+## Residuals vs. Fitted Plot
+The characteristics of a well-behaved residual vs. fits plot and what they suggest about the appropriateness of the simple linear regression model:
+1)The residuals "bounce randomly" around the 0 line. This suggests that the assumption that the relationship is linear is reasonable.
+2) The residuals roughly form a "horizontal band" around the 0 line. This suggests that the variances of the error terms are equal.
+3) No one residual "stands out" from the basic random pattern of residuals. This suggests that there are no outliers.
+Source: https://newonlinecourses.science.psu.edu/stat462/node/117/
+
+The one point that stands out is juvenile year 2012 when the SEAK catch was 94.7. 
+
+## Residuals vs. Predictor Plots
+The interpretation of a "residuals vs. predictor plot" is identical to that for a "residuals vs. fits plot." That is, a well-behaved plot will bounce randomly and form a roughly horizontal band around the residual = 0 line. And, no data points will stand out from the basic random pattern of the other residuals.
+
+# References
+
+\pagebreak
+```{r sess_info, echo=FALSE}
+#sessionInfo()
+```
