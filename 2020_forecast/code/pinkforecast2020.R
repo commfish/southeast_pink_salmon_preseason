@@ -80,5 +80,6 @@ model_m3 <- train(SEAKCatch ~ CPUE * ISTI_MJJ, data = variables, method='lm',
 fit.avg<-model.avg(seak.model.summary[[1]])
 predict(fit.avg,variables[23,])
 
+#plot with prediction error
 
 
