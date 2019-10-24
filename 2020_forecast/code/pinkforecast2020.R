@@ -105,8 +105,6 @@ x <- rbind(m1, m2) #combine data for all zones
 x <- rbind(x, m3)
 write.csv(x, "2020_forecast/results/model_summary_table4.csv")
 
-#plot with prediction error
-
 # Diagnostics: test model assumptions (normality, linearity, residuals)
 # diagnostic plots
 png("2020_forecast/results/figs/general_diagnostics.png")
@@ -213,6 +211,8 @@ lm_out_seak %>% #leverage plot
 
 cowplot::plot_grid(plot4, plot5,  align = "vh", nrow = 1, ncol=2)
 ggsave("2020_forecast/results/figs/influential.png", dpi = 500, height = 3, width = 6, units = "in")
+
+# plot with prediction error  *add to Rmarkdown
 
 # model average
 fit.avg<-model.avg(seak.model.summary[[1]])
