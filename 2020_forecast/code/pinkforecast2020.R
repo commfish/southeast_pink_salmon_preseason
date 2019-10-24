@@ -3,6 +3,8 @@
 
 #need to add MASE metric from Hundman paper***
 # load----
+devtools::install_github("ben-williams/FNGr")
+library("FNGr")
 library(gam)
 library(MASS)
 library(MuMIn)
@@ -61,21 +63,21 @@ write.csv(., "2020_forecast/results/model_summary_table2.csv")
 # https://stats.stackexchange.com/questions/27351/compare-models-loccv-implementation-in-r
 # https://machinelearningmastery.com/how-to-estimate-model-accuracy-in-r-using-the-caret-package/
 variables %>% 
-  filter(JYear<2019) -> variables
-model_m1 <- train(SEAKCatch ~ CPUE, data = variables, method='lm', 
+  filter(JYear<2019) -> variables_subset
+model_m1 <- train(SEAKCatch ~ CPUE, data = variables_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
-model_m2 <- train(SEAKCatch ~ CPUE + ISTI_MJJ, data = variables, method='lm', 
+model_m2 <- train(SEAKCatch ~ CPUE + ISTI_MJJ, data = variables_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
-model_m3 <- train(SEAKCatch ~ CPUE * ISTI_MJJ, data = variables, method='lm', 
+model_m3 <- train(SEAKCatch ~ CPUE * ISTI_MJJ, data = variables_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
 
 # MASE calculation
-model.m1 = lm(SEAKCatch ~ CPUE, data = variables)
-model.m2 = lm(SEAKCatch ~ CPUE + ISTI_MJJ, data = variables)
-model.m3 = lm(SEAKCatch ~ CPUE*ISTI_MJJ, data = variables)
+model.m1 = lm(SEAKCatch ~ CPUE, data = variables_subset)
+model.m2 = lm(SEAKCatch ~ CPUE + ISTI_MJJ, data = variables_subset)
+model.m3 = lm(SEAKCatch ~ CPUE*ISTI_MJJ, data = variables_subset)
 MASE(model.m1, model.m2, model.m3) %>%
   dplyr::select(MASE)-> MASE
 
@@ -91,9 +93,9 @@ results %>%
 # summary of model fits (i.e., coefficients, p-value)
 variables %>% 
   dplyr::filter(JYear<2019) %>% 
-  do(m1 = lm(SEAKCatch ~ CPUE, data = variables),
-     m2 = lm(SEAKCatch ~ CPUE + ISTI_MJJ, data = variables),
-     m3 = lm(SEAKCatch ~ CPUE*ISTI_MJJ, data = variables)) -> lm_out_seak
+  do(m1 = lm(SEAKCatch ~ CPUE, data = variables_subset),
+     m2 = lm(SEAKCatch ~ CPUE + ISTI_MJJ, data = variables_subset),
+     m3 = lm(SEAKCatch ~ CPUE*ISTI_MJJ, data = variables_subset)) -> lm_out_seak
 lm_out_seak %>% 
   tidy(m1) -> m1
 lm_out_seak %>% 
@@ -107,6 +109,7 @@ write.csv(x, "2020_forecast/results/model_summary_table4.csv")
 
 # Diagnostics: test model assumptions (normality, linearity, residuals)
 # diagnostic plots
+axisb <- tickr(m2, year, 2)
 png("2020_forecast/results/figs/general_diagnostics.png")
 par(mfrow=c(2,2))
 plot(model.m2)
@@ -149,8 +152,8 @@ lm_out_seak %>% #Pearson by index
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
-  scale_x_continuous(breaks = c(1997:2018), limits = c(1997,2018)) +
-  labs(y = "Residuals", x =  "Juvenile year") + theme_bw () +theme(text = element_text(size=12),
+  scale_x_continuous(breaks = axisb$breaks, labels = axisb$labels) +
+  labs(y = "Residuals", x =  "Juvenile year") + theme_bw () +theme(text = element_text(size=10),
                                                                    axis.text.x = element_text(angle=90, hjust=1),
                                                                    panel.border = element_blank(), panel.grid.major = element_blank(),
                                                                    panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
@@ -184,9 +187,9 @@ lm_out_seak %>% #Cook's distance plot
   geom_text(size = 3, position = position_stack(vjust = 1.1)) + 
   geom_hline(yintercept = 0.87, lty=2) +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  scale_x_continuous(breaks = c(1997:2018), limits = c(1997,2018))+
+  scale_x_continuous(breaks = axisb$breaks, labels = axisb$labels) +
   scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0), limits = c(0,1))+
-  labs(y = "Cook's distance", x =  "Juvenile year") + theme(text = element_text(size=12),
+  labs(y = "Cook's distance", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                       axis.text.x = element_text(angle=90, hjust=1))+
   geom_text(aes(x = 1997, y = 1, label="a)"),family="Times New Roman", colour="black", size=5)-> plot4
 
@@ -204,16 +207,65 @@ lm_out_seak %>% #leverage plot
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_hline(yintercept = 0.27, lty=2) +
-  scale_x_continuous(breaks = c(1997:2018), limits = c(1997,2018)) +
-  labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=12),
+  scale_x_continuous(breaks = axisb$breaks, labels = axisb$labels)  +
+  labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                       axis.text.x = element_text(angle=90, hjust=1))+
   geom_text(aes(x = 1997, y = 0.45, label="b)"),family="Times New Roman", colour="black", size=5)-> plot5
 
 cowplot::plot_grid(plot4, plot5,  align = "vh", nrow = 1, ncol=2)
 ggsave("2020_forecast/results/figs/influential.png", dpi = 500, height = 3, width = 6, units = "in")
 
-# plot with prediction error  *add to Rmarkdown
+# plot with prediction error  
+lm_out_seak %>% 
+  augment(m2) %>% 
+  mutate(year = 1998:2019, 
+         catch = SEAKCatch, 
+         fit = (.fitted)) -> m2
+m2 %>%
+  ggplot(aes(x=year)) +
+  geom_bar(aes(y = catch, colour = " SEAK pink catch"),
+           stat = "identity",  
+           fill = "lightgrey",
+           width = 1, position = position_dodge(width = 0.1)) +
+  geom_line(aes(x=year, y = fit), linetype = 2, colour = "black", size = 1) +
+  scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                                         text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1)) +
+  theme(legend.position="none") +
+  scale_x_continuous(breaks = axisb$breaks, labels = axisb$labels) +
+  scale_y_continuous(labels = scales::comma, 
+                     breaks = seq(0, 110, 10)) + theme(legend.title=element_blank())+
+  labs(x = "Year", y = "Harvest (millions)\n", linetype = NULL, fill = NULL) +
+  geom_text(aes(x = 1998, y = 110, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
+
+#test new model to match ouput in SFMM
+#nd<-data.frame(CPUE=1.202606515,ISTI_MJJ=9.91121125) 
+#prediction<-predict(model.m2, newdata=nd, interval="prediction")
+
+lm_out_seak %>% 
+  augment(m2) %>% 
+  mutate(year = 1997:2018, 
+         catch = SEAKCatch, 
+         fit = (.fitted)) -> m2
+axisb <- tickr(m2, year, 2)
+m2 %>%
+  ggplot(aes(x=catch, y=fit)) +
+  geom_point() +
+  geom_point(x=1.202607, y=2.06113749767909, pch=8, size=2) +
+  geom_smooth(method="lm", colour="black") +
+  geom_point(aes(y = fit), colour = "black", size = 1) +
+  scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  theme(legend.position="none") + theme(legend.title=element_blank())+
+  scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100))+
+  scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100))+
+  labs(y = "Fitted", x = "Harvest (millions)\n", linetype = NULL, fill = NULL) +
+  geom_segment(aes(x = 1.202607, y = 12.19, xend = 1.202607, yend = 0), size=1, colour="black", lty=1)+  
+  geom_text(aes(x = 3, y = 100, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
+
+cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
+ggsave('2020_forecast/results/figs/catch_plot_pred.png', dpi=500, height=3, width=7, units="in")
 
 # model average
-fit.avg<-model.avg(seak.model.summary[[1]])
+fit.avg <- model.avg(model.m1, model.m2)
 predict(fit.avg,variables[23,])

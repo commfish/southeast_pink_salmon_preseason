@@ -70,11 +70,9 @@ bootstraplm<-function(cpuedata,variables,model.formula){
 boot.summary<-function(cpuedata,variables,model.formulas,model.names,quantiles=c(.1,.9)){
   boot.summary<-numeric()
   for(i in 1:length(model.formulas))
-    boot.summary<-rbind(boot.summary,
-                        quantile(
-                          replicate(10000,
-                                    bootstraplm(cpuedata=cpuedata,variables=variables,model.formula=model.formulas[[i]])),
-                          probs=quantiles))
+    boot.summary<-rbind(boot.summary,quantile(replicate(10000,
+                      bootstraplm(cpuedata=cpuedata,variables=variables,model.formula=model.formulas[[i]])),
+                      probs=quantiles))
   row.names(boot.summary)<-model.names
   boot.summary
   write.csv(boot.summary, "2020_forecast/results/seak_model_bootsummary.csv")
