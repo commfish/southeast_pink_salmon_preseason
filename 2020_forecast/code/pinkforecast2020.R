@@ -265,7 +265,7 @@ m2 %>%
 cowplot::plot_grid(plot1, plot1,  align = "vh", nrow = 1, ncol=1)
 ggsave('2020_forecast/results/figs/catch_plot_pred.png', dpi=500, height=3, width=7, units="in")
 
-# model average (not sure how to do prediction interval on model averaged linear regressions)
+# model average (not sure how to do prediction interval on model averaged linear regressions)**
 fit.avg <- model.avg(model.m1, model.m2)
 predicted<-predict(fit.avg, variables[23,], se.fit = TRUE, level= 0.8, interval ="predict")
 lower_CI <- predicted$fit - 1.96*predicted$se.fit
