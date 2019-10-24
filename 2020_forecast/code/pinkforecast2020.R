@@ -249,18 +249,18 @@ lm_out_seak %>%
          fit = (.fitted)) -> m2
 axisb <- tickr(m2, year, 2)
 m2 %>%
-  ggplot(aes(x=catch, y=fit)) +
+  ggplot(aes(x=fit, y=catch)) +
   geom_point() +
   geom_point(x=1.202607, y=2.06113749767909, pch=8, size=2) +
   geom_smooth(method="lm", colour="black") +
-  geom_point(aes(y = fit), colour = "black", size = 1) +
+  geom_point(aes(y = catch), colour = "black", size = 1) +
   scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                          panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   theme(legend.position="none") + theme(legend.title=element_blank())+
   scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100))+
   scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100))+
-  labs(y = "Fitted", x = "Harvest (millions)\n", linetype = NULL, fill = NULL) +
-  geom_segment(aes(x = 1.202607, y = 12.19, xend = 1.202607, yend = 0), size=1, colour="black", lty=1)+  
+  labs(y = "Harvest (millions)\n", x = "Fitted", linetype = NULL, fill = NULL) +
+  geom_segment(aes(x = 1.202607, y = 12.19, yend = 0, xend = 1.202607), size=1, colour="black", lty=1)+  
   geom_text(aes(x = 3, y = 100, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
 
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
