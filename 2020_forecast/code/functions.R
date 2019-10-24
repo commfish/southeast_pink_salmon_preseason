@@ -33,7 +33,7 @@ model.summary<-function(harvest,variables,model.formulas,model.names){
       vector.jack[j]<-jacklm.reg(data=data,model.formula=model.formulas[[i]],jacknife.index=j)
     }
     mape<-mean(abs(obs-vector.jack)/obs)
-    meape<-median(abs(vector.jack-obs)/obs)
+    meape<-median(abs(obs-vector.jack)/obs)
     model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='confidence',level=.8))
     model.results<-rbind(model.results,c(model.pred,R2=model.sum$r.squared,AdjR2=model.sum$adj.r.squared,AIC=AIC(fit),AICc=AICcmodavg::AICc(fit),BIC=BIC(fit),MAPE=mape,MEAPE=meape))
   }
@@ -77,14 +77,13 @@ boot.summary<-function(cpuedata,variables,model.formulas,model.names,quantiles=c
                           probs=quantiles))
   row.names(boot.summary)<-model.names
   boot.summary
+  write.csv(boot.summary, "2020_forecast/results/seak_model_bootsummary.csv")
 }
 
 mape <- function(actual, predicted){
   mean(abs((actual - predicted)/actual))}
 
-mape_summary <- function (data,
-                            lev = NULL,
-                            model = NULL) {
+mape_summary <- function (data,lev = NULL, model = NULL) {
   out <- mape((data$obs),(data$pred))  
   names(out) <- "MAPE"
   out

@@ -15,6 +15,7 @@ library(mda)
 library(tidyverse)
 library(dLagM) #MASE calc
 library(ggplot2)
+library(car)
 source('2020_forecast/code/functions.r')
 
 # data----
@@ -104,23 +105,27 @@ x <- rbind(m1, m2) #combine data for all zones
 x <- rbind(x, m3)
 write.csv(x, "2020_forecast/results/model_summary_table4.csv")
 
-# model average
-fit.avg<-model.avg(seak.model.summary[[1]])
-predict(fit.avg,variables[23,])
-
 #plot with prediction error
 
 # Diagnostics: test model assumptions (normality, linearity, residuals)
+# diagnostic plots
+png("2020_forecast/results/figs/general_diagnostics.png")
+par(mfrow=c(2,2))
+plot(model.m2)
+dev.off()
+
+outlierTest(model.m2) #Bonferroni p-values (term # 16)
+residualPlots(model.m2) #lack-of fit curvature test; terms that are non-significant suggest a properly speciified model
 lm_out_seak %>% #  residuals against covariate
   augment(m2) %>% 
   mutate(resid = (.resid))%>% 
   ggplot(aes(x = CPUE, y = resid)) +
   geom_hline(yintercept = 0, lty=2) + 
   geom_point(color ="grey50") + 
-  #scale_x_continuous(breaks = c(0, 0.1, 0.2, 0.3, 0.4,0.5), limits = c(0, 0.5))+
-  #scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40,45), limits = c(0,45)) +
   geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
   labs(y = "Residuals", x =  "CPUE") +
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_text(aes(x = 0, y = 45, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
 
 lm_out_seak %>% #  residuals against covariate
@@ -129,14 +134,29 @@ lm_out_seak %>% #  residuals against covariate
   ggplot(aes(x = ISTI_MJJ, y = resid)) +
   geom_hline(yintercept = 0, lty=2) + 
   geom_point(color ="grey50") + 
-  #scale_x_continuous(breaks = c(0, 0.1, 0.2, 0.3, 0.4,0.5), limits = c(0, 0.5))+
-  #scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40,45), limits = c(0,45)) +
   geom_smooth(aes(colour = ISTI_MJJ, fill = ISTI_MJJ), colour="black") +
   labs(y = "Residuals", x =  "ISTI_MJJ") +
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
   geom_text(aes(x = 7, y = 45, label="b)"),family="Times New Roman", colour="black", size=5) -> plot2
 cowplot::plot_grid(plot1, plot2
                    ,  align = "vh", nrow = 1, ncol=2)
-ggsave("2020_forecast/results/figs/predicted.png", dpi = 500, height = 5, width = 6, units = "in")
+ggsave("2020_forecast/results/figs/predicted.png", dpi = 500, height = 3, width = 6, units = "in")
+
+lm_out_seak %>% #Pearson by index
+  augment(m2) %>% 
+  mutate(resid = (.resid),
+         count = 1997:2018) %>% 
+  ggplot(aes(x = count, y = resid)) +
+  geom_bar(stat = "identity", colour = "grey50", 
+           fill = "lightgrey",alpha=.7,
+           width = 0.8, position = position_dodge(width = 0.2)) + 
+  scale_x_continuous(breaks = c(1997:2018), limits = c(1997,2018)) +
+  labs(y = "Residuals", x =  "Juvenile year") + theme_bw () +theme(text = element_text(size=12),
+                                                                   axis.text.x = element_text(angle=90, hjust=1),
+                                                                   panel.border = element_blank(), panel.grid.major = element_blank(),
+                                                                   panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  geom_text(aes(x = 1997, y = 45, label="a)"),family="Times New Roman", colour="black", size=5)-> plot2
 
 lm_out_seak %>% #residuals against fitted
   augment(m2) %>% 
@@ -144,55 +164,56 @@ lm_out_seak %>% #residuals against fitted
          fit = (.fitted)) %>% 
   ggplot(aes(x = fit, y = resid)) +
   geom_point(color ="grey50") + 
-  #scale_x_continuous(breaks = c(-1.0, -0.5, 0, 0.5), limits = c(-1, 0.5))+
-  #scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40,45), limits = c(0,45)) +
   geom_smooth(aes(colour = fit, fill = fit),colour="black") +
   geom_hline(yintercept = 0, lty=2) + 
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   labs(y = "Residuals", x =  "Fitted values") +
-  geom_text(aes(x = 0, y = 45, label="c)", hjust = 1),family="Times New Roman", colour="black", size=5)-> plot3
-cowplot::plot_grid(plot3
-                   ,  align = "vh", nrow = 1, ncol=1)
-ggsave("2020_forecast/results/figs/fitted.png", dpi = 500, height = 4, width = 4, units = "in")
+  geom_text(aes(x = 1, y = 45, label="b)"),family="Times New Roman", colour="black", size=5)-> plot3
+cowplot::plot_grid(plot2, plot3, align = "vh", nrow = 1, ncol=2)
+ggsave("2020_forecast/results/figs/fitted.png", dpi = 500, height = 3, width = 6, units = "in")
 
+qf(.50, df1=4, df2=18) # F distribution of p+1 (4) and n-p-1 (22-3-1)
 lm_out_seak %>% #Cook's distance plot
   augment(m2) %>% 
   mutate(cooksd = (.cooksd),
-         count = 1:22,
-         name= ifelse(cooksd >0.05, count, ""))%>% 
+         count = 1997:2018,
+         name= ifelse(cooksd >0.87, count, ""))%>% 
   ggplot(aes(x = count, y = cooksd, label=name)) +
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
   geom_text(size = 3, position = position_stack(vjust = 1.1)) + 
-  scale_y_continuous(breaks = c(0, 0.05, 0.1, 0.15), limits = c(0,0.15)) +
-  labs(y = "Cook's distance", x =  "Index") +
-  geom_text(aes(x = 0, y = 0.15, label="d)"),family="Times New Roman", colour="black", size=5)-> plot4
+  geom_hline(yintercept = 0.87, lty=2) +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                                           panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  scale_x_continuous(breaks = c(1997:2018), limits = c(1997,2018))+
+  scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0), limits = c(0,1))+
+  labs(y = "Cook's distance", x =  "Juvenile year") + theme(text = element_text(size=12),
+                                                      axis.text.x = element_text(angle=90, hjust=1))+
+  geom_text(aes(x = 1997, y = 1, label="a)"),family="Times New Roman", colour="black", size=5)-> plot4
 
+#hat value 2*p/n = 2*(3/22)
 lm_out_seak %>% #leverage plot
   augment(m2) %>% 
   mutate(hat= (.hat),
-         count = 1:22,
-         name= ifelse(hat >0.20, count, "")) %>% 
+         count = 1997:2018,
+         name= ifelse(hat >0.27, count, "")) %>% 
   ggplot(aes(x = count, y = hat, label=name)) +
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
   geom_text(size = 3, position = position_stack(vjust = 1.1)) + 
-  #scale_y_continuous(breaks = c(0, 0.05, 0.1, 0.15, .2, .25, .3), limits = c(0,0.3)) +
-  labs(y = "hat-values", x =  "Index") +
-  geom_text(aes(x = 1, y = 0.45, label="e)"),family="Times New Roman", colour="black", size=5)-> plot5
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  geom_hline(yintercept = 0.27, lty=2) +
+  scale_x_continuous(breaks = c(1997:2018), limits = c(1997,2018)) +
+  labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=12),
+                                                      axis.text.x = element_text(angle=90, hjust=1))+
+  geom_text(aes(x = 1997, y = 0.45, label="b)"),family="Times New Roman", colour="black", size=5)-> plot5
 
-lm_out_seak %>% #Pearson by index
-  augment(m2) %>% 
-  mutate(resid = (.resid),
-         count = 1:22) %>% 
-  ggplot(aes(x = count, y = resid)) +
-  geom_bar(stat = "identity", colour = "grey50", 
-           fill = "lightgrey",alpha=.7,
-           width = 0.8, position = position_dodge(width = 0.2)) + 
-  #scale_y_continuous(breaks = c(-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2), limits = c(-2,2)) +
-  labs(y = "Pearson residuals", x =  "Index") +
-  geom_text(aes(x = 0, y = 1.9, label="f)"),family="Times New Roman", colour="black", size=5)-> plot6
+cowplot::plot_grid(plot4, plot5,  align = "vh", nrow = 1, ncol=2)
+ggsave("2020_forecast/results/figs/influential.png", dpi = 500, height = 3, width = 6, units = "in")
 
-cowplot::plot_grid(plot1, plot2, plot3, plot4, plot5, plot6,  align = "vh", nrow = 3, ncol=2)
-ggsave("figs/glm_diagnostics.png", dpi = 500, height = 6, width = 8, units = "in")
+# model average
+fit.avg<-model.avg(seak.model.summary[[1]])
+predict(fit.avg,variables[23,])
