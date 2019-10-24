@@ -18,6 +18,7 @@ library(tidyverse)
 library(dLagM) #MASE calc
 library(ggplot2)
 library(car)
+library(ggfortify)
 source('2020_forecast/code/functions.r')
 
 # data----
@@ -111,8 +112,7 @@ write.csv(x, "2020_forecast/results/model_summary_table4.csv")
 # diagnostic plots
 axisb <- tickr(m2, year, 2)
 png("2020_forecast/results/figs/general_diagnostics.png")
-par(mfrow=c(2,2))
-plot(model.m2)
+autoplot(model.m2)
 dev.off()
 
 outlierTest(model.m2) #Bonferroni p-values (term # 16)
@@ -215,7 +215,7 @@ lm_out_seak %>% #leverage plot
 cowplot::plot_grid(plot4, plot5,  align = "vh", nrow = 1, ncol=2)
 ggsave("2020_forecast/results/figs/influential.png", dpi = 500, height = 3, width = 6, units = "in")
 
-# plot with prediction error  
+# plot with prediction error 
 lm_out_seak %>% 
   augment(m2) %>% 
   mutate(year = 1998:2019, 
@@ -231,41 +231,42 @@ m2 %>%
   scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                          panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
                                          text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1)) +
-  theme(legend.position="none") +
-  scale_x_continuous(breaks = axisb$breaks, labels = axisb$labels) +
-  scale_y_continuous(labels = scales::comma, 
-                     breaks = seq(0, 110, 10)) + theme(legend.title=element_blank())+
+  theme(legend.position="none") +geom_point(x=2020, y=2.06113749767909, pch=8, size=2) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100), limits = c(0,100))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "Harvest (millions)\n", linetype = NULL, fill = NULL) +
-  geom_text(aes(x = 1998, y = 110, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
+  geom_segment(aes(x = 2020, y = 12.19, yend = 0, xend = 2020), size=1, colour="black", lty=1) -> plot1
 
 #test new model to match ouput in SFMM
 #nd<-data.frame(CPUE=1.202606515,ISTI_MJJ=9.91121125) 
 #prediction<-predict(model.m2, newdata=nd, interval="prediction")
 
-lm_out_seak %>% 
-  augment(m2) %>% 
-  mutate(year = 1997:2018, 
-         catch = SEAKCatch, 
-         fit = (.fitted)) -> m2
-axisb <- tickr(m2, year, 2)
-m2 %>%
-  ggplot(aes(x=fit, y=catch)) +
-  geom_point() +
-  geom_point(x=1.202607, y=2.06113749767909, pch=8, size=2) +
-  geom_smooth(method="lm", colour="black") +
-  geom_point(aes(y = catch), colour = "black", size = 1) +
-  scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  theme(legend.position="none") + theme(legend.title=element_blank())+
-  scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100))+
-  scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100))+
-  labs(y = "Harvest (millions)\n", x = "Fitted", linetype = NULL, fill = NULL) +
-  geom_segment(aes(x = 1.202607, y = 12.19, yend = 0, xend = 1.202607), size=1, colour="black", lty=1)+  
-  geom_text(aes(x = 3, y = 100, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
+#lm_out_seak %>% 
+#  augment(m2) %>% 
+#  mutate(year = 1997:2018, 
+#         catch = SEAKCatch, 
+#         fit = (.fitted)) -> m2
+#axisb <- tickr(m2, year, 2)
+#m2 %>%
+#  ggplot(aes(x=fit, y=catch)) +
+#  geom_point() +
+#  geom_point(x=1.202607, y=2.06113749767909, pch=8, size=2) +
+#  geom_smooth(method="lm", colour="black") +
+#  geom_point(aes(y = catch), colour = "black", size = 1) +
+#  scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+#                                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+#  theme(legend.position="none") + theme(legend.title=element_blank())+
+#  scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100))+
+#  scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100))+
+#  labs(y = "Harvest (millions)\n", x = "Fitted", linetype = NULL, fill = NULL) +
+#  geom_segment(aes(x = 1.202607, y = 12.19, yend = 0, xend = 1.202607), size=1, colour="black", lty=1)+  
+#  geom_text(aes(x = 3, y = 100, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
 
-cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
+cowplot::plot_grid(plot1, plot1,  align = "vh", nrow = 1, ncol=1)
 ggsave('2020_forecast/results/figs/catch_plot_pred.png', dpi=500, height=3, width=7, units="in")
 
-# model average
+# model average (not sure how to do prediction interval on model averaged linear regressions)
 fit.avg <- model.avg(model.m1, model.m2)
-predict(fit.avg,variables[23,])
+predicted<-predict(fit.avg, variables[23,], se.fit = TRUE, level= 0.8, interval ="predict")
+lower_CI <- predicted$fit - 1.96*predicted$se.fit
+upper_CI <- predicted$fit + 1.96*predicted$se.fit

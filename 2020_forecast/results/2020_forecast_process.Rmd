@@ -105,7 +105,7 @@ The SEAK pink salmon harvest in 2020 is predicted to be in the weak range with a
 knitr::include_graphics(here("2020_forecast/results/figs/catch_plot_pred.png"))
 ```
 
-Figure 3: SEAK harvest (millions) a) by year with the fitted values from model 2  shown as a line in the figure, and b) by the fitted values with the predicted 2020 forecast symbolized as a star with 80% bootstrap confidence intervals. 
+Figure 3: SEAK harvest (millions) by year with the fitted values from model 2  shown as a line in the figure. The predicted 2020 forecast is symbolized as a star with 80% bootstrap confidence intervals. 
 
 #References
 Cook, R. D. 1977. Detection of influential observations in linear regression. Technometrics 19: 15–18.
