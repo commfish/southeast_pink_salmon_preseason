@@ -34,32 +34,26 @@ To forecast the Southeast Alaska (SEAK) pink salmon harvest in 2020.
 Three hierarchical models were investigated. The full model was:
 $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2}$$
 
-where ${X_1}$ was cpue and ${X_2}$ was the average temperature in Icy Strait in May, June, and July.
-The regression coefficients cpue and temperature (ISTI_MJJ) are significant in the first two models. The interaction term in not significant (Table 1). Therefore, only the first two models will be considered.
+where ${X_1}$ was CPUE and ${X_2}$ was the average temperature in Icy Strait in May, June, and July.
+The regression coefficients CPUE and temperature (ISTI_MJJ) are significant in the first two models. The interaction term in not significant (Table 1). Therefore, only the first two models will be considered (although results are shown for all three models).
 
 ```{r coefficients}
-tbls_seak$model_summary_table4 %>% 
+tbls_seak$model_summary_table1 %>% 
    knitr::kable(format = 'pandoc', caption = 'Parameter estimates')
 ```
 
-The model summary results using the metrics AIC, BIC, mean absolute percent error (MAPE), median absolute percent error (MEAPE), and mean absolute scaled error (MASE)(Hyndman and Kohler 2006) are shown in Tables 2 and 3. For all these metrics, the smallest value is the preferred model. These metrics suggest that model two is the preferred model.
+The model summary results using the metrics Akaike Information Criterion corrected for small sample size (AICc), mean absolute percent error (MAPE), median absolute percent error (MEAPE), and mean absolute scaled error (MASE)(Hyndman and Kohler 2006) are shown in Tables 2 and 3. For all these metrics, the smallest value is the preferred model. The difference ($\Delta_i$) between a given model and the model with the lowest AICc value and the metric MASE were the primary statistics for choosing appropriate models in this analysis. Models with $\Delta_i$ $\leq$ 2 have substantial support, those in which 4 $\leq$  $\Delta_i$ $\leq$  7 have considerably less support, and models with $\Delta_i$ > 10 have essentially no support (Burnham and Anderson 2004). These two metrics suggest that model two is the preferred model.
 
 
 ```{r model_summary}
 tbls_seak$model_summary_table2 %>% 
-   knitr::kable(format = 'pandoc', caption = 'Summary of model outputs')
-```
-
-
-```{r MASE}
-tbls_seak$model_summary_table3 %>% 
-   knitr::kable(format = 'pandoc', caption = 'Forecast error measures')
+   knitr::kable(format = 'pandoc', caption = 'Summary of model outputs and forecast error measures')
 ```
 
 # Model Diagnostics
-Model diagnostics included residual plots, the curvature test, and influential observation diagnostics using Cook’s distance (Cook 1977), the Bonferroni outlier test, and leverage plots. Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). These observations may have significant impact on model fitting and may need to be excluded.  An observation that is distant from the average covariate pattern is considered to have high leverage. If an individual observation has a leverage value $h_i$ greater than 2 or three times $p/n$, it may be a concern (where $p$ is the number of parameters (i.e., 2) and $n$ is the number of observations (i.e., 22); $p/n$ = 3/22 = 0.14 for this study; Dobson 2002). Therefore, a leverage cut-off of 0.27 was used; observations with a leverage value greater than 0.14 were investigated further. Cook’s distance is a measure of influence, or the product of both leverage and outlier. Cook’s distance,
+Model diagnostics included residual plots, the curvature test, and influential observation diagnostics using Cook’s distance (Cook 1977), the Bonferroni outlier test, and leverage plots. Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). These observations may have significant impact on model fitting and may need to be excluded.  An observation that is distant from the average covariate pattern is considered to have high leverage. If an individual observation has a leverage value $h_i$ greater than two or three times $p/n$, it may be a concern (where $p$ is the number of parameters (i.e., 3) and $n$ is the number of observations (i.e., 22); $p/n$ = 3/22 = 0.14 for this study; Dobson 2002). Therefore, a leverage cut-off of 0.27 was used; observations with a leverage value greater than 0.14 were investigated further. Cook’s distance is a measure of influence, or the product of both leverage and outlier. Cook’s distance,
 $$D_i=\ \frac{e_{PSi}^2}{p+1}\ast\frac{h_i}{1-h_i},$$				
-where $e_{PSi}^2$ is the standardized Pearson residuals, $h_i$ are the hat values (measure of leverage), and $p$ is the number of predictor variables in the model, is a measure of overall influence of the ith on all $n$ fitted values (Fox and Weisburg 2019). A large value of Cook’s distance indicates that the data point is an influential observation. Cook and Weisberg (1994) suggest using the median of the F-distribution with $(p+1)$ and $(n-p-1)$ degrees of freedom as a benchmark for identifying the subset of influential observations. Therefore, a Cook’s distance cut-off of 0.87 was used; observations with a Cook’s distance value greater than 0.87 were investigated further with the Bonferroni outlier test ($P$< 0.05). Influential observations were removed and coefficients reexamined to determine the impact of the observation. A significant shift in the coefficient when influential observations are removed may indicate an unusual observation that needs to be investigated further. To determine if a variable has a relationship with residuals, a lack-of fit curvature test was performed. In this test, terms that are non-significant suggest a properly specified model. Statistical analyses were performed with the R Project for Statistical computing version 3.6.0 (R Core Team 2019). 
+where $e_{PSi}^2$ is the standardized Pearson residuals, $h_i$ are the hat values (measure of leverage), and $p$ is the number of predictor variables in the model, is a measure of overall influence of the $i_th$ on all $n$ fitted values (Fox and Weisburg 2019). A large value of Cook’s distance indicates that the data point is an influential observation. Cook and Weisberg (1994) suggest using the median of the F-distribution with $(p+1)$ and $(n-p-1)$ degrees of freedom as a benchmark for identifying the subset of influential observations. Therefore, a Cook’s distance cut-off of 0.87 was used; observations with a Cook’s distance value greater than 0.87 were investigated further with the Bonferroni outlier test ($P$< 0.05). Influential observations were removed and coefficients reexamined to determine the impact of the observation. A significant shift in the coefficient when influential observations are removed may indicate an unusual observation that needs to be investigated further. To determine if a variable has a relationship with residuals, a lack-of fit curvature test was performed. In this test, terms that are non-significant suggest a properly specified model. Statistical analyses were performed with the R Project for Statistical computing version 3.6.0 (R Core Team 2019). 
 
 ## Residuals vs. Fitted Plot
 The characteristics of a well-behaved residual vs. fitted plot and what they suggest about the appropriateness of the simple linear regression model:
@@ -74,7 +68,7 @@ The one point that stands out is juvenile year 2012 when the SEAK catch was 94.7
 knitr::include_graphics(here("2020_forecast/results/figs/fitted.png"))
 ```
 
-Figure 1: Residuals versus fitted plot for model 2.
+Figure 1: a) Standardized residuals versus juvnile year and b) residuals (millions) versus fitted values for model 2. Positive residuals indicate that the observed harvest was larger than predicted by the model.
 
 ##Residuals vs. Predictor Plots
 The interpretation of a "residuals vs. predictor plot" is identical to that for a "residuals vs. fits plot." That is, a well-behaved plot will bounce randomly and form a roughly horizontal band around the residual = 0 line. And, no data points will stand out from the basic random pattern of the other residuals.
@@ -84,7 +78,7 @@ Taken directly from the source: https://newonlinecourses.science.psu.edu/stat462
 knitr::include_graphics(here("2020_forecast/results/figs/predicted.png"))
 ```
 
-Figure 2: Residuals versus predicted plots for a)CPUE and b) temperature for model 2.
+Figure 2: Residuals versus predicted plots for a) CPUE and b) temperature for model 2.
 
 ##Influential Datapoints
 The Bonferroni outlier test suggested that observaton 16 (juvenile year 2012) was an outlier. No terms were significant in the lack-of-fit curvature test, suggesting that the model was properly specified.
@@ -93,21 +87,23 @@ The Bonferroni outlier test suggested that observaton 16 (juvenile year 2012) wa
 knitr::include_graphics(here("2020_forecast/results/figs/influential.png"))
 ```
 
-Figure 2: Diagnostics plots of influential observations including a) Cook's Distance (witha cut-off of 0.87), b) leverage values (with a cut-off value of 0.27).
+Figure 2: Diagnostics plots of influential observations including a) Cook's Distance (with a cut-off value of 0.87), b) leverage values (with a cut-off value of 0.27).
 
 #Results
 The best model, based on MASE metric and significant coefficients was model 2 (i.e. the model containing cpue and temperature). Diagnostics indicated some observations had high leverage values, but none of the observations affected model fitting and overall the model did not show lack of fit. None of the data points were above the cut-off value for the Cook’s distance. Based on the Bonferroni outlier test, one the data points had a studentized residual with a significant Bonferroni $P$-value suggesting one of data points impacted the model fitting. The conditional mean function in the residual plots should be constant across the plot in a “correct” model. Based on the results of the curvature test ($P$ > 0.05), and the relatively flat (non-curved) fitted smooth lines in the Pearson residual plots, the plot does not show lack of fit of the model. The adjusted $R^2$ value was 0.72 indicating a good model fit.
 
 #Conclusion 
-The SEAK pink salmon harvest in 2020 is predicted to be in the weak range with a point estimate of 2 million fish (80% confidence interval: 0–12 million fish; Figure 3). 
+The SEAK pink salmon harvest in 2020 is predicted to be in the weak range with a point estimate of 2 million fish (80% confidence interval: 0–20 million fish; Figure 3). 
 
 ```{r pred, echo=FALSE}
 knitr::include_graphics(here("2020_forecast/results/figs/catch_plot_pred.png"))
 ```
 
-Figure 3: SEAK harvest (millions) by year with the fitted values from model 2  shown as a line in the figure. The predicted 2020 forecast is symbolized as a star with 80% bootstrap confidence intervals. 
+Figure 3: SEAK harvest (millions) a) by year and b) by the fitted values from model 2. The line in figure b is a one to one line. The predicted 2020 forecast is symbolized as a star with an 80% prediction interval (0-20 million fish). 
 
 #References
+Burnham, K. P., and Anderson, D. R. 2004. Multimodel inference: Understanding AIC and BIC in model selection. Sociological Methods and Research 33: 261–304.
+
 Cook, R. D. 1977. Detection of influential observations in linear regression. Technometrics 19: 15–18.
 
 Cook, R. D. and S. Weisberg. 1994. An Introduction to Regression Graphics. New York: Wiley.
