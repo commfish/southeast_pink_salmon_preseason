@@ -86,3 +86,7 @@ mape_summary <- function (data,lev = NULL, model = NULL) {
   names(out) <- "MAPE"
   out
 }
+
+
+
+

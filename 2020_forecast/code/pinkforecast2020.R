@@ -19,6 +19,7 @@ library(dLagM) #MASE calc
 library(ggplot2)
 library(car)
 library(ggfortify)
+library(Hmisc)
 source('2020_forecast/code/functions.r')
 
 # data----
@@ -35,9 +36,6 @@ cal.data <- split(cal.data$Pink,cal.data$Year)
 
 # 2020 SE Pink salmon harvest models
 # define model names and formulas
-model.names<-c(m1='CPUE')
-model.formulas<-c(SEAKCatch ~ CPUE)
-
 model.names<-c(m1='CPUE',
           m2='CPUE+ISTI_MJJ',
           m3='CPUE+ISTI_MJJ+CPUE:ISTI_MJJ')
@@ -48,6 +46,12 @@ model.formulas<-c(SEAKCatch ~ CPUE,
 # summary statistics SEAK pink salmon harvest forecast models
 seak.model.summary <- model.summary(harvest=variables$SEAKCatch,variables=variables, model.formulas=model.formulas,model.names=model.names)
 seak.boot.summary <- boot.summary(cpuedata=cal.data,variables=variables,model.formulas=model.formulas,model.names=model.names)
+# http://rstudio-pubs-static.s3.amazonaws.com/24365_2803ab8299934e888a60e7b16113f619.html
+CPUE <- 1.202606515
+ISTI_MJJ <- 9.91121125
+newdata <- data.frame(x1,x2)
+bootfit1 <- Boot(model.m2, function(SEAKCatch)predict(SEAKCatch, newdata), R=10000)
+predict(model.m2, newdata, interval="predict", level = 0.80) 
 
 # results as tables
 results<-read.csv("2020_forecast/results/seak_model_summary.csv")
