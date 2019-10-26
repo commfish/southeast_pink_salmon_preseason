@@ -34,12 +34,12 @@ model.summary<-function(harvest,variables,model.formulas,model.names){
     }
     mape<-mean(abs(obs-vector.jack)/obs)
     meape<-median(abs(obs-vector.jack)/obs)
-    model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='confidence',level=.8))
+    model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='prediction',level=.8))
     model.results<-rbind(model.results,c(model.pred,R2=model.sum$r.squared,AdjR2=model.sum$adj.r.squared,AIC=AIC(fit),AICc=AICcmodavg::AICc(fit),BIC=BIC(fit),MAPE=mape,MEAPE=meape))
   }
   
   row.names(model.results)<-model.names
-  dimnames(model.results)[[2]][1:3]<-c('Fit','LCI','UCI')
+  dimnames(model.results)[[2]][1:3]<-c('Fit','LPI','UPI')
   as.data.frame(model.results)-> x
   write.csv(x, "2020_forecast/results/seak_model_summary.csv")}
 
