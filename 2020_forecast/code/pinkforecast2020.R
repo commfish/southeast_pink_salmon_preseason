@@ -35,6 +35,13 @@ variables %>%
 SECM2019 %>% 
   mutate(Pink=log(Pink))-> SECM2019
 
+# normal data check
+eda.norm(log_data$SEAKCatch)# data is normal if the p-value is above 0.05.
+eda.norm(log_data$SEAKCatch_log)
+eda.norm(log_data$ISTI_MJJ)# data is normal if the p-value is above 0.05.
+eda.norm(log_data$ISTI_MJJ_log)
+eda.norm(log_data$CPUE)# data is normal if the p-value is above 0.05.
+
 # subset data by peak month and generate list of catch by year
 cal.data <- SECM2019[SECM2019$Pink_Peak,]
 cal.data <- split(cal.data$Pink,cal.data$Year)
@@ -44,9 +51,9 @@ cal.data <- split(cal.data$Pink,cal.data$Year)
 model.names<-c(m1='CPUE',
           m2='CPUE+ISTI_MJJ',
           m3='CPUE+ISTI_MJJ+CPUE:ISTI_MJJ')
-model.formulas<-c(SEAKCatch_log ~ CPUE_log,
-                 SEAKCatch_log ~ CPUE_log+ISTI_MJJ_log,
-                 SEAKCatch_log ~ CPUE_log*ISTI_MJJ_log)
+model.formulas<-c(SEAKCatch_log ~ CPUE,
+                 SEAKCatch_log ~ CPUE+ISTI_MJJ_log,
+                 SEAKCatch_log ~ CPUE*ISTI_MJJ_log)
 
 # summary statistics SEAK pink salmon harvest forecast models
 seak.model.summary <- model.summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names)
@@ -55,9 +62,9 @@ seak.model.summary <- model.summary(harvest=log_data$SEAKCatch_log, variables=lo
 # summary of model fits (i.e., coefficients, p-value)
 log_data %>% 
   dplyr::filter(JYear<2019) %>% 
-  do(m1 = lm(SEAKCatch_log ~ CPUE_log, data = .),
-     m2 = lm(SEAKCatch_log ~ CPUE_log + ISTI_MJJ_log, data = .),
-     m3 = lm(SEAKCatch_log ~ CPUE_log*ISTI_MJJ_log, data = .)) -> lm_out_seak
+  do(m1 = lm(SEAKCatch_log ~ CPUE, data = .),
+     m2 = lm(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = .),
+     m3 = lm(SEAKCatch_log ~ CPUE*ISTI_MJJ_log, data = .)) -> lm_out_seak
 lm_out_seak %>% 
   tidy(m1) -> m1
 lm_out_seak %>% 
@@ -73,22 +80,22 @@ write.csv(., "2020_forecast/results/model_summary_table1.csv")
 # https://machinelearningmastery.com/how-to-estimate-model-accuracy-in-r-using-the-caret-package/
 log_data %>% 
   filter(JYear<2019) -> log_data_subset
-model_m1 <- train(SEAKCatch_log ~ CPUE_log, data = log_data_subset, method='lm', 
+model_m1 <- train(SEAKCatch_log ~ CPUE, data = log_data_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
-model_m2 <- train(SEAKCatch_log ~ CPUE_log + ISTI_MJJ_log, data = log_data_subset, method='lm', 
+model_m2 <- train(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = log_data_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
-model_m3 <- train(SEAKCatch_log ~ CPUE_log * ISTI_MJJ_log, data = log_data_subset, method='lm', 
+model_m3 <- train(SEAKCatch_log ~ CPUE * ISTI_MJJ_log, data = log_data_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
 
 # MASE calculation
 log_data %>% 
   filter(JYear<2019) -> log_data_subset
-model.m1 = lm(SEAKCatch_log ~ CPUE_log, data = log_data_subset)
-model.m2 = lm(SEAKCatch_log ~ CPUE_log + ISTI_MJJ_log, data = log_data_subset)
-model.m3 = lm(SEAKCatch_log ~ CPUE_log*ISTI_MJJ_log, data = log_data_subset)
+model.m1 = lm(SEAKCatch_log ~ CPUE, data = log_data_subset)
+model.m2 = lm(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = log_data_subset)
+model.m3 = lm(SEAKCatch_log ~ CPUE*ISTI_MJJ_log, data = log_data_subset)
 MASE(model.m1, model.m2) %>%
   dplyr::select(MASE)-> MASE
 
@@ -104,9 +111,9 @@ results %>%
 # bootstrap
 # http://rstudio-pubs-static.s3.amazonaws.com/24365_2803ab8299934e888a60e7b16113f619.html
 sigma<- sigma(model.m2)
-CPUE_log <- log(1.202607)
+CPUE <- (1.202607)
 ISTI_MJJ_log <- log(9.91121125)
-newdata <- data.frame(CPUE_log, ISTI_MJJ_log)
+newdata <- data.frame(CPUE, ISTI_MJJ_log)
 #bootfit1 <- Boot(model.m2, function(SEAKCatch_log)predict(SEAKCatch_log, newdata), R=10000)
 predicted<-predict(model.m2, newdata, interval="prediction", level = 0.80) #prediction interval
 predicted <- as.data.frame(predicted)
@@ -128,13 +135,13 @@ car::residualPlots(model.m2, terms = ~ 1, fitted = T, id.n = 5, smoother = loess
 lm_out_seak %>% 
   augment(m2) %>% 
   mutate(resid = (.std.resid)) %>% 
-  ggplot(aes(x = CPUE_log, y = resid)) +
+  ggplot(aes(x = CPUE, y = resid)) +
   geom_hline(yintercept = 0, lty=2) + 
   geom_point(color ="grey50") + 
-  geom_smooth(aes(colour = CPUE_log, fill = CPUE_log), colour="black") +
+  geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
   scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4,5), limits = c(-4,5)) +
   scale_x_continuous(breaks = c(-2, -1, 0,1,2), limits = c(-2,2)) +
-  labs(y = "Standardized residuals", x =  "ln(CPUE)") + theme(legend.position="none") +
+  labs(y = "Standardized residuals", x =  "CPUE") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_text(aes(x = -2, y = 5, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
@@ -283,40 +290,6 @@ predicted<-predict(fit.avg, variables[23,], se.fit = TRUE)
 lower_CI <- predicted$fit - 1.96*predicted$se.fit
 upper_CI <- predicted$fit + 1.96*predicted$se.fit
 
-# summary of model fits (i.e., coefficients, p-value); not-logged
-eda.norm(log_data$SEAKCatch)# data is normal if the p-value is above 0.05.
-eda.norm(log_data$SEAKCatch_log)
-eda.norm(log_data$ISTI_MJJ)# data is normal if the p-value is above 0.05.
-eda.norm(log_data$ISTI_MJJ_log)
-eda.norm(log_data$CPUE)# data is normal if the p-value is above 0.05.
-eda.norm(log_data$CPUE_log)
 
-log_data %>% 
-  dplyr::filter(JYear<2019) %>% 
-  do(m1 = lm(SEAKCatch ~ CPUE, data = .),
-     m2 = lm(SEAKCatch ~ CPUE + ISTI_MJJ, data = .),
-     m3 = lm(SEAKCatch~ CPUE*ISTI_MJJ, data = .)) -> lm_out_seak
-lm_out_seak %>% 
-  tidy(m1) -> m1
-lm_out_seak %>% 
-  tidy(m2) -> m2
-lm_out_seak %>% 
-  tidy(m3) -> m3
-rbind(m1, m2) %>% 
-  rbind(., m3) %>% 
-  write.csv(., "2020_forecast/results/model_summary_table1_non.csv")
 
-# models
-log_data %>% 
-  filter(JYear<2019) -> log_data_subset
-model.m1 = lm(SEAKCatch ~ CPUE, data = log_data_subset)
-model.m2 = lm(SEAKCatch ~ CPUE + ISTI_MJJ, data = log_data_subset)
-model.m3 = lm(SEAKCatch~ CPUE*ISTI_MJJ, data = log_data_subset)
-
-# prediction
-CPUE <- 1.202607
-ISTI_MJJ <- 9.91121125
-newdata <- data.frame(CPUE, ISTI_MJJ)
-predicted<-predict(model.m2, newdata, interval="prediction", level = 0.80) #prediction interval
-predicted <- as.data.frame(predicted)
 
