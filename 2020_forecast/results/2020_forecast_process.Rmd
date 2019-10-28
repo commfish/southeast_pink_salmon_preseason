@@ -3,10 +3,10 @@ title: "2020 Preseason Pink Salmon Forecast"
 author: "Sara Miller and Rich Brenner"
 date: "October 2019"
 output:
-  pdf_document: default
+  word_document: default
   html_document:
     df_print: paged
-  word_document: default
+  pdf_document: default
 ---
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
 library(here)
