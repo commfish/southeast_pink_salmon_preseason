@@ -40,7 +40,7 @@ eda.norm(log_data$SEAKCatch)# data is normal if the p-value is above 0.05.
 eda.norm(log_data$SEAKCatch_log)
 eda.norm(log_data$ISTI_MJJ)# data is normal if the p-value is above 0.05.
 eda.norm(log_data$ISTI_MJJ_log)
-eda.norm(log_data$CPUE)# data is normal if the p-value is above 0.05.
+eda.norm(log_data$CPUE)# already ln(CPUE+1)
 
 # subset data by peak month and generate list of catch by year
 cal.data <- SECM2019[SECM2019$Pink_Peak,]
@@ -86,7 +86,7 @@ model_m1 <- train(SEAKCatch_log ~ CPUE, data = log_data_subset, method='lm',
 model_m2 <- train(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = log_data_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
-model_m3 <- train(SEAKCatch_log ~ CPUE * ISTI_MJJ_log, data = log_data_subset, method='lm', 
+model_m3 <- train(SEAKCatch_log ~ CPUE * ISTI_MJJ_log, data = log_data_subsetempt, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
 
@@ -117,7 +117,7 @@ newdata <- data.frame(CPUE, ISTI_MJJ_log)
 #bootfit1 <- Boot(model.m2, function(SEAKCatch_log)predict(SEAKCatch_log, newdata), R=10000)
 predicted<-predict(model.m2, newdata, interval="prediction", level = 0.80) #prediction interval
 predicted <- as.data.frame(predicted)
-fit_value <- exp(predicted$fit)*exp(0.5*sigma*sigma)
+fit_value <- exp(predicted$fit)*exp(0.5*sigma*sigma) #adjustment for exp
 lwr_pi <-  exp(predicted$lwr)*exp(0.5*sigma*sigma)
 upr_pi <-  exp(predicted$upr)*exp(0.5*sigma*sigma)
 
@@ -131,6 +131,34 @@ outlierTest(model.m2) #Bonferroni p-values (term # 16)
 residualPlots(model.m2) #lack-of fit curvature test; terms that are non-significant suggest a properly speciified model
 car::residualPlots(model.m2, terms = ~ 1, fitted = T, id.n = 5, smoother = loessLine)
 
+# cpue and catch
+lm_out_seak %>% 
+  augment(m2)  %>% 
+  ggplot(aes(x = CPUE, y = SEAKCatch_log)) +
+  geom_point(color ="grey50") + 
+  geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
+  scale_y_continuous(breaks = c(0,1,2,3,4,5), limits = c(0,5)) +
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
+  labs(y = "ln(Harvest)", x =  "CPUE") + theme(legend.position="none") +
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  geom_text(aes(x = 0, y = 5, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
+
+# temp and catch
+lm_out_seak %>% 
+  augment(m2)  %>% 
+  ggplot(aes(x = ISTI_MJJ_log, y = SEAKCatch_log)) +
+  geom_point(color ="grey50") + 
+  geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
+  scale_y_continuous(breaks = c(0,1,2,3,4,5), limits = c(0,5)) +
+  scale_x_continuous(breaks = c(2,2.1,2.2,2.3,2.4,2.5), limits = c(2,2.5)) +
+  labs(y = "ln(Harvest)", x =  "Temperature") + theme(legend.position="none") +
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  geom_text(aes(x = 2, y = 5, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
+cowplot::plot_grid(plot1, plot2, align = "vh", nrow = 1, ncol=2)
+ggsave("2020_forecast/results/figs/cpue_temp.png", dpi = 500, height = 3, width = 6, units = "in")
+
 # residuals against covariate
 lm_out_seak %>% 
   augment(m2) %>% 
@@ -139,12 +167,12 @@ lm_out_seak %>%
   geom_hline(yintercept = 0, lty=2) + 
   geom_point(color ="grey50") + 
   geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
-  scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4,5), limits = c(-4,5)) +
-  scale_x_continuous(breaks = c(-2, -1, 0,1,2), limits = c(-2,2)) +
+  scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4), limits = c(-4,4)) +
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
   labs(y = "Standardized residuals", x =  "CPUE") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = -2, y = 5, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
+  geom_text(aes(x = 0, y = 4, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
 
 # residuals against covariate
 lm_out_seak %>% 
@@ -154,7 +182,7 @@ lm_out_seak %>%
   geom_hline(yintercept = 0, lty=2) + 
   geom_point(color ="grey50") + 
   geom_smooth(aes(colour = ISTI_MJJ_log, fill = ISTI_MJJ_log), colour="black") +
-  scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4,5), limits = c(-4,5)) +
+  scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4), limits = c(-4,4)) +
   labs(y = "Standardized residuals", x =  "ln(ISTI_MJJ)") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
@@ -172,26 +200,27 @@ lm_out_seak %>%
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
   scale_x_continuous(breaks = 1997:2018, labels = 1997:2018) +
-  scale_y_continuous(breaks = c(-4,-3,-2,-1,0, 1,2,3,4, 5), limits = c(-4,5))+
+  scale_y_continuous(breaks = c(-4,-3,-2,-1,0, 1,2,3,4), limits = c(-4,4))+
   labs(y = "Standardized residuals", x =  "Juvenile year") + theme_bw () +theme(text = element_text(size=10),
                                                                    axis.text.x = element_text(angle=90, hjust=1),
                                                                    panel.border = element_blank(), panel.grid.major = element_blank(),
                                                                    panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 1997, y = 5, label="a)"),family="Times New Roman", colour="black", size=5)-> plot2
+  geom_text(aes(x = 1997, y = 4, label="a)"),family="Times New Roman", colour="black", size=5)-> plot2
 
 # residuals against fitted
 lm_out_seak %>% 
   augment(m2) %>% 
   mutate(resid = (.resid),
-         fit = exp(.fitted) * exp(0.5* sigma*sigma)) %>% 
+         fit = (.fitted)) %>% 
   ggplot(aes(x = fit, y = resid)) +
   geom_point(color ="grey50") + 
   geom_smooth(aes(colour = fit, fill = fit),colour="black") +
   geom_hline(yintercept = 0, lty=2) + 
-  scale_y_continuous(breaks = c(-1, -0.50, 0, 0.5, 1), limits = c(-1,1))+
+  scale_y_continuous(breaks = c(-1,-0.5,0,0.5,1), limits = c(-1,1))+
+  scale_x_continuous(breaks = c(2,3,4,5), limits = c(2,5))+
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  labs(y = "Residuals", x =  "Fitted values (millions)") +
+  labs(y = "Residuals", x =  "Fitted values") +
   geom_text(aes(x = 0, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot3
 cowplot::plot_grid(plot2, plot3, align = "vh", nrow = 1, ncol=2)
 ggsave("2020_forecast/results/figs/fitted.png", dpi = 500, height = 3, width = 6, units = "in")
@@ -231,11 +260,10 @@ lm_out_seak %>%
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_hline(yintercept = 0.27, lty=2) +
-  scale_x_continuous(breaks = axisb$breaks, labels = axisb$labels)  +
+  scale_x_continuous(breaks = 1997:2018, labels = 1997:2018) +
   labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                       axis.text.x = element_text(angle=90, hjust=1))+
   geom_text(aes(x = 1997, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot5
-
 cowplot::plot_grid(plot4, plot5,  align = "vh", nrow = 1, ncol=2)
 ggsave("2020_forecast/results/figs/influential.png", dpi = 500, height = 3, width = 6, units = "in")
 
@@ -257,10 +285,10 @@ m2 %>%
                                          text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1)) +
   theme(legend.position="none") +geom_point(x=2020, y=fit_value, pch=8, size=2) +
   scale_x_continuous(breaks = seq(1998, 2020, 1)) +
-  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100), limits = c(0,100))+ theme(legend.title=element_blank())+
+  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "Harvest (millions)\n", linetype = NULL, fill = NULL) +
   geom_segment(aes(x = 2020, y = lwr_pi, yend = upr_pi, xend = 2020), size=1, colour="black", lty=1) +
-  geom_text(aes(x = 1998, y = 100, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
+  geom_text(aes(x = 1998, y = 140, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
 
 # plot of observed harvest by fitted values (with one to one line)
 lm_out_seak %>% 
@@ -269,7 +297,6 @@ lm_out_seak %>%
          catch = exp(SEAKCatch_log), 
          sigma = .sigma,
          fit = exp(.fitted) * exp(0.5*sigma*sigma))  -> m2
-axisb <- tickr(m2, year, 2)
 m2 %>%
   ggplot(aes(x=fit, y=catch)) +
   geom_point() +
