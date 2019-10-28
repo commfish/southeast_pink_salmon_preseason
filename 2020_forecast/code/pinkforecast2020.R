@@ -57,7 +57,7 @@ model.formulas<-c(SEAKCatch_log ~ CPUE,
 
 # summary statistics SEAK pink salmon harvest forecast models
 seak.model.summary <- model.summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names)
-#seak.boot.summary <- boot.summary(cpuedata=cal.data,variables=variables,model.formulas=model.formulas,model.names=model.names)
+#seak.boot.summary <- boot.summary(cpuedata=cal.data,variables=log_data,model.formulas=model.formulas,model.names=model.names)
 
 # summary of model fits (i.e., coefficients, p-value)
 log_data %>% 
