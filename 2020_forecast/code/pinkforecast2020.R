@@ -73,8 +73,20 @@ lm_out_seak %>%
   tidy(m3) -> m3
 rbind(m1, m2) %>% 
 rbind(., m3) %>% 
+mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3', 'm3')) %>% 
+  dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
 write.csv(., "2020_forecast/results/model_summary_table1.csv")
 
+lm_out_seak %>% 
+  augment(m2) %>% 
+  mutate(resid =(.resid),
+         hat_values =(.hat),
+         Cooks_distance =(.cooksd),
+         std_resid = (.std.resid),
+         fitted = (.fitted),
+         year=1998:2019) %>%
+  dplyr::select(year, SEAKCatch_log, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
+  write.csv(., "2020_forecast/results/model_summary_table3.csv")
 # leave one out cross validation (verify seak.model.summary)
 # https://stats.stackexchange.com/questions/27351/compare-models-loccv-implementation-in-r
 # https://machinelearningmastery.com/how-to-estimate-model-accuracy-in-r-using-the-caret-package/
@@ -133,13 +145,13 @@ car::residualPlots(model.m2, terms = ~ 1, fitted = T, id.n = 5, smoother = loess
 
 # cpue and catch
 lm_out_seak %>% 
-  augment(m2)  %>% 
+  augment(m2)%>% 
   ggplot(aes(x = CPUE, y = SEAKCatch_log)) +
   geom_point(color ="grey50") + 
   geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
   scale_y_continuous(breaks = c(0,1,2,3,4,5), limits = c(0,5)) +
   scale_x_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
-  labs(y = "ln(Harvest)", x =  "CPUE") + theme(legend.position="none") +
+  labs(y = "ln(Harvest)", x =  "ln(CPUE+1)") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_text(aes(x = 0, y = 5, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
@@ -149,10 +161,10 @@ lm_out_seak %>%
   augment(m2)  %>% 
   ggplot(aes(x = ISTI_MJJ_log, y = SEAKCatch_log)) +
   geom_point(color ="grey50") + 
-  geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
+  geom_smooth(aes(colour = ISTI_MJJ_log, fill = ISTI_MJJ_log), colour="black") +
   scale_y_continuous(breaks = c(0,1,2,3,4,5), limits = c(0,5)) +
   scale_x_continuous(breaks = c(2,2.1,2.2,2.3,2.4,2.5), limits = c(2,2.5)) +
-  labs(y = "ln(Harvest)", x =  "Temperature") + theme(legend.position="none") +
+  labs(y = "ln(Harvest)", x =  "ln(Temperature)") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_text(aes(x = 2, y = 5, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
