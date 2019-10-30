@@ -64,16 +64,20 @@ log_data %>%
   dplyr::filter(JYear<2019) %>% 
   do(m1 = lm(SEAKCatch_log ~ CPUE, data = .),
      m2 = lm(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = .),
-     m3 = lm(SEAKCatch_log ~ CPUE + ISTI_log, data = .)) -> lm_out_seak
+     m3 = lm(SEAKCatch_log ~ CPUE + ISTI_log, data = .),
+     m4 = lm(SEAKCatch_log ~ CPUE*ISTI_MJJ_log, data = .)) -> lm_out_seak
 lm_out_seak %>% 
   tidy(m1) -> m1
 lm_out_seak %>% 
   tidy(m2) -> m2
 lm_out_seak %>% 
   tidy(m3) -> m3
+lm_out_seak %>% 
+  tidy(m4) -> m4
 rbind(m1, m2) %>% 
 rbind(., m3) %>% 
-mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3')) %>% 
+rbind(., m4) %>%  
+mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3','m4','m4','m4', 'm4')) %>% 
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
 write.csv(., "2020_forecast/results/model_summary_table1.csv")
 
