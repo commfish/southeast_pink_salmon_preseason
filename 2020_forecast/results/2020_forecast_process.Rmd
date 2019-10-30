@@ -37,7 +37,7 @@ $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2} + \epsilon$$
 
 where $y$ is ln(harvest), $\beta_1$ is the coefficient for ln(CPUE+1), $\beta_2$ is the coefficient for the environmental covariate water temperature, $\beta_3$ is the interaction term, and $\epsilon$ represents the normally distributed error term. Leave-one-out cross validation (hindcast) and model performance metrics such as Mean and Median Absolute Percentage Error (MAPE, MEAPE), and mean absolute scaled error (MASE)(Hyndman and Kohler 2006) were then used to evaluate forecast accuracy of alternative models. Statistical analyses were performed with the R Project for Statistical computing version 3.6.0 (R Core Team 2019). 
   
-The SEAK pink salmon harvest in 2020 is predicted to be in the weak range with a point estimate of 11.8 million fish (80% confidence interval: 7.4–18.8 million fish).
+The SEAK pink salmon harvest in 2020 is predicted to be in the weak range with a point estimate of 11.8 million fish (80% prediction interval: 7.4–18.8 million fish).
 
 #Analysis
 Three hierarchical models were investigated. The full model was:
@@ -108,7 +108,7 @@ Figure 4: Diagnostics plots of influential observations including a) Cook's Dist
 The best model, based on MASE metric and significant coefficients was model 2 (i.e. the model containing CPUE and temperature). Diagnostics indicated some observations had high leverage values, but none of the observations affected model fitting and overall the model showed some lack of fit. None of the data points were above the cut-off value for the Cook’s distance. Based on the Bonferroni outlier test, none of the data points had a studentized residual with a significant Bonferroni $P$-value suggesting that none of the data points impacted the model fitting. The conditional mean function in the residual plots should be constant across the plot in a “correct” model. Based on the results of the curvature test, and the slightly curved fitted lines in the residual versus fitted plot, the fitted plot shows some lack of fit of the model. The adjusted $R^2$ value was 0.77 indicating overall a good model fit.
 
 #Conclusion 
-The SEAK pink salmon harvest in 2020 is predicted to be in the weak range with a point estimate of 11.8 million fish (80% confidence interval: 7.4-18.8 million fish).
+The SEAK pink salmon harvest in 2020 is predicted to be in the weak range with a point estimate of 11.8 million fish (80% prediction interval: 7.4-18.8 million fish).
 
 ```{r pred, echo=FALSE}
 knitr::include_graphics(here("2020_forecast/results/figs/catch_plot_pred.png"))
