@@ -50,10 +50,10 @@ cal.data <- split(cal.data$Pink,cal.data$Year)
 # define model names and formulas
 model.names<-c(m1='CPUE',
           m2='CPUE+ISTI_MJJ',
-          m3='CPUE+ISTI_MJJ+CPUE:ISTI_MJJ')
+          m3='CPUE+ISTI')
 model.formulas<-c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE+ISTI_MJJ_log,
-                 SEAKCatch_log ~ CPUE*ISTI_MJJ_log)
+                 SEAKCatch_log ~ CPUE+ISTI_log)
 
 # summary statistics SEAK pink salmon harvest forecast models
 seak.model.summary <- model.summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names)
@@ -64,7 +64,7 @@ log_data %>%
   dplyr::filter(JYear<2019) %>% 
   do(m1 = lm(SEAKCatch_log ~ CPUE, data = .),
      m2 = lm(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = .),
-     m3 = lm(SEAKCatch_log ~ CPUE*ISTI_MJJ_log, data = .)) -> lm_out_seak
+     m3 = lm(SEAKCatch_log ~ CPUE + ISTI_log, data = .)) -> lm_out_seak
 lm_out_seak %>% 
   tidy(m1) -> m1
 lm_out_seak %>% 
@@ -73,7 +73,7 @@ lm_out_seak %>%
   tidy(m3) -> m3
 rbind(m1, m2) %>% 
 rbind(., m3) %>% 
-mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3', 'm3')) %>% 
+mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3')) %>% 
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
 write.csv(., "2020_forecast/results/model_summary_table1.csv")
 
@@ -98,7 +98,7 @@ model_m1 <- train(SEAKCatch_log ~ CPUE, data = log_data_subset, method='lm',
 model_m2 <- train(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = log_data_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
-model_m3 <- train(SEAKCatch_log ~ CPUE * ISTI_MJJ_log, data = log_data_subsetempt, method='lm', 
+model_m3 <- train(SEAKCatch_log ~ CPUE + ISTI_log, data = log_data_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
 
@@ -107,27 +107,27 @@ log_data %>%
   filter(JYear<2019) -> log_data_subset
 model.m1 = lm(SEAKCatch_log ~ CPUE, data = log_data_subset)
 model.m2 = lm(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = log_data_subset)
-model.m3 = lm(SEAKCatch_log ~ CPUE*ISTI_MJJ_log, data = log_data_subset)
-MASE(model.m1, model.m2) %>%
+model.m3 = lm(SEAKCatch_log ~ CPUE + ISTI_log, data = log_data_subset)
+MASE(model.m1, model.m2, model.m3) %>%
   dplyr::select(MASE)-> MASE
 
 results<-read.csv("2020_forecast/results/seak_model_summary.csv")
 results %>% 
   dplyr::select(X, AdjR2, AICc, MAPE, MEAPE) %>%
   dplyr::rename(model = 'X') %>% 
-  filter(model!='CPUE+ISTI_MJJ+CPUE:ISTI_MJJ' ) %>%
   cbind(., MASE) %>%
   dplyr::select(model, AdjR2, AICc, MAPE, MEAPE, MASE) %>%
   write.csv(., "2020_forecast/results/model_summary_table2.csv")
 
 # bootstrap
 # http://rstudio-pubs-static.s3.amazonaws.com/24365_2803ab8299934e888a60e7b16113f619.html
-sigma<- sigma(model.m2)
+sigma<- sigma(model.m3)
 CPUE <- (1.202607)
 ISTI_MJJ_log <- log(9.91121125)
-newdata <- data.frame(CPUE, ISTI_MJJ_log)
+ISTI_log <- log(10.13475266)
+newdata <- data.frame(CPUE, ISTI_log)
 #bootfit1 <- Boot(model.m2, function(SEAKCatch_log)predict(SEAKCatch_log, newdata), R=10000)
-predicted<-predict(model.m2, newdata, interval="prediction", level = 0.80) #prediction interval
+predicted<-predict(model.m3, newdata, interval="prediction", level = 0.80) #prediction interval
 predicted <- as.data.frame(predicted)
 fit_value <- exp(predicted$fit)*exp(0.5*sigma*sigma) #adjustment for exp
 lwr_pi <-  exp(predicted$lwr)*exp(0.5*sigma*sigma)
