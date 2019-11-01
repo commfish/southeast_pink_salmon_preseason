@@ -41,6 +41,7 @@ eda.norm(log_data$SEAKCatch_log)
 eda.norm(log_data$ISTI_MJJ)# data is normal if the p-value is above 0.05.
 eda.norm(log_data$ISTI_MJJ_log)
 eda.norm(log_data$CPUE)# already ln(CPUE+1)
+eda.norm(log_data$ISTI_log)# already ln(CPUE+1)
 
 # subset data by peak month and generate list of catch by year
 cal.data <- SECM2019[SECM2019$Pink_Peak,]
@@ -65,7 +66,9 @@ log_data %>%
   do(m1 = lm(SEAKCatch_log ~ CPUE, data = .),
      m2 = lm(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = .),
      m3 = lm(SEAKCatch_log ~ CPUE + ISTI_log, data = .),
-     m4 = lm(SEAKCatch_log ~ CPUE*ISTI_MJJ_log, data = .)) -> lm_out_seak
+     m4 = lm(SEAKCatch_log ~ CPUE*ISTI_MJJ_log, data = .),
+     m5 = lm(SEAKCatch_log ~ CPUE*ISTI_log, data = .)) -> lm_out_seak
+
 lm_out_seak %>% 
   tidy(m1) -> m1
 lm_out_seak %>% 
@@ -74,10 +77,13 @@ lm_out_seak %>%
   tidy(m3) -> m3
 lm_out_seak %>% 
   tidy(m4) -> m4
+lm_out_seak %>% 
+  tidy(m4) -> m5
 rbind(m1, m2) %>% 
 rbind(., m3) %>% 
 rbind(., m4) %>%  
-mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3','m4','m4','m4', 'm4')) %>% 
+rbind(., m5) %>%   
+mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3','m4','m4','m4', 'm4','m5','m5','m5', 'm5')) %>% 
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
 write.csv(., "2020_forecast/results/model_summary_table1.csv")
 
@@ -125,17 +131,27 @@ results %>%
 
 # bootstrap
 # http://rstudio-pubs-static.s3.amazonaws.com/24365_2803ab8299934e888a60e7b16113f619.html
-sigma<- sigma(model.m3)
+#preduction m2
+sigma<- sigma(model.m2)
 CPUE <- (1.202607)
 ISTI_MJJ_log <- log(9.91121125)
-ISTI_log <- log(10.13475266)
-newdata <- data.frame(CPUE, ISTI_log)
-#bootfit1 <- Boot(model.m2, function(SEAKCatch_log)predict(SEAKCatch_log, newdata), R=10000)
-predicted<-predict(model.m3, newdata, interval="prediction", level = 0.80) #prediction interval
+newdata <- data.frame(CPUE, ISTI_MJJ_log)
+predicted<-predict(model.m2, newdata, interval="prediction", level = 0.80) #prediction interval
 predicted <- as.data.frame(predicted)
 fit_value <- exp(predicted$fit)*exp(0.5*sigma*sigma) #adjustment for exp
 lwr_pi <-  exp(predicted$lwr)*exp(0.5*sigma*sigma)
 upr_pi <-  exp(predicted$upr)*exp(0.5*sigma*sigma)
+
+#preduction m3
+#sigma<- sigma(model.m3)
+#CPUE <- (1.202607)
+#ISTI_log <- log(10.13475266)
+#newdata <- data.frame(CPUE, ISTI_log)
+#predicted<-predict(model.m3, newdata, interval="prediction", level = 0.80) #prediction interval
+#predicted <- as.data.frame(predicted)
+#fit_value <- exp(predicted$fit)*exp(0.5*sigma*sigma) #adjustment for exp
+#lwr_pi <-  exp(predicted$lwr)*exp(0.5*sigma*sigma)
+#upr_pi <-  exp(predicted$upr)*exp(0.5*sigma*sigma)
 
 # Diagnostics: test model assumptions (normality, linearity, residuals)
 # diagnostic plots
