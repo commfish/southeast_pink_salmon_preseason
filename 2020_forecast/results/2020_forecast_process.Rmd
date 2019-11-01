@@ -31,7 +31,7 @@ fs::dir_ls(here::here('2020_forecast/results'), regexp = "\\.csv$") %>%
 To forecast the Southeast Alaska (SEAK) pink salmon harvest in 2020.
 
 # Executive Summary
-Forecasts were developed using an approach described in Wertheimer et al. (2011). A linear multiple regression model was developed using monthly peak juvenile CPUE (standardized catch based on 20 minute trawl set) for the June and July surveys and associated environmental parameters. The model used was:
+Forecasts were developed using an approach described in Murphy et al. inpress. A linear multiple regression model was developed using monthly peak juvenile CPUE (standardized catch based on 20 minute trawl set) for the June and July surveys and associated environmental parameters. The model used was:
   
 $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2} + \epsilon$$
 
@@ -137,9 +137,9 @@ Fox, J. and S. Weisburg. 2019. An R Companion to Applied Regression, Third Editi
 
 Hyndman, R. J. and A. B. Koehler. 2006. Another look at measures of forecast accuracy. International Journal of Forecasting 22: 679-688.
 
-R Core Team. 2019. R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL: https://www.R-project.org/.
+Murphy, J. M., E.A. Fergusson, A. Piston, A. Gray, and E. Farley.  In Press.  Growth and harvest forecast models for Southeast Alaska pink salmon.  North Pacific Anadromous Fish Commisson Technical Report No. 15:xx-xx.
 
-Wertheimer, A. C., J. A. Orsi, E. A. Fergusson, and M. V. Sturdevant. 2011. Forecasting pink salmon harvest in Southeast Alaska from juvenile salmon abundance and associated environmental parameters: 2010 returns and 2011 forecast (NPAFC Doc. 1343) Auke Bay Lab., Alaska Fish. Sci. Cen., Nat. Mar. Fish. Serv., NOAA, 17109 Point Lena Loop Road, Juneau, AK 99801-8626, USA, 20 p.; http://www.npafc.org/new/pub_documents.html.
+R Core Team. 2019. R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL: https://www.R-project.org/.
 
 Zhang, Z. 2016. Residuals and regression diagnostics: focusing on logistic regression. Annals of Translational Medicine 4: 195. 
 ```{r sess_info, echo=FALSE}
