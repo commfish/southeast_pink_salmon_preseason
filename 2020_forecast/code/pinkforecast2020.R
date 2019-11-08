@@ -78,7 +78,7 @@ lm_out_seak %>%
 lm_out_seak %>% 
   tidy(m4) -> m4
 lm_out_seak %>% 
-  tidy(m4) -> m5
+  tidy(m5) -> m5
 rbind(m1, m2) %>% 
 rbind(., m3) %>% 
 rbind(., m4) %>%  
