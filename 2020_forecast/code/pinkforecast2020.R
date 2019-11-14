@@ -131,7 +131,7 @@ results %>%
 
 # bootstrap
 # http://rstudio-pubs-static.s3.amazonaws.com/24365_2803ab8299934e888a60e7b16113f619.html
-#preduction m2
+#prediction m2
 sigma<- sigma(model.m2)
 CPUE <- (1.202607)
 ISTI_MJJ_log <- log(9.91121125)
@@ -311,14 +311,16 @@ m2 %>%
            stat = "identity",  
            fill = "lightgrey",
            width = 1, position = position_dodge(width = 0.1)) +
-  geom_line(aes(x=year, y = fit), linetype = 2, colour = "black", size = 1) +
+  geom_line(aes(x=year, y = fit), linetype = 1, colour = "black", size = 0.75) +
   scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                          panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                                         text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1)) +
-  theme(legend.position="none") +geom_point(x=2020, y=fit_value, pch=8, size=2) +
+                                         text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1),
+                                         axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
+                                         axis.title.x = element_text(size=9, colour="black",family="Times New Roman")) +
+  theme(legend.position="none") +geom_point(x=2020, y=fit_value, pch=21, size=3, colour = "black", fill="grey") +
   scale_x_continuous(breaks = seq(1998, 2020, 1)) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
-  labs(x = "Year", y = "Harvest (millions)\n", linetype = NULL, fill = NULL) +
+  labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_segment(aes(x = 2020, y = lwr_pi, yend = upr_pi, xend = 2020), size=1, colour="black", lty=1) +
   geom_text(aes(x = 1998, y = 140, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
 
@@ -330,18 +332,21 @@ lm_out_seak %>%
          sigma = .sigma,
          fit = exp(.fitted) * exp(0.5*sigma*sigma))  -> m2
 m2 %>%
-  ggplot(aes(x=fit, y=catch)) +
+  ggplot(aes(y=fit, x=catch)) +
   geom_point() +
-  geom_point(aes(y = catch), colour = "black", size = 1) +
+  geom_point(aes(x = catch), colour = "black", size = 1) +
   scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+                                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                                         axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
+                                         axis.title.x = element_text(size=9, colour="black",family="Times New Roman")) +
   theme(legend.position="none") + theme(legend.title=element_blank())+
-  scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100))+
-  scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100))+geom_abline(intercept = 0) +
-  labs(y = "Harvest (millions)\n", x = "Fitted (millions)", linetype = NULL, fill = NULL) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100)) +
+  scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100)) +
+  geom_abline(intercept = 0, lty=3) +
+  labs(x = "Observed SEAK Pink Salmon Harvest (millions)", y = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_text(aes(x = 2, y = 100, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave('2020_forecast/results/figs/catch_plot_pred.png', dpi=500, height=3, width=7, units="in")
+ggsave('2020_forecast/results/figs/catch_plot_pred.png', dpi=500, height=4, width=7, units="in")
 
 # model average (not sure how to do prediction interval on model averaged linear regressions)**
 fit.avg <- model.avg(model.m1, model.m2)
