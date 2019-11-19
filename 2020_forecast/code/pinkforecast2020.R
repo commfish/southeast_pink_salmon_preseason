@@ -304,20 +304,26 @@ lm_out_seak %>%
   augment(m2) %>% 
   mutate(year = 1998:2019, 
          catch = exp(SEAKCatch_log),
-         fit = exp(.fitted) * exp(0.5* sigma*sigma)) -> m2
+         fit = exp(.fitted) * exp(0.5* sigma*sigma)) %>% 
+ as.data.frame -> m2
 m2 %>%
   ggplot(aes(x=year)) +
-  geom_bar(aes(y = catch, colour = " SEAK pink catch"),
-           stat = "identity",  
-           fill = "lightgrey",
+  geom_bar(aes(y = catch, fill = "SEAK pink catch"),
+           stat = "identity", colour ="black",
            width = 1, position = position_dodge(width = 0.1)) +
-  geom_line(aes(x=year, y = fit), linetype = 1, colour = "black", size = 0.75) +
-  scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+  geom_line(aes(y = fit, colour = "fit"), linetype = 1, size = 0.75) +
+  scale_colour_manual("", values=c("SEAK pink catch" = "lightgrey", "fit" = "black")) +
+  scale_fill_manual("",values="lightgrey")+
+  theme_bw() + theme(legend.key=element_blank(),
+                     legend.title=element_blank(),
+                     legend.box="horizontal",
+                     panel.border = element_blank(), panel.grid.major = element_blank(),
                                          panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
                                          text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1),
                                          axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
-                                         axis.title.x = element_text(size=9, colour="black",family="Times New Roman")) +
-  theme(legend.position="none") +geom_point(x=2020, y=fit_value, pch=21, size=3, colour = "black", fill="grey") +
+                                         axis.title.x = element_text(size=9, colour="black",family="Times New Roman"),
+                     legend.position=c(0.6,0.9)) +
+  geom_point(x=2020, y=fit_value, pch=21, size=3, colour = "black", fill="grey") +
   scale_x_continuous(breaks = seq(1998, 2020, 1)) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
@@ -344,7 +350,9 @@ m2 %>%
   scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   geom_abline(intercept = 0, lty=3) +
   labs(x = "Observed SEAK Pink Salmon Harvest (millions)", y = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  geom_text(aes(x = 2, y = 140, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
+  geom_text(aes(x = 2, y = 140, label="b)"),family="Times New Roman", colour="black", size=5) +
+  geom_text(aes(x = 104, y = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(x = 87, y = 134, label="1998"),family="Times New Roman", colour="black", size=4)-> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
 ggsave('2020_forecast/results/figs/catch_plot_pred.png', dpi=500, height=4, width=7, units="in")
 
