@@ -340,11 +340,11 @@ m2 %>%
                                          axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
                                          axis.title.x = element_text(size=9, colour="black",family="Times New Roman")) +
   theme(legend.position="none") + theme(legend.title=element_blank())+
-  scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100)) +
-  scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100), limits = c(0,100)) +
+  scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
+  scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   geom_abline(intercept = 0, lty=3) +
   labs(x = "Observed SEAK Pink Salmon Harvest (millions)", y = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  geom_text(aes(x = 2, y = 100, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
+  geom_text(aes(x = 2, y = 140, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
 ggsave('2020_forecast/results/figs/catch_plot_pred.png', dpi=500, height=4, width=7, units="in")
 
