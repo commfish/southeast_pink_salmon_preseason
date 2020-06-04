@@ -13,8 +13,8 @@ theme_set(theme_sleek())
 source("code/functions.R")
 
 #read in data----
-SECM2019<-read.csv("southeast/preseason_joint_pink_salmon/data/SECMcatch2019.csv") # catch data
-variables<-read.csv("southeast/preseason_joint_pink_salmon/data/SECMvar2019.csv") # dataset with harvest, catch indicies, and environmental variables
+SECM2019<-read.csv("southeast/preseason_joint_pink_salmon/data/SECMcatch2018.csv") # catch data
+variables<-read.csv("southeast/preseason_joint_pink_salmon/data/SECMvar2018.csv") # dataset with harvest, catch indicies, and environmental variables
 historical<-read.csv("southeast/preseason_joint_pink_salmon/data/historical/pink_salmon_historical_esc_harvest.csv") #historical catch data
 
 #FLAG: Rich Brenner is checking to makle sure the historical dataset matches the variables and SECM2019 catch data
