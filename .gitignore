@@ -3,7 +3,6 @@
 .RData
 .Ruserdata
 *.png
-*.csv
 *.Rproj
 *.Rdata
 *.xlsx
