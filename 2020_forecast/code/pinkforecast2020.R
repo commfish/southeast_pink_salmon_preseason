@@ -3,8 +3,8 @@
 # adapted by Sara Miller 10/25/19
 
 # load----
-devtools::install_github("ben-williams/FNGr")
-library("FNGr")
+devtools::install_github("ben-williams/fngr")
+library("fngr")
 library(gam)
 library(MASS)
 library(MuMIn)
