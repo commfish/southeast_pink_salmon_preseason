@@ -1,6 +1,8 @@
 # SECM Pink salmon forecast models
 # Script written by Jim Murphy updated: 10/18/19
-# adapted by Sara Miller 10/25/19
+# adapted by Sara Miller 9/24/2020
+
+# make sure functions refer to correct forecast folder
 
 # load----
 devtools::install_github("ben-williams/fngr")
@@ -20,11 +22,18 @@ library(ggplot2)
 library(car)
 library(ggfortify)
 library(Hmisc)
-source('2020_forecast/code/functions.r')
+library(dplyr)
+
+year.forecast <- "2021_forecast" 
+year.data <- 2019  #change to 2020 with new data
+data.directory <- file.path(year.forecast, 'data', '/')
+results.directory <- file.path(year.forecast, 'results', '/')
+source('2021_forecast/code/functions_2021.r')
 
 # data----
-SECM2019<-read.csv("2020_forecast/data/SECMcatch2019.csv")
-variables<-read.csv("2020_forecast/data/SECMvar2019.csv")
+read.csv(file.path(data.directory,'SECMcatch2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> SECM
+read.csv(file.path(data.directory,'SECMvar2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables
+
 
 # analysis----
 variables$CPUE<-variables$CPUEcal #Use CPUEcal as CPUE index
@@ -32,8 +41,8 @@ n <- dim(variables)[1] #number of years including forecast year
 variables %>% 
   mutate_at(vars(-JYear), funs(log = log(.)))-> log_data
 
-SECM2019 %>% 
-  mutate(Pink=log(Pink))-> SECM2019
+SECM %>% 
+  mutate(Pink=log(Pink))-> SECM
 
 # normal data check
 eda.norm(log_data$SEAKCatch)# data is normal if the p-value is above 0.05.
@@ -44,7 +53,7 @@ eda.norm(log_data$CPUE)# already ln(CPUE+1)
 eda.norm(log_data$ISTI_log)# already ln(CPUE+1)
 
 # subset data by peak month and generate list of catch by year
-cal.data <- SECM2019[SECM2019$Pink_Peak,]
+cal.data <- SECM[SECM$Pink_Peak,]
 cal.data <- split(cal.data$Pink,cal.data$Year)
 
 # 2020 SE Pink salmon harvest models
@@ -62,33 +71,29 @@ seak.model.summary <- model.summary(harvest=log_data$SEAKCatch_log, variables=lo
 
 # summary of model fits (i.e., coefficients, p-value)
 log_data %>% 
-  dplyr::filter(JYear<2019) %>% 
-  do(m1 = lm(SEAKCatch_log ~ CPUE, data = .),
-     m2 = lm(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = .),
-     m3 = lm(SEAKCatch_log ~ CPUE + ISTI_log, data = .),
-     m4 = lm(SEAKCatch_log ~ CPUE*ISTI_MJJ_log, data = .),
-     m5 = lm(SEAKCatch_log ~ CPUE*ISTI_log, data = .)) -> lm_out_seak
+  dplyr::filter(JYear < year.data) -> log_data_subset 
 
-lm_out_seak %>% 
-  tidy(m1) -> m1
-lm_out_seak %>% 
-  tidy(m2) -> m2
-lm_out_seak %>% 
-  tidy(m3) -> m3
-lm_out_seak %>% 
-  tidy(m4) -> m4
-lm_out_seak %>% 
-  tidy(m5) -> m5
-rbind(m1, m2) %>% 
-rbind(., m3) %>% 
-rbind(., m4) %>%  
-rbind(., m5) %>%   
+lm(SEAKCatch_log ~ CPUE, data = log_data_subset) -> m1
+lm(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = log_data_subset) -> m2
+lm(SEAKCatch_log ~ CPUE + ISTI_log, data = log_data_subset) -> m3
+lm(SEAKCatch_log ~ CPUE*ISTI_MJJ_log, data = log_data_subset) -> m4
+lm(SEAKCatch_log ~ CPUE*ISTI_log, data = log_data_subset) -> m5
+
+tidy(m1) -> m11
+tidy(m2) -> m22
+tidy(m3) -> m33
+tidy(m4) -> m44
+tidy(m5) -> m55
+rbind(m11, m22) %>% 
+rbind(., m33) %>% 
+rbind(., m44) %>%  
+rbind(., m55) %>%   
 mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3','m4','m4','m4', 'm4','m5','m5','m5', 'm5')) %>% 
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
-write.csv(., "2020_forecast/results/model_summary_table1.csv")
+write.csv(., paste0(year.forecast, "/results/model_summary_table1.csv"))
 
-lm_out_seak %>% 
-  augment(m2) %>% 
+
+augment(m2) %>% 
   mutate(resid =(.resid),
          hat_values =(.hat),
          Cooks_distance =(.cooksd),
@@ -96,12 +101,13 @@ lm_out_seak %>%
          fitted = (.fitted),
          year=1998:2019) %>%
   dplyr::select(year, SEAKCatch_log, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
-  write.csv(., "2020_forecast/results/model_summary_table3.csv")
+  write.csv(paste0(year.forecast, "/results/model_summary_table3.csv"))
 # leave one out cross validation (verify seak.model.summary)
 # https://stats.stackexchange.com/questions/27351/compare-models-loccv-implementation-in-r
 # https://machinelearningmastery.com/how-to-estimate-model-accuracy-in-r-using-the-caret-package/
+
 log_data %>% 
-  filter(JYear<2019) -> log_data_subset
+  filter(JYear < year.data) -> log_data_subset
 model_m1 <- train(SEAKCatch_log ~ CPUE, data = log_data_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
@@ -114,21 +120,20 @@ model_m3 <- train(SEAKCatch_log ~ CPUE + ISTI_log, data = log_data_subset, metho
 
 # MASE calculation
 log_data %>% 
-  filter(JYear<2019) -> log_data_subset
+  filter(JYear < year.data) -> log_data_subset
 model.m1 = lm(SEAKCatch_log ~ CPUE, data = log_data_subset)
 model.m2 = lm(SEAKCatch_log ~ CPUE + ISTI_MJJ_log, data = log_data_subset)
 model.m3 = lm(SEAKCatch_log ~ CPUE + ISTI_log, data = log_data_subset)
 MASE(model.m1, model.m2, model.m3) %>%
   dplyr::select(MASE)-> MASE
 
-results<-read.csv("2020_forecast/results/seak_model_summary.csv")
+read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
 results %>% 
   dplyr::select(X, AdjR2, AICc, MAPE, MEAPE) %>%
   dplyr::rename(model = 'X') %>% 
   cbind(., MASE) %>%
   dplyr::select(model, AdjR2, AICc, MAPE, MEAPE, MASE) %>%
-  write.csv(., "2020_forecast/results/model_summary_table2.csv")
-
+  write.csv(paste0(year.forecast, "/results/model_summary_table2.csv"))
 # bootstrap
 # http://rstudio-pubs-static.s3.amazonaws.com/24365_2803ab8299934e888a60e7b16113f619.html
 #prediction m2
@@ -155,7 +160,7 @@ upr_pi <-  exp(predicted$upr)*exp(0.5*sigma*sigma)
 
 # Diagnostics: test model assumptions (normality, linearity, residuals)
 # diagnostic plots
-png("2020_forecast/results/figs/general_diagnostics.png")
+png(paste0(results.directory, "figs/general_diagnostics.png"))
 autoplot(model.m2)
 dev.off()
 
@@ -164,8 +169,7 @@ residualPlots(model.m2) #lack-of fit curvature test; terms that are non-signific
 car::residualPlots(model.m2, terms = ~ 1, fitted = T, id.n = 5, smoother = loessLine)
 
 # cpue and catch
-lm_out_seak %>% 
-  augment(m2)%>% 
+augment(m2)%>% 
   ggplot(aes(x = CPUE, y = SEAKCatch_log)) +
   geom_point(color ="grey50") + 
   geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
@@ -177,8 +181,7 @@ lm_out_seak %>%
   geom_text(aes(x = 0, y = 5, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
 
 # temp and catch
-lm_out_seak %>% 
-  augment(m2)  %>% 
+augment(m2)  %>% 
   ggplot(aes(x = ISTI_MJJ_log, y = SEAKCatch_log)) +
   geom_point(color ="grey50") + 
   geom_smooth(aes(colour = ISTI_MJJ_log, fill = ISTI_MJJ_log), colour="black") +
@@ -189,11 +192,10 @@ lm_out_seak %>%
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_text(aes(x = 2, y = 5, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
 cowplot::plot_grid(plot1, plot2, align = "vh", nrow = 1, ncol=2)
-ggsave("2020_forecast/results/figs/cpue_temp.png", dpi = 500, height = 3, width = 6, units = "in")
+ggsave(paste0(results.directory, "figs/cpue_temp.png"), dpi = 500, height = 3, width = 6, units = "in")
 
 # residuals against covariate
-lm_out_seak %>% 
-  augment(m2) %>% 
+augment(m2) %>% 
   mutate(resid = (.std.resid)) %>% 
   ggplot(aes(x = CPUE, y = resid)) +
   geom_hline(yintercept = 0, lty=2) + 
@@ -207,8 +209,7 @@ lm_out_seak %>%
   geom_text(aes(x = 0, y = 4, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
 
 # residuals against covariate
-lm_out_seak %>% 
-  augment(m2) %>% 
+augment(m2) %>% 
   mutate(resid = (.std.resid))%>% 
   ggplot(aes(x = ISTI_MJJ_log, y = resid)) +
   geom_hline(yintercept = 0, lty=2) + 
@@ -220,11 +221,10 @@ lm_out_seak %>%
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
   geom_text(aes(x = 2, y = 4, label="b)"),family="Times New Roman", colour="black", size=5) -> plot2
 cowplot::plot_grid(plot1, plot2, align = "vh", nrow = 1, ncol=2)
-ggsave("2020_forecast/results/figs/predicted.png", dpi = 500, height = 3, width = 6, units = "in")
+ggsave(paste0(results.directory, "figs/predicted.png"), dpi = 500, height = 3, width = 6, units = "in")
 
 # residuals by year
-lm_out_seak %>% 
-  augment(m2) %>% 
+augment(m2) %>% 
   mutate(resid = (.std.resid),
          count = 1997:2018)%>% 
   ggplot(aes(x = count, y = resid)) +
@@ -240,8 +240,7 @@ lm_out_seak %>%
   geom_text(aes(x = 1997, y = 4, label="a)"),family="Times New Roman", colour="black", size=5)-> plot2
 
 # residuals against fitted
-lm_out_seak %>% 
-  augment(m2) %>% 
+augment(m2) %>% 
   mutate(resid = (.resid),
          fit = (.fitted)) %>% 
   ggplot(aes(x = fit, y = resid)) +
@@ -255,12 +254,13 @@ lm_out_seak %>%
   labs(y = "Residuals", x =  "Fitted values") +
   geom_text(aes(x = 0, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot3
 cowplot::plot_grid(plot2, plot3, align = "vh", nrow = 1, ncol=2)
-ggsave("2020_forecast/results/figs/fitted.png", dpi = 500, height = 3, width = 6, units = "in")
+ggsave(paste0(results.directory, "figs/fitted.png"), dpi = 500, height = 3, width = 6, units = "in")
+
 
 qf(.50, df1=4, df2=18) # F distribution of p+1 (4) and n-p-1 (22-3-1); Cook's distance cut-off
+
 # Cook's distance plot
-lm_out_seak %>% 
-  augment(m2) %>% 
+augment(m2) %>% 
   mutate(cooksd = (.cooksd),
          count = 1997:2018,
          name= ifelse(cooksd >0.87, count, ""))%>% 
@@ -275,12 +275,11 @@ lm_out_seak %>%
   scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0), limits = c(0,1))+
   labs(y = "Cook's distance", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                       axis.text.x = element_text(angle=90, hjust=1))+
-  geom_text(aes(x = 1997, y = 1, label="a)"),family="Times New Roman", colour="black", size=5)-> plot4
+  geom_text(aes(x = 1997, y = 1, label="a)"),family="Times New Roman", colour="black", size=5) -> plot4
 
 # hat value 2*p/n = 2*(3/22); cut-off value
 # leverage plot
-lm_out_seak %>% 
-  augment(m2) %>% 
+augment(m2) %>% 
   mutate(hat= (.hat),
          count = 1997:2018,
          name= ifelse(hat >0.27, count, "")) %>% 
@@ -297,15 +296,15 @@ lm_out_seak %>%
                                                       axis.text.x = element_text(angle=90, hjust=1))+
   geom_text(aes(x = 1997, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot5
 cowplot::plot_grid(plot4, plot5,  align = "vh", nrow = 1, ncol=2)
-ggsave("2020_forecast/results/figs/influential.png", dpi = 500, height = 3, width = 6, units = "in")
+ggsave(paste0(results.directory, "figs/influential.png"), dpi = 500, height = 3, width = 6, units = "in")
 
 # plot of harvest by year with prediction error 
-lm_out_seak %>% 
-  augment(m2) %>% 
+augment(m2) %>% 
   mutate(year = 1998:2019, 
          catch = exp(SEAKCatch_log),
          fit = exp(.fitted) * exp(0.5* sigma*sigma)) %>% 
  as.data.frame -> m2
+
 m2 %>%
   ggplot(aes(x=year)) +
   geom_bar(aes(y = catch, fill = "SEAK pink catch"),
@@ -328,15 +327,15 @@ m2 %>%
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_segment(aes(x = 2020, y = lwr_pi, yend = upr_pi, xend = 2020), size=1, colour="black", lty=1) +
-  geom_text(aes(x = 1998, y = 140, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
+  geom_text(aes(x = 1998, y = 140, label="a)"),family="Times New Roman", colour="black", size=5) -> plot1
 
 # plot of observed harvest by fitted values (with one to one line)
-lm_out_seak %>% 
-  augment(m2) %>% 
+augment(m2) %>% 
   mutate(year = 1997:2018, 
          catch = exp(SEAKCatch_log), 
          sigma = .sigma,
          fit = exp(.fitted) * exp(0.5*sigma*sigma))  -> m2
+
 m2 %>%
   ggplot(aes(y=fit, x=catch)) +
   geom_point() +
@@ -352,11 +351,11 @@ m2 %>%
   labs(x = "Observed SEAK Pink Salmon Harvest (millions)", y = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_text(aes(x = 2, y = 140, label="b)"),family="Times New Roman", colour="black", size=5) +
   geom_text(aes(x = 104, y = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(x = 87, y = 134, label="1998"),family="Times New Roman", colour="black", size=4)-> plot2
+  geom_text(aes(x = 87, y = 134, label="1998"),family="Times New Roman", colour="black", size=4) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave('2020_forecast/results/figs/catch_plot_pred.png', dpi=500, height=4, width=7, units="in")
+ggsave(paste0(results.directory, "figs/catch_plot_pred.png"), dpi = 500, height = 3, width = 6, units = "in")
 
-# model average (not sure how to do prediction interval on model averaged linear regressions)**
+# model average (not sure how to do prediction interval on model averaged linear regressions**
 fit.avg <- model.avg(model.m1, model.m2)
 predicted<-predict(fit.avg, variables[23,], se.fit = TRUE)
 lower_CI <- predicted$fit - 1.96*predicted$se.fit
