@@ -25,14 +25,14 @@ library(Hmisc)
 library(dplyr)
 
 year.forecast <- "2021_forecast" 
-year.data <- 2019  #change to 2020 with new data
+year.data <- 2020  #change to 2020 with new data
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast, 'results', '/')
 source('2021_forecast/code/functions_2021.r')
 
 # data----
-read.csv(file.path(data.directory,'SECMcatch2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> SECM
-read.csv(file.path(data.directory,'SECMvar2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables
+read.csv(file.path(data.directory,'SECMcatch2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> SECM # update file names
+read.csv(file.path(data.directory,'SECMvar2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables #update file names
 
 
 # analysis----
