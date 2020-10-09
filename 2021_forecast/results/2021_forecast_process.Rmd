@@ -37,7 +37,7 @@ $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2} + \epsilon$$
 
 where $y$ is ln(harvest), $\beta_1$ is the coefficient for ln(CPUE+1), $\beta_2$ is the coefficient for environmental covariate water temperature (i.e., May through July average temperature 'ISTI' in the upper 20 m at eight stations in Icy Strait or the natural logarithm of 'ISTI'), $\beta_3$ is the interaction term, and $\epsilon$ represents the normal error term that is lognormal. 
 
-Leave-one-out cross validation (hindcast) and model performance metrics such as Mean and Median Absolute Percentage Error (MAPE, MEAPE), and mean absolute scaled error (MASE) (Hyndman and Kohler 2006) were then used to evaluate forecast accuracy of alternative models. Statistical analyses were performed with the R Project for Statistical computing version 3.6.0 (R Core Team 2019). 
+Leave-one-out cross validation (hindcast) and model performance metrics such as Mean and Median Absolute Percentage Error (MAPE, MEAPE), and mean absolute scaled error (MASE) (Hyndman and Kohler 2006) were then used to evaluate forecast accuracy of alternative models. Statistical analyses were performed with the R Project for Statistical computing version 3.6.3 (R Core Team 2020). 
   
 Based on model 2, the SEAK pink salmon harvest in 2021 is predicted to be in the strong range with a point estimate of 31.4 million fish (80% prediction interval: 21.0 to 47.0 million fish).
 
@@ -112,13 +112,13 @@ Figure 4: Diagnostics plots of influential observations including a) Cook's Dist
 The best regression model based on the MASE metric, significant coefficients in the models, and the argument for restricting temperature to the months when CPUE is sampled was model 2 (i.e. the model containing CPUE and May through July temperature). Diagnostics indicated some observations had high leverage values, but none of the observations affected model fitting and overall the model showed some lack of fit. None of the data points were above the cut-off value for the Cook's distance. Based on the Bonferroni outlier test, none of the data points had a studentized residual with a significant Bonferroni $P$-value suggesting that none of the data points impacted the model fitting. The conditional mean function in the residual plots should be constant across the plot in a "correct"" model. Based on the results of the curvature test, and the slightly curved fitted lines in the residual versus fitted plot, the fitted plot shows some lack of fit of the model. The adjusted $R^2$ value was 0.77 indicating overall a good model fit.
 
 #Conclusion 
-The SEAK pink salmon harvest in 2020 is predicted to be in the weak range with a point estimate of 11.8 million fish (80% prediction interval: 7.4-18.8 million fish).
+The SEAK pink salmon harvest in 2021 is predicted to be in the strong range with a point estimate of 31.4 million fish (80% prediction interval: 21.0 to 47.0 million fish).
 
 ```{r pred, echo=FALSE}
 knitr::include_graphics(here("2021_forecast/results/figs/catch_plot_pred.png"))
 ```
 
-Figure 5: SEAK harvest (millions) a) by year and b) by the fitted values from model 2. The line in figure b is a one to one line. The predicted 2020 forecast is symbolized as a star with an 80% prediction interval (7.4-18.8 million fish) in figure a. 
+Figure 5: SEAK harvest (millions) a) by year and b) by the fitted values from model 2. The line in figure b is a one to one line. The predicted 2021 forecast is symbolized as a star with an 80% prediction interval (21.0 to 47.0 million fish) in figure a. 
 
 \pagebreak
 ```{r model_summary_detailed}
@@ -139,9 +139,9 @@ Fox, J. and S. Weisburg. 2019. An R Companion to Applied Regression, Third Editi
 
 Hyndman, R. J. and A. B. Koehler. 2006. Another look at measures of forecast accuracy. International Journal of Forecasting 22: 679-688.
 
-Murphy, J. M., E.A. Fergusson, A. Piston, A. Gray, and E. Farley.  In Press.  Growth and harvest forecast models for Southeast Alaska pink salmon.  North Pacific Anadromous Fish Commisson Technical Report No. 15:xx-xx.
+Murphy, J. M., E.A. Fergusson, A. Piston, A. Gray, and E. Farley.  2019. Southeast Alaska pink salmon growth and harvest forecast models.  North Pacific Anadromous Fish Commisson Technical Report No. 15: 75-81.
 
-R Core Team. 2019. R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL: https://www.R-project.org/.
+R Core Team. 2020. R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL: http://www.r-project.org/index.html 
 
 Zhang, Z. 2016. Residuals and regression diagnostics: focusing on logistic regression. Annals of Translational Medicine 4: 195. 
 ```{r sess_info, echo=FALSE}
