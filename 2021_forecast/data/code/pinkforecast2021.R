@@ -5,7 +5,8 @@
 # make sure functions refer to correct forecast folder
 
 # load----
-devtools::install_github("ben-williams/fngr")
+library("devtools")
+devtools::install_github("commfish/fngr")
 library("fngr")
 library(gam)
 library(MASS)
@@ -23,51 +24,57 @@ library(car)
 library(ggfortify)
 library(Hmisc)
 library(dplyr)
+library(extrafont)
+#extrafont::font_import()
+windowsFonts(Times=windowsFont("TT Times New Roman"))
+theme_set(theme_report(base_size = 14))
 
 year.forecast <- "2021_forecast" 
 year.data <- 2020  #change to 2020 with new data
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast, 'results', '/')
-source('2021_forecast/code/functions_2021.r')
+source('2021_forecast/code/functions.r')
 
 # data----
-read.csv(file.path(data.directory,'SECMcatch2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> SECM # update file names
+read.csv(file.path(data.directory,'SECMcatch2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> catch # update file names
 read.csv(file.path(data.directory,'SECMvar2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables #update file names
 
-
 # analysis----
-variables$CPUE<-variables$CPUEcal #Use CPUEcal as CPUE index
-n <- dim(variables)[1] #number of years including forecast year
+variables$CPUE <- variables$CPUEcal # Use CPUEcal as CPUE index
+n <- dim(variables)[1] # number of years including forecast year
 variables %>% 
-  mutate_at(vars(-JYear), funs(log = log(.)))-> log_data
+  mutate (SEAKCatch_log = log(SEAKCatch)) %>% # log catcah variable
+  dplyr::select(-c(SEAKCatch, CPUEcal, Pink_Peak)) -> log_data 
 
-SECM %>% 
-  mutate(Pink=log(Pink))-> SECM
+catch %>% 
+  mutate(Pink = LN_Pink_Cal)-> catch # variable 'Pink' is logged calibrated pink catch (same variable as in SECMvaryyyy.csv file)
 
 # normal data check
 eda.norm(log_data$SEAKCatch)# data is normal if the p-value is above 0.05.
 eda.norm(log_data$SEAKCatch_log)
 eda.norm(log_data$ISTI_MJJ)# data is normal if the p-value is above 0.05.
-eda.norm(log_data$ISTI_MJJ_log)
 eda.norm(log_data$CPUE)# already ln(CPUE+1)
-eda.norm(log_data$ISTI_log)# already ln(CPUE+1)
+eda.norm(log_data$ISTI)
 
-# subset data by peak month and generate list of catch by year
-cal.data <- SECM[SECM$Pink_Peak,]
+# subset data by peak month (using left_join) and generate list of catch by year (this is used for the bootstrap)
+left_join(catch, variables, by = c("Year" = "JYear")) %>% 
+  dplyr::select(-c(SEAKCatch, CPUEcal, ISTI, ISTI_MJJ, CPUE)) %>% 
+  dplyr::filter(Month == Pink_Peak) -> cal.data
+
 cal.data <- split(cal.data$Pink,cal.data$Year)
 
-# 2020 SE Pink salmon harvest models
+# 2021 SE Pink salmon harvest models
 # define model names and formulas
 model.names<-c(m1='CPUE',
           m2='CPUE+ISTI_MJJ',
           m3='CPUE+ISTI')
 model.formulas<-c(SEAKCatch_log ~ CPUE,
-                 SEAKCatch_log ~ CPUE+ISTI_MJJ_log,
-                 SEAKCatch_log ~ CPUE+ISTI_log)
+                 SEAKCatch_log ~ CPUE+ISTI_MJJ,# temp. data not logged
+                 SEAKCatch_log ~ CPUE+ISTI) # temp. data not logged
 
 # summary statistics SEAK pink salmon harvest forecast models
 seak.model.summary <- model.summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names)
-#seak.boot.summary <- boot.summary(cpuedata=cal.data,variables=log_data,model.formulas=model.formulas,model.names=model.names)
+seak.boot.summary <- boot.summary(cpuedata=cal.data,variables=log_data,model.formulas=model.formulas,model.names=model.names)
 
 # summary of model fits (i.e., coefficients, p-value)
 log_data %>% 

@@ -1,7 +1,7 @@
 ---
-title: "2020 Preseason Pink Salmon Forecast"
+title: "2021 Preseason Pink Salmon Forecast"
 author: "Sara Miller and Rich Brenner"
-date: "November 2019"
+date: "October 2020"
 output:
   pdf_document: default
   html_document:
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE, error=FALSE)
 
 ```{r data}
 
-fs::dir_ls(here::here('2020_forecast/results'), regexp = "\\.csv$") %>% 
+fs::dir_ls(here::here('2021_forecast/results'), regexp = "\\.csv$") %>% 
   set_names(nm = (basename(.) %>% 
                     tools::file_path_sans_ext())) %>%
   map(read_csv) -> tbls_seak
@@ -28,14 +28,16 @@ fs::dir_ls(here::here('2020_forecast/results'), regexp = "\\.csv$") %>%
 ```
 
 #Objective
-To forecast the Southeast Alaska (SEAK) pink salmon harvest in 2020.
+To forecast the Southeast Alaska (SEAK) pink salmon harvest in 2021.
 
 # Executive Summary
 Forecasts were developed using an approach described in Murphy et al. in press. A multiple regression model was developed using monthly peak juvenile CPUE (standardized catch based on 20 minute trawl set) for the June and July surveys and associated environmental parameters. The model used was:
   
 $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2} + \epsilon$$
 
-where $y$ is ln(harvest), $\beta_1$ is the coefficient for ln(CPUE+1), $\beta_2$ is the coefficient for the natural log of the environmental covariate water temperature (either May through July average temperature 'ISTI_MJJ_log' or May through August average temperature 'ISTI_log' in the upper 20 m at eight stations in Icy Strait), $\beta_3$ is the interaction term, and $\epsilon$ represents the normal error term that is lognormal. Leave-one-out cross validation (hindcast) and model performance metrics such as Mean and Median Absolute Percentage Error (MAPE, MEAPE), and mean absolute scaled error (MASE) (Hyndman and Kohler 2006) were then used to evaluate forecast accuracy of alternative models. Statistical analyses were performed with the R Project for Statistical computing version 3.6.0 (R Core Team 2019). 
+where $y$ is ln(harvest), $\beta_1$ is the coefficient for ln(CPUE+1), $\beta_2$ is the coefficient for environmental covariate water temperature (i.e., May through July average temperature 'ISTI'in the upper 20 m at eight stations in Icy Strait), $\beta_3$ is the interaction term, and $\epsilon$ represents the normal error term that is lognormal. This year there was no survey in August. Therefore, the variable ISTI could not be calculated and was not included as a possible variable in the model. 
+
+Leave-one-out cross validation (hindcast) and model performance metrics such as Mean and Median Absolute Percentage Error (MAPE, MEAPE), and mean absolute scaled error (MASE) (Hyndman and Kohler 2006) were then used to evaluate forecast accuracy of alternative models. Statistical analyses were performed with the R Project for Statistical computing version 3.6.0 (R Core Team 2019). 
   
 Based on model 2, the SEAK pink salmon harvest in 2020 is predicted to be in the weak range with a point estimate of 11.8 million fish (80% prediction interval: 7.4 to 18.8 million fish).
 

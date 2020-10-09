@@ -21,7 +21,7 @@ jacklm.reg<-function(data,model.formula,jacknife.index=0){
       # model.names: names of selected models
   
       # this function needs to be edited to select harvest data based on the model.formula
-model.summary<-function(harvest,variables,model.formulas,model.names){
+model.summary <- function(harvest,variables,model.formulas,model.names){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
@@ -44,8 +44,7 @@ model.summary<-function(harvest,variables,model.formulas,model.names){
   row.names(model.results)<-model.names
   dimnames(model.results)[[2]][1:3]<-c('Fit','LPI','UPI')
   as.data.frame(model.results)-> x
-  write.csv(x, "2021_forecast/results/seak_model_summary.csv")}
-
+  write.csv(x, file.path(results.directory, "seak_model_summary.csv"))}
 # Bootstrap Functions
    # boostraplm function
        # cpuedata: a list of individual catch observations by year
@@ -70,7 +69,7 @@ bootstraplm<-function(cpuedata,variables,model.formula){
       # model.names: vector of model names to bootstrap
       # quantiles: quantiles of the boostrap distribution used for confidence intervals
 # this function will need to be edited once the bootstraplm function is edited to support weighted transect data
-boot.summary<-function(cpuedata,variables,model.formulas,model.names,quantiles=c(.1,.9)){
+boot.summary <- function(cpuedata,variables,model.formulas,model.names,quantiles=c(.1,.9)){
   boot.summary<-numeric()
   for(i in 1:length(model.formulas))
     boot.summary<-rbind(boot.summary,quantile(replicate(10000,
@@ -78,8 +77,8 @@ boot.summary<-function(cpuedata,variables,model.formulas,model.names,quantiles=c
                       probs=quantiles))
   row.names(boot.summary)<-model.names
   boot.summary
-  write.csv(boot.summary, "2021_forecast/results/seak_model_bootsummary.csv")
-}
+  write.csv(boot.summary, file.path(results.directory, "seak_model_bootsummary.csv")) }
+
 
 mape <- function(actual, predicted){
   mean(abs((actual - predicted)/actual))}
