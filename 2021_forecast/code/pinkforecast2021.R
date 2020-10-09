@@ -31,6 +31,7 @@ theme_set(theme_report(base_size = 14))
 year.forecast <- "2021_forecast" 
 year.data <- 2020  
 year.data.one <- year.data - 1
+sample_size <-  23 # number of data points in model
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast, 'results', '/')
 best.model <- m2 # this can be added after steps 1 and 2 after the best model is determined
@@ -101,14 +102,19 @@ rbind(., m44) %>%
 rbind(., m55) %>%   
 mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3','m4','m4','m4', 'm4','m5','m5','m5', 'm5')) %>% 
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
+  mutate(estimate = round(estimate,3),
+         std.error = round(std.error,3),
+         statistic = round(statistic,3),
+         p.value = round(p.value,3)) %>%
 write.csv(., paste0(year.forecast, "/results/model_summary_table1.csv"))
 
 augment(best.model) %>% 
-  mutate(resid =(.resid),
-         hat_values =(.hat),
-         Cooks_distance =(.cooksd),
-         std_resid = (.std.resid),
-         fitted = (.fitted),
+  mutate(SEAKCatch_log = round((SEAKCatch_log),3),
+        resid = round((.resid),3),
+         hat_values = round((.hat),3),
+         Cooks_distance = round((.cooksd),3),
+         std_resid = round((.std.resid),3),
+         fitted = round((.fitted),3),
          year=1998:year.data) %>%
   dplyr::select(year, SEAKCatch_log, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
   write.csv(paste0(year.forecast, "/results/model_summary_table3.csv"))
@@ -116,7 +122,7 @@ augment(best.model) %>%
 # https://stats.stackexchange.com/questions/27351/compare-models-loccv-implementation-in-r
 # https://machinelearningmastery.com/how-to-estimate-model-accuracy-in-r-using-the-caret-package/
 
-# MAPE calc. check (check that these match summary file)
+# MAPE calc. check (check that these match summary file) 3 leave one out cross validation method
 log_data %>% 
   filter(JYear < year.data) -> log_data_subset
 model_m1 <- train(SEAKCatch_log ~ CPUE, data = log_data_subset, method='lm', 
@@ -145,6 +151,11 @@ results %>%
   dplyr::rename(model = 'X') %>% 
   cbind(., MASE) %>%
   dplyr::select(model, AdjR2, AICc, MAPE, MEAPE, MASE) %>%
+  mutate(AdjR2 = round(AdjR2,3),
+         AICc = round(AICc,0),
+         MAPE = round(MAPE,3),
+         MEAPE = round(MEAPE,3),
+         MASE = round(MASE,3)) %>%
   write.csv(paste0(year.forecast, "/results/model_summary_table2.csv"))
 
 # STEP #3: PREDICT NEXT YEAR'S CATCH BASED ON BEST MODEL
@@ -168,7 +179,7 @@ autoplot(best.model)
 dev.off()
 
 outlierTest(best.model) #Bonferroni p-values (term # 16)
-residualPlots(best.model) #lack-of fit curvature test; terms that are non-significant suggest a properly speciified model
+residualPlots(best.model) #lack-of fit curvature test; terms that are non-significant suggest a properly specified model
 car::residualPlots(best.model, terms = ~ 1, fitted = T, id.n = 5, smoother = loessLine)
 
 # cpue and catch
@@ -230,12 +241,12 @@ ggsave(paste0(results.directory, "figs/predicted.png"), dpi = 500, height = 3, w
 # residuals by year
 augment(best.model) %>% 
   mutate(resid = (.std.resid),
-         count = 1997:year.data-1)%>% 
+         count = 1997:year.data.one)%>% 
   ggplot(aes(x = count, y = resid)) +
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
-  scale_x_continuous(breaks = 1997:year.data-1, labels = 1997:year.data-1) +
+  scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
   scale_y_continuous(breaks = c(-4,-3,-2,-1,0, 1,2,3,4), limits = c(-4,4))+
   labs(y = "Standardized residuals", x =  "Juvenile year") + theme_bw () +theme(text = element_text(size=10),
                                                                    axis.text.x = element_text(angle=90, hjust=1),
@@ -260,10 +271,10 @@ augment(best.model) %>%
 cowplot::plot_grid(plot2, plot3, align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "figs/fitted.png"), dpi = 500, height = 3, width = 6, units = "in")
 
-
-level <- qf(.50, df1=4, df2=19) # F distribution of p+1 (4) and n-p-1 (23-3-1); Cook's distance cut-off
-year.data.one <- year.data-1
 # Cook's distance plot
+k <- 2 # predictors in model
+level <- 4/(sample_size-k-1) # source: Ren et al. 2016
+
 augment(best.model) %>% 
   mutate(cooksd = (.cooksd),
          count = (1997:year.data.one),
@@ -273,15 +284,17 @@ augment(best.model) %>%
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
   geom_text(size = 3, position = position_stack(vjust = 1.1)) + 
-  geom_hline(yintercept = 0.87, lty=2) +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+  geom_hline(yintercept = level, lty=2) +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  scale_x_continuous(breaks = 1997:year.data-1, labels = 1997:year.data-1) +
+  scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
   scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0), limits = c(0,1))+
   labs(y = "Cook's distance", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                       axis.text.x = element_text(angle=90, hjust=1))+
   geom_text(aes(x = 1997, y = 1, label="a)"),family="Times New Roman", colour="black", size=5) -> plot4
 
-# hat value 2*p/n = 2*(3/23); cut-off value
+# Leverage plot
+p <- 3 # the number of parameters in the model including intercept
+level <- 2*p/sample_size # source: Ren et al. 2016
 # leverage plot
 augment(best.model) %>% 
   mutate(hat= (.hat),
@@ -295,7 +308,7 @@ augment(best.model) %>%
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_hline(yintercept = 0.26, lty=2) +
-  scale_x_continuous(breaks = 1997:year.data-1, labels = 1997:year.data-1) +
+  scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
   labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                       axis.text.x = element_text(angle=90, hjust=1))+
   geom_text(aes(x = 1997, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot5
@@ -354,8 +367,8 @@ best.model %>%
   geom_abline(intercept = 0, lty=3) +
   labs(x = "Observed SEAK Pink Salmon Harvest (millions)", y = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_text(aes(x = 2, y = 140, label="b)"),family="Times New Roman", colour="black", size=5) +
-  geom_text(aes(x = 104, y = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(x = 87, y = 134, label="1998"),family="Times New Roman", colour="black", size=4) -> plot2
+  geom_text(aes(x = 110, y = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(x = 90, y = 134, label="1998"),family="Times New Roman", colour="black", size=4) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "figs/catch_plot_pred.png"), dpi = 500, height = 3, width = 6, units = "in")
 
@@ -366,6 +379,21 @@ ggsave(paste0(results.directory, "figs/catch_plot_pred.png"), dpi = 500, height 
 #lower_CI <- predicted$fit - 1.96*predicted$se.fit
 #upper_CI <- predicted$fit + 1.96*predicted$se.fit
 
+# Cook's Distance cut-offs
+#https://stats.stackexchange.com/questions/22161/how-to-read-cooks-distance-plots
+#https://www.stat.berkeley.edu/~spector/s133/Lr1.html
+#http://rstudio-pubs-static.s3.amazonaws.com/477250_8b19e334ad1245c9b9259e9c5db36089.html
+
+#Here are the guidelines commonly used:https://online.stat.psu.edu/stat462/node/173/
+#If Di is greater than 0.5, then the ith data point is worthy of further investigation as it may be influential. 
+#If Di is greater than 1, then the ith data point is quite likely to be influential. 
+#Or, if Di sticks out like a sore thumb from the other Di values, it is almost certainly influential.
+#level <- qf(.10, df1=3, df2=20) # F distribution of p (p=3 for two predictors in the model) and n-p; Cook's distance cut-off; pg.382 in Neter et al. 1996
+#level <- 4/n
+# Rough rule of thumb: Cook’s distance is large if Di > 4/(n−p−1); https://stat.ethz.ch/education/semesters/FS_2008/regression/7-Diagnostics.pdf
+#level <- 4/(n-p) # source: Bollen et al (1990) as cited in  Jayakumar and A.Sulthan 2015 
+# Bollen KA, Jackman RW. Regression diagnostics: An expository treatment of outliers and influential cases. Sociological Methods & Research. 1985 May;13(4):510-42.
+#level <- 0.5
 
 
 
