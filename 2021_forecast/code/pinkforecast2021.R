@@ -106,7 +106,7 @@ mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3','m4','m4','m4', 'm4','m
          std.error = round(std.error,3),
          statistic = round(statistic,3),
          p.value = round(p.value,3)) %>%
-write.csv(., paste0(year.forecast, "/results/model_summary_table1.csv"))
+write.csv(., paste0(year.forecast, "/results/model_summary_table1.csv"), row.names = F)
 
 augment(best.model) %>% 
   mutate(SEAKCatch_log = round((SEAKCatch_log),3),
@@ -117,7 +117,7 @@ augment(best.model) %>%
          fitted = round((.fitted),3),
          year=1998:year.data) %>%
   dplyr::select(year, SEAKCatch_log, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
-  write.csv(paste0(year.forecast, "/results/model_summary_table3.csv"))
+  write.csv(paste0(year.forecast, "/results/model_summary_table3.csv"), row.names = F)
 # leave one out cross validation (verify seak.model.summary)
 # https://stats.stackexchange.com/questions/27351/compare-models-loccv-implementation-in-r
 # https://machinelearningmastery.com/how-to-estimate-model-accuracy-in-r-using-the-caret-package/
@@ -156,7 +156,7 @@ results %>%
          MAPE = round(MAPE,3),
          MEAPE = round(MEAPE,3),
          MASE = round(MASE,3)) %>%
-  write.csv(paste0(year.forecast, "/results/model_summary_table2.csv"))
+  write.csv(paste0(year.forecast, "/results/model_summary_table2.csv"), row.names = F)
 
 # STEP #3: PREDICT NEXT YEAR'S CATCH BASED ON BEST MODEL
 # bootstrap
