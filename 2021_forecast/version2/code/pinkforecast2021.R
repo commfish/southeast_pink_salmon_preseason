@@ -163,7 +163,7 @@ results %>%
 # http://rstudio-pubs-static.s3.amazonaws.com/24365_2803ab8299934e888a60e7b16113f619.html
 # prediction m2
 sigma<- sigma(best.model) # best model
-CPUE <- 2.261528925 # last year of data
+CPUE <- 2.147502256 # last year of data
 ISTI <- 8.888254 # last year of data
 newdata <- data.frame(CPUE, ISTI)
 predicted<-predict(model.m2, newdata, interval="prediction", level = 0.80) #prediction interval
@@ -347,7 +347,7 @@ best.model %>%
   geom_text(aes(x = 1998, y = 140, label="a)"),family="Times New Roman", colour="black", size=5) -> plot1
 
 # plot of observed harvest by fitted values (with one to one line)
-augment(best.model) %>% 
+augment(m2) %>% 
   mutate(year = 1997:year.data.one, 
          catch = exp(SEAKCatch_log), 
          sigma = .sigma,

@@ -1,12 +1,12 @@
 ---
-title: "2021 Preseason Pink Salmon Forecast"
+title: "2021 Preseason Pink Salmon Forecast--version 1"
 author: "Sara Miller, Rich Brenner, and Jim Murphy"
 date: "October 9, 2020--draft"
 output:
-  word_document: default
+  pdf_document: default
   html_document:
     df_print: paged
-  pdf_document: default
+  word_document: default
 ---
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
 library(here)
@@ -116,7 +116,7 @@ knitr::include_graphics(here("2021_forecast/results/figs/influential.png"))
 Figure 4: Diagnostics plots of influential observations including a) Cook's Distance (with a cut-off value of 0.20), and b) leverage values (with a cut-off value of 0.26) from model m2.
 
 #Results
-The best regression model based on AICc, the MASE metric, significant coefficients in the models, and the argument for restricting temperature to the months when CPUE is sampled was model m2 (i.e. the model containing CPUE, and a May through July temperature variable). Diagnostics indicated some observations had high leverage values (Figure 4b), but none of the observations affected model fitting and overall the model showed some lack of fit. A few of the data points were above the cut-off value for the Cook's distance (Figure 4a). Based on the Bonferroni outlier test, none of the data points had a studentized residual with a significant Bonferroni $P$-value suggesting that none of the data points impacted the model fitting. The conditional mean function in the residual plots should be constant across the plot in a "correct" model. Based on the results of the curvature test, and the slightly curved fitted lines in the residual versus fitted plot (Figure 2b), the fitted plot shows some lack of fit of the model. The adjusted $R^2$ value for model m2 was 0.81 indicating overall a good model fit.
+The best regression model based on AICc, the MASE metric, significant coefficients in the models, and the argument for restricting temperature to the months when CPUE is sampled was model m2 (i.e. the model containing CPUE, and a May through July temperature variable). Diagnostics indicated one observation had a high leverage value (Figure 4b), but none of the observations affected model fitting and overall the model showed some lack of fit. A few of the data points were above the cut-off value for the Cook's distance (Figure 4a). Based on the Bonferroni outlier test, none of the data points had a studentized residual with a significant Bonferroni $P$-value suggesting that none of the data points impacted the model fitting. The conditional mean function in the residual plots should be constant across the plot in a "correct" model. Based on the results of the curvature test, and the slightly curved fitted lines in the residual versus fitted plot (Figure 2b), the fitted plot shows some lack of fit of the model. The adjusted $R^2$ value for model m2 was 0.81 indicating overall a good model fit.
 
 #Conclusion 
 The SEAK pink salmon harvest in 2021 is predicted to be in the strong range with a point estimate of 31.4 million fish (80% prediction interval: 21.0 to 47.0 million fish).
