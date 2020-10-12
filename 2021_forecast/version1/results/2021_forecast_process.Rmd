@@ -1,12 +1,12 @@
 ---
-title: "2021 Preseason Pink Salmon Forecast--version2"
+title: "2021 Preseason Pink Salmon Forecast"
 author: "Sara Miller, Rich Brenner, and Jim Murphy"
 date: "October 9, 2020--draft"
 output:
-  pdf_document: default
+  word_document: default
   html_document:
     df_print: paged
-  word_document: default
+  pdf_document: default
 ---
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
 library(here)
@@ -39,7 +39,7 @@ where $y$ is ln(harvest), $\beta_1$ is the coefficient for ln(CPUE+1), $\beta_2$
 
 Leave-one-out cross validation (hindcast) and model performance metrics such as Mean and Median Absolute Percentage Error (MAPE, MEAPE), and mean absolute scaled error (MASE) (Hyndman and Kohler 2006) were then used to evaluate forecast accuracy of alternative models. Statistical analyses were performed with the R Project for Statistical computing version 3.6.3 (R Core Team 2020). 
   
-Based on an additive model with CPUE and temperature, the SEAK pink salmon harvest in 2021 is predicted to be in the strong range with a point estimate of 29.7 million fish (80% prediction interval: 19.8 to 44.4 million fish).
+Based on an additive model with CPUE and temperature, the SEAK pink salmon harvest in 2021 is predicted to be in the strong range with a point estimate of 31.4 million fish (80% prediction interval: 21.0 to 47.0 million fish).
 
 #Analysis
 Five hierarchical models were investigated. The full model was:
@@ -116,16 +116,16 @@ knitr::include_graphics(here("2021_forecast/results/figs/influential.png"))
 Figure 4: Diagnostics plots of influential observations including a) Cook's Distance (with a cut-off value of 0.20), and b) leverage values (with a cut-off value of 0.26) from model m2.
 
 #Results
-The best regression model based on AICc, the MASE metric, significant coefficients in the models, and the argument for restricting temperature to the months when CPUE is sampled was model m2 (i.e. the model containing CPUE, and a May through July temperature variable). Diagnostics indicated one observation had high leverage values (Figure 4b), but none of the observations affected model fitting and overall the model showed some lack of fit. A few of the data points were above the cut-off value for the Cook's distance (Figure 4a). Based on the Bonferroni outlier test, none of the data points had a studentized residual with a significant Bonferroni $P$-value suggesting that none of the data points impacted the model fitting. The conditional mean function in the residual plots should be constant across the plot in a "correct" model. Based on the results of the curvature test, and the slightly curved fitted lines in the residual versus fitted plot (Figure 2b), the fitted plot shows some lack of fit of the model. The adjusted $R^2$ value for model m2 was 0.81 indicating overall a good model fit.
+The best regression model based on AICc, the MASE metric, significant coefficients in the models, and the argument for restricting temperature to the months when CPUE is sampled was model m2 (i.e. the model containing CPUE, and a May through July temperature variable). Diagnostics indicated some observations had high leverage values (Figure 4b), but none of the observations affected model fitting and overall the model showed some lack of fit. A few of the data points were above the cut-off value for the Cook's distance (Figure 4a). Based on the Bonferroni outlier test, none of the data points had a studentized residual with a significant Bonferroni $P$-value suggesting that none of the data points impacted the model fitting. The conditional mean function in the residual plots should be constant across the plot in a "correct" model. Based on the results of the curvature test, and the slightly curved fitted lines in the residual versus fitted plot (Figure 2b), the fitted plot shows some lack of fit of the model. The adjusted $R^2$ value for model m2 was 0.81 indicating overall a good model fit.
 
 #Conclusion 
-The SEAK pink salmon harvest in 2021 is predicted to be in the strong range with a point estimate of 29.7 million fish (80% prediction interval: 19.8 to 44.4 million fish).
+The SEAK pink salmon harvest in 2021 is predicted to be in the strong range with a point estimate of 31.4 million fish (80% prediction interval: 21.0 to 47.0 million fish).
 
 ```{r pred, echo=FALSE}
 knitr::include_graphics(here("2021_forecast/results/figs/catch_plot_pred.png"))
 ```
 
-Figure 5: SEAK harvest (millions) a) by year and b) by the fitted values from model m2. The line in figure b is a one to one line. The predicted 2021 forecast is symbolized as a grey circle with an 80% prediction interval (19.8 to 44.4 million fish) in figure a. 
+Figure 5: SEAK harvest (millions) a) by year and b) by the fitted values from model m2. The line in figure b is a one to one line. The predicted 2021 forecast is symbolized as a grey circle with an 80% prediction interval (21.0 to 47.0 million fish) in figure a. 
 
 \pagebreak
 ```{r model_summary_detailed}
