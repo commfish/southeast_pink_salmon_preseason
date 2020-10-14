@@ -111,7 +111,7 @@ knitr::include_graphics(here(results.directory, "/figs/predicted.png"))
 Figure 3: Standardized residuals versus predicted plots for a) CPUE and b) temperature.
 
 ##Influential Datapoints
-The Bonferroni outlier test for model m2 suggested that there were no outliers, although observations 16 and 18 and were the most extreme (juvenile year 2012 (year 2013) and juvenile year 2014; (year 2015)) based on standardized residuals (Figure 2a; Table 3). The CPUE term was significant in the lack-of-fit curvature test ($P$<0.05), suggesting some lack of fit for this term.
+The Bonferroni outlier test for model m2 suggested that there were no outliers, although observations 18 and 21 and were the most extreme (juvenile year 2014; (year 2015) and juvnile year 2017 (year 2018)) based on standardized residuals (Figure 2a; Table 3). The CPUE term was significant in the lack-of-fit curvature test ($P$<0.05), suggesting some lack of fit for this term.
 
 ```{r influential, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/influential.png"))
