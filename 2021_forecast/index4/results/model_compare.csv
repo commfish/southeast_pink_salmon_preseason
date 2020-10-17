@@ -1,0 +1,5 @@
+AdjR2,AICc,MAPE,MEAPE,MASE,vessel calibration coefficient index
+0.81,17,0.08,0.06,0.263,mixed1
+0.819,15,0.077,0.06,0.257,mixed2
+0.828,14,0.075,0.064,0.251,species 
+0.821,15,0.076,0.063,0.257,pooled

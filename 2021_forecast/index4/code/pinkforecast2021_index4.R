@@ -24,6 +24,7 @@ library(ggfortify)
 library(Hmisc)
 library(dplyr)
 library(extrafont)
+library(ggrepel)
 #extrafont::font_import()
 windowsFonts(Times=windowsFont("TT Times New Roman"))
 theme_set(theme_report(base_size = 14))
@@ -104,14 +105,17 @@ mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3',' m3')) %>%
 write.csv(., paste0(results.directory, "/model_summary_table1.csv"), row.names = F)
 
 augment(best.model) %>% 
-  mutate(SEAKCatch_log = round((SEAKCatch_log),3),
+  mutate(SEAKCatch = round((exp(SEAKCatch_log)),1),
         resid = round((.resid),3),
          hat_values = round((.hat),3),
          Cooks_distance = round((.cooksd),3),
          std_resid = round((.std.resid),3),
          fitted = round((.fitted),3),
-         year=1998:year.data) %>%
-  dplyr::select(year, SEAKCatch_log, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
+         CPUE = round((CPUE),3),
+         ISTI = round((ISTI),3),
+         year=1998:year.data, 
+        juvenile_year = 1997:year.data.one) %>%
+  dplyr::select(year, juvenile_year,  SEAKCatch, CPUE, ISTI, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
   write.csv(paste0(results.directory, "/model_summary_table3.csv"), row.names = F)
 # leave one out cross validation (verify seak.model.summary)
 # https://stats.stackexchange.com/questions/27351/compare-models-loccv-implementation-in-r
@@ -261,7 +265,7 @@ augment(best.model) %>%
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   labs(y = "Residuals", x =  "Fitted values") +
-  geom_text(aes(x = 2, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot3
+  geom_text(aes(x = 2.1, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot3
 cowplot::plot_grid(plot2, plot3, align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "figs/fitted.png"), dpi = 500, height = 3, width = 6, units = "in")
 
@@ -330,22 +334,21 @@ augment(best.model) %>%
                                          text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1),
                                          axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
                                          axis.title.x = element_text(size=9, colour="black",family="Times New Roman"),
-                     legend.position=c(0.6,0.9)) +
+                     legend.position=c(0.9,0.9)) +
   geom_point(x=year.data +1, y=fit_value, pch=21, size=3, colour = "black", fill="grey") +
   scale_x_continuous(breaks = seq(1998, year.data+1, 1)) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  geom_segment(aes(x = year.data + 1, y = lwr_pi, yend = upr_pi, xend = year.data + 1), size=1, colour="black", lty=1) +
-  geom_text(aes(x = 1998, y = 140, label="a)"),family="Times New Roman", colour="black", size=5) -> plot1
+  #geom_text(aes(x = 1998, y = 140, label="a)"),family="Times New Roman", colour="black", size=5)+
+  geom_segment(aes(x = year.data + 1, y = lwr_pi, yend = upr_pi, xend = year.data + 1), size=1, colour="black", lty=1)  -> plot1
 
 # plot of observed harvest by fitted values (with one to one line)
 augment(best.model) %>% 
-  mutate(year = 1997:year.data.one, 
+  mutate(year = 1998:2020, 
          catch = exp(SEAKCatch_log), 
          sigma = .sigma,
          fit = exp(.fitted) * exp(0.5*sigma*sigma))  %>%
   ggplot(aes(x=fit, y=catch)) +
-  geom_point() +
   geom_point(aes(y = catch), colour = "black", size = 1) +
   scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                          panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
@@ -354,14 +357,18 @@ augment(best.model) %>%
   theme(legend.position="none") + theme(legend.title=element_blank())+
   scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
-  geom_abline(intercept = 0, lty=3) +
+  geom_abline(intercept = 0, lty=3) +  
+  #geom_text_repel( aes(x = fit, y = catch, label = year),
+  #                                                     nudge_x = 1, size = 4, show.legend = FALSE) + 
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  geom_text(aes(x = 2, y = 140, label="b)"),family="Times New Roman", colour="black", size=5) +
+  #geom_text(aes(x = 2, y = 140, label="b)"),family="Times New Roman", colour="black", size=5) +
   geom_text(aes(y = 103, x = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(y = 85, x = 134, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
-cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "figs/catch_plot_pred.png"), dpi = 500, height = 3, width = 6, units = "in")
-
+  geom_text(aes(y = 85, x = 120, label="1999"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(y = 30, x = 60, label="2015"),family="Times New Roman", colour="black", size=4)-> plot2
+cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
+ggsave(paste0(results.directory, "figs/catch_plot_pred_a.png"), dpi = 500, height = 3, width = 6, units = "in")
+cowplot::plot_grid(plot2, align = "vh", nrow = 1, ncol=1)
+ggsave(paste0(results.directory, "figs/catch_plot_pred_b.png"), dpi = 500, height = 3, width = 6, units = "in")
 # model average (not sure how to do prediction interval on model averaged linear regressions)**
 # not currently used 
 #fit.avg <- model.avg(model.m1, model.m2)
