@@ -37,11 +37,11 @@ fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>%
 To forecast the Southeast Alaska (SEAK) pink salmon harvest in 2021.
 
 # Executive Summary
-Forecasts were developed using an approach described in Murphy et al. 2019. A multiple regression model was developed using monthly peak juvenile pink salmon CPUE (standardized catch based on a 20 minute trawl set for either the June or July Southeast Coastal Monitoring (SECM) survey) and associated environmental parameters. The final model used for the forecast was:
+Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019).  We used a similar approach to Murphy et al. (2019) but assume a log-normal error. The approach is based on a multiple regression model with juvenile pink salmon catch-per-unit-effort (CPUE) and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Murphy et al. 2020). The final model used for the forecast was:
   
 $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \epsilon,$$
 
-where $y$ is ln(pink salmon harvest in SEAK), $\beta_1$ is the coefficient for ln(CPUE+1) using the 'pooled' vessel calibration coeffcient (see *Calibration Coefficient Discusssion*), $\beta_2$ is the coefficient for the environmental covariate water temperature (i.e., May through July average temperature  in the upper 20 m at eight stations in Icy Strait;'ISTI'), and $\epsilon$ represents the normal error term that is lognormal. 
+where $y$ is ln(pink salmon harvest in SEAK), $\beta_1$ is the coefficient for CPUE using the 'pooled' vessel calibration coeffcient (see *Calibration Coefficient Discusssion*), $\beta_2$ is the coefficient for the environmental covariate water temperature, and $\epsilon$ represents the normal error term that is lognormal. CPUE data are log-transformed catches that are standardized to an effort of a 20 minute trawl set and are calibrated to the fishing power of the NOAA Ship *John N. Cobb.*  Water temperature data is the average (May through July) temperature in the upper 20 m at eight stations in Icy Strait. This is similar to what has been identified as the Icy Strait Temperature Index ('ISTI'), but historically this index has included May through August temperature data.
 
 Leave-one-out cross validation (hindcast) and model performance metrics such as Mean and Median Absolute Percentage Error (MAPE, MEAPE), mean absolute scaled error (MASE) (Hyndman and Kohler 2006), and Akaike Information Criterion corrected for small sample sizes (AICc values; Burnham and Anderson 2004) were used to evaluate forecast accuracy of alternative models. Statistical analyses were performed with the R Project for Statistical computing version 3.6.3 (R Core Team 2020). Based on the AICc, the MASE metric, and significant coefficients in the models, the preferred model (i.e., the additive model with CPUE and temperature) predicted that the SEAK pink salmon harvest in 2021 will be in the strong range with a point estimate of 28.3 million fish (80% prediction interval: 19.1 to 41.9 million fish).
 
@@ -60,11 +60,11 @@ tbls_seak$fishing_power %>%
 			
 *'Chellissa:Cobb'* was calculated from estimates for *'Chellisa:Medeia'* and *'Medeia:Cobb'*. *'Mixed Chellissa:Cobb'* was a mixture of species estimates for *'Chellisa:Medeia'* and a pooled species estimate for *'Medeia:Cobb'*.
 
-For the 2021 SEAK pink salmon forecast, there was a discussion as to which vessel calibration coefficient to use going forward. Using the four potential vessel calibration coefficients (mixed1, mixed2, species, pooled; Table 2), the corresponding time-series of juvenile abundance was slightly different (i.e., CPUE; standardized pink salmon catch based on a 20 min trawl set by year; Table 3). Performance metrics were used to evaluate forecast accuracy of alternative vessel calibration coefficients (Table 4) using the same model. The model used for the comparison of the vessel calibration coeffcient model was:
+For the 2021 SEAK pink salmon forecast, there was a discussion as to which vessel calibration coefficient to use going forward. Using the four potential vessel calibration coefficients (mixed1, mixed2, species, pooled; Table 2), the corresponding time-series of juvenile abundance was slightly different (i.e., CPUE; standardized pink salmon catch based on a 20 minute trawl set by year; Table 3). Performance metrics were used to evaluate forecast accuracy of alternative vessel calibration coefficients (Table 4) using the same model. The model used for the comparison of the vessel calibration coeffcient model was:
 
 $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2},$$   
 
-where ${X_1}$ is ln(CPUE+1), juvenile pink salmon abundance index based on the different vessel calibration coefficients, and ${X_2}$ is the average temperature in Icy Strait in May, June, and July at eight stations in Icy Strait. 
+where ${X_1}$ is CPUE, juvenile pink salmon abundance index based on the different vessel calibration coefficients, and ${X_2}$ is the average temperature in Icy Strait in May, June, and July at eight stations in Icy Strait. CPUE data are log-transformed catches that are standardized to an effort of a 20 minute trawl set.
 
 ```{r coefficients2}
 tbls_seak$calibration_coeff %>% 
@@ -74,7 +74,7 @@ tbls_seak$calibration_coeff %>%
 
 ```{r coefficients3}
 tbls_seak$peak_values %>% 
-   knitr::kable(format = 'pandoc', caption = 'The data for the variable ln(CPUE+1) (time-series of juvenile pink salmon abundance) using different vessel calibration coefficients. The variable ln(CPUE+1) is defined as the average ln(CPUE+1) for catches in either the June or July SECM survey, whichever month had the highest average catches in a given year.', row.names = F)
+   knitr::kable(format = 'pandoc', caption = 'The data for the variable CPUE (time-series of juvenile pink salmon abundance based on log-transformed catches that are standardized to an effort of a 20 minute trawl set) using different vessel calibration coefficients.', row.names = F)
 ```
 	
 ## Conclusion
@@ -82,7 +82,7 @@ Based on *x,y,and z???*, the discussion was limited to the 'species' and pooled'
 
 ```{r coefficients4}
 tbls_seak$model_compare %>% 
-   knitr::kable(format = 'pandoc', caption = 'Comparison of the performance metrics for a model based on calculating ln(CPUE+1) using diferent vessel calibration coefficients.', row.names = F)
+   knitr::kable(format = 'pandoc', caption = 'Comparison of the performance metrics for a model based on calculating a time-series of juvenile pink salmon abundance using diferent vessel calibration coefficients.', row.names = F)
 ```
 
 # Forecast Models ('Pooled' Vessel Calibration Coefficient)
@@ -91,7 +91,7 @@ Three hierarchical models were investigated. The full model was:
 
 $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2},$$
 
-where ${X_1}$ is the average ln(CPUE+1) for catches in either the June or July survey, whichever month had the highest average catches in a given year, and based on the 'pooled' vessel calibration coefficent, and ${X_2}$ is the average temperature in Icy Strait in May, June, and July at eight stations in Icy Strait (Icy Strait and Upper Chatham transects; 'ISTI'), and $\beta_3$ is the interaction term between CPUE and the temperature index. If temperature is actually altering how CPUE is related to abundance it makes sense to restrict the temperature data to the CPUE months in the forecast model (June and July). The month of May is included as there are important migratory dynamics prior to the time juveniles are actually sampled in Icy Strait. In the past, the 'ISTI' variable was the average temperature in the upper 20 m during May through August at eight stations in Icy Strait (Icy Strait and Upper Chatham transects). For simplicity, although the definition of the variable has changed, the variable is still called 'ISTI.' 
+where ${X_1}$ is the average CPUE for catches in either the June or July survey, whichever month had the highest average catches in a given year, and based on the 'pooled' vessel calibration coefficent, and ${X_2}$ is the average temperature in Icy Strait in May, June, and July at eight stations in Icy Strait (Icy Strait and Upper Chatham transects; 'ISTI'), and $\beta_3$ is the interaction term between CPUE and the temperature index. CPUE data are log-transformed in the model. If temperature is actually altering how CPUE is related to abundance it makes sense to restrict the temperature data to the CPUE months in the forecast model (June and July). The month of May is included as there are important migratory dynamics prior to the time juveniles are actually sampled in Icy Strait. In the past, the 'ISTI' variable was the average temperature in the upper 20 m during May through August at eight stations in Icy Strait. For simplicity, although the definition of the variable has changed, the variable is still called 'ISTI.' 
  
 The regression coefficients CPUE and temperature ('ISTI') were significant in the first two models (m1, m2). The interaction term was not significant in model m3 (Table 5). Therefore, only the first two models will be considered further.
 
@@ -199,9 +199,12 @@ Orsi, J. A., M. V. Sturdevant, J. M. Murphy, D. G. Mortensen, and B. L. Wing. 20
 
 Orsi, J. A., E. A. Fergusson, M. V. Sturdevant, B. L. Wing, A. C. Wertheimer, and W. R. Heard. 2008. Annual survey of juvenile salmon and ecologically related species and environmental factors in the marine waters of southeastern Alaska, May–August 2007. NPAFC Doc. 1110, 82 pp.
 
+Orsi, J. A., E. A. Fergusson, A. C. Wertheimer, E. V. Farley, and P. R. Mundy. 2016. Forecasting pink salmon production in Southeast Alaska using ecosystem indicators in times of climate change. N. Pac. Anadr. Fish Comm. Bull. 6: 483–499. (Available at https://npafc.org)
 R Core Team. 2020. R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL: http://www.r-project.org/index.html 
 
 Ren, Y. Y., L. C. Zhou, L. Yang, P. Y. Liu, B. W. Zhao, and H. X. Liu. 2016. Predicting the aquatic toxicity mode of action using logistic regression and linear discriminant analysis. SAR and QSAR in Environmental Research 27(9). DOI: 10.1080/1062936X.2016.1229691 
+
+Wertheimer A. C., J. A. Orsi, M. V. Sturdevant, and E. A. Fergusson. 2006. Forecasting pink salmon harvest in Southeast Alaska from juvenile salmon abundance and associated environmental parameters. In Proceedings of the 22nd Northeast Pacific Pink and Chum Workshop. Edited by H. Geiger (Rapporteur). Pac. Salmon Comm. Vancouver, British Columbia. pp. 65–72.
 
 Wertheimer, A. C., J. A. Orsi, E. A. Fergusson, and M. V. Sturdevant. 2008. Paired comparisons of juvenile salmon catches between two research vessels fishing Nordic 264 surface trawls in southeastern Alaska, July 2007. NPAFC Doc. 1112.,17 p.
 
