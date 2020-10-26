@@ -1,7 +1,7 @@
 ---
 title: "2021 Preseason Pink Salmon Forecast"
 author: "Sara Miller, Rich Brenner, Jim Murphy"
-date: "October 16, 2020--draft"
+date: "October 26, 2020--draft"
 output:
   bookdown::pdf_document2:
     fig_caption: yes
@@ -39,7 +39,7 @@ Forecasts were developed using an approach originally described in Wertheimer et
   
 $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \epsilon,$$
 
-where $y$ is ln(pink salmon harvest in SEAK), $\beta_1$ is the coefficient for CPUE using the 'pooled' vessel calibration coeffcient (see *calibration_coefficient_discusssion* document), $\beta_2$ is the coefficient for the environmental covariate water temperature, and $\epsilon$ represents the lognormal error term. The CPUE data are the average log-transformed catches standardized to an effort of a 20 minute trawl set and calibrated to the fishing power of the NOAA Ship *John N. Cobb.* For each year, the standardized catch is either taken from June or July, whichever month had the highest average catches in a given year. Water temperature data is the average (May through July) temperature in the upper 20 m at the eight SECM stations in Icy Strait. This is similar to what has been identified as the Icy Strait Temperature Index ('ISTI'), but historically this index has included May through August temperature data. Based on performance metrics (Akaike Information Criterion corrected for small sample sizes; AICc values; Burnham and Anderson 2004; mean and median absolute percentage error (MAPE, MEAPE); mean absolute scaled error (MASE) (Hyndman and Kohler 2006)) used to evaluate forecast accuracy of alternative vessel calibration coefficients using the same model, the 'pooled' vessel calibration coefficient was used in the following analysis. 
+where $y$ is ln(pink salmon harvest in SEAK), $\beta_1$ is the coefficient for CPUE using the 'pooled' vessel calibration coefficient (see *calibration_coefficient_discussion* document), $\beta_2$ is the coefficient for the environmental covariate water temperature, and $\epsilon$ represents the lognormal error term. The CPUE data are the average log-transformed catches standardized to an effort of a 20 minute trawl set and calibrated to the fishing power of the NOAA Ship *John N. Cobb.* For each year, the standardized catch is either taken from June or July, whichever month had the highest average catches in a given year. Water temperature data is the average (May through July) temperature in the upper 20 m at the eight SECM stations in Icy Strait. This is similar to what has been identified as the Icy Strait Temperature Index ('ISTI'), but historically this index has included May through August temperature data. Based on performance metrics (Akaike Information Criterion corrected for small sample sizes; AICc values; Burnham and Anderson 2004; mean and median absolute percentage error (MAPE, MEAPE); mean absolute scaled error (MASE) (Hyndman and Kohler 2006)) used to evaluate forecast accuracy of alternative vessel calibration coefficients using the same model, the 'pooled' vessel calibration coefficient was used in the following analysis. 
 
 Leave-one-out cross validation (hindcast) and model performance metrics were used to evaluate the forecast accuracy of models. These metrics included MAPE, MEAPE, MASE, and AICc. Statistical analyses were performed with the R Project for Statistical computing version 3.6.3 (R Core Team 2020). Based on the AICc, the MASE metric, and significant coefficients in the models, the preferred model (i.e., the additive model with CPUE and temperature; model m2) predicted that the SEAK pink salmon harvest in 2021 will be in the moderate range with a point estimate of 28.3 million fish (80% prediction interval: 19.1 to 41.9 million fish).
 
@@ -69,7 +69,7 @@ tbls_seak$model_summary_table2 %>%
 knitr::include_graphics(here(results.directory, "figs/cpue_temp.png"))
 ```
 
-Figure 1: Relationship between a) ln(CPUE+1) and ln(harvest) and b) temperature in May through July (ISTI) and ln(harvest). The line is a smoothing function applied to the relationship.
+Figure 1: Relationship between a) ln(CPUE+1) and ln(harvest) and b) temperature in May through July (ISTI) and ln(harvest). The line is a smoothing function applied to the relationship with a 95% confidence level interval.
 
 ## Model Diagnostics
 Model diagnostics for model m2 included residual plots, the curvature test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage plots. Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). These observations may have significant impact on model fitting and may need to be excluded. 

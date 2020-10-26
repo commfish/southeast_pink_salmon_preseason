@@ -1,7 +1,7 @@
 ---
 title: "Vessel Calibration Coefficient Discussion "
 author: "Sara Miller, Rich Brenner, Jim Murphy"
-date: "October 16, 2020--draft"
+date: "October 26, 2020--draft"
 output:
   bookdown::pdf_document2:
     fig_caption: yes
@@ -71,7 +71,7 @@ tbls_seak$peak_values %>%
 ```
 	
 ## Conclusion
-Based on *x,y,and z???*, the discussion was limited to the 'species' and pooled' vessel calibration coefficients. Although there is a bit more statistical support for the species-specific coefficient, there is not a very meaningful difference between the 'species' and 'pooled' coefficents. As the pooled-species coefficients are currently used for sockeye, coho and Chinook salmon catches, the 'pooled' vessel calibration coefficient will be used moving forward for calculating the time-series of juvenile pink salmon abundance.
+Based on *x,y,and z???*, the discussion was limited to the species-specific and pooled-species vessel calibration coefficients. Although there is a bit more statistical support for the species-specific coefficient, there is not a very meaningful difference between the species-specific and pooled-species coefficents. As the pooled-species coefficients are currently used for sockeye, coho and Chinook salmon catches, the pooled-species vessel calibration coefficient will be used moving forward for calculating the juvenile pink salmon abundance index.
 
 ```{r coefficients4}
 tbls_seak$model_compare %>% 
