@@ -143,9 +143,10 @@ MASE(model.m1, model.m2) %>%
 read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
 results %>% 
   dplyr::select(X, AdjR2, AICc, MAPE, MEAPE) %>%
-  dplyr::rename(model = 'X') %>% 
+  dplyr::rename(terms = 'X') %>% 
+  mutate(model = ifelse(terms =="CPUE", 'm1', 'm2')) %>% 
   cbind(., MASE) %>%
-  dplyr::select(model, AdjR2, AICc, MAPE, MEAPE, MASE) %>%
+  dplyr::select(model, terms, AdjR2, AICc, MAPE, MEAPE, MASE) %>%
   mutate(AdjR2 = round(AdjR2,3),
          AICc = round(AICc,0),
          MAPE = round(MAPE,3),
