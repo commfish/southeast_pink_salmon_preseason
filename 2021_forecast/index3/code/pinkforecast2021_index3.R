@@ -1,7 +1,7 @@
 # SECM Pink salmon forecast models
 # Script written by Jim Murphy updated: 10/18/19
 # adapted by Sara Miller 9/24/2020
-# LN_Pink_Cal_sp
+# pink_cal_species_specific
 
 # load libraries
 library("devtools")
@@ -34,7 +34,7 @@ year.data <- 2020
 year.data.one <- year.data - 1
 sample_size <-  23 # number of data points in model
 index <- "index3"
-#need to change line 57****
+# need to change lines 57-58
 data.directory <- file.path(year.forecast, index, 'data', '/')
 results.directory <- file.path(year.forecast, index, 'results', '/')
 best.model <- m2 # this can be added after steps 1 and 2 after the best model is determined
