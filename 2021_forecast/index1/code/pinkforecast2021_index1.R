@@ -1,7 +1,7 @@
 # SECM Pink salmon forecast models
 # Script written by Jim Murphy updated: 10/18/19
 # adapted by Sara Miller 9/24/2020
-# pink_cal_mixspecies
+# pink_cal_mixsp
 
 # load libraries
 library("devtools")
@@ -38,7 +38,7 @@ index <- "index1"
 data.directory <- file.path(year.forecast, index, 'data', '/')
 results.directory <- file.path(year.forecast, index, 'results', '/')
 best.model <- m2 # this can be added after steps 1 and 2 after the best model is determined
-last_year_data_cpue <- 2.147502256 # last year of data
+last_year_data_cpue <- 2.261528925 # last year of data
 last_year_data_ISTI <- 8.888254 # last year of data
 source('2021_forecast/functions.r')
 
@@ -111,7 +111,7 @@ augment(best.model) %>%
          std_resid = round((.std.resid),3),
          fitted = round((.fitted),3),
          year=1998:year.data) %>%
-  dplyr::select(year, SEAKCatch_log, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
+  dplyr::select(year, SEAKCatch_log, CPUE, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
   write.csv(paste0(results.directory, "/model_summary_table3.csv"), row.names = F)
 # leave one out cross validation (verify seak.model.summary)
 # https://stats.stackexchange.com/questions/27351/compare-models-loccv-implementation-in-r

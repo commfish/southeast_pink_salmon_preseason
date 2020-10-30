@@ -1,6 +1,6 @@
-Species,Chellissa:Medeia,Medeia:Cobb,Chellissa:Cobb,mixed Chellissa:Cobb,Medeia:Steller
-Pink,1.27,1.13,1.44,1.51,1.18
-Chum,1.19,1.21,1.44,1.42,1.04
-Sockeye,0.99,1.19,1.18,1.18,1.13
-Coho,1.05,1.26,1.32,1.25,1.48
-Total Salmon,1.14,1.19,1.36,1.36,1.13
+Species,Medeia:Cobb,Chellissa:Cobb,Steller:Cobb,Medeia:Steller,Chellissa:Medeia,mixed Chellissa:Cobb
+Pink,1.13,1.44,0.96,1.18,1.27,1.51
+Chum,1.21,1.44,1.16,1.04,1.19,1.42
+Sockeye,1.19,1.18,1.05,1.13,0.99,1.18
+Coho,1.26,1.32,0.85,1.48,1.05,1.25
+Total Salmon,1.19,1.36,1.05,1.13,1.14,1.36

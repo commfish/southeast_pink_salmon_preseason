@@ -1,7 +1,7 @@
 # SECM Pink salmon forecast models
 # Script written by Jim Murphy updated: 10/18/19
 # adapted by Sara Miller 9/24/2020
-# pink_cal_species_specific
+# pink_cal_sp
 
 # load libraries
 library("devtools")
@@ -111,7 +111,7 @@ augment(best.model) %>%
          std_resid = round((.std.resid),3),
          fitted = round((.fitted),3),
          year=1998:year.data) %>%
-  dplyr::select(year, SEAKCatch_log, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
+  dplyr::select(year, SEAKCatch_log, CPUE, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
   write.csv(paste0(results.directory, "/model_summary_table3.csv"), row.names = F)
 # leave one out cross validation (verify seak.model.summary)
 # https://stats.stackexchange.com/questions/27351/compare-models-loccv-implementation-in-r
