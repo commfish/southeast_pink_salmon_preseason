@@ -348,7 +348,7 @@ augment(best.model) %>%
   mutate(year = 1998:2020, 
          catch = exp(SEAKCatch_log), 
          sigma = .sigma,
-         fit = exp(.fitted) * exp(0.5*sigma*sigma)) ->x %>%
+         fit = exp(.fitted) * exp(0.5*sigma*sigma)) %>%
   ggplot(aes(x=fit, y=catch)) +
   geom_point(aes(y = catch), colour = "black", size = 1) +
   scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
