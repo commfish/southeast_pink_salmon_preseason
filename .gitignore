@@ -2,8 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
-*.png
+.png
 *.Rproj
 *.Rdata
-*.xlsx
-*.pdf
+.xlsx
+.pdf
