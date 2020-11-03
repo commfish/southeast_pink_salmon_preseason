@@ -2,7 +2,7 @@
 title: "2021 Preseason Pink Salmon Forecast"
 subtitle: "pink_cal_mixpool"
 author: "Sara Miller, Rich Brenner, Jim Murphy"
-date: "October 30, 2020--draft"
+date: "November 3, 2020--draft"
 output:
   pdf_document: default
   html_document:
@@ -46,7 +46,7 @@ where $y$ is ln(harvest), $\beta_1$ is the coefficient for ln(CPUE+1), $\beta_2$
 
 Leave-one-out cross validation (hindcast) and model performance metrics such as Mean and Median Absolute Percentage Error (MAPE, MEAPE), and mean absolute scaled error (MASE) (Hyndman and Kohler 2006) were then used to evaluate forecast accuracy of alternative models. Statistical analyses were performed with the R Project for Statistical computing version 3.6.3 (R Core Team 2020). 
   
-Based on an additive model with CPUE and temperature, the SEAK pink salmon harvest in 2021 is predicted to be in the moderate range with a point estimate of 29.8 million fish (80% prediction interval: 20.1 to 44.2 million fish).
+Based on an additive model with CPUE and temperature, the SEAK pink salmon harvest in 2021 is predicted to be in the moderate range with a point estimate of 29.8 million fish (80% prediction interval: 20.1 to 44.1 million fish).
 
 # Analysis
 Three hierarchical models were investigated. The full model was:
@@ -77,12 +77,12 @@ Figure 1: Relationship between a) ln(CPUE+1) and ln(harvest) and b) temperature 
 The best regression model based on AICc, the MASE metric, significant coefficients in the models, and the argument for restricting temperature to the months when CPUE is sampled was model m2 (i.e. the model containing CPUE, and a May through July temperature variable). The adjusted $R^2$ value for model m2 was 0.82 indicating overall a good model fit.
 
 # Conclusion 
-The SEAK pink salmon harvest in 2021 is predicted to be in the moderate range with a point estimate of 29.8 million fish (80% prediction interval: 20.1 to 44.2 million fish).
+The SEAK pink salmon harvest in 2021 is predicted to be in the moderate range with a point estimate of 29.8 million fish (80% prediction interval: 20.1 to 44.1 million fish).
 ```{r pred, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/catch_plot_pred.png"))
 ```
 
-Figure 2: SEAK harvest (millions) a) by year and b) by the fitted values from model m2. The line in figure b is a one to one line. The predicted 2021 forecast is symbolized as a grey circle with an 80% prediction interval (20.1 to 44.2 million fish) in figure a. 
+Figure 2: SEAK harvest (millions) a) by year and b) by the fitted values from model m2. The line in figure b is a one to one line. The predicted 2021 forecast is symbolized as a grey circle with an 80% prediction interval (20.1 to 44.1 million fish) in figure a. 
 
 ```{r model_summary_detailed}
 tbls_seak$model_summary_table3 %>% 

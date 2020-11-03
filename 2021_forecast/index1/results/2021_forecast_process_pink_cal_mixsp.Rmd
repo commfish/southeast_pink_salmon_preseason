@@ -2,7 +2,7 @@
 title: "2021 Preseason Pink Salmon Forecast"
 subtitle: "pink_cal_mixspecies"
 author: "Sara Miller, Rich Brenner, Jim Murphy"
-date: "October 30, 2020--draft"
+date: "November 3, 2020--draft"
 output:
   pdf_document: default
   html_document:
