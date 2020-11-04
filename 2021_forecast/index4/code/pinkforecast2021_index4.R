@@ -230,7 +230,7 @@ augment(best.model) %>%
   geom_smooth(aes(colour = ISTI, fill = ISTI), colour="black") +
   scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4), limits = c(-4,4)) +
   scale_x_continuous(breaks = c(7,8,9,10,11,12), limits = c(7,12)) +
-  labs(y = "Standardized residuals", x =  "ISTI") +
+  labs(y = "Standardized residuals", x =  "Temperature") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
   geom_text(aes(x = 7, y = 4, label="b)"),family="Times New Roman", colour="black", size=5) -> plot2
@@ -360,12 +360,13 @@ augment(best.model) %>%
   scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   geom_abline(intercept = 0, lty=3) +  
   #geom_text_repel( aes(x = fit, y = catch, label = year),
-  #                                                     nudge_x = 1, size = 4, show.legend = FALSE) + 
+   #                                                    nudge_x = 1, size = 4, show.legend = FALSE) + 
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   #geom_text(aes(x = 2, y = 140, label="b)"),family="Times New Roman", colour="black", size=5) +
-  geom_text(aes(y = 103, x = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(y = 85, x = 120, label="1999"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(y = 30, x = 60, label="2015"),family="Times New Roman", colour="black", size=4)-> plot2
+  geom_text(aes(y = 101, x = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(y = 46, x = 23, label="1998"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(y = 8, x = 19, label="2018"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(y = 30, x = 62, label="2015"),family="Times New Roman", colour="black", size=4)-> plot2
 cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
 ggsave(paste0(results.directory, "figs/catch_plot_pred_a.png"), dpi = 500, height = 3, width = 6, units = "in")
 cowplot::plot_grid(plot2, align = "vh", nrow = 1, ncol=1)
