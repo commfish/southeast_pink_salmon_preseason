@@ -320,6 +320,7 @@ augment(best.model) %>%
          catch = exp(SEAKCatch_log),
          fit = exp(.fitted) * exp(0.5* sigma*sigma))  %>%
   as.data.frame() %>%
+  #write.csv(paste0(results.directory, "/data1.csv"), row.names = F)
   ggplot(aes(x=year)) +
   geom_bar(aes(y = catch, fill = "SEAK pink catch"),
            stat = "identity", colour ="black",
@@ -335,7 +336,7 @@ augment(best.model) %>%
                                          text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1),
                                          axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
                                          axis.title.x = element_text(size=9, colour="black",family="Times New Roman"),
-                     legend.position=c(0.9,0.9)) +
+                     legend.position=c(0.68,0.9)) +
   geom_point(x=year.data +1, y=fit_value, pch=21, size=3, colour = "black", fill="grey") +
   scale_x_continuous(breaks = seq(1998, year.data+1, 1)) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
@@ -349,6 +350,8 @@ augment(best.model) %>%
          catch = exp(SEAKCatch_log), 
          sigma = .sigma,
          fit = exp(.fitted) * exp(0.5*sigma*sigma)) %>%
+  as.data.frame() %>%
+  #write.csv(paste0(results.directory, "/data2.csv"), row.names = F)
   ggplot(aes(x=fit, y=catch)) +
   geom_point(aes(y = catch), colour = "black", size = 1) +
   scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
@@ -365,12 +368,15 @@ augment(best.model) %>%
   #geom_text(aes(x = 2, y = 140, label="b)"),family="Times New Roman", colour="black", size=5) +
   geom_text(aes(y = 101, x = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
   geom_text(aes(y = 47, x = 23, label="1998"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(y = 6, x = 19, label="2018"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(y = 4, x = 19, label="2018"),family="Times New Roman", colour="black", size=4) +
   geom_text(aes(y = 30, x = 62, label="2015"),family="Times New Roman", colour="black", size=4)-> plot2
 cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
 ggsave(paste0(results.directory, "figs/catch_plot_pred_a.png"), dpi = 500, height = 3, width = 6, units = "in")
 cowplot::plot_grid(plot2, align = "vh", nrow = 1, ncol=1)
 ggsave(paste0(results.directory, "figs/catch_plot_pred_b.png"), dpi = 500, height = 3, width = 6, units = "in")
+
+cowplot::plot_grid(plot1, plot2, align = "vh", nrow = 1, ncol=2)
+ggsave(paste0(results.directory, "figs/catch_plot_combined.png"), dpi = 500, height = 4, width = 8, units = "in")
 # model average (not sure how to do prediction interval on model averaged linear regressions)**
 # not currently used 
 #fit.avg <- model.avg(model.m1, model.m2)
