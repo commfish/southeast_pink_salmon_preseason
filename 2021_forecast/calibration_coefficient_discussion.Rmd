@@ -1,14 +1,20 @@
 ---
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
 title: "Vessel Calibration Coefficient Discussion "
 author: "Sara Miller, Rich Brenner, Jim Murphy"
-date: "October 29, 2020--draft"
+date: "November 2, 2020--draft"
+
 output:
-  bookdown::pdf_document2:
+  bookdown:: word_document:
     fig_caption: yes
     toc: yes
 header-includes:
  \usepackage{float}
----
+
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
 library(here)
 library(fs)

@@ -1,14 +1,21 @@
 ---
-title: "2021 Preseason Pink Salmon Forecast"
-author: "Sara Miller, Rich Brenner, Jim Murphy"
-date: "October 26, 2020--draft"
 output:
-  bookdown::pdf_document2:
+  html_document: default
+  '''''''bookdown:: word_document''''''': default
+  pdf_document: default
+  word_document: default
+---
+title: "2021 SEAK Pink Salmon Forecast "
+author: "Sara Miller, Rich Brenner, Jim Murphy"
+date: "November 2, 2020--draft"
+
+output:
+  bookdown:: word_document:
     fig_caption: yes
     toc: yes
 header-includes:
  \usepackage{float}
----
+
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
 library(here)
 library(fs)

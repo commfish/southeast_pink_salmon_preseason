@@ -1,0 +1,319 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
+\usepackage[unicode=true]{hyperref}
+\hypersetup{
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs}
+% Fix footnotes in tables (requires footnote package)
+\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{long table}}{}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+
+title: ``Vessel Calibration Coefficient Discussion'' author: ``Sara
+Miller, Rich Brenner, Jim Murphy'' date: ``November 2, 2020--draft''
+
+output: bookdown:: word\_document: fig\_caption: yes toc: yes
+header-includes: \usepackage{float}
+
+\section{Calibration Coefficient
+Discussion}\label{calibration-coefficient-discussion}
+
+\subsection{Background}\label{background}
+
+Excerpted from Wertheimer et al. 2010:
+
+``From 1997 to 2007, SECM used the NOAA ship \emph{John N. Cobb} to
+accrue an 11 year time series of catches with a Nordic 264 rope trawl
+fished at the surface\ldots{} (Orsi et al. 2000, 2008)\ldots{} In 2007,
+in anticipation of the decommissioning of the \emph{John N. Cobb}, the
+\emph{Medeia} and the \emph{John N. Cobb} fished synoptically for 28
+pairs of trawl hauls to develop calibration factors in the event of
+differential catch rates between the two vessels (Wertheimer et al.
+2008). In 2008, the \emph{Medeia} fished synoptically with the chartered
+research vessel \emph{Steller} to determine relative fishing efficiency
+so that \emph{Steller} catches could then be compared and calibrated to
+the SECM data series from the \emph{John N. Cobb} (Wertheimer et al.
+2009). In 2009, the commercial trawler \emph{Chellissa} was chartered to
+fish the SECM transects in the northern and southern regions of
+Southeast Alaska. The \emph{Medeia} was again fished synoptically in the
+northern region transects to determine relative fishing efficiency
+(Table 1).''
+
+\pagebreak
+
+\begin{longtable}[]{@{}lrrrrrr@{}}
+\caption{Estimated fishing power coefficients for juvenile salmon
+catches by the different vessels used during the Southeast Alaska
+Coastal Monitoring survey (Wertheimer et al. 2008, 2009, and
+2010).\emph{Chellissa:Cobb} was calculated from pink salmon estimates
+for \emph{Chellisa:Medeia} and \emph{Medeia:Cobb}. \emph{Mixed
+Chellissa:Cobb} was a mixture of species estimates for
+\emph{Chellisa:Medeia} and a pooled species estimate for
+\emph{Medeia:Cobb}. One of the primary trawl vessels, F/V
+\emph{Northwest Explorer}, has not been calibrated and it is assumed to
+have the same fishing power as the \emph{Chellissa}.}\tabularnewline
+\toprule
+Species & Medeia:Cobb & Chellissa:Cobb & Steller:Cobb & Medeia:Steller &
+Chellissa:Medeia & mixed Chellissa:Cobb\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Species & Medeia:Cobb & Chellissa:Cobb & Steller:Cobb & Medeia:Steller &
+Chellissa:Medeia & mixed Chellissa:Cobb\tabularnewline
+\midrule
+\endhead
+Pink & 1.13 & 1.44 & 0.96 & 1.18 & 1.27 & 1.51\tabularnewline
+Chum & 1.21 & 1.44 & 1.16 & 1.04 & 1.19 & 1.42\tabularnewline
+Sockeye & 1.19 & 1.18 & 1.05 & 1.13 & 0.99 & 1.18\tabularnewline
+Coho & 1.26 & 1.32 & 0.85 & 1.48 & 1.05 & 1.25\tabularnewline
+Total Salmon & 1.19 & 1.36 & 1.05 & 1.13 & 1.14 & 1.36\tabularnewline
+\bottomrule
+\end{longtable}
+
+For the 2021 SEAK pink salmon forecast, there was a discussion as to
+which vessel calibration coefficient to use going forward. Using the
+four potential vessel calibration coefficients (pink\_cal\_mixspecies,
+pink\_cal\_mixpool, pink\_cal\_species, pink\_cal\_pool; Table 2), the
+corresponding index of juvenile abundance was slightly different (i.e.,
+CPUE; standardized pink salmon catch based on a 20 minute trawl set by
+year; Table 3). Performance metrics (Akaike Information Criterion
+corrected for small sample sizes; AICc values; Burnham and Anderson
+2004; mean and median absolute percentage error (MAPE, MEAPE); mean
+absolute scaled error (MASE) (Hyndman and Kohler 2006)) were used to
+evaluate forecast accuracy of alternative vessel calibration
+coefficients (Table 4) using the same model. Statistical analyses were
+performed with the R Project for Statistical computing version 3.6.3 (R
+Core Team 2020). The model used for the comparison of the vessel
+calibration coefficient model was:
+
+\[E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2},\]
+
+where \({X_1}\) is CPUE, juvenile pink salmon abundance index based on
+the different vessel calibration coefficients, and \({X_2}\) is the
+average temperature in Icy Strait in May, June, and July at eight
+stations in Icy Strait. CPUE data are log-transformed catches that are
+standardized to an effort of a 20 minute trawl set. The four potential
+vessel calibration coefficients are defined as:
+
+pink\_cal\_mixspecies is a mixture of pink-specific
+(\emph{Chellisa:Medeia}) and pooled-species (\emph{Medeia:Cobb})
+coefficients for the \emph{Chellissa} and the \emph{N/W Explorer}, and a
+pink salmon coefficient for the \emph{Medeia}. This ends up with a time
+series that is based on coefficients that vary with species, but are
+partially derived from a mixture of species-specific and pooled-species
+coefficients.
+
+pink\_cal\_mixpool is a mixture of pink-specific
+(\emph{Chellissa:Medeia}) and pooled-species (\emph{Medeia:Cobb})
+coefficients for the \emph{Chellissa} and the \emph{N/W Explorer}, and a
+pooled-species coefficient for the \emph{Medeia}.
+
+pink\_cal\_species\ldots{}
+
+pink\_cal\_pool\ldots{}
+
+\begin{longtable}[]{@{}lrrrr@{}}
+\caption{Calibration coefficients used to convert vessel-specific
+catches to \emph{Cobb} units. Direct calibrations with the \emph{Cobb}
+are estimated for the \emph{Steller} and \emph{Medeia}, therefore mixed
+coefficients are only applied to the \emph{Chellissa} and \emph{NW
+Explorer}. Species-specific or pooled-species coefficients could be used
+as the mixed coefficients for the \emph{Steller} and
+\emph{Medeia}.}\tabularnewline
+\toprule
+Vessel & pink\_cal\_mixspecies & pink\_cal\_mixpool & pink\_cal\_species
+& pink\_cal\_pool\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Vessel & pink\_cal\_mixspecies & pink\_cal\_mixpool & pink\_cal\_species
+& pink\_cal\_pool\tabularnewline
+\midrule
+\endhead
+Cobb & 1.00 & 1.00 & 1.00 & 1.00\tabularnewline
+Chellissa & 0.66 & 0.66 & 0.70 & 0.74\tabularnewline
+NW Explorer & 0.66 & 0.66 & 0.70 & 0.74\tabularnewline
+Steller & 1.04 & 0.95 & 1.04 & 0.95\tabularnewline
+Medeia & 0.88 & 0.84 & 0.88 & 0.84\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}lrrrr@{}}
+\caption{The data for the variable CPUE (index of juvenile pink salmon
+abundance based on log-transformed catches that are standardized to an
+effort of a 20 minute trawl set) using different vessel calibration
+coefficients.}\tabularnewline
+\toprule
+year & pink\_cal\_mixspecies & pink\_cal\_mixpool & pink\_cal\_species &
+pink\_cal\_pool\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+year & pink\_cal\_mixspecies & pink\_cal\_mixpool & pink\_cal\_species &
+pink\_cal\_pool\tabularnewline
+\midrule
+\endhead
+1997 & 2.477744 & 2.477744 & 2.4777444 & 2.4777444\tabularnewline
+1998 & 5.622380 & 5.622380 & 5.6223800 & 5.6223800\tabularnewline
+1999 & 1.597723 & 1.597723 & 1.5977233 & 1.5977233\tabularnewline
+2000 & 3.729985 & 3.729985 & 3.7299847 & 3.7299847\tabularnewline
+2001 & 2.868826 & 2.868826 & 2.8688260 & 2.8688260\tabularnewline
+2002 & 2.784664 & 2.784664 & 2.7846641 & 2.7846641\tabularnewline
+2003 & 3.077820 & 3.077820 & 3.0778204 & 3.0778204\tabularnewline
+2004 & 3.899407 & 3.899407 & 3.8994067 & 3.8994067\tabularnewline
+2005 & 2.040345 & 2.040345 & 2.0403454 & 2.0403454\tabularnewline
+2006 & 2.572781 & 2.572781 & 2.5727807 & 2.5727807\tabularnewline
+2007 & 1.167639 & 1.167639 & 1.1676386 & 1.1676386\tabularnewline
+2008 & 2.555111 & 2.323473 & 2.5551107 & 2.3234731\tabularnewline
+2009 & 2.094192 & 2.094192 & 2.2053878 & 2.3330031\tabularnewline
+2010 & 3.687782 & 3.687782 & 3.8835930 & 4.1083181\tabularnewline
+2011 & 1.305918 & 1.305918 & 1.3752584 & 1.4548381\tabularnewline
+2012 & 3.161036 & 3.161036 & 3.3288788 & 3.5215052\tabularnewline
+2013 & 1.923429 & 1.923429 & 2.0255583 & 2.1427677\tabularnewline
+2014 & 3.426619 & 3.426619 & 3.6085629 & 3.8173733\tabularnewline
+2015 & 2.201588 & 2.201588 & 2.3184867 & 2.4526465\tabularnewline
+2016 & 3.905705 & 3.905705 & 4.1130877 & 4.3510925\tabularnewline
+2017 & 0.310436 & 0.310436 & 0.3269194 & 0.3458366\tabularnewline
+2018 & 1.233765 & 1.171558 & 1.2337651 & 1.1715584\tabularnewline
+2019 & 1.202606 & 1.141971 & 1.2026065 & 1.1419709\tabularnewline
+2020 & 2.261529 & 2.147502 & 2.2615289 & 2.1475023\tabularnewline
+average & 2.546210 & 2.526689 & 2.5949191 & 2.6313000\tabularnewline
+\bottomrule
+\end{longtable}
+
+\subsection{Conclusion}\label{conclusion}
+
+Based on \emph{x,y,and z???}, the discussion was limited to the
+pink\_cal\_species and pink\_cal\_pool vessel calibration coefficients.
+There is a bit more statistical support for the pink\_cal\_pool
+coefficient. As the pool coefficients are currently used for sockeye,
+coho and Chinook salmon catches, the pink\_cal\_pool vessel calibration
+coefficient will be used moving forward for calculating the juvenile
+pink salmon abundance index.
+
+\begin{longtable}[]{@{}lrrrrrrrrl@{}}
+\caption{Comparison of the performance metrics for a model based on
+calculating a time-series of juvenile pink salmon abundance using
+different vessel calibration coefficients.}\tabularnewline
+\toprule
+model & AdjR2 & AICc & MAPE & MEAPE & MASE & forecast & lower\_80 &
+upper\_80 & index\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+model & AdjR2 & AICc & MAPE & MEAPE & MASE & forecast & lower\_80 &
+upper\_80 & index\tabularnewline
+\midrule
+\endhead
+CPUE+ISTI & 0.811 & 16 & 0.079 & 0.061 & 0.262 & 31.3 & 20.9 & 46.9 &
+pink\_cal\_mixspecies\tabularnewline
+CPUE+ISTI & 0.820 & 15 & 0.077 & 0.060 & 0.256 & 29.8 & 20.1 & 44.1 &
+pink\_cal\_mixpool\tabularnewline
+CPUE+ISTI & 0.820 & 15 & 0.077 & 0.070 & 0.257 & 30.6 & 20.6 & 45.3 &
+pink\_cal\_species\tabularnewline
+CPUE+ISTI & 0.830 & 14 & 0.074 & 0.060 & 0.249 & 28.5 & 19.4 & 41.7 &
+pink\_cal\_pool\tabularnewline
+\bottomrule
+\end{longtable}
+
+\section{References}\label{references}
+
+Burnham, K. P., and D. R. Anderson. 2004. Multimodel inference:
+Understanding AIC and BIC in model selection. Sociological Methods and
+Research 33: 261-304.
+
+Hyndman, R. J. and A. B. Koehler. 2006. Another look at measures of
+forecast accuracy. International Journal of Forecasting 22: 679-688.
+
+Orsi, J. A., M. V. Sturdevant, J. M. Murphy, D. G. Mortensen, and B. L.
+Wing. 2000. Seasonal habitat use and early marine ecology of juvenile
+Pacific salmon in southeastern Alaska. NPAFC Bull. 2:111-122.
+
+Orsi, J. A., E. A. Fergusson, M. V. Sturdevant, B. L. Wing, A. C.
+Wertheimer, and W. R. Heard. 2008. Annual survey of juvenile salmon and
+ecologically related species and environmental factors in the marine
+waters of southeastern Alaska, May--August 2007. NPAFC Doc. 1110, 82 pp.
+
+R Core Team. 2020. R: A language and environment for statistical
+computing. R Foundation for Statistical Computing, Vienna, Austria. URL:
+\url{http://www.r-project.org/index.html}
+
+Wertheimer, A. C., J. A. Orsi, E. A. Fergusson, and M. V. Sturdevant.
+2008. Paired comparisons of juvenile salmon catches between two research
+vessels fishing Nordic 264 surface trawls in southeastern Alaska, July
+2007. NPAFC Doc. 1112.,17 p.
+
+Wertheimer, A. C., J. A. Orsi, E. A. Fergusson, and M. V. Sturdevant.
+2009. Calibration of Juvenile Salmon Catches using Paired Comparisons
+between Two Research Vessels Fishing Nordic 264 Surface Trawls in
+Southeastern Alaska, July 2008. NPAFC Doc. 1180. 18 pp.
+
+Wertheimer, A. C., J. A. Orsi, E. A. Fergusson, and M. V. Sturdevant.
+2010. Calibration of Juvenile Salmon Catches using Paired Comparisons
+between Two Research Vessels Fishing Nordic 264 Surface Trawls in
+Southeast Alaska, July 2009. NPAFC Doc. 1177. 19 pp. (Available at
+\url{http://www.npafc.org}).
+
+\end{document}
