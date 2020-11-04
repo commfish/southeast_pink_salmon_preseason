@@ -2,13 +2,17 @@
 title: "2021 SEAK Pink Salmon Forecast "
 author: "Sara Miller, Rich Brenner, Jim Murphy"
 date: "November 2, 2020--draft"
-
 output:
-  bookdown::pdf_document2:
-    fig_caption: yes
-    toc: yes
-header-includes:
- \usepackage{float}   
+  word_document: default
+  html_document: default
+  pdf_document: default
+
+#output:
+#  bookdown::pdf_document2:
+#    fig_caption: yes
+#    toc: yes
+#header-includes:
+# \usepackage{float}   
 ---
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
 library(here)
