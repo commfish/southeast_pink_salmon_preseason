@@ -1,12 +1,19 @@
 ---
-title: "vessel calibration Coefficient Discussion"
+title: "Pink Salmon Vessel Calibration Coefficient Discussion"
 author: "Sara Miller, Rich Brenner, Jim Murphy"
-date: "November 3, 2020--draft"
+date: "November 4, 2020--draft"
+#output:
+#  word_document: default
+#  html_document: default
+#  pdf_document: default
+
+
 output:
-  word_document: default
-  html_document:
-    df_print: paged
-  pdf_document: default
+  bookdown::pdf_document2:
+    fig_caption: yes
+    toc: yes
+header-includes:
+ \usepackage{float}   
 ---
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
 library(here)
@@ -29,55 +36,71 @@ fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>%
   map(read_csv) -> tbls_seak
 
 ```
+# Objective
+To determine the vessel calibration coefficient to calculate the corresponding index of juvenile abundance for the 2021 SEAK pink salmon forecast models.
 
-# Calibration Coefficient Discussion
-## Background
+# Background
 Excerpted from Wertheimer et al. 2010:  
 
 "From 1997 to 2007, SECM used the NOAA ship *John N. Cobb* to accrue an 11 year time series of catches with a Nordic 264 rope trawl fished at the surface... (Orsi et al. 2000, 2008)... In 2007, in anticipation of the decommissioning of the *John N. Cobb*, the *Medeia* and the *John N. Cobb* fished synoptically for 28 pairs of trawl hauls to develop calibration factors in the event of differential catch rates between the two vessels (Wertheimer et al. 2008).  In 2008, the *Medeia* fished synoptically with the chartered research vessel *Steller* to determine relative fishing efficiency so that *Steller* catches could then be compared and calibrated to the SECM data series from the *John N. Cobb* (Wertheimer et al. 2009).  In 2009, the commercial trawler *Chellissa* was chartered to fish the SECM transects in the northern and southern regions of Southeast Alaska. The *Medeia* was again fished synoptically in the northern region transects to determine relative fishing efficiency (Table 1)."
 
-\pagebreak
+Historically....  
+For the 2021 SEAK pink salmon forecast, there was a discussion as to which vessel calibration coefficient to use going forward. Using the four potential vessel calibration types (pink_cal_mixspecies, pink_cal_mixpool, pink_cal_species, pink_cal_pool; Table 1), the corresponding index of juvenile abundance was slightly different (i.e., CPUE; standardized pink salmon catch based on a 20 minute trawl set by year; Table 2). To calculate the index of juvenile abundance by calibration type, the log-transformed pink salmon catch (standardized to an effort of a 20 minute trawl set), by haul, is multiplied by a vessel calibration coefficient (Table 1). Then, this value is averaged by month and year; whichever month had the highest average catches in a given year is then used as the juvenile abundance index for that particular year (Table 2). This index of juvenile abundance is then used as the variable 'CPUE' in the 2021 SEAK pink salmon forecast models.
+
 ```{r coefficients1}
-tbls_seak$fishing_power %>% 
-   knitr::kable(format = 'pandoc', caption = 'Estimated fishing power coefficients for juvenile salmon catches by the different vessels used during the Southeast Alaska Coastal Monitoring survey (Wertheimer et al.  2008, 2009, and 2010).*Chellissa:Cobb* was calculated from pink salmon estimates for *Chellisa:Medeia* and *Medeia:Cobb*. *Mixed Chellissa:Cobb* was a mixture of species estimates for *Chellisa:Medeia* and a pooled species estimate for *Medeia:Cobb*. One of the primary trawl vessels, F/V *Northwest Explorer*, has not been calibrated and it is assumed to have the same fishing power as the *Chellissa*.', row.names = F)
+tbls_seak$calibration_coeff %>% 
+   knitr::kable(format = 'pandoc', caption = 'Vessel calibration coefficients (inverse of the fishing power coefficients in Table 3) used to convert vessel-specific catches to *Cobb* units.', row.names = F)
 ```
-			
-For the 2021 SEAK pink salmon forecast, there was a discussion as to which vessel calibration coefficient to use going forward. Using the four potential vessel calibration coefficients (pink_cal_mixspecies, pink_cal_mixpool, pink_cal_species, pink_cal_pool; Table 2), the corresponding index of juvenile abundance was slightly different (i.e., CPUE; standardized pink salmon catch based on a 20 minute trawl set by year; Table 3). Performance metrics (Akaike Information Criterion corrected for small sample sizes; AICc values; Burnham and Anderson 2004; mean and median absolute percentage error (MAPE, MEAPE); mean absolute scaled error (MASE) (Hyndman and Kohler 2006)) were used to evaluate forecast accuracy of alternative vessel calibration coefficients (Table 4) using the same model. Statistical analyses were performed with the R Project for Statistical computing version 3.6.3 (R Core Team 2020). The model used for the comparison of the vessel calibration coefficient model was:
+
+```{r coefficients2}
+tbls_seak$peak_values %>% 
+   knitr::kable(format = 'pandoc', caption = 'The datasets for the variable CPUE (index of juvenile pink salmon abundance based on log-transformed catches that are standardized to an effort of a 20 minute trawl set) using different vessel calibration coefficients.', row.names = F)
+```
+
+# Vessel Calibration Coefficients
+The four types of vessel calibration coefficients are defined as:  
+
+* pink_cal_mixspecies is a mixture of species-specific (*Chellisa:Medeia*) and pooled-species (*Medeia:Cobb*) coefficients for the *Chellissa* and the *N/W Explorer* (i.e., 1/(1.19 x 1.27) where 1.19 is the pooled-species fishing power coefficient from the *Medeia:Cobb* and 1.27 is the species-specific fishing power coefficient from the *Chellisa:Medeia*; see Table 3), and species-specific coefficients for the *Steller* and the *Medeia*. This ends up with a time series that is based on coefficients that vary with species, but are partially derived from a mixture of species-specific and pooled-species coefficients.  
+
+* pink_cal_mixpool is a mixture of species-specific (*Chellissa:Medeia*) and pooled-species (*Medeia:Cobb*) coefficients for the *Chellissa* and the *N/W Explorer* (i.e., 1/(1.19 x 1.27)), and pooled-species coefficients for the *Steller* and the *Medeia*.
+
+* pink_cal_species uses species-specific coefficients for the *Chellisa*, *Steller*, and *Medeia*,  and the *N/W Explorer* uses a species-specific coefficient from the *Chellisa*.
+
+* pink_cal_pool uses pooled-species coefficients for the *Chellisa*, *Steller*, and *Medeia*, and the *N/W Explorer* uses a pooled-species coefficient from the *Chellisa*.
+
+The term species-specific refers to a pink salmon specific vessel calibration coefficient, and the term pooled-species refers to a pink, chum, sockeye, and coho vessel calibration coefficient.
+
+The four vessel calibration coefficients (Table 1) are calculated as the inverse of the fishing power coefficients (Table 3). 
+
+```{r coefficients3}
+tbls_seak$fishing_power %>% 
+   knitr::kable(format = 'pandoc', caption = 'Estimated fishing power coefficients for juvenile salmon catches by the different vessels used during the Southeast Alaska Coastal Monitoring survey (Wertheimer et al.  2008, 2009, and 2010). One of the primary trawl vessels, F/V *Northwest Explorer*, has not been calibrated and it is assumed to have the same fishing power as the *Chellissa*.', row.names = F)
+```
+
+Table 4 (below) shows how the vessel calibration coefficients (in Table 1) are calculated by taking the inverse of the fishing power coefficients in Table 3. 
+
+```{r coefficients4}
+tbls_seak$calibration_coeff_calc %>% 
+   knitr::kable(format = 'pandoc', caption = 'Specific calculations for determining the vessel calibration coefficients  from the fishing power coefficients.', row.names = F)
+```
+
+# Analysis
+Performance metrics (Akaike Information Criterion corrected for small sample sizes; AICc values; Burnham and Anderson 2004; mean and median absolute percentage error (MAPE, MEAPE); mean absolute scaled error (MASE) (Hyndman and Kohler 2006)) were used to evaluate forecast accuracy of four alternative vessel calibration coefficients (Table 1) using the same model. For all of these metrics, the smallest value is the preferred model. The model used for the comparison of the vessel calibration coefficients was:
 
 $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2},$$   
 
-where ${X_1}$ is CPUE, juvenile pink salmon abundance index based on the different vessel calibration coefficients, and ${X_2}$ is the average temperature in Icy Strait in May, June, and July at eight stations in Icy Strait. CPUE data are log-transformed catches that are standardized to an effort of a 20 minute trawl set. The four potential vessel calibration coefficients are defined as:  
-
-pink_cal_mixspecies is a mixture of pink-specific (*Chellisa:Medeia*) and pooled-species (*Medeia:Cobb*) coefficients for the *Chellissa* and the *N/W Explorer*, and a pink salmon coefficient for the *Medeia*. This ends up with a time series that is based on coefficients that vary with species, but are partially derived from a mixture of species-specific and pooled-species coefficients.
-
-pink_cal_mixpool is a mixture of pink-specific (*Chellissa:Medeia*) and pooled-species (*Medeia:Cobb*) coefficients for the *Chellissa* and the *N/W Explorer*, and a pooled-species coefficient for the *Medeia*.
-
-pink_cal_species...
-
-pink_cal_pool...
+where ${X_1}$ is CPUE (i.e., juvenile pink salmon abundance index based on one of the four different vessel calibration coefficients; Table 2), and ${X_2}$ is the average temperature in Icy Strait in May, June, and July at the eight SECM stations in Icy Strait. CPUE data are log-transformed. Statistical analyses were performed with the R Project for Statistical computing version 3.6.3 (R Core Team 2020).
 
 
-```{r coefficients2}
-tbls_seak$calibration_coeff %>% 
-   knitr::kable(format = 'pandoc', caption = 'Calibration coefficients used to convert vessel-specific catches to *Cobb* units. Direct calibrations with the *Cobb* are estimated for the *Steller* and *Medeia*, therefore mixed coefficients are only applied to the *Chellissa* and *NW Explorer*.  Species-specific or pooled-species coefficients could be used as the mixed coefficients for the *Steller* and *Medeia*.', row.names = F)
-```
-
-
-
-```{r coefficients3}
-tbls_seak$peak_values %>% 
-   knitr::kable(format = 'pandoc', caption = 'The data for the variable CPUE (index of juvenile pink salmon abundance based on log-transformed catches that are standardized to an effort of a 20 minute trawl set) using different vessel calibration coefficients.', row.names = F)
-```
-	
-## Conclusion
-Based on *x,y,and z???*, the discussion was limited to the pink_cal_species and pink_cal_pool vessel calibration coefficients. There is a bit more statistical support for the pink_cal_pool coefficient. As the pool coefficients are currently used for sockeye, coho and Chinook salmon catches, the pink_cal_pool vessel calibration coefficient will be used moving forward for calculating the juvenile pink salmon abundance index.
-
-```{r coefficients4}
+```{r coefficients5}
 tbls_seak$model_compare %>% 
    knitr::kable(format = 'pandoc', caption = 'Comparison of the performance metrics for a model based on calculating a time-series of juvenile pink salmon abundance using different vessel calibration coefficients.', row.names = F)
 ```
 
-#References
+# Conclusion
+Based on performance metrics, the pooled-species vessel calibration coefficient was preferred (Table 5). Therefore, the index of juvenile abundance for the 2021 SEAK pink salmon forecast will be based on the pooled-species vessel calibration coefficient.
+
+# References
 Burnham, K. P., and D. R. Anderson. 2004. Multimodel inference: Understanding AIC and BIC in model selection. Sociological Methods and Research 33: 261-304.
 
 Hyndman, R. J. and A. B. Koehler. 2006. Another look at measures of forecast accuracy. International Journal of Forecasting 22: 679-688.
