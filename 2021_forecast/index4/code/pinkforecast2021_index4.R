@@ -66,7 +66,7 @@ eda.norm(log_data$ISTI)
 
 # subset data by peak month (using left_join) and generate list of catch by year (this is used for the bootstrap)
 left_join(catch, variables, by = c("Year" = "JYear")) %>% 
-  dplyr::select(-c(SEAKCatch, CPUEcal, ISTI, CPUE)) %>% 
+  dplyr::select(-c(SEAKCatch, CPUEcal, ISTI, CPUE, ISTI_May, ISTI_May_sat)) %>% 
   dplyr::filter(Month == Pink_Peak) -> cal.data
 
 cal.data <- split(cal.data$Pink,cal.data$Year)
@@ -75,9 +75,13 @@ cal.data
 # STEP #2: HARVEST MODELS AND SUMMARY STATS
 # define model names and formulas
 model.names<-c(m1='CPUE',
-          m2='CPUE+ISTI')
+          m2='CPUE+ISTI',
+          m3='CPUE+ISTI_May',
+          m4='CPUE+ISTI_May_sat')
 model.formulas<-c(SEAKCatch_log ~ CPUE,
-                 SEAKCatch_log ~ CPUE+ISTI) # temp. data 
+                 SEAKCatch_log ~ CPUE+ISTI,
+                 SEAKCatch_log ~ CPUE+ISTI_May,
+                 SEAKCatch_log ~ CPUE+ISTI_May_sat) # temp. data 
 
 # summary statistics and bootstrap of SEAK pink salmon harvest forecast models
 seak.model.summary <- model.summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names)
@@ -90,13 +94,21 @@ log_data %>%
 lm(SEAKCatch_log ~ CPUE, data = log_data_subset) -> m1
 lm(SEAKCatch_log ~ CPUE + ISTI, data = log_data_subset) -> m2
 lm(SEAKCatch_log ~ CPUE*ISTI, data = log_data_subset) -> m3
+lm(SEAKCatch_log ~ CPUE+ISTI_May, data = log_data_subset) -> m4
+lm(SEAKCatch_log ~ CPUE+ISTI_May_sat, data = log_data_subset) -> m5
+
 
 tidy(m1) -> m11
 tidy(m2) -> m22
 tidy(m3) -> m33
+tidy(m4) -> m44
+tidy(m5) -> m55
+
 rbind(m11, m22) %>% 
 rbind(., m33) %>% 
-mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3',' m3')) %>% 
+rbind(., m44) %>%   
+rbind(., m55) %>%   
+mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3',' m3', 'm4', 'm4','m4', 'm5', 'm5', 'm5')) %>% 
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
   mutate(estimate = round(estimate,3),
          std.error = round(std.error,3),
@@ -130,13 +142,21 @@ model_m1 <- train(SEAKCatch_log ~ CPUE, data = log_data_subset, method='lm',
 model_m2 <- train(SEAKCatch_log ~ CPUE + ISTI, data = log_data_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
+model_m4 <- train(SEAKCatch_log ~ CPUE + ISTI_May, data = log_data_subset, method='lm', 
+                  trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
+                  metric = c("MAPE"))
+model_m5 <- train(SEAKCatch_log ~ CPUE + ISTI_May_sat, data = log_data_subset, method='lm', 
+                  trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
+                  metric = c("MAPE"))
 
 # calculate MASE 
 log_data %>% 
   filter(JYear < year.data) -> log_data_subset
 model.m1 = lm(SEAKCatch_log ~ CPUE, data = log_data_subset)
 model.m2 = lm(SEAKCatch_log ~ CPUE + ISTI, data = log_data_subset)
-MASE(model.m1, model.m2) %>%
+model.m4 = lm(SEAKCatch_log ~ CPUE+ISTI_May, data = log_data_subset)
+model.m5 = lm(SEAKCatch_log ~ CPUE + ISTI_May_sat, data = log_data_subset)
+MASE(model.m1, model.m2, model.m4, model.m5) %>%
   dplyr::select(MASE)-> MASE
 
 # add MASE to summary file
@@ -144,7 +164,9 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.
 results %>% 
   dplyr::select(X, AdjR2, AICc, MAPE, MEAPE) %>%
   dplyr::rename(terms = 'X') %>% 
-  mutate(model = ifelse(terms =="CPUE", 'm1', 'm2')) %>% 
+  mutate(model = ifelse(terms =="CPUE", 'm1',
+         ifelse(terms =="CPUE+ISTI_May", 'm4',
+         ifelse(terms =="CPUE+ISTI_May_sat", 'm5', 'm2')))) %>% 
   cbind(., MASE) %>%
   dplyr::select(model, terms, AdjR2, AICc, MAPE, MEAPE, MASE) %>%
   mutate(AdjR2 = round(AdjR2,3),
