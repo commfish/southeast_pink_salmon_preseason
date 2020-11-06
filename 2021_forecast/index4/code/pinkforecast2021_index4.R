@@ -43,34 +43,33 @@ last_year_data_cpue <- 2.147502256 # last year of data
 last_year_data_ISTI <- 8.888254 # last year of data
 source('2021_forecast/functions.r')
 
-
 # STEP 1: DATA
 # read in data
-readRDS(file.path(data.directory,'SECM_Sampling_location_sst.RDS')) -> satellite_SST # update file names
+readRDS(file.path(data.directory,'SECM_Sampling_location_sst.RDS')) -> satellite_SST # SST temp data from satellites
 read.csv(file.path(data.directory,'SECMcatch2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> catch # update file names
 read.csv(file.path(data.directory,'SECMvar2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables #update file names
 
 # summarize SST data
 satellite_SST %>%
-  filter(region == 'ISD')%>%
   group_by(year, month, region) %>%
-  summarise(mean_SST = mean(msst), .groups = 'drop') -> SST_satellite_grouped
+  summarise(mean_SST = mean(msst), .groups = 'drop') %>%
+  as.data.frame() %>%
+  group_by(year, month) %>%
+  summarise(mean_SST = mean(mean_SST), .groups = 'drop') -> SST_satellite_grouped
 
 # average SST for May, June, July
 SST_satellite_grouped %>%
   filter(month %in% c(5,6,7)) %>% 
-  group_by(year, region) %>%
-  summarise(SST_MJJ = mean(mean_SST), .groups = 'drop') %>% 
-  dplyr::select(-c(region)) -> SST_MJJ
+  group_by(year) %>%
+  summarise(SST_MJJ = mean(mean_SST), .groups = 'drop') -> SST_MJJ
 
 # average SST for May
 SST_satellite_grouped %>%
   filter(month %in% c(5)) %>% 
-  group_by(year, region) %>%
-  summarise(SST_May = mean(mean_SST), .groups = 'drop') %>% 
-  dplyr::select(-c(region)) -> SST_May
+  group_by(year) %>%
+  summarise(SST_May = mean(mean_SST), .groups = 'drop') -> SST_May
 
-merge(SST_MJJ, SST_May, by=("year"))->SST_data
+merge(SST_MJJ, SST_May, by=("year")) -> SST_data
 
 # merge satellite data with variables file
 left_join(variables, SST_data,  by = c("JYear" = "year")) -> variables
@@ -204,48 +203,32 @@ results %>%
   write.csv(paste0(results.directory, "/model_summary_table2.csv"), row.names = F)
 
 # STEP #3: CREATE A TEMP FIGURE
-ggplot(variables, aes(x = JYear)) +
-  geom_point(aes(y = ISTI), color ="black", pch=16) +
-  geom_line(aes(y = ISTI), color ="black", lty=1)+
-  geom_point(aes(y = SST_MJJ), color ="grey50") +
-  geom_line(aes(y = SST_MJJ), color ="grey50", lty=3)+
+variables %>% 
+  dplyr::select(JYear, ISTI, ISTI_May, SST_MJJ, SST_May) %>%
+  gather("var", "value", -c(JYear))%>% 
+ggplot(., aes(y = value, x = JYear, group =var)) +
+  geom_point(aes(shape = var, color = var, size=var)) +
+  geom_line(aes(linetype = var, color = var)) +
+  scale_linetype_manual(values=c("solid", "solid", "dotted", "dotted" ))+
+  scale_shape_manual(values=c(15, 8, 15, 8)) +
+  scale_color_manual(values=c('black','black', 'grey70', 'grey70'))+
+  scale_size_manual(values=c(2,2,2,2)) +
   theme(legend.title=element_blank(),
                      panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                     text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
-                     legend.text=element_text(size=12), 
-                     axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
-                     axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
-                     legend.position=c(0.68,0.9))  +
+                     text = element_text(size=14),axis.text.x = element_text(angle=90, hjust=1),
+                     legend.text=element_text(size=14), 
+                     axis.title.y = element_text(size=14, colour="black",family="Times New Roman"),
+                     axis.title.x = element_text(size=14, colour="black",family="Times New Roman"),
+                     legend.position=c(0.9,0.15))  +
   scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
   scale_y_continuous(breaks = c(5,6,7, 8, 9,10,11,12), limits = c(5,12))+
-  labs(y = "Temperature (May, June, July)", x =  "Year") +
-  geom_text(aes(x = 1997, y = 12, label="A)"),family="Times New Roman", colour="black", size=5)+
-  geom_text(aes(x = 2011, y = 8.3, label="ISTI"),family="Times New Roman", colour="black", size=4)+
-  geom_text(aes(x = 2011, y = 10.5, label="SST_MJJ"),family="Times New Roman", colour="black", size=4)-> plot1
+  labs(y = "Temperature", x =  "Year")-> plot1
 
-ggplot(variables, aes(x = JYear)) +
-  geom_point(aes(y = ISTI_May), color ="black", pch=15) +
-  geom_line(aes(y = ISTI_May), color ="black", lty=1)+
-  geom_point(aes(y = SST_May), color ="grey50", pch=15) +
-  geom_line(aes(y = SST_May), color ="grey50", lty=3)+
-  theme(legend.title=element_blank(),
-        legend.box="horizontal",
-        panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
-        legend.text=element_text(size=12), 
-        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
-        axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
-        legend.position=c(0.68,0.9))  +
-  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
-  scale_y_continuous(breaks = c(5, 6,7,8, 9,10,11,12), limits = c(5,12))+
-  labs(y = "Temperature (May)", x =  "Year")+
-  geom_text(aes(x = 1997, y = 12, label="B)"),family="Times New Roman", colour="black", size=5)-> plot2
-cowplot::plot_grid(plot1, plot2, align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "figs/temp.png"), dpi = 500, height = 4, width = 8, units = "in")
+cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
+ggsave(paste0(results.directory, "figs/temp.png"), dpi = 500, height = 4, width = 6, units = "in")
 
-# STEP #3: MODEL DIAGNOSTICS FOR BEST MODEL
+# STEP #4: MODEL DIAGNOSTICS FOR BEST MODEL
 augment(best.model) %>% 
   mutate(SEAKCatch = round((exp(SEAKCatch_log)),1),
          resid = round((.resid),3),
@@ -260,7 +243,7 @@ augment(best.model) %>%
   dplyr::select(year, juvenile_year,  SEAKCatch, CPUE, ISTI, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
   write.csv(paste0(results.directory, "/model_summary_table3.csv"), row.names = F)
 
-# STEP #3: PREDICT NEXT YEAR'S CATCH BASED ON BEST MODEL
+# STEP #5: PREDICT NEXT YEAR'S CATCH BASED ON BEST MODEL
 # bootstrap
 # http://rstudio-pubs-static.s3.amazonaws.com/24365_2803ab8299934e888a60e7b16113f619.html
 # prediction m2
@@ -277,7 +260,7 @@ fit_value
 lwr_pi
 upr_pi
 
-# STEP #4: DIAGNOSTIC PLOTS OF BEST MODEL
+# STEP #6: MORE DIAGNOSTIC PLOTS OF BEST MODEL
 # Diagnostics: test model assumptions (normality, linearity, residuals)
 png(paste0(results.directory, "figs/general_diagnostics.png"))
 autoplot(best.model)
