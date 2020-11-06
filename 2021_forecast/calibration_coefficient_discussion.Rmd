@@ -68,7 +68,7 @@ The four types of vessel calibration coefficients are defined as:
 
 * pink_cal_pool uses pooled-species coefficients for the *Chellisa*, *Steller*, and *Medeia*, and the *N/W Explorer* uses a pooled-species coefficient from the *Chellisa*.
 
-The term species-specific refers to a pink salmon specific vessel calibration coefficient, and the term pooled-species refers to a pink, chum, sockeye, and coho vessel calibration coefficient.
+The term species-specific refers to a pink salmon specific vessel calibration coefficient, and the term pooled-species refers to a pink, chum, sockeye, and coho (i.e., catch of all species summed) vessel calibration coefficient.
 
 The four vessel calibration coefficients (Table 1) are calculated as the inverse of the fishing power coefficients (Table 3). 
 

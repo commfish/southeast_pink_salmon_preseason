@@ -43,10 +43,37 @@ last_year_data_cpue <- 2.147502256 # last year of data
 last_year_data_ISTI <- 8.888254 # last year of data
 source('2021_forecast/functions.r')
 
+
 # STEP 1: DATA
 # read in data
+readRDS(file.path(data.directory,'SECM_Sampling_location_sst.RDS')) -> satellite_SST # update file names
 read.csv(file.path(data.directory,'SECMcatch2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> catch # update file names
 read.csv(file.path(data.directory,'SECMvar2020.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables #update file names
+
+# summarize SST data
+satellite_SST %>%
+  filter(region == 'ISD')%>%
+  group_by(year, month, region) %>%
+  summarise(mean_SST = mean(msst), .groups = 'drop') -> SST_satellite_grouped
+
+# average SST for May, June, July
+SST_satellite_grouped %>%
+  filter(month %in% c(5,6,7)) %>% 
+  group_by(year, region) %>%
+  summarise(SST_MJJ = mean(mean_SST), .groups = 'drop') %>% 
+  dplyr::select(-c(region)) -> SST_MJJ
+
+# average SST for May
+SST_satellite_grouped %>%
+  filter(month %in% c(5)) %>% 
+  group_by(year, region) %>%
+  summarise(SST_May = mean(mean_SST), .groups = 'drop') %>% 
+  dplyr::select(-c(region)) -> SST_May
+
+merge(SST_MJJ, SST_May, by=("year"))->SST_data
+
+# merge satellite data with variables file
+left_join(variables, SST_data,  by = c("JYear" = "year")) -> variables
 
 # restructure the data 
 variables$CPUE <- variables$CPUEcal # Use CPUEcal as CPUE index
@@ -63,10 +90,13 @@ eda.norm(log_data$SEAKCatch)# data is normal if the p-value is above 0.05.
 eda.norm(log_data$SEAKCatch_log)
 eda.norm(log_data$CPUE)# already ln(CPUE+1)
 eda.norm(log_data$ISTI)
+eda.norm(log_data$ISTI_May)
+eda.norm(log_data$SST_May)
+eda.norm(log_data$SST_MJJ)
 
 # subset data by peak month (using left_join) and generate list of catch by year (this is used for the bootstrap)
 left_join(catch, variables, by = c("Year" = "JYear")) %>% 
-  dplyr::select(-c(SEAKCatch, CPUEcal, ISTI, CPUE, ISTI_May, ISTI_May_sat)) %>% 
+  dplyr::select(-c(SEAKCatch, CPUEcal, ISTI, CPUE, ISTI_May, SST_May, SST_MJJ)) %>% 
   dplyr::filter(Month == Pink_Peak) -> cal.data
 
 cal.data <- split(cal.data$Pink,cal.data$Year)
@@ -77,11 +107,13 @@ cal.data
 model.names<-c(m1='CPUE',
           m2='CPUE+ISTI',
           m3='CPUE+ISTI_May',
-          m4='CPUE+ISTI_May_sat')
+          m4='CPUE+SST_May',
+          m5='CPUE+SST_MJJ')
 model.formulas<-c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE+ISTI,
                  SEAKCatch_log ~ CPUE+ISTI_May,
-                 SEAKCatch_log ~ CPUE+ISTI_May_sat) # temp. data 
+                 SEAKCatch_log ~ CPUE+SST_May,
+                 SEAKCatch_log ~ CPUE+SST_MJJ) # temp. data 
 
 # summary statistics and bootstrap of SEAK pink salmon harvest forecast models
 seak.model.summary <- model.summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names)
@@ -95,20 +127,22 @@ lm(SEAKCatch_log ~ CPUE, data = log_data_subset) -> m1
 lm(SEAKCatch_log ~ CPUE + ISTI, data = log_data_subset) -> m2
 lm(SEAKCatch_log ~ CPUE*ISTI, data = log_data_subset) -> m3
 lm(SEAKCatch_log ~ CPUE+ISTI_May, data = log_data_subset) -> m4
-lm(SEAKCatch_log ~ CPUE+ISTI_May_sat, data = log_data_subset) -> m5
-
+lm(SEAKCatch_log ~ CPUE+SST_May, data = log_data_subset) -> m5
+lm(SEAKCatch_log ~ CPUE+SST_MJJ, data = log_data_subset) -> m6
 
 tidy(m1) -> m11
 tidy(m2) -> m22
 tidy(m3) -> m33
 tidy(m4) -> m44
 tidy(m5) -> m55
+tidy(m6) -> m66
 
 rbind(m11, m22) %>% 
 rbind(., m33) %>% 
 rbind(., m44) %>%   
-rbind(., m55) %>%   
-mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3',' m3', 'm4', 'm4','m4', 'm5', 'm5', 'm5')) %>% 
+rbind(., m55) %>%  
+rbind(., m66) %>% 
+mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3',' m3', 'm4', 'm4','m4', 'm5', 'm5', 'm5', 'm6', 'm6', 'm6')) %>% 
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
   mutate(estimate = round(estimate,3),
          std.error = round(std.error,3),
@@ -116,19 +150,6 @@ mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3',' m3', 'm4', 'm4','m4',
          p.value = round(p.value,3)) %>%
 write.csv(., paste0(results.directory, "/model_summary_table1.csv"), row.names = F)
 
-augment(best.model) %>% 
-  mutate(SEAKCatch = round((exp(SEAKCatch_log)),1),
-        resid = round((.resid),3),
-         hat_values = round((.hat),3),
-         Cooks_distance = round((.cooksd),3),
-         std_resid = round((.std.resid),3),
-         fitted = round((.fitted),3),
-         CPUE = round((CPUE),3),
-         ISTI = round((ISTI),3),
-         year=1998:year.data, 
-        juvenile_year = 1997:year.data.one) %>%
-  dplyr::select(year, juvenile_year,  SEAKCatch, CPUE, ISTI, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
-  write.csv(paste0(results.directory, "/model_summary_table3.csv"), row.names = F)
 # leave one out cross validation (verify seak.model.summary)
 # https://stats.stackexchange.com/questions/27351/compare-models-loccv-implementation-in-r
 # https://machinelearningmastery.com/how-to-estimate-model-accuracy-in-r-using-the-caret-package/
@@ -145,7 +166,10 @@ model_m2 <- train(SEAKCatch_log ~ CPUE + ISTI, data = log_data_subset, method='l
 model_m4 <- train(SEAKCatch_log ~ CPUE + ISTI_May, data = log_data_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
-model_m5 <- train(SEAKCatch_log ~ CPUE + ISTI_May_sat, data = log_data_subset, method='lm', 
+model_m5 <- train(SEAKCatch_log ~ CPUE + SST_May, data = log_data_subset, method='lm', 
+                  trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
+                  metric = c("MAPE"))
+model_m6 <- train(SEAKCatch_log ~ CPUE + SST_MJJ, data = log_data_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
 
@@ -155,8 +179,10 @@ log_data %>%
 model.m1 = lm(SEAKCatch_log ~ CPUE, data = log_data_subset)
 model.m2 = lm(SEAKCatch_log ~ CPUE + ISTI, data = log_data_subset)
 model.m4 = lm(SEAKCatch_log ~ CPUE+ISTI_May, data = log_data_subset)
-model.m5 = lm(SEAKCatch_log ~ CPUE + ISTI_May_sat, data = log_data_subset)
-MASE(model.m1, model.m2, model.m4, model.m5) %>%
+model.m5 = lm(SEAKCatch_log ~ CPUE + SST_May, data = log_data_subset)
+model.m6 = lm(SEAKCatch_log ~ CPUE + SST_MJJ, data = log_data_subset)
+
+MASE(model.m1, model.m2, model.m4, model.m5, model.m6) %>%
   dplyr::select(MASE)-> MASE
 
 # add MASE to summary file
@@ -165,8 +191,9 @@ results %>%
   dplyr::select(X, AdjR2, AICc, MAPE, MEAPE) %>%
   dplyr::rename(terms = 'X') %>% 
   mutate(model = ifelse(terms =="CPUE", 'm1',
+         ifelse(terms =="CPUE+ISTI", 'm2',              
          ifelse(terms =="CPUE+ISTI_May", 'm4',
-         ifelse(terms =="CPUE+ISTI_May_sat", 'm5', 'm2')))) %>% 
+         ifelse(terms =="CPUE+SST_May", 'm5', 'm6'))))) %>% 
   cbind(., MASE) %>%
   dplyr::select(model, terms, AdjR2, AICc, MAPE, MEAPE, MASE) %>%
   mutate(AdjR2 = round(AdjR2,3),
@@ -175,6 +202,63 @@ results %>%
          MEAPE = round(MEAPE,3),
          MASE = round(MASE,3)) %>%
   write.csv(paste0(results.directory, "/model_summary_table2.csv"), row.names = F)
+
+# STEP #3: CREATE A TEMP FIGURE
+ggplot(variables, aes(x = JYear)) +
+  geom_point(aes(y = ISTI), color ="black", pch=16) +
+  geom_line(aes(y = ISTI), color ="black", lty=1)+
+  geom_point(aes(y = SST_MJJ), color ="grey50") +
+  geom_line(aes(y = SST_MJJ), color ="grey50", lty=3)+
+  theme(legend.title=element_blank(),
+                     panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                     text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
+                     legend.text=element_text(size=12), 
+                     axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
+                     axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
+                     legend.position=c(0.68,0.9))  +
+  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
+  scale_y_continuous(breaks = c(5,6,7, 8, 9,10,11,12), limits = c(5,12))+
+  labs(y = "Temperature (May, June, July)", x =  "Year") +
+  geom_text(aes(x = 1997, y = 12, label="A)"),family="Times New Roman", colour="black", size=5)+
+  geom_text(aes(x = 2011, y = 8.3, label="ISTI"),family="Times New Roman", colour="black", size=4)+
+  geom_text(aes(x = 2011, y = 10.5, label="SST_MJJ"),family="Times New Roman", colour="black", size=4)-> plot1
+
+ggplot(variables, aes(x = JYear)) +
+  geom_point(aes(y = ISTI_May), color ="black", pch=15) +
+  geom_line(aes(y = ISTI_May), color ="black", lty=1)+
+  geom_point(aes(y = SST_May), color ="grey50", pch=15) +
+  geom_line(aes(y = SST_May), color ="grey50", lty=3)+
+  theme(legend.title=element_blank(),
+        legend.box="horizontal",
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
+        legend.text=element_text(size=12), 
+        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
+        axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
+        legend.position=c(0.68,0.9))  +
+  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
+  scale_y_continuous(breaks = c(5, 6,7,8, 9,10,11,12), limits = c(5,12))+
+  labs(y = "Temperature (May)", x =  "Year")+
+  geom_text(aes(x = 1997, y = 12, label="B)"),family="Times New Roman", colour="black", size=5)-> plot2
+cowplot::plot_grid(plot1, plot2, align = "vh", nrow = 1, ncol=2)
+ggsave(paste0(results.directory, "figs/temp.png"), dpi = 500, height = 4, width = 8, units = "in")
+
+# STEP #3: MODEL DIAGNOSTICS FOR BEST MODEL
+augment(best.model) %>% 
+  mutate(SEAKCatch = round((exp(SEAKCatch_log)),1),
+         resid = round((.resid),3),
+         hat_values = round((.hat),3),
+         Cooks_distance = round((.cooksd),3),
+         std_resid = round((.std.resid),3),
+         fitted = round((.fitted),3),
+         CPUE = round((CPUE),3),
+         ISTI = round((ISTI),3),
+         year=1998:year.data, 
+         juvenile_year = 1997:year.data.one) %>%
+  dplyr::select(year, juvenile_year,  SEAKCatch, CPUE, ISTI, resid, hat_values, Cooks_distance, std_resid, fitted) %>%
+  write.csv(paste0(results.directory, "/model_summary_table3.csv"), row.names = F)
 
 # STEP #3: PREDICT NEXT YEAR'S CATCH BASED ON BEST MODEL
 # bootstrap
@@ -330,11 +414,63 @@ augment(best.model) %>%
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_hline(yintercept = 0.26, lty=2) +
   scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
-  labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=10),
+  labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=12),
                                                       axis.text.x = element_text(angle=90, hjust=1))+
   geom_text(aes(x = 1997, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot5
 cowplot::plot_grid(plot4, plot5,  align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "figs/influential.png"), dpi = 500, height = 3, width = 6, units = "in")
+
+# plot of harvest by year with prediction error; news release
+augment(best.model) %>% 
+  mutate(year = 1998:year.data, 
+         catch = exp(SEAKCatch_log),
+         fit = exp(.fitted) * exp(0.5* sigma*sigma))  %>%
+  as.data.frame() %>%
+  ggplot(aes(x=year)) +
+  geom_bar(aes(y = catch, fill = "SEAK pink catch"),
+           stat = "identity", colour ="black",
+           width = 1, position = position_dodge(width = 0.1)) +
+  geom_line(aes(y = fit, colour = "fit"), linetype = 1, size = 0.75) +
+  scale_colour_manual("", values=c("SEAK pink catch" = "lightgrey", "fit" = "black")) +
+  scale_fill_manual("",values="lightgrey")+
+  theme_bw() + theme(legend.key=element_blank(),
+                     legend.title=element_blank(),
+                     legend.box="horizontal",
+                     panel.border = element_blank(), panel.grid.major = element_blank(),
+                                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                                         text = element_text(size=16),axis.text.x = element_text(angle=90, hjust=1),
+                                         legend.text=element_text(size=16), 
+                                         axis.title.y = element_text(size=16, colour="black",family="Times New Roman"),
+                                         axis.title.x = element_text(size=16, colour="black",family="Times New Roman"),
+                     legend.position=c(0.68,0.9)) +
+  geom_point(x=year.data +1, y=fit_value, pch=21, size=5, colour = "black", fill="grey") +
+  scale_x_continuous(breaks = seq(1998, year.data+1, 1)) +
+  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ 
+  labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
+  geom_text(aes(x = 1998, y = 140, label="A)"),family="Times New Roman", colour="black", size=7)+
+  geom_segment(aes(x = year.data + 1, y = lwr_pi, yend = upr_pi, xend = year.data + 1), size=1, colour="black", lty=1)  -> plot1
+
+# plot of observed harvest by fitted values (with one to one line); news release
+augment(best.model) %>% 
+  mutate(year = 1998:2020, 
+         catch = exp(SEAKCatch_log), 
+         sigma = .sigma,
+         fit = exp(.fitted) * exp(0.5*sigma*sigma)) %>%
+  as.data.frame() %>%
+  ggplot(aes(x=fit, y=catch)) +
+  geom_point(aes(y = catch), colour = "black", size = 3) +
+  scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                         text = element_text(size=16),
+                                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                                         axis.title.y = element_text(size=16, colour="black",family="Times New Roman"),
+                                         axis.title.x = element_text(size=16, colour="black",family="Times New Roman")) +
+  theme(legend.position="none") + theme(legend.title=element_blank())+
+  scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
+  scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
+  geom_abline(intercept = 0, lty=3) +  
+  labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
+  geom_text(aes(x = 2, y = 140, label="B)"),family="Times New Roman", colour="black", size=7) -> plot2
+ggsave(paste0(results.directory, "figs/catch_plot_nr.png"), dpi = 500, height = 6, width = 10, units = "in")
 
 # plot of harvest by year with prediction error 
 augment(best.model) %>% 
@@ -354,16 +490,17 @@ augment(best.model) %>%
                      legend.title=element_blank(),
                      legend.box="horizontal",
                      panel.border = element_blank(), panel.grid.major = element_blank(),
-                                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                                         text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1),
-                                         axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
-                                         axis.title.x = element_text(size=9, colour="black",family="Times New Roman"),
-                     legend.position=c(0.68,0.9)) +
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                     text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1),
+                     legend.text=element_text(size=10), 
+                     axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
+                     axis.title.x = element_text(size=10, colour="black",family="Times New Roman"),
+                     legend.position=c(0.60,0.9)) +
   geom_point(x=year.data +1, y=fit_value, pch=21, size=3, colour = "black", fill="grey") +
   scale_x_continuous(breaks = seq(1998, year.data+1, 1)) +
-  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
+  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ 
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  #geom_text(aes(x = 1998, y = 140, label="a)"),family="Times New Roman", colour="black", size=5)+
+  geom_text(aes(x = 1998, y = 140, label="A)"),family="Times New Roman", colour="black", size=5)+
   geom_segment(aes(x = year.data + 1, y = lwr_pi, yend = upr_pi, xend = year.data + 1), size=1, colour="black", lty=1)  -> plot1
 
 # plot of observed harvest by fitted values (with one to one line)
@@ -375,11 +512,12 @@ augment(best.model) %>%
   as.data.frame() %>%
   #write.csv(paste0(results.directory, "/data2.csv"), row.names = F)
   ggplot(aes(x=fit, y=catch)) +
-  geom_point(aes(y = catch), colour = "black", size = 1) +
+  geom_point(aes(y = catch), colour = "black", size = 2) +
   scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                         text = element_text(size=10),
                                          panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                                         axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
-                                         axis.title.x = element_text(size=9, colour="black",family="Times New Roman")) +
+                                         axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
+                                         axis.title.x = element_text(size=10, colour="black",family="Times New Roman")) +
   theme(legend.position="none") + theme(legend.title=element_blank())+
   scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
@@ -387,18 +525,13 @@ augment(best.model) %>%
   #geom_text_repel( aes(x = fit, y = catch, label = year),
   #                                                     nudge_x = 1, size = 4, show.legend = FALSE) + 
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  #geom_text(aes(x = 2, y = 140, label="b)"),family="Times New Roman", colour="black", size=5) +
-  geom_text(aes(y = 101, x = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(y = 47, x = 23, label="1998"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(y = 4, x = 19, label="2018"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(y = 30, x = 62, label="2015"),family="Times New Roman", colour="black", size=4)-> plot2
-cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
-ggsave(paste0(results.directory, "figs/catch_plot_pred_a.png"), dpi = 500, height = 3, width = 6, units = "in")
-cowplot::plot_grid(plot2, align = "vh", nrow = 1, ncol=1)
-ggsave(paste0(results.directory, "figs/catch_plot_pred_b.png"), dpi = 500, height = 3, width = 6, units = "in")
-
+  geom_text(aes(x = 2, y = 140, label="B)"),family="Times New Roman", colour="black", size=5) -> plot2
+#geom_text(aes(y = 101, x = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
+#geom_text(aes(y = 47, x = 23, label="1998"),family="Times New Roman", colour="black", size=4) +
+#geom_text(aes(y = 4, x = 19, label="2018"),family="Times New Roman", colour="black", size=4) +
+#geom_text(aes(y = 30, x = 62, label="2015"),family="Times New Roman", colour="black", size=4)-> plot2
 cowplot::plot_grid(plot1, plot2, align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "figs/catch_plot_combined.png"), dpi = 500, height = 4, width = 8, units = "in")
+ggsave(paste0(results.directory, "figs/catch_plot_combined.png"), dpi = 500, height = 3, width = 6, units = "in")
 # model average (not sure how to do prediction interval on model averaged linear regressions)**
 # not currently used 
 #fit.avg <- model.avg(model.m1, model.m2)
