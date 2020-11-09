@@ -254,8 +254,9 @@ newdata <- data.frame(CPUE, ISTI)
 predicted<-predict(model.m2, newdata, interval="prediction", level = 0.80) #prediction interval
 predicted <- as.data.frame(predicted)
 fit_value <- exp(predicted$fit)*exp(0.5*sigma*sigma) #adjustment for exp
+#fit_value <- exp(predicted$fit +0.5*sigma*sigma) #adjustment for exp
 lwr_pi <-  exp(predicted$lwr)*exp(0.5*sigma*sigma)
-upr_pi <-  exp(predicted$upr)*exp(0.5*sigma*sigma)
+upr_pi <-  exp(predicted$upr)*exp(0.5*sigma*sigma) # https://stackoverflow.com/questions/40324963/when-predicting-using-model-with-logtarget-do-i-have-to-make-any-changes-to-pr
 fit_value
 lwr_pi
 upr_pi
