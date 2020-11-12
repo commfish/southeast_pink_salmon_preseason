@@ -114,7 +114,7 @@ tbls_seak$model_summary_table3 %>%
 ```
 
 ## Results
-The best regression model based on the AICc value, the MASE metric, and significant coefficients in the model was model m2 (i.e., the model containing CPUE, and a May through July temperature variable). The adjusted $R^2$ value for model m2 was 0.83 (Table 2) indicating overall a good model fit. Based upon a model that includes juvenile pink salmon CPUE and May through July temperature (model m2), the 2021 SEAK pink salmon harvest is predicted to be in the moderate range with a point estimate (model mean) of 28.5 million fish (80% prediction interval: 19.4 to 41.7 million fish). The 80% prediction interval around the forecast were calculated using the car package (Fox and Weisberg 2019) in program R (R Core Team).
+The best regression model based on the AICc value, the MASE metric, and significant coefficients in the model was model m2 (i.e., the model containing CPUE, and a May through July temperature variable). The adjusted $R^2$ value for model m2 was 0.83 (Table 2) indicating overall a good model fit. Based upon a model that includes juvenile pink salmon CPUE and May through July temperature (model m2), the 2021 SEAK pink salmon harvest is predicted to be in the average range with a point estimate (model mean) of 28.5 million fish (80% prediction interval: 19.4 to 41.7 million fish). The 80% prediction interval around the forecast were calculated using the car package (Fox and Weisberg 2019) in program R (R Core Team).
 
 ```{r pred, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/catch_plot_combined.png"))
