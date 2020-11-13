@@ -73,6 +73,7 @@ merge(SST_MJJ, SST_May, by=("year")) -> SST_data
 
 # merge satellite data with variables file
 left_join(variables, SST_data,  by = c("JYear" = "year")) -> variables
+#write.csv(variables, paste0(data.directory, "/dataset.csv"), row.names = F)
 
 # restructure the data 
 variables$CPUE <- variables$CPUEcal # Use CPUEcal as CPUE index
@@ -95,7 +96,7 @@ eda.norm(log_data$SST_MJJ)
 
 # subset data by peak month (using left_join) and generate list of catch by year (this is used for the bootstrap)
 left_join(catch, variables, by = c("Year" = "JYear")) %>% 
-  dplyr::select(-c(SEAKCatch, CPUEcal, ISTI, CPUE, ISTI_May, SST_May, SST_MJJ)) %>% 
+  dplyr::select(-c(SEAKCatch, CPUEcal, ISTI, CPUE)) %>% 
   dplyr::filter(Month == Pink_Peak) -> cal.data
 
 cal.data <- split(cal.data$Pink,cal.data$Year)
@@ -104,15 +105,9 @@ cal.data
 # STEP #2: HARVEST MODELS AND SUMMARY STATS
 # define model names and formulas
 model.names<-c(m1='CPUE',
-          m2='CPUE+ISTI',
-          m3='CPUE+ISTI_May',
-          m4='CPUE+SST_May',
-          m5='CPUE+SST_MJJ')
+               m2='CPUE+ISTI')
 model.formulas<-c(SEAKCatch_log ~ CPUE,
-                 SEAKCatch_log ~ CPUE+ISTI,
-                 SEAKCatch_log ~ CPUE+ISTI_May,
-                 SEAKCatch_log ~ CPUE+SST_May,
-                 SEAKCatch_log ~ CPUE+SST_MJJ) # temp. data 
+                 SEAKCatch_log ~ CPUE+ISTI) # temp. data 
 
 # summary statistics and bootstrap of SEAK pink salmon harvest forecast models
 seak.model.summary <- model.summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names)
@@ -125,25 +120,16 @@ log_data %>%
 lm(SEAKCatch_log ~ CPUE, data = log_data_subset) -> m1
 lm(SEAKCatch_log ~ CPUE + ISTI, data = log_data_subset) -> m2
 lm(SEAKCatch_log ~ CPUE*ISTI, data = log_data_subset) -> m3
-lm(SEAKCatch_log ~ CPUE+ISTI_May, data = log_data_subset) -> m4
-lm(SEAKCatch_log ~ CPUE+SST_May, data = log_data_subset) -> m5
-lm(SEAKCatch_log ~ CPUE+SST_MJJ, data = log_data_subset) -> m6
 
 tidy(m1) -> m11
 tidy(m2) -> m22
 tidy(m3) -> m33
-tidy(m4) -> m44
-tidy(m5) -> m55
-tidy(m6) -> m66
 
 rbind(m11, m22) %>% 
 rbind(., m33) %>% 
-rbind(., m44) %>%   
-rbind(., m55) %>%  
-rbind(., m66) %>% 
-mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3',' m3', 'm4', 'm4','m4', 'm5', 'm5', 'm5', 'm6', 'm6', 'm6')) %>% 
+mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3',' m3')) %>% 
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
-  mutate(estimate = round(estimate,3),
+  mutate(estimate = round(estimate,8),
          std.error = round(std.error,3),
          statistic = round(statistic,3),
          p.value = round(p.value,3)) %>%
@@ -162,26 +148,14 @@ model_m1 <- train(SEAKCatch_log ~ CPUE, data = log_data_subset, method='lm',
 model_m2 <- train(SEAKCatch_log ~ CPUE + ISTI, data = log_data_subset, method='lm', 
                   trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
                   metric = c("MAPE"))
-model_m4 <- train(SEAKCatch_log ~ CPUE + ISTI_May, data = log_data_subset, method='lm', 
-                  trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
-                  metric = c("MAPE"))
-model_m5 <- train(SEAKCatch_log ~ CPUE + SST_May, data = log_data_subset, method='lm', 
-                  trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
-                  metric = c("MAPE"))
-model_m6 <- train(SEAKCatch_log ~ CPUE + SST_MJJ, data = log_data_subset, method='lm', 
-                  trControl=trainControl(method = "LOOCV", summaryFunction = mape_summary),
-                  metric = c("MAPE"))
 
 # calculate MASE 
 log_data %>% 
   filter(JYear < year.data) -> log_data_subset
 model.m1 = lm(SEAKCatch_log ~ CPUE, data = log_data_subset)
 model.m2 = lm(SEAKCatch_log ~ CPUE + ISTI, data = log_data_subset)
-model.m4 = lm(SEAKCatch_log ~ CPUE+ISTI_May, data = log_data_subset)
-model.m5 = lm(SEAKCatch_log ~ CPUE + SST_May, data = log_data_subset)
-model.m6 = lm(SEAKCatch_log ~ CPUE + SST_MJJ, data = log_data_subset)
 
-MASE(model.m1, model.m2, model.m4, model.m5, model.m6) %>%
+MASE(model.m1, model.m2) %>%
   dplyr::select(MASE)-> MASE
 
 # add MASE to summary file
@@ -189,10 +163,7 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.
 results %>% 
   dplyr::select(X, AdjR2, AICc, MAPE, MEAPE) %>%
   dplyr::rename(terms = 'X') %>% 
-  mutate(model = ifelse(terms =="CPUE", 'm1',
-         ifelse(terms =="CPUE+ISTI", 'm2',              
-         ifelse(terms =="CPUE+ISTI_May", 'm4',
-         ifelse(terms =="CPUE+SST_May", 'm5', 'm6'))))) %>% 
+  mutate(model = ifelse(terms =="CPUE", 'm1','m2')) %>% 
   cbind(., MASE) %>%
   dplyr::select(model, terms, AdjR2, AICc, MAPE, MEAPE, MASE) %>%
   mutate(AdjR2 = round(AdjR2,3),
@@ -203,30 +174,30 @@ results %>%
   write.csv(paste0(results.directory, "/model_summary_table2.csv"), row.names = F)
 
 # STEP #3: CREATE A TEMP FIGURE
-variables %>% 
-  dplyr::select(JYear, ISTI, ISTI_May, SST_MJJ, SST_May) %>%
-  gather("var", "value", -c(JYear))%>% 
-ggplot(., aes(y = value, x = JYear, group =var)) +
-  geom_point(aes(shape = var, color = var, size=var)) +
-  geom_line(aes(linetype = var, color = var)) +
-  scale_linetype_manual(values=c("solid", "solid", "dotted", "dotted" ))+
-  scale_shape_manual(values=c(15, 8, 15, 8)) +
-  scale_color_manual(values=c('black','black', 'grey70', 'grey70'))+
-  scale_size_manual(values=c(2,2,2,2)) +
-  theme(legend.title=element_blank(),
-                     panel.border = element_blank(), panel.grid.major = element_blank(),
-                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                     text = element_text(size=14),axis.text.x = element_text(angle=90, hjust=1),
-                     legend.text=element_text(size=14), 
-                     axis.title.y = element_text(size=14, colour="black",family="Times New Roman"),
-                     axis.title.x = element_text(size=14, colour="black",family="Times New Roman"),
-                     legend.position=c(0.9,0.15))  +
-  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
-  scale_y_continuous(breaks = c(5,6,7, 8, 9,10,11,12), limits = c(5,12))+
-  labs(y = "Temperature", x =  "Year")-> plot1
+#variables %>% 
+#  dplyr::select(JYear, ISTI, ISTI_May, SST_MJJ, SST_May) %>%
+#  gather("var", "value", -c(JYear))%>% 
+#ggplot(., aes(y = value, x = JYear, group =var)) +
+#  geom_point(aes(shape = var, color = var, size=var)) +
+#  geom_line(aes(linetype = var, color = var)) +
+#  scale_linetype_manual(values=c("solid", "solid", "dotted", "dotted" ))+
+#  scale_shape_manual(values=c(15, 8, 15, 8)) +
+#  scale_color_manual(values=c('black','black', 'grey70', 'grey70'))+
+#  scale_size_manual(values=c(2,2,2,2)) +
+#  theme(legend.title=element_blank(),
+#                     panel.border = element_blank(), panel.grid.major = element_blank(),
+#                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+#                     text = element_text(size=14),axis.text.x = element_text(angle=90, hjust=1),
+#                     legend.text=element_text(size=14), 
+#                     axis.title.y = element_text(size=14, colour="black",family="Times New Roman"),
+#                     axis.title.x = element_text(size=14, colour="black",family="Times New Roman"),
+#                     legend.position=c(0.9,0.15))  +
+#  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
+#  scale_y_continuous(breaks = c(5,6,7, 8, 9,10,11,12), limits = c(5,12))+
+#  labs(y = "Temperature", x =  "Year")-> plot1
 
-cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
-ggsave(paste0(results.directory, "figs/temp.png"), dpi = 500, height = 4, width = 6, units = "in")
+#cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
+#ggsave(paste0(results.directory, "figs/temp.png"), dpi = 500, height = 4, width = 6, units = "in")
 
 # STEP #4: MODEL DIAGNOSTICS FOR BEST MODEL
 augment(best.model) %>% 
@@ -246,11 +217,14 @@ augment(best.model) %>%
 # STEP #5: PREDICT NEXT YEAR'S CATCH BASED ON BEST MODEL
 # bootstrap
 # http://rstudio-pubs-static.s3.amazonaws.com/24365_2803ab8299934e888a60e7b16113f619.html
+# https://davegiles.blogspot.com/2014/12/s.html
 # prediction m2
 sigma<- sigma(best.model) # best model
 CPUE <- last_year_data_cpue # last year of data
 ISTI <- last_year_data_ISTI # last year of data
 newdata <- data.frame(CPUE, ISTI)
+#newdata <- data.frame(CPUE)
+#predicted<-predict(model.m1, newdata, interval="prediction", level = 0.80) #prediction interval
 predicted<-predict(model.m2, newdata, interval="prediction", level = 0.80) #prediction interval
 predicted <- as.data.frame(predicted)
 fit_value <- exp(predicted$fit)*exp(0.5*sigma*sigma) #adjustment for exp
@@ -260,6 +234,7 @@ upr_pi <-  exp(predicted$upr)*exp(0.5*sigma*sigma) # https://stackoverflow.com/q
 fit_value
 lwr_pi
 upr_pi
+
 
 # STEP #6: MORE DIAGNOSTIC PLOTS OF BEST MODEL
 # Diagnostics: test model assumptions (normality, linearity, residuals)

@@ -1,7 +1,7 @@
 ---
 title: "Pink Salmon Vessel Calibration Coefficient Discussion"
 author: "Sara Miller, Rich Brenner, Jim Murphy"
-date: "November 4, 2020--draft"
+date: "November 12, 2020"
 #output:
 #  word_document: default
 #  html_document: default
@@ -44,7 +44,6 @@ Excerpted from Wertheimer et al. 2010:
 
 "From 1997 to 2007, SECM used the NOAA ship *John N. Cobb* to accrue an 11 year time series of catches with a Nordic 264 rope trawl fished at the surface... (Orsi et al. 2000, 2008)... In 2007, in anticipation of the decommissioning of the *John N. Cobb*, the *Medeia* and the *John N. Cobb* fished synoptically for 28 pairs of trawl hauls to develop calibration factors in the event of differential catch rates between the two vessels (Wertheimer et al. 2008).  In 2008, the *Medeia* fished synoptically with the chartered research vessel *Steller* to determine relative fishing efficiency so that *Steller* catches could then be compared and calibrated to the SECM data series from the *John N. Cobb* (Wertheimer et al. 2009).  In 2009, the commercial trawler *Chellissa* was chartered to fish the SECM transects in the northern and southern regions of Southeast Alaska. The *Medeia* was again fished synoptically in the northern region transects to determine relative fishing efficiency (Table 1)."
 
-Historically....  
 For the 2021 SEAK pink salmon forecast, there was a discussion as to which vessel calibration coefficient to use going forward. Using the four potential vessel calibration types (pink_cal_mixspecies, pink_cal_mixpool, pink_cal_species, pink_cal_pool; Table 1), the corresponding index of juvenile abundance was slightly different (i.e., CPUE; standardized pink salmon catch based on a 20 minute trawl set by year; Table 2). To calculate the index of juvenile abundance by calibration type, the log-transformed pink salmon catch (standardized to an effort of a 20 minute trawl set), by haul, is multiplied by a vessel calibration coefficient (Table 1). Then, this value is averaged by month and year; whichever month had the highest average catches in a given year is then used as the juvenile abundance index for that particular year (Table 2). This index of juvenile abundance is then used as the variable 'CPUE' in the 2021 SEAK pink salmon forecast models.
 
 ```{r coefficients1}
