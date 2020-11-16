@@ -481,8 +481,8 @@ augment(best.model) %>%
   scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   geom_abline(intercept = 0, lty=3) +  
-  #geom_text_repel( aes(x = fit, y = catch, label = year),
-  #                                                     nudge_x = 1, size = 4, show.legend = FALSE) + 
+  geom_text_repel( aes(x = fit, y = catch, label = year),
+                                                       nudge_x = 1, size = 4, show.legend = FALSE) + 
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_text(aes(x = 2, y = 140, label="B)"),family="Times New Roman", colour="black", size=5) -> plot2
 #geom_text(aes(y = 101, x = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
