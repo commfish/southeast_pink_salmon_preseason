@@ -58,7 +58,7 @@ The four regions are defined as:
 
 **Chatham_Strait**: This region encompasses waters of Chatham Strait from the northern tip of Admiralty Island (approximately 58.425 degrees latitude north) to the approximate latitude of 56.025 degrees north (roughly Cape Decision off Kuiu Island) (Figure 2).
 
-**NSEAK**: This region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude (Figure 3).  
+**NSEAK**: This region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude (approximately Districts 9 through 15 and District 13 inside area only; Figure 3).  
 
 **ISTI_Jordan**: This region is meant to replicate sampling of the Icy Strait transect (stations ISA, ISB, ISC, ISD) during the SECM survey (Figure 4).  
 
