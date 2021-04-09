@@ -80,7 +80,7 @@ tbls_sst_regions$sst_oisst_97_20_Chatham_summary %>%
 
 ```{r summary3}
 tbls_sst_regions$sst_oisst_97_20_NSEAK_summary %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the northern Southeast Alaska (NSEAK) region from 1997 to 2020. The variable SST_MJJ is the sea surface temperature averaged over the entire NSEAK region for the months May, June, and July. The variable SST_May is the sea surface temperature averaged over the entire NSEAK region for the month of May. There were 1,732 satellite stations (latitude/longitude combinations) in the NSEAK region.', row.names = F, align = "c")
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the northern Southeast Alaska (NSEAK) region from 1997 to 2020. The variable SST_MJJ is the sea surface temperature averaged over the entire NSEAK region for the months May, June, and July. The variable SST_May is the sea surface temperature averaged over the entire NSEAK region for the month of May. There were 1,344 satellite stations (latitude/longitude combinations) in the NSEAK region.', row.names = F, align = "c")
 ```
 
 \pagebreak

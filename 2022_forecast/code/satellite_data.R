@@ -273,15 +273,19 @@ map_data %>%
 
 # merge coordinates from the map_data with the SST data to create SST data by region of interest
 merge(map_data_Icy_Strait, SST_satellite, by = c("latitude", "longitude"), all.x = TRUE, all.y = TRUE) %>% 
+  dplyr::select(latitude, longitude, region, variable, year, month, SST) %>%
   filter(region == 'Icy_Strait')-> Icy_Strait_SST
 
 merge(map_data_NSEAK, SST_satellite, by = c("latitude", "longitude"), all.x = TRUE, all.y = TRUE) %>% 
+  dplyr::select(latitude, longitude, region, variable, year, month, SST) %>%
   filter(region == 'NSEAK') -> NSEAK_SST
 
 merge(map_data_Chatham_Strait, SST_satellite, by = c("latitude", "longitude"), all.x = TRUE, all.y = TRUE) %>% 
+  dplyr::select(latitude, longitude, region, variable, year, month, SST) %>%
   filter(region == 'Chatham_Strait') -> Chatham_Strait_SST
 
 merge(map_data_ISTI_Jordan, SST_satellite, by = c("latitude", "longitude"), all.x = TRUE, all.y = TRUE) %>% 
+  dplyr::select(latitude, longitude, region, variable, year, month, SST) %>%
   filter(region == 'ISTI_Jordan') -> ISTI_Jordan_SST
 
 # combine region data sets into one csv file (data by lat, long, region, year, month, SST)
@@ -289,9 +293,9 @@ rbind(Icy_Strait_SST, NSEAK_SST) %>%
 rbind(., Chatham_Strait_SST) %>% 
 rbind(., ISTI_Jordan_SST) %>% 
   write.csv(., paste0(data.directory, 'sst_regions_oisst_97_20_data.csv'))
-#-------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------------
 # SUMMARIZE SST DATA BY REGION, YEAR, MONTH
-#-------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------------
 # summarize SST data
 read.csv(paste0(data.directory, 'sst_regions_oisst_97_20_data.csv')) %>%
   filter(region %in% c('Icy_Strait', 'Chatham_Strait', 'NSEAK')) %>% 
@@ -452,9 +456,9 @@ read.csv(paste0(results.directory, 'sst_oisst_97_20_ISTI_Jordan_summary.csv')) %
   labs(y = "Temperature (Celsius)", x ="") -> plot2
 cowplot::plot_grid(plot1,plot2, align = "vh", nrow = 2, ncol=1)
 ggsave(paste0(results.directory, "temp_regions.png"), dpi = 500, height = 6, width = 7, units = "in")
-#-------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------
 ## CREATE A MAP OF THE SATELLITE DATA STATIONS
-#-------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------------------
 data(nepacLLhigh)   #import land data
 # color code
 .PBSdot <- 3; .PBSdash <- 2 
@@ -508,9 +512,10 @@ Upper_Chatham_Strait_SECM <- as.PolyData(Upper_Chatham_Strait_SECM, projection="
 Icy_Strait_SECM <- as.PolyData(Icy_Strait_SECM, projection="LL") # Icy Strait SECM stations
 ISTI_Jordan <- as.PolyData(ISTI_Jordan, projection="LL") # Icy Strait SECM stations
 
-# Icy Strait region
 x<-c(-138, -131.5)   #coordinates of land data
 y<-c(56,59.5)
+
+# Icy Strait region
 region<-clipPolys(nepacLLhigh,xlim=x,ylim=y)      
 par(mfrow=c(1,1),omi=c(0,0,0,0))  
 png(paste0(results.directory, "Icy_Strait.png"),width=6,height=8,units="in", res=600)                                                        
