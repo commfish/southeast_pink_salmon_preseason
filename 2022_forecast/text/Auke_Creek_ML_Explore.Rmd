@@ -1,0 +1,906 @@
+---
+title: Illustration of data preparation and modeling process for Auke Creek Pink Salmon
+  forecasting
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    df_print: paged
+---
+
+```{r load_libraries,message=FALSE}
+#-------------------------------------------------------------------------------------------------------------
+#  Chunk 1: Load R libraries
+#-------------------------------------------------------------------------------------------------------------
+library(tidyverse)
+library(gridExtra)
+library(tidymodels)
+library(lubridate)
+library(readxl)
+library(ggcorrplot)
+library(knitr)
+library(rpart.plot)
+library(randomForestExplainer)
+library(doParallel)
+library(vip)
+#-------------------------------------------------------------------------------------------------------------
+```
+
+Before we begin, a quick note about the dataset I'm using. These data come from the Auke Creek weir in Juneau. All juvenile salmon outmigrating each spring are enumerated and the returning salmon are then counted the following year (pink salmon only spend one year at sea - Christine, I realize you know this but I don't know who else is gonna see this). While it would be cool if we could see a nice response between fry and returning fish, there is also a fishery that occurs somewhere in between. In southeast Alaska there is little pink salmon hatchery production so we can assume that salmon harvests are indicative of natural returns. So first I'll just show a few quick exploratory plots of the data. 
+
+So our goal with this exercise is to see if using outmigrating fry counts from Auke Creek will enable us to forecast harvest. Below we see plots of the time series of log(fry) and log(harvest) counts (left) and we see a scatterplot of log(fry) vs. log(harvests). The reason that fry counts are less than harvest is that harvests are for all of northern southeast Alaska, which includes more than just the Auke Creek run. Also note the very distinctive even / odd year patterns in harvests (adult returns). This is very characteristic of pink salmon and may suggest that we will want to include a dummy variable for even/odd years.
+
+```{r,message=FALSE}
+data <- readRDS("data/auke_data_jordan.RDS") 
+
+grid.arrange(
+  data %>% 
+    dplyr::select(year,harvest,fry) %>% 
+    pivot_longer(cols=c(harvest,fry),names_to="metric",values_to="count") %>% 
+    ggplot() + 
+    geom_line(aes(year,count,linetype=metric)) + 
+    theme(legend.position = "top"),
+  data %>% 
+    ggplot(aes(fry,harvest)) + 
+    geom_point() + 
+    geom_smooth(),ncol=2)
+```
+
+Now first I'll describe the process of organizing the environmental datasets. 
+
+For pink salmon, we hypothesize that sea surface temperatures may have impacts and different spatial or temporal scales. So I pull SST data from the NOAA_DHW_monthly time series for a couple of different locations, 0.1x0.1 degrees square. 
+
+**isti**: Icy Strait Temperature Index is meant to replicate sampling that occurs from vessels in Icy Strait, a migration pinch point for salmon in southeast Alaska.   
+**x_sound**: Cross Sound is a popular salmon trolling location just north of Sitka, Alaska, and slightly farther offshore from Icy Strait. It's a glacially influenced but almost ocean region that is part of the migration.    
+**just_off_x**: A slightly farther offshore region than x_sound but still on the shelf.   
+**break**: A region right at the shelf break, directly offshore from the x_sound and just_off_x regions   
+**cgoa**: Farther offshore in the central GOA, along approximately the same latitudinal band but 6 degrees farther west. To represent "offshore" cgoa.
+**seamount**: A shallower seamount region in the central GOA, 2 degrees south of cgoa, but nearly the same longitude.
+
+For each of these regions, monthly sst data are summarized for each month.
+
+This temperature time series begins in 1985, requiring truncation of the Auke Creek salmon time series slightly. We could alternatively use the ERSST time series, but it is at a much coarser spatial scale so I'm not sure if the temperature data will be as valuable. Though it's worth a try on a subsequent iteration. If Icy Strait temperatures do not appear to be important than this spatial scale should not be a problem but Icy Strait is a narrow band of water, not well-captured by the ERSST.
+
+```{r prep_satellite_data, eval=FALSE}
+#-------------------------------------------------------------------------------------------------------------
+## Chunk 2: Begin data preparation - skip this section for modeling
+#-------------------------------------------------------------------------------------------------------------
+
+#  These libraries are only needed for dealing with satellite netCDFs.
+library(ncdf4)
+library(RCurl)
+library(tidync)
+year.forecast <- "2022_forecast" 
+data.directory <- file.path(year.forecast, 'data')
+results.directory <- file.path(year.forecast,  'results', '/')
+
+# read in data file with SST region
+read_excel(file.path('C:/preseason_forecasts_pink_salmon_SEAK/2022_forecast/data/sst_spatial_regions.xlsx')) -> myregions
+
+
+newdat <- data.frame()
+#  Download the data for a fixed spatial and temporal period.
+#  (note this is a lot of data and will take a few minutes to download if you do the whole thing)
+
+for(i in 1:nrow(myregions)){
+  regions <- myregions[i,]
+  
+  x <- getBinaryURL(paste0("https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.nc?sea_surface_temperature[(1985-01-16T00:00:00Z):1:(2020-02-16T00:00:00Z)][(",
+                           regions$maxlat,
+                           "):1:(",
+                           regions$minlat,
+                           ")][(",
+                           regions$minlon,
+                           "):1:(",
+                           regions$maxlon,
+                           ")],sea_surface_temperature_anomaly[(1985-01-16T00:00:00Z):1:(2020-02-16T00:00:00Z)][(",
+                           regions$maxlat,
+                           "):1:(",
+                           regions$minlat,
+                           ")][(",
+                           regions$minlon,
+                           "):1:(",
+                           regions$maxlon,
+                           ")]"))
+  
+  #  Convert and open the netcdf file
+  tmpSST <- tempfile(pattern="xwB", fileext=".nc")
+  writeBin(object=x, con=tmpSST)
+  
+  #----------------------------------------------------------------
+  #  Extract netCDF data, convert date (seconds since 1970) to date time, and spatially average daily data to a single daily point.
+  tempdat <- tidync(tmpSST) %>% 
+    hyper_tibble() %>% 
+    mutate(date=as_datetime(time)) %>% 
+    group_by(date) %>% 
+    summarise(msst=round(mean(sea_surface_temperature),2),
+              manom=round(mean(sea_surface_temperature_anomaly),2),
+              region=regions$region) 
+  
+  newdat <- tempdat %>% bind_rows(newdat)
+}
+
+newdat %>% 
+  saveRDS(., paste0(data.directory, "sst_regions_oisst_85_20.RDS"))
+```
+
+Read in upwelling data and average for November - March as per Kohan et al 2017.Data source: https://oceanview.pfeg.noaa.gov/products/upwelling/dnld
+Here I have removed the missing data placeholder (-9999) and calculated the mean for each year. However, I do not calculate anomalies, as those will affect inference for training and test data sets (data leakage?).
+
+```{r upwelling_data, eval=FALSE}
+upwelldata <- read_csv("data/upwell57N137W.csv",col_types="cdddddddd") %>% #specify date column as character due to leading zeros.
+  mutate(year=ifelse(between(as.numeric(substr(date,1,2)),67,99), #create a formatted year variable.
+                     as.numeric(paste0("19",substr(date,1,2))),
+                     as.numeric(paste0("20",substr(date,1,2)))),
+         month=as.numeric(substr(date,3,4))) %>% 
+  filter(month%in%c(1,2,3,11,12)) %>% #Keep only the winter months
+  mutate(year=ifelse(month<=3,year-1,year)) %>% 
+  #filter(year>=1985) %>% 
+  pivot_longer(-c(date,year,month,year),names_to = "upwell_type",values_to="upwell") %>% 
+  filter(upwell!=-9999) %>% #  remove filler data values
+  group_by(year) %>% 
+  summarise(msst=mean(upwell,na.rm = TRUE),
+            regmo="upwell")
+```
+
+Read in the satellite temperature data, NPGO data, and join these (as well as the above upwelling data). Create a long and wide version of the dataset.
+
+```{r prep_and_merge_data, eval=FALSE}
+# Because of the way I have linked / lagged environmental data, relationships with juvenile data begin in May. So we don't use January : April of the first year.
+# I removed 2020 here though that isn't really necessary. It would fall out in subsequent joins.
+newdat <- readRDS("data/sst_regions_oisst_85_20.RDS") %>% 
+  mutate(msst=round(msst,2),
+         manom=round(manom,2),
+         year=lubridate::year(date),
+         month=lubridate::month(date),
+         regmo=paste0(region,"_",month.abb[month]),
+         yearmo=format(date,"%Y-%m"),
+         regmo=gsub("seamoumt","seamount",regmo)) %>% 
+  filter(!yearmo%in%c("1985-01","1985-02","1985-03","1985-04") & year!=2020) %>% 
+  dplyr::select(-c(date,yearmo)) 
+
+#Explore the data. 
+# newdat %>% 
+#   ggplot(aes(date,msst,color=region)) + 
+#   geom_line()
+# 
+# newdat %>% 
+#   ggplot(aes(date,manom,color=region)) + 
+#   geom_line()
+
+
+# Read North Pacific Index November-March (data from: https://climatedataguide.ucar.edu/climate-data/north-pacific-np-index-trenberth-and-hurrell-monthly-and-winter)
+#npi <- read_excel("data/npi_index.xlsx") %>% 
+#  mutate(npi_center=npi-mean(npi)) %>% 
+#  dplyr::select(-npi)
+
+#  Read NPGO and average November - March (data from: http://www.o3d.org/npgo/)
+npgo <- read_excel("data/npgo_index.xlsx")  %>% 
+  mutate(year2=ifelse(month%in%c(1,2,3),year-1,year)) %>% 
+  filter(!month%in%c(4:10)) %>% 
+  group_by(year2) %>% 
+  summarise(msst=mean(npgo),
+            regmo="winternpgo") %>% 
+  rename(year=year2)
+
+# Read in Auke Creek data
+auke <- read_excel("data/AukeCreek_pink_salmon.xlsx",sheet="spawn_recruit") %>% 
+  mutate(fry=log(fry),
+         adult=log(adult),
+         even=ifelse(year%%2==0,1,0)) # Create a dummy variable for odd/even years. Relevant to pink salmon population dynamics.
+
+harvest <- read_excel("data/SalmonHarvests.xlsx",sheet="Salmon_Species_Region") %>% 
+  filter(region==1 & mgmt_area%in%c("A")) %>% 
+  mutate(spp=case_when(species==410 ~ "chinook",
+                       species==420 ~ "sockeye",
+                       species==430 ~ "coho",
+                       species==440 ~ "pink",
+                       species==450 ~ "chum")) %>% 
+  dplyr::select(year,harvest,spp) %>% 
+  group_by(year,spp) %>% 
+  summarise(harvest=log(sum(harvest))) %>% 
+  filter(spp%in%c("pink","chum")) %>% 
+  mutate(year=year-1)
+
+#  In this version, May is associated with the return year. So we do this funky little year-1 thing to lag the temperature variables. 
+#  Merge the data into a long format, with fry, adults, and even as repeated columns for each of the environmental variables.
+testdat <- newdat %>% 
+  mutate(year2=year,
+         year=ifelse(month<5,year2-1,year2)) %>% 
+  dplyr::select(-c(month,manom,year2)) %>% 
+  bind_rows(upwelldata) %>% 
+  bind_rows(npgo) %>% 
+  bind_rows(harvest %>% filter(spp=="chum") %>% rename(msst=harvest,regmo=spp)) %>% 
+  inner_join(harvest %>% filter(spp=="pink") %>% dplyr::select(year,harvest)) %>% 
+  inner_join(auke %>% dplyr::select(year,fry,even))
+
+testdat %>% saveRDS("data/auke_data_jordan_long.RDS")
+
+#  Pivot the data to wide format so each column is a covariate or response.
+datwide <- testdat %>% 
+  dplyr::select(-c(region)) %>% 
+  pivot_wider(names_from="regmo",values_from="msst")
+
+datwide %>% 
+  #mutate(year=as.factor(year)) %>% 
+  saveRDS("data/auke_data_jordan.RDS")
+#-------------------------------------------------------------------------------------------------------------
+## Chunk 2 End
+#-------------------------------------------------------------------------------------------------------------
+```
+
+We are obviously going to have a lot of correlated environmental variables. Too many. We'll most certainly want to remove some. 
+The below correlation plot shows strings of high correlations, which are typically the temperature of one region correlated to that of other regions during the same month. I didn't spend any time making this figure pretty - but it does illustrate correlation patterns pretty clearly. 
+
+```{r}
+round(cor(readRDS("data/auke_data_jordan.RDS") %>% 
+  filter(as.numeric(as.character(year))>=1985) %>% 
+  dplyr::select(-c(year,even)) %>% data.frame), 1) %>% 
+ggcorrplot(tl.cex=6)
+
+```
+
+I started out with some basic linear regression models so that I could explore the impacts of some of the different temperature variables and so that I could get a sense for the scale of the prediction and fitting errors from more traditional approaches. Also, I'm still learning this linkage of tidymodels packages (parsnip, recipe, rsample, yardstick, workflows). 
+
+One thing that we can note from this excessive amount of temperature variables is that none of the August or September variables have very good R squared values based on the simple regressions. So we'll probably be able to remove those. 
+
+```{r}
+#-------------------------------------------------------------------------------------------------------------
+## Chunk 3 Begin linear regression modeling
+#-------------------------------------------------------------------------------------------------------------
+
+#  First explore a simple regression of each of the different environmental time series
+#  This suggests that May temperatures are important. 
+readRDS("data/auke_data_jordan_long.RDS") %>% 
+  dplyr::select(-c(year)) %>% 
+  group_by(regmo) %>% 
+  do(glance(lm(harvest~fry+msst,data=.))) %>% 
+  bind_rows(readRDS("data/auke_data_jordan_long.RDS") %>% 
+              dplyr::select(-c(msst,regmo,region)) %>%
+              distinct() %>% 
+              do(glance(lm(harvest~fry,data=.))) %>% 
+              mutate(regmo="fry only")) %>% 
+  arrange(-adj.r.squared) %>% 
+  mutate(across(where(is.double), round, 3)) %>% 
+  dplyr::select(-c(r.squared,logLik)) %>% 
+  data.frame %>% 
+  kable()
+```
+
+Okay, starting to play with the tidy models syntax now. First let's look at how tidymodels splits the data into training and test datasets.   
+When we use initial_split() it automatically breaks the data into a training and dataset. If we look at the object it creates, it'll show us the number of records in the training (analysis) / test (assess) / total. In this case, 26 + 8 = 34
+
+```{r}
+datwide <- readRDS("data/auke_data_jordan.RDS") %>% 
+  filter(!year%in%c("1984","1983","1982","1981","1980")) %>%  #no enviro data for the early years.
+  dplyr::select(-c(year,even))
+
+set.seed(100)
+auke_split <- initial_split(datwide) #By default, 3/4 data going into training; 1/4 test
+auke_train <- training(auke_split)
+auke_test <- testing(auke_split)
+
+auke_split # View the auke_split object.
+```
+
+When we fit the model with fit_split using the auke_split dataset, it fits the training dataset and then provides prediction metrics for the out of sample, test dataset. We use collect_metrics() to view, by default, rsquared and rmse.
+
+```{r}
+# fit_split is a custom function for tidymodels fitting that I stole from a tutorial: https://conf20-intro-ml.netlify.app/
+#  This function creates a data "workflow".
+fit_split <- function(formula, model, split, ...) {
+  wf <- workflows::add_model(workflows::add_formula(workflows::workflow(), 
+                                                    formula, 
+                                                    blueprint = hardhat::default_formula_blueprint(indicators = FALSE, allow_novel_levels = TRUE)), 
+                             model)
+  tune::last_fit(wf, split, ...)
+}
+
+#  Specify the model using tidymodels (parsnip package syntax)
+lm_spec <- linear_reg() %>% 
+  set_engine("lm")
+
+#  Use the workflows and tidymodels function from above to fit a model to the training data
+lm_fit <- fit_split(harvest~fry+cgoa_May, # specify formula
+            model=lm_spec, # specify model
+            split=auke_split) # specify data
+
+lm_fit %>% 
+  collect_metrics()
+```
+
+To confirm that we understand what's happening here, let's confirm that if we look at the actual predicted values, we only see data from the test dataset - in this case, 8 rows, with adult being the response and .pred being the model prediction. 
+
+```{r}
+lm_fit %>% 
+  collect_predictions 
+```
+
+Now we could manually calculate the rmse from these predictions and see if it matches the one from collect_metrics. Thankfully, it is. 
+
+```{r}
+lm_fit %>% 
+  collect_predictions %>% # from tune package, predicting using test data
+  mutate(resid=(harvest-.pred)^2) %>% #calculate squared residuals
+  summarise(rmse=sqrt(mean(resid)))
+```
+
+Alternatively, we could change the metrics that we'd like to see. In this case let's ask for rmse, mean absolute error (mae), and mean absolute prediction error (mape). Note that our prediction of fish numbers are in log space, so that percent error is based on differences of logs. So these aren't actual prediction values.
+
+```{r}
+fit_split(harvest~fry+cgoa_May, # specify formula
+            model=lm_spec, # specify model
+            metrics=metric_set(rmse,mae,mape), #specify model evaluation criteria.
+            split=auke_split) %>% 
+  collect_metrics()
+```
+
+So let's start to look at resampling. I'm still working on loocv for the machine learning models but at least I have played with it for a linear model.   
+
+Let's first create a loocv dataset. This will create a list of 34 splits, each of have 33 training data and 1 test datum. 
+
+```{r loo_cv}
+#  Create a set of leave-one-out datasets. 
+loocvdat <- loo_cv(datwide)
+
+head(loocvdat)
+```
+
+Now let's fit a model to each of those datasets and predict on the held-out datum. I can't get loocv to work with collect_metrics. Sigh.
+So I calculate my own. 
+
+```{r lm_map}
+
+#  Specify the model using tidymodels (parsnip package syntax)
+lm_spec <- linear_reg() %>% 
+  set_engine("lm")
+
+#  Use the workflows and tidymodels function from above to fit a model to the training data
+splitfun <- function(mysplit){
+  fit_split(harvest~fry+cgoa_May, # specify formula
+            model=lm_spec, # specify model
+            split=mysplit) %>%  # specify data
+            #metrics=metric_set(rmse,mae,mape)) %>% 
+    collect_predictions %>% # from tune package, predicting using test data
+    mutate(rmse=sqrt(mean((harvest-.pred)^2)), # this is nonsensical with loocv since we only have one value and really the resid is the value.
+           prederr=round(100*(harvest-.pred)/harvest,1)) #calculate error
+  } 
+
+#  Apply this function to the full list of leave-one-out datasets
+#  Something is wrong here. My prediction errors are too low.
+#  This might take about 20 seconds to run.
+purrr::map(loocvdat$splits,splitfun) %>% 
+  bind_rows() %>%
+  summarise(mean(rmse),
+            mean(abs(prederr)))
+```
+
+Just for grins, let's transform our predictions back out of log space so we can get a sense of what the real prediction errors are. So I'm just exponentiating the predictions and harvest values. Ouch - pretty big error (which also seems really dependent on the set.seed() value. Turns out that if I add "winternpgo" to the model, the prediction error drops by 6% (not shown here). But certainly some combination of variables would be better. Maybe we should try machine learning!
+
+```{r run_loocv}
+#  Use the workflows and tidymodels function from above to fit a model to the training data
+splitfun <- function(mysplit){
+  fit_split(harvest~fry+cgoa_May, # specify formula
+            model=lm_spec, # specify model
+            split=mysplit) %>%  # specify data
+            #metrics=metric_set(rmse,mae,mape)) %>% 
+    collect_predictions %>% # from tune package, predicting using test data
+    mutate(rmse=sqrt(mean((exp(harvest)-exp(.pred))^2)), # this is nonsensical w/ loocv since we only have one value - really just leaves the resid
+           prederr=round(100*(exp(harvest)-exp(.pred))/exp(harvest),1)) #calculate error
+  } 
+
+#  Apply this function to the full list of leave-one-out datasets
+#  Something is wrong here. My prediction errors are too low.
+purrr::map(loocvdat$splits,splitfun) %>% 
+  bind_rows() %>%
+  summarise(mean(rmse),
+            mean(abs(prederr)))
+#-------------------------------------------------------------------------------------------------------------
+## End Chunk 3
+##---------------------------------------------------------------------------------------------------------
+```
+
+**Update**: Okay, now that you are super impressed by my janky loo_cv example, I just got a reply on StackOverflow from one of the developers from the rsample package. They are not supporting the loo_cv function any more because...well, because it sucks. But I think I figured out a workaround with k-fold cross validation that will work for us lowly fisheries people with small datasets. More on that later. 
+
+\pagebreak
+
+We'll begin to play around with some machine learning methods. In doing so, we'll also start using the recipe package. Hold onto your hats, people! The first thing to note when we create the recipe is the data transformation options. This dataset is pretty uneventful because most of the covariates are temperatures, which have a narrow range. However, upwell for example spans a range of numbers so we'll need to center and scale the variable probably. When we create the recipe, the scaling of the variables will get done for each training dataset so that it is based on the mean and standard deviation within the sample. There are lots of step_* options. For example, you could do a PCA here, you can create dummy variables, you can create empty factor levels in case your training dataset doesn't include all levels. Here I'll just use step_center and step_scale on upwell. We will create and prep a recipe and then look at the parameters of the prepped recipe.
+
+```{r recipe_prep}
+#-------------------------------------------------------------------------------------------------------------
+## Chunk 4 Begin Machine Learning
+##---------------------------------------------------------------------------------------------------------
+
+#  Load wide format data.
+datwide <- readRDS("data/auke_data_jordan.RDS") %>% 
+  filter(year>=1985) %>% 
+  dplyr::select(-year) %>% # Drop year because it's not a useful covariate
+  mutate(even=factor(even))
+
+set.seed(100)
+auke_split <- initial_split(datwide)
+auke_train <- training(auke_split)
+auke_test <- testing(auke_split)
+
+#  Create a recipe.
+auke_recipe <- recipe(harvest~.,data=auke_train) %>% 
+  step_center(upwell) %>% 
+  step_scale(upwell)
+
+#  Prep the recipe. 
+auke_prep <- auke_recipe %>% 
+  prep(training=auke_train,retain=TRUE)
+
+auke_prep
+```
+
+The parsnip package has hundred of models and libraries that can be specified using tidymodels. Look here for the list https://www.tidymodels.org/find/. Here we'll just build a quick decision tree and see where some of the splits come out. Not surprising the "Fry" (as in, little baby salmon fry) is the first node, but I was surprised to see seamount, as that hasn't appeared to many times. 
+
+```{r}
+dt_model <- decision_tree(min_n=5,tree_depth=10) %>% 
+  set_engine("rpart") %>%  # Specify the R library
+  set_mode("regression") %>%  # Specify regression or classification
+  fit(harvest~.,data=juice(auke_prep))
+
+rpart.plot::rpart.plot(dt_model$fit,
+                       type=4,
+                       extra=101,
+                       branch.lty=3,
+                       nn=TRUE,
+                       roundint=FALSE)  
+```
+
+But why make one decision tree when we can make lots of them! We can keep working with the same recipe but I'm going to start fresh with the data in case we want to play with different size training / test datasets.We will use the rand_forest function from the Ranger package https://parsnip.tidymodels.org/reference/rand_forest.html. Here, we will use the randomForestExplainer package to help visualize importance of different features (covariates).      
+
+```{r}
+#  Explore a basic random forest with default hyperparameters and all data columns
+#  Examples from: https://notast.netlify.app/post/explaining-predictions-random-forest-post-hoc-analysis-randomforestexplainer-package/
+
+set.seed(100)
+auke_split <- initial_split(datwide,prop=0.90)
+auke_train <- training(auke_split)
+
+auke_recipe <- recipe(harvest~.,data=auke_train) %>% 
+  step_center(upwell) %>% 
+  step_scale(upwell)
+
+auke_prep <- auke_recipe %>% 
+  prep(training=auke_train,retain=TRUE)
+
+rf_model <- rand_forest(trees=2000,mtry=4,mode="regression") %>% #rand_forest is a function in parsnip.
+  set_engine("ranger",importance="permutation") %>% # rand_forest is part of the ranger package. We have several options for importance measures.
+  fit(harvest~.,data=juice(auke_prep))
+
+
+#library(randomForestExplainer)
+impt_frame<-measure_importance(rf_model$fit)
+
+#impt_frame %>% head()
+#  I like this plot as a way to illustate how several of the different RF hyperparameters fall out for different features.
+plot_multi_way_importance(impt_frame,no_of_labels = 6)
+```
+
+Generally, the multi-way importance plot offers a wide variety of possibilities so it can be hard to select the most informative one. One idea of overcoming this obstacle is to first explore relations between different importance measures to then select three that least agree with each other and use them in the multi-way importance plot to select top variables. The first is easily done by plotting selected importance measures pairwise against each other using plot_importance_ggpairs as below.(Taken directly from: https://cran.r-project.org/web/packages/randomForestExplainer/vignettes/randomForestExplainer.html).
+
+Typically we want to select the set of measures that are least correlated. So I think to optimize this model we'd want no_of_trees, no_of_nodes, and p_value.
+
+```{r message=FALSE}
+plot_importance_ggpairs(impt_frame)
+```
+
+More diagnostics plots to explore variable importance. You could try rerunning the models with a different set.seed() value and see how this changes. When I resample and refit this model a few times, fry is also the most important and the second is typically a seamount_* value but not always the same. 
+
+```{r}
+md_frame <- min_depth_distribution(rf_model$fit)
+
+plot_min_depth_distribution(md_frame, mean_sample = "top_trees")
+```
+The following code chunk would give a cool plot if I could get it to work. Sigh.There's an example that plots the prediction space from all of the different trees in the vignette noted above for RandomForestExplainer package.
+
+```{r, eval=FALSE}
+#  Beware. This gives craziness.
+#vars<- important_variables(impt_frame, k = 6, measures = c("times_a_root", "no_of_nodes"))
+#interactions_frame <- min_depth_interactions(rf_model$fit, vars)
+#plot_min_depth_interactions(interactions_frame)
+#plot_predict_interaction(rf_model$fit, datwide, "fry", "seamount_Feb")
+```
+
+```{r}
+#  Basic RF
+fit_split(harvest ~ ., 
+          model = rand_forest() %>% 
+            set_engine("ranger") %>% 
+            set_mode("regression"), 
+          split = auke_split) %>% 
+  collect_metrics()
+```
+
+Okay, so let's try to tune those hyperparameters. We'll use the tune() function to search over a grid of values for mtry, trees, and min_n. The following tuning code stolen from https://juliasilge.com/blog/sf-trees-random-tuning/. 
+
+
+One thing I will tweak from the example though is the **vfold_cv**. This function is how k-fold cross validation is incorporated into tidymodels. Since LOOCV isn't currently implemented, I think I found a work around. First, when we split the data into training and test datasets, we can specify the proportion in each dataset. So we can specify the training data to include all but one datum. In this case, we have 34 years of data and a proportion of 95% training will give us this split. We see this by running this chunk.
+
+```{r}
+initial_split(datwide, prop=0.95)
+```
+
+Let's split and save the datasets for real and then build our random forest workflow.    
+
+```{r}
+set.seed(100)
+auke_split <- initial_split(datwide,prop=0.95)
+auke_train <- training(auke_split)
+#  First specify the model framework
+tune_spec <- rand_forest(mtry = tune(),
+              trees = tune(),
+              min_n = tune()) %>% 
+  set_engine("ranger") %>% 
+  set_mode("regression")
+
+# Now specify the model
+tune_wf <- workflow() %>% 
+  add_recipe(auke_recipe) %>% 
+  add_model(tune_spec)
+```
+
+We will now create each of our cross-validation datasets using **vfold_cv()**. The default resampling is 10. Howver, if we specify more resamples than there are rows of data, it will only create the distinct subsets. So as long as we specify a number of folds greater than 34, we should be good. Here, I specify 100 but it will only create 34.
+
+```{r}
+dim(vfold_cv(datwide,100))
+```
+Now let's do this for real and we'll get 33 tibbles out.
+
+```{r}
+#set.seed(234) If you were actually doing random subsets, you'd want to set the seed.
+auke_folds <- vfold_cv(auke_train,100)
+
+#  Setup parallel processing.
+doParallel::registerDoParallel()
+
+#  Now run the model, which is going to try 20 different values for each of the tuning hyperparameters and do this for 10 resamples of the data.
+set.seed(345)
+tune_res <- tune_grid(
+  tune_wf,
+  resamples = auke_folds,
+  grid = 20
+)
+
+tune_res
+```
+First lets look and see which set of parameters led to the lowest rmse.
+
+```{r}
+tune_res %>%
+  collect_metrics() %>% 
+  filter(.metric=="rmse") %>% 
+  arrange(mean)
+```
+
+Which one had the highest rsquared? Hmm. NaN. Not sure why we get that. Let's skip it for now and see if it bites us later.
+
+```{r}
+tune_res %>%
+  collect_metrics() %>% 
+  filter(.metric=="rsq") %>% 
+  arrange(-mean)
+```
+
+We can visualize hyperparameter values that minimize rmse. seems that the number of trees isn't as important as min_n or mtry, if I interpret this right.     
+
+```{r, message=FALSE}
+tune_res %>%
+  collect_metrics() %>%
+  filter(.metric == "rmse") %>%
+  select(mean, min_n, mtry, trees) %>%
+  pivot_longer(c(min_n,mtry,trees),
+    values_to = "value",
+    names_to = "parameter"
+  ) %>%
+  ggplot(aes(value, mean, color = parameter)) +
+  geom_point(show.legend = FALSE) +
+  facet_wrap(~parameter, scales = "free_x") +
+  labs(x = NULL, y = "rmse")
+```
+We can extract the hyperparameter values from the best model. 
+
+```{r}
+best_rmse <- select_best(tune_res,"rmse")
+
+best_rmse
+```
+
+Now we can update our previous model recipe using the optimal hyperparameter values from above.
+
+```{r}
+final_rf <- finalize_model(
+  tune_spec,
+  best_rmse
+)
+```
+
+Doesn't give us the more interesting variable importance plot. 
+
+```{r}
+final_rf %>%
+  set_engine("ranger", importance = "permutation") %>%
+  fit(harvest ~ .,
+    data = juice(auke_prep)) %>%
+  vip::vip(geom = "point")
+
+
+rand_forest(trees=1911,mtry=7,min_n=18,mode="regression") %>% #rand_forest is a function in parsnip.
+  set_engine("ranger",importance="permutation") %>% # rand_forest is part of the ranger package. We have several options for importance measures.
+  fit(harvest~.,data=juice(auke_prep)) %>% 
+  vip()
+
+```
+
+I don't have a great grasp on which "importance" metric to use. Seems like folks mostly switch between "permutation" and "impurity".     
+
+```{r}
+final_rf %>%
+  set_engine("ranger", importance = "impurity") %>%
+  fit(harvest ~ .,
+    data = juice(auke_prep)) %>%
+  vip::vip(geom = "point")
+```
+
+If we wanted to choose a different set of hyperparameter values and see how the VIP plot would differ we can manually enter those in the call to **rand_forest**.    
+
+```{r}
+rand_forest(trees=1911,mtry=7,min_n=18,mode="regression") %>% #rand_forest is a function in parsnip.
+  set_engine("ranger",importance="permutation") %>% # rand_forest is part of the ranger package. We have several options for importance measures.
+  fit(harvest~.,data=juice(auke_prep)) %>% 
+  vip(geom="point")
+```
+```{r}
+rand_forest(trees=1911,mtry=7,min_n=18,mode="regression") %>% #rand_forest is a function in parsnip.
+  set_engine("ranger",importance="impurity") %>% # rand_forest is part of the ranger package. We have several options for importance measures.
+  fit(harvest~.,data=juice(auke_prep)) %>% 
+  vip(geom="point")
+```
+\pagebreak
+
+
+Okay, let's switch to a simple gradient boosting model. My understanding is that the main difference is that random forests are all independent whereas GBMs take the output of one model and try to improve it in the next. So they tend to take longer to fit because you get less of a benefit from parallel processing (though still some it seems).
+
+```{r}
+##--------------------------
+## Basic gradient boosting
+##--------------------------
+#library(doParallel)
+all_cores <- parallel::detectCores(logical = FALSE)
+registerDoParallel(cores = all_cores)
+```
+
+Start with fresh data.
+
+```{r}
+
+#  Load wide format data.
+#  Retain "year" as a continuous variable to allow for possible non-stationarity over the time series.
+#  Load wide format data.
+datwide <- readRDS("data/auke_data_jordan.RDS") %>% 
+  filter(year>=1985) %>% 
+  dplyr::select(-year) %>% # Drop year because it's not a useful covariate
+  mutate(even=factor(even)) #%>% 
+  #dplyr::select(-c(matches("Aug")))
+
+#  Omit year to assume a stationary time series.
+#datwide <- readRDS("data/secm_data_jordan.RDS") %>% dplyr::select(-year)
+set.seed(100)
+auke_split <- initial_split(datwide,prop=0.95)
+auke_train <- training(auke_split)
+auke_test <- testing(auke_split)
+
+auke_recipe <- recipe(harvest~.,data=auke_train) %>% 
+  step_center(winternpgo,upwell) %>% 
+  step_scale(winternpgo,upwell)
+
+auke_prep <- auke_recipe %>% 
+  prep(training=auke_train,retain=TRUE)
+
+auke_cv_folds <- recipes::bake(auke_prep,
+                               new_data=training(auke_split)) %>% 
+  rsample::vfold_cv(v=35)
+
+# From: https://www.r-bloggers.com/using-xgboost-with-tidymodels/
+#  Tune across a grid for min_n, tree_depth, learn_rate, and loss_reduction
+xgboost_model <- 
+  parsnip::boost_tree(
+    mode = "regression",
+    trees = 1000,
+    min_n = tune(),
+    tree_depth = tune(),
+    learn_rate = tune(),
+    loss_reduction = tune()
+  ) %>%
+  set_engine("xgboost", objective = "reg:squarederror") 
+
+# Identify hyperparameters that will be tuned.
+xgboost_params <- dials::parameters(
+  min_n(),
+  tree_depth(),
+  learn_rate(),
+  loss_reduction()
+)
+
+#  Identify entropy as the hyperparameter grid tuning method
+xgboost_grid <- 
+  dials::grid_max_entropy(
+    xgboost_params,
+    size=60
+  )
+
+#xgboost_grid
+
+xgboost_wf <- workflow() %>% 
+  add_model(xgboost_model) %>% 
+  add_formula(harvest~.)
+
+# Implement the hyperparameter grid search across all cross-validations, and 60 grid values.
+# This can take a little while. Much faster with the parallel computing loaded.
+xgboost_tuned <- tune_grid(
+  object=xgboost_wf,
+  resamples=auke_cv_folds,
+  grid=xgboost_grid,
+  metrics=yardstick::metric_set(rmse,rsq), 
+  control=tune::control_grid(verbose=TRUE)
+)
+
+xgboost_tuned %>% 
+  tune::show_best("rmse")
+```
+
+Select the best parameter values.
+```{r}
+xgboost_best_params <- xgboost_tuned %>% 
+  select_best("rmse")
+
+xgboost_best_params
+```
+
+Fit a final model using the best parameters and see how well they did. Either we super overfit based on the rsq, or we are amazing. Oh wait, but we just tested that model on the same data with which we trained it. So that should make sense then. 
+
+```{r}
+xgboost_model_final <- xgboost_model %>% 
+  finalize_model(xgboost_best_params)
+
+# Build a new training model using the optimal parameters
+train_processed <- auke_recipe %>% 
+  prep() %>% 
+  bake(new_data=training(auke_split))
+
+train_prediction <- xgboost_model_final %>% 
+  fit(harvest~.,data=train_processed) %>% 
+  predict(new_data=train_processed) %>% 
+  bind_cols(training(auke_split))
+
+#  How well did that final model do?
+xgboost_score_train <- 
+  train_prediction %>% 
+  yardstick::metrics(harvest,.pred) %>% 
+  mutate(.estimate=format(round(.estimate,2),big.mark=','))
+
+xgboost_score_train %>% 
+  kable()
+```
+
+Now let's try with our test data. 
+
+```{r}
+test_processed <- auke_recipe %>% 
+  prep() %>% 
+  bake(new_data=testing(auke_split))
+
+#  Fit the model with training data and then predict on test data.
+test_prediction <- xgboost_model_final %>% 
+  fit(harvest~.,data=train_processed) %>% 
+  predict(new_data=test_processed) %>% 
+  bind_cols(testing(auke_split))
+
+test_prediction %>% 
+  yardstick::metrics(harvest,.pred) %>% 
+  kable()
+```
+
+Okay, how does an RMSE of 1.003 translate to prediction of salmon harvests? Yikes, for 11,603 fry, we overpredict harvest by nearly 3-fold.
+
+Okay, well, we still need to look through the cv_folds resamples to get the mean prediction error (simulating loocv). But I'm stuck on that right now. I need to use fit_resamples, I think, but I'll revisit. 
+
+```{r}
+test_prediction %>% 
+  transmute(fry,
+            harvest,
+            pred=.pred,
+            efry=exp(fry),
+            eharvest=exp(harvest),
+            epred=exp(.pred),
+            percenterror=100*(eharvest-epred)/eharvest)
+```
+
+Let's fit a model to the full dataset and visualize variable importance. Interestingly, "fry" was not the most important variable. 
+
+```{r}
+#  Fit a model to the full dataset in order to examine the variable importance plot
+model_final <- xgboost_model_final %>% 
+  fit(harvest~.,data=auke_recipe %>% 
+        prep() %>% 
+        bake(new_data=datwide))
+
+#  Even though we've been calling xgboost models through tidymodels, we never loaded the package. To use additional tools we have to load it explicitly.
+library(xgboost)
+xgb.importance(colnames(datwide), model = model_final$fit)
+
+#library(vip)
+vip::vip(model_final)
+
+```
+
+The following is not, ML, but using the variables we identified from ML, let's look at linear models again.
+
+For that same test datum, what if we had done a simple linear model with fry, cgoa_May, and even has predictors? Wow, 62% error - much better than the GBM actually.
+
+```{r}
+#  Use the workflows and tidymodels function from above to fit a model to the training data
+fit_split(harvest~fry+cgoa_May+even, # specify formula
+            model=lm_spec, # specify model
+            split=auke_split) %>% 
+  collect_predictions() %>% 
+  transmute(harvest,
+            pred=.pred,
+            eharvest=exp(harvest),
+            epred=exp(.pred),
+            percenterror=100*(eharvest-epred)/eharvest)
+```
+
+We can do our ghetto version of loocv on the linear model like we did before. What do we get for a mean absolute percent error once we exponentiate the forecasts back to numbers of fish. 
+
+```{r}
+#  Specify the model using tidymodels (parsnip package syntax)
+lm_spec <- linear_reg() %>% 
+  set_engine("lm")
+
+loocvdat <- loo_cv(datwide)
+
+splitfun <- function(mysplit){
+  fit_split(harvest~fry+cgoa_May+even, # specify formula
+            model=lm_spec, # specify model
+            split=mysplit) %>%  # specify data
+            collect_predictions 
+  } 
+
+#  Apply this function to the full list of leave-one-out datasets
+lm_out <- purrr::map(loocvdat$splits,splitfun) %>% 
+  bind_rows()
+
+outdat <- lm_out %>% 
+  arrange(.row) %>% 
+  bind_cols(readRDS("data/auke_data_jordan.RDS") %>% filter(year>=1985) %>% dplyr::select(year,fry)) %>% 
+  mutate(harvest,
+            pred=.pred,
+            eharvest=exp(harvest),
+            epred=exp(.pred),
+            percenterror=100*(eharvest-epred)/eharvest,
+            resid=harvest-pred)
+
+outdat %>% 
+  summarise(mean(abs(percenterror)))
+```
+
+What do the residuals look like over time?
+
+```{r, message=FALSE}
+outdat %>% 
+  ggplot(aes(year,resid)) + 
+  geom_point() + 
+  geom_line()
+```
+
+Do the residuals increase with with harvest? Ummm, kinda. 
+
+```{r,message=FALSE}
+outdat %>% 
+  ggplot(aes(harvest,resid)) + 
+  geom_point()
+```
