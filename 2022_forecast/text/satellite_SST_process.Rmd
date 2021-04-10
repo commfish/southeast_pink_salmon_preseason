@@ -122,6 +122,7 @@ https://coralreefwatch.noaa.gov/satellite/docs/recommendations_crw_citation.php
 
 The data produced by Coral Reef Watch are available for use without restriction, but Coral Reef Watch relies on the ethics and integrity of the user to ensure that the source of the data and products is appropriately cited and credited. When using these data and products, credit and courtesy should be given to NOAA Coral Reef Watch. Please include the appropriate DOI associated with this dataset in the citation.
 
+Monthly versus daily???
 
 # References
 Piston, A. W., J. Murphy, J. Moss, W. Strasburger, S. C. Heinl, E. Fergusson, S. Miller, A. Gray, and C. Waters. 2021. Operational Plan: Southeast coastal monitoring, 2021. Alaska Department of Fish and Game, Regional Operational Plan No. ROP.CF.1J.2021.02, Douglas.
