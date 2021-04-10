@@ -526,7 +526,7 @@ addPoints(Upper_Chatham_Strait_SECM, xlim=x,ylim=y,col=2,pch=16, cex=0.75) # sta
 addPoints(Icy_Strait_SECM, xlim=x,ylim=y,col=2,pch=16, cex=0.75) # station points
 addLines(scale, xlim=x,ylim=y,col=1,lty=1, lwd=2, cex=1)
 addCompass(-137, 56.5, rot="trueN", cex=1)
-legend (-134, 58.9, legend=c("Icy Strait SST locations", "SECM stations"),
+legend (-134.2, 58.9, legend=c("Icy Strait SST locations", "SECM stations"),
         col=c(1,2), bty="n", cex=1, pch=c(1, 16))
 text(-136,57.1,"Pacific Ocean", cex=1.25, adj=1, font=1)
 text(-131.7, 59.2,"25 nm at 59°N", cex = 0.75, adj = 1, font = 1)

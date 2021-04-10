@@ -58,22 +58,24 @@ The four regions are defined as:
 
 **Chatham_Strait**: This region encompasses waters of Chatham Strait from the northern tip of Admiralty Island (approximately 58.425 degrees latitude north) to the approximate latitude of 56.025 degrees north (roughly Cape Decision off Kuiu Island) (Figure 2).
 
-**NSEAK**: This region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude (approximately Districts 9 through 15 and District 13 inside area only; Figure 3).  
+**NSEAK**: This region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude (approximately Districts 9 through 15, and District 13 inside area only; northern Southeast Inside subregion for Southeast Alaska (NSEI); Figure 3).  
 
 **ISTI_Jordan**: This region is meant to replicate sampling of the Icy Strait transect (stations ISA, ISB, ISC, ISD) during the SECM survey (Figure 4).  
 
 # Results  
-Satellite sea surface temperature data was summarized by region and year for the month of May or over the months of May, June, and July from 1997 to 2020.
+Satellite sea surface temperature data were summarized by region and year for the month of May or over the months of May, June, and July from 1997 to 2020.
 
 \pagebreak
 ```{r summary1}
 tbls_sst_regions$sst_oisst_97_20_Icy_Strait_summary %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Icy_Strait region from 1997 to 2020. The variable SST_MJJ is the sea surface temperature averaged over the entire Icy Strait region for the months May, June, and July. The variable SST_May is the sea surface temperature averaged over the entire Icy strait region for the month of May. There were 42 satellite stations (latitude/longitude combinations) in the Icy_Strait region.', row.names = F, align = "c")
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Icy_Strait region from 1997 to 2020. The variable SST_MJJ is the sea surface temperature averaged over the entire Icy Strait region for the months May, June, and July. The variable SST_May is the sea surface temperature averaged over the entire Icy_Strait region for the month of May. There were 42 satellite stations (latitude/longitude combinations) in the Icy_Strait region.', row.names = F, align = "c")
 ```
+
 \pagebreak
+
 ```{r summary2}
 tbls_sst_regions$sst_oisst_97_20_Chatham_summary %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Chatham_Strait region from 1997 to 2020. The variable SST_MJJ is the sea surface temperature averaged over the entire Chatham Strait region for the months May, June, and July. The variable SST_May is the sea surface temperature averaged over the entire Chatham Strait region for the month of May. There were 266 satellite stations (latitude/longitude combinations) in the Chatham_Strait region.', row.names = F, align = "c")
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Chatham_Strait region from 1997 to 2020. The variable SST_MJJ is the sea surface temperature averaged over the entire Chatham_Strait region for the months May, June, and July. The variable SST_May is the sea surface temperature averaged over the entire Chatham_Strait region for the month of May. There were 266 satellite stations (latitude/longitude combinations) in the Chatham_Strait region.', row.names = F, align = "c")
 ```
 
 \pagebreak
@@ -87,7 +89,7 @@ tbls_sst_regions$sst_oisst_97_20_NSEAK_summary %>%
 
 ```{r summary4}
 tbls_sst_regions$sst_oisst_97_20_ISTI_Jordan %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the Icy Strait transect of the SECM project from 1997 to 2020. The variable SST_MJJ is the sea surface temperature averaged over the entire Icy Strait transect for the months May, June, and July. The variable SST_May is the sea surface temperature averaged over the entire Icy strait transect for the month of May. There were 4 satellite stations (latitude/longitude combinations) in the ISTI_Jordan region.', row.names = F, align = "c")
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the Icy Strait transect of the SECM project from 1997 to 2020. The variable SST_MJJ is the sea surface temperature averaged over the entire Icy Strait transect for the months May, June, and July. The variable SST_May is the sea surface temperature averaged over the entire Icy Strait transect for the month of May. There were 4 satellite stations (latitude/longitude combinations) in the ISTI_Jordan region.', row.names = F, align = "c")
 ```
 
 ```{r fig1, fig.cap="The Icy Strait region is meant to replicate sampling that occurs from vessels in Icy Strait (Icy Strait and Upper Chatham transects), a migration pinch point for salmon in southeast Alaska. The Southeast Coastal Monitoring (SECM) project transects (Upper Chatham Strait and Icy Strait) are shown as red points for comparison to the satellite stations (i.e., data points; black circles)."}
@@ -102,7 +104,7 @@ knitr::include_graphics(here(results.directory, "Chatham.png"))
 knitr::include_graphics(here(results.directory, "NSEAK.png"))
 ```
 
-```{r fig4, fig.cap="This region is meant to replicate sampling of the Icy Strait transect (stations ISA, ISB, ISC, ISD) during the SECM survey. The black circles are the satellite stations (i.e., data points) and SECM project stations (i.e., Icy Strait transect) are shown as red points for comparison."}
+```{r fig4, fig.cap="This region is meant to replicate sampling of the Icy Strait transect (stations ISA, ISB, ISC, ISD) during the SECM survey. The black circles are the satellite stations (i.e., data points) and the SECM project stations (i.e., Icy Strait transect) are shown as red points for comparison."}
 knitr::include_graphics(here(results.directory, "ISTI_Jordan.png"))
 ```
 
@@ -110,12 +112,16 @@ knitr::include_graphics(here(results.directory, "ISTI_Jordan.png"))
 knitr::include_graphics(here(results.directory, "temp.png"))
 ```
 
-```{r fig6, fig.cap="A. The May temperature averaged over each region (Chatham Strait, Icy strait, NSEAK, or ISIT Jordan) from 1997 through 2020. B. The May, June, and July temperature averaged over each region (Chatham Strait, Icy strait, NSEAK, or ISIT Jordan) from 1997 through 2020."}
+```{r fig6, fig.cap="A. The May temperature averaged over each region (Chatham Strait, Icy Strait, NSEAK, or ISIT Jordan) from 1997 through 2020. B. The May, June, and July temperature averaged over each region (Chatham Strait, Icy Strait, NSEAK, or ISIT Jordan) from 1997 through 2020."}
 knitr::include_graphics(here(results.directory, "temp_regions.png"))
 ```
 
 # Acknowledgements
-Jordan Watson (NOAA) helped with the code to process the satellite data into a usable format.
+Jordan Watson (NOAA) helped with the code to process the satellite data into a usable format. Acknowledge data here
+https://coralreefwatch.noaa.gov/satellite/docs/recommendations_crw_citation.php
+
+The data produced by Coral Reef Watch are available for use without restriction, but Coral Reef Watch relies on the ethics and integrity of the user to ensure that the source of the data and products is appropriately cited and credited. When using these data and products, credit and courtesy should be given to NOAA Coral Reef Watch. Please include the appropriate DOI associated with this dataset in the citation.
+
 
 # References
 Piston, A. W., J. Murphy, J. Moss, W. Strasburger, S. C. Heinl, E. Fergusson, S. Miller, A. Gray, and C. Waters. 2021. Operational Plan: Southeast coastal monitoring, 2021. Alaska Department of Fish and Game, Regional Operational Plan No. ROP.CF.1J.2021.02, Douglas.
