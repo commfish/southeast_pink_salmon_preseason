@@ -1,7 +1,7 @@
 ---
 title: "Environmental variables for SEAK Pink Salmon Preseason Forecast"
 author: "Sara Miller"
-date: "April 12, 2021"
+date: "April 16, 2021"
 output:
   bookdown::pdf_document2:
     fig_caption: yes
@@ -38,16 +38,16 @@ fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>%
 ```
 
 # Objective
-The overall objective is to optimize temperature variables by testing a variety of reasonable options using satellite data or Southeast Alaska Coastal Monitoring project (SECM) data within the forecast model framework. This would allow us to better evaluate our options and decide whether or not a variable change in the 2022 forecast model for SEAK pink salmon is warranted. This write-up is a summary of available sea surface temperature (SST) variables based on satellite data (average of May or the average over the months of May, June, and July from 1997 through 2020) in four regions of northern Southeast Alaska (NSEAK); Icy Strait, Chatham Strait, NSEAK as a whole, and a region that is in close proximity to the Icy Strait transect from the SECM survey (SST_Jordan). This write-up also includes a summary of SECM survey data from various months (the average of May or the average over the months of May, June, and July), and depths (i.e., 3m, 10m, 15m, 20m) of the Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) from 1997 through 2020. 
+The overall objective is to optimize temperature variables by testing a variety of reasonable options using satellite data or Southeast Alaska Coastal Monitoring project (SECM) data within the forecast model framework. This would allow us to better evaluate our options and decide whether or not a variable change in the 2022 forecast model for SEAK pink salmon is warranted. This write-up is a summary of available sea surface temperature (SST) variables based on satellite data (average of May or the average over the months of May, June, and July from 1997 through 2020) in four regions of northern Southeast Alaska (NSEAK); Icy Strait, Chatham Strait, NSEAK as a whole, and a region that is in close proximity to the Icy Strait transect from the SECM survey (SST_Jordan). This write-up also includes a summary of SECM survey data from various months (the average of May or the average over the months of May, June, and July), and depths (i.e., 3m, 10m, 15m, 20m) of the SECM transects (Icy Strait and Upper Chatham transects stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD or the Icy strait transect only) from 1997 through 2020. 
 
 # Methods
 ## Satellite-derived SST data
 Satellite-derived sea surface temperature (SST) data were pulled from the 'SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, Monthly, 1985-Present' time series (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html; full citation in references). This satellite-derived SST data set was then matched to pre-determined coordinates from four regions (Icy_Strait, Chatham_Strait, NEAK, and SST_Jordan) that corresponded with eight variables of interest. 
 
 ### Variables
-**Icy_Strait_SST_May**: This variable is similar to the Icy Strait Temperature Index (i.e., ISTI3_May in Figure 6 and Figure 7) and is meant to replicate May sampling that occurs from vessels in Icy Strait during the SECM surveys (Icy Strait and Upper Chatham transects; stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD), a migration pinch point for salmon in Southeast Alaska (Piston et al., 2021; Figure 1 and Figure 5a; Table 1). The Icy Strait Temperature Index (i.e., ISTI3_May) is defined as the average May temperature at 3m at the Icy Strait and Upper Chatham Stations of the SECM survey. 
+**Icy_Strait_SST_May**: This variable is similar to the Icy Strait Temperature Index (i.e., ISTI3_May in Figure 6 and Figure 7) and is meant to replicate May sampling that occurs from vessels in Icy Strait during the SECM surveys (Icy Strait and Upper Chatham transects; stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD), a migration pinch point for salmon in Southeast Alaska (Piston et al., 2021; Figure 1; Figure 5a; Figure 7a; Table 1). The Icy Strait Temperature Index (i.e., ISTI3_May) is defined as the average May temperature at 3m at the Icy Strait and Upper Chatham Stations of the SECM survey. 
 
-**Icy_Strait_SST_MJJ**: This variable is similar to the Icy Strait Temperature Index (i.e., ISTI3_MJJ in Figure 6 and Figure 7) and is meant to replicate May through July sampling that occurs from vessels in Icy Strait during the SECM surveys (Icy Strait and Upper Chatham transects; stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD), a migration pinch point for salmon in Southeast Alaska (Piston et al., 2021; Figure 1 and Figure 5b; Table 1). The Icy Strait Temperature Index (i.e., ISTI3_MJJ) is defined as the average May, June, and July temperature at 3m at the Icy Strait and Upper Chatham Stations of the SECM survey. 
+**Icy_Strait_SST_MJJ**: This variable is similar to the Icy Strait Temperature Index (i.e., ISTI3_MJJ in Figure 6 and Figure 7) and is meant to replicate May through July sampling that occurs from vessels in Icy Strait during the SECM surveys (Icy Strait and Upper Chatham transects; stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD), a migration pinch point for salmon in Southeast Alaska (Piston et al., 2021; Figure 1; Figure 5b; Figure 7a; Table 1). The Icy Strait Temperature Index (i.e., ISTI3_MJJ) is defined as the average May, June, and July temperature at 3m at the Icy Strait and Upper Chatham Stations of the SECM survey. 
 
 **Chatham_Strait_SST_May**: The Chatham Strait region encompasses waters of Chatham Strait from the northern tip of Admiralty Island (approximately 58.425 degrees latitude north) to the approximate latitude of 56.025 degrees north (roughly Cape Decision off Kuiu Island) (Figure 2 and Figure 5a; Table 2). This variable is the average SST in May over the Chatham Strait region.
 
@@ -57,18 +57,18 @@ Satellite-derived sea surface temperature (SST) data were pulled from the 'SST a
 
 **NSEAK_SST_MJJ**: The NSEAK region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude (approximately Districts 9 through 15, and District 13 inside area only; northern Southeast Inside subregion for Southeast Alaska (NSEI); Figure 3 and Figure 5b; Table 3). This variable is the average SST in May through July over the NSEAK region. 
 
-**SST_Jordan_May**: This region is meant to replicate sampling of the Icy Strait transect (stations ISA, ISB, ISC, ISD) during the SECM survey (Figure 4 and Figure 5a; Table 4). This variable is the average SST in May over the SST Jordan region.
+**SST_Jordan_May**: This region is meant to replicate sampling of the Icy Strait transect (stations ISA, ISB, ISC, ISD) during the SECM survey (Figure 4; Figure 5a; Figure 7b; Table 4). This variable is the average SST in May over the SST Jordan region.
 
-**SST_Jordan_MJJ**: This region is meant to replicate sampling of the Icy Strait transect (stations ISA, ISB, ISC, ISD) during the SECM survey (Figure 4 and Figure 5b; Table 4). This variable is the average SST in May through July over the SST Jordan region.
+**SST_Jordan_MJJ**: This region is meant to replicate sampling of the Icy Strait transect (stations ISA, ISB, ISC, ISD) during the SECM survey (Figure 4; Figure 5b; Figure 7b; Table 4). This variable is the average SST in May through July over the SST Jordan region.
 
-## SECM survey SST data
-SECM survey sea surface temperature data were summarized by year (1997 to 2020), month (the month of May or over the months of May, June, and July), and depth (3m, 10m, 15m, and 20m). Only the Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) are included in this data set.
+## SECM survey temperature data
+SECM survey temperature data were summarized by year (1997 to 2020), month (the month of May or over the months of May, June, and July), depth (3m, 10m, 15m, and 20m), and transect (the Icy Strait and Upper Chatham transects combined or only the Icy Strait transect).
 
 ### Variables
 
-**ISTI3_May**: Average temperature at 3m during May at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6a and Figure 7; Table 5).
+**ISTI3_May**: Average temperature at 3m during May at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6a; Figure 7a; Table 5).
 
-**ISTI3_MJJ**: Average temperature at 3m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6b and Figure 7; Table 6).
+**ISTI3_MJJ**: Average temperature at 3m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6b; Figure 7a; Table 6).
 
 **ISTI10_May**: Average temperature in the upper 10m during May at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6a; Table 5).
 
@@ -82,7 +82,12 @@ SECM survey sea surface temperature data were summarized by year (1997 to 2020),
 
 **ISTI20_MJJ**: Average temperature in the upper 20m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6b; Table 6).
 
+**IS3_May**: Average temperature at 3m during May at 4 stations in Icy Strait (Icy Strait transect only; Figure 6a; Table 5; Figure 7b).
+
+**IS3_MJJ**: Average temperature at 3m during May through July at 4 stations in Icy Strait (Icy Strait transect only; Figure 6b; Table 6; Figure 7b).
+
 # Results  
+
 ## Satellite-derived SST data
 Satellite sea surface temperature data were summarized by region and year for the month of May or over the months of May, June, and July from 1997 to 2020 (Tables 1 through 4).
 
@@ -114,19 +119,19 @@ tbls_sst_regions$sst_oisst_97_20_SST_Jordan_monthly_summary %>%
    knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the Icy Strait transect of the SECM project from 1997 to 2020. The variable SST_Jordan_MJJ is the sea surface temperature averaged over the entire Icy Strait transect for the months May, June, and July. The variable SST_Jordan_May is the sea surface temperature averaged over the entire Icy Strait transect for the month of May. There were 4 satellite stations (latitude/longitude combinations) in the SST_Jordan region.', row.names = F, align = "c")
 ```
 
-## SECM survey SST data
-SECM survey sea surface temperature data were summarized by year (1997 to 2020), month (the month of May or over the months of May, June, and July), and depth (3m, 10m, 15m, and 20m; Tables 5 and 6).
+## SECM survey temperature data
+SECM survey temperature data were summarized by year (1997 to 2020), month (the month of May or over the months of May, June, and July), and depth (3m, 10m, 15m, and 20m; Tables 5 and 6).
 \pagebreak
 ```{r summary5}
 tbls_sst_SECM$SECMvar2021_May %>%
-   knitr::kable(format = 'pandoc', caption = 'SECM survey sea surface temperature data were summarized by year (1997 to 2020), month (May), and depth (3m, 10m, 15m, and 20m). Only the Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) are included in this data set.', row.names = F, align = "c")
+   knitr::kable(format = 'pandoc', caption = 'SECM survey temperature data were summarized by year (1997 to 2020), month (May), and depth (3m, 10m, 15m, and 20m). Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) are included in the ISTI_3May, ISTI10_May, ISTI15_May, and ISTI20_May variables. The Icy Strait transect is only included in the IS3_May variable.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ```{r summary6}
 tbls_sst_SECM$SECMvar2021_MJJ %>%
-   knitr::kable(format = 'pandoc', caption = 'SECM survey sea surface temperature data were summarized by year (1997 to 2020), month (the months of May, June, and July), and depth (3m, 10m, 15m, and 20m). Only the Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) are included in this data set.', row.names = F, align = "c")
+   knitr::kable(format = 'pandoc', caption = 'SECM survey temperature data were summarized by year (1997 to 2020), month (the months of May, June, and July), and depth (3m, 10m, 15m, and 20m). Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) are included in the ISTI_3MJJ, ISTI10_MJJ, ISTI15_MJJ, and ISTI20_MJJ variables. The Icy Strait transect is only included in the IS3_MJJ variable.', row.names = F, align = "c")
 ```
 
 ```{r fig1, fig.cap="The Icy Strait region is meant to replicate sampling that occurs from vessels in Icy Strait (Icy Strait and Upper Chatham transects), a migration pinch point for salmon in southeast Alaska. The Southeast Coastal Monitoring (SECM) project transects (Upper Chatham Strait and Icy Strait) are shown as red points for comparison to the satellite stations (i.e., data points; black circles)."}
@@ -141,7 +146,7 @@ knitr::include_graphics(here(results.directory, "Chatham.png"))
 knitr::include_graphics(here(results.directory, "NSEAK.png"))
 ```
 
-```{r fig4, fig.cap="The SST Jordan region is meant to replicate sampling of the Icy Strait transect (stations ISA, ISB, ISC, ISD) during the SECM survey. The black circles are the satellite stations (i.e., data points) and the SECM project stations (i.e., Icy Strait transect) are shown as red points for comparison."}
+```{r fig4, fig.cap="The 'SST Jordan' region is meant to replicate sampling of the Icy Strait transect (stations ISA, ISB, ISC, ISD) during the SECM survey. The black circles are the satellite stations (i.e., data points) and the SECM project stations (i.e., Icy Strait transect) are shown as red points for comparison."}
 knitr::include_graphics(here(results.directory, "SST_Jordan.png"))
 ```
 
@@ -149,11 +154,11 @@ knitr::include_graphics(here(results.directory, "SST_Jordan.png"))
 knitr::include_graphics(here(results.directory, "monthly_temp_regions.png"))
 ```
 
-```{r fig6, fig.cap="A. Average temperature at 3m and in the upper 10m, 15m, or 20m during May at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects) from 1997 through 2020. B. Average temperature at 3m, and in the upper 10m, 15m, or 20m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects) from 1997 through 2020."}
+```{r fig6, fig.cap="A. Average temperature at 3m and in the upper 10m, 15m, or 20m during May at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects) or at 4 stations (Icy Strait transect only; 'IS3 May') from 1997 through 2020. B. Average temperature at 3m, and in the upper 10m, 15m, or 20m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects) or at 4 stations (Icy Strait transect only; 'IS3 MJJ') from 1997 through 2020."}
 knitr::include_graphics(here(results.directory, "monthly_SECM_temp_regions.png"))
 ```
 
-```{r fig7, fig.cap="Mean temperature data (degrees Celsius) from 1997 through 2020 for the month of May and averaged over the months of May, June, and July for the Icy Strait region compared to the SECM survey region. The variable ISTI3 May is the May Icy Strait Temperature Index (average temperature at 3m in the Icy Strait and Upper Chatham stations). The variable ISTI3 MJJ is the average May, June, and July Icy Strait Temperature Index (average temperature at 3m in the Icy Strait and Upper Chatham stations). The variable Icy Strait SST May is the satellite sea surface temperature data averaged over the entire Icy Strait region for the month of May. The variable 'Icy Strait SST MJJ' is the satellite sea surface temperature averaged over the entire Icy Strait region for the months of May, June, and July."}
+```{r fig7, fig.cap="A. Mean temperature data (degrees Celsius) from 1997 through 2020 for the month of May and averaged over the months of May, June, and July for the Icy Strait region compared to the SECM survey region. The variable 'ISTI3 May' is the May Icy Strait Temperature Index (average temperature at 3m in the Icy Strait and Upper Chatham stations). The variable 'ISTI3 MJJ' is the average May, June, and July Icy Strait Temperature Index (average temperature at 3m in the Icy Strait and Upper Chatham stations). The variable 'Icy Strait SST May' is the satellite sea surface temperature data averaged over the entire Icy Strait region for the month of May. The variable 'Icy Strait SST MJJ' is the satellite sea surface temperature averaged over the entire Icy Strait region for the months of May, June, and July. B. Mean temperature data (degrees Celsius) from 1997 through 2020 for the month of May and averaged over the months of May, June, and July for the SST Jordan region compared to the SECM survey region (Icy Strait transect only). The variable 'IS3 May' is the average May temperature at 3m in the Icy Strait stations. The variable 'IS3 MJJ' is the average May, June, and July temperature at 3m in the Icy Strait stations. The variable 'SST Jordan May' and 'SST Jordan MJJ' cover a similiar area to the SECM Icy Strait transect. "}
 knitr::include_graphics(here(results.directory, "monthly_temp.png"))
 ```
 

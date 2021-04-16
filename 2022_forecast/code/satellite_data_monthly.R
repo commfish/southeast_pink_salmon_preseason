@@ -203,11 +203,11 @@ read.csv(paste0(results.directory, 'sst_oisst_97_20_SST_Jordan_monthly_summary.c
   merge (., NSEAK) -> fig_data
 
 read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, year, ISTI3_May, ISTI10_May, ISTI15_May, ISTI20_May) %>%
+  dplyr::select(year, year, ISTI3_May, ISTI10_May, ISTI15_May, ISTI20_May, IS3_May) %>%
   write.csv(., paste0(results.directory, 'SECMvar2021_May.csv'), row.names = FALSE)
 
 read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, ISTI3_MJJ, ISTI10_MJJ, ISTI15_MJJ, ISTI20_MJJ) %>%
+  dplyr::select(year, ISTI3_MJJ, ISTI10_MJJ, ISTI15_MJJ, ISTI20_MJJ, IS3_MJJ) %>%
   write.csv(., paste0(results.directory, 'SECMvar2021_MJJ.csv'), row.names = FALSE)
 
 #-------------------------------------------------------------------------------------------------------------
@@ -232,12 +232,37 @@ merge(.,fig_data) %>%
                      legend.text=element_text(size=12), 
                      axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
                      axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
-                     legend.position=c(0.80,0.15))  +
+          legend.position=c(0.85,0.18))  +
   scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
   scale_y_continuous(breaks = c(4,5,6,7, 8, 9,10,11,12,13), limits = c(4,13))+
+  geom_text(aes(x = 1997, y = 13, label="A)"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot1
-cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
-ggsave(paste0(results.directory, "monthly_temp.png"), dpi = 500, height = 4, width = 6, units = "in")
+
+read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
+  merge(.,fig_data) %>%
+  dplyr::select(year, IS3_MJJ, IS3_May, SST_Jordan_MJJ, SST_Jordan_May) %>%
+  gather("var", "value", -c(year)) %>% 
+  ggplot(., aes(y = value, x = year, group =var)) +
+  geom_point(aes(shape = var, color = var, size=var)) +
+  geom_line(aes(linetype = var, color = var)) +
+  scale_linetype_manual(values=c("solid", "solid", "dotted", "dotted" ))+
+  scale_shape_manual(values=c(1, 16, 1, 16)) +
+  scale_color_manual(values=c('black','black', 'grey70', 'grey70'))+
+  scale_size_manual(values=c(2,2,2,2)) +
+  theme(legend.title=element_blank(),
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
+        legend.text=element_text(size=12), 
+        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
+        axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
+        legend.position=c(0.85,0.18))  +
+  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
+  scale_y_continuous(breaks = c(4,5,6,7, 8, 9,10,11,12,13), limits = c(4,13))+
+  geom_text(aes(x = 1997, y = 13, label="B)"),family="Times New Roman", colour="black", size=4) +
+  labs(y = "Temperature (Celsius)", x ="") -> plot2
+cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 2, ncol=1)
+ggsave(paste0(results.directory, "monthly_temp.png"), dpi = 500, height = 6, width = 6.5, units = "in")
 
 # create a figure of SST_MJJ and SST_May by region
 fig_data %>%
@@ -290,15 +315,15 @@ ggsave(paste0(results.directory, "monthly_temp_regions.png"), dpi = 500, height 
 
 # create a figure of ISTI_May and ISTI_MJJ for the SECM survey
 read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, ISTI3_May, ISTI10_May, ISTI15_May, ISTI20_May) %>%
+  dplyr::select(year, ISTI3_May, ISTI10_May, ISTI15_May, ISTI20_May, IS3_May) %>%
   gather("var", "value", -c(year)) %>% 
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size=var)) +
   geom_line(aes(linetype = var, color = var)) +
-  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted"))+
-  scale_shape_manual(values=c(1, 16, 15, 2)) +
-  scale_color_manual(values=c('black','black', 'grey70', 'grey70'))+
-  scale_size_manual(values=c(2,2,2,2)) +
+  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted", "dotted"))+
+  scale_shape_manual(values=c(1, 16, 15, 2, 8)) +
+  scale_color_manual(values=c('black','black', 'grey70', 'grey70', 'black'))+
+  scale_size_manual(values=c(2,2,2,2,2)) +
   theme(legend.title=element_blank(),
         panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
@@ -313,15 +338,15 @@ read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
   labs(y = "Temperature (Celsius)", x ="") -> plot1
 
 read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, ISTI3_MJJ, ISTI10_MJJ, ISTI15_MJJ, ISTI20_MJJ) %>%
+  dplyr::select(year, ISTI3_MJJ, ISTI10_MJJ, ISTI15_MJJ, ISTI20_MJJ, IS3_MJJ) %>%
   gather("var", "value", -c(year)) %>% 
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size=var)) +
   geom_line(aes(linetype = var, color = var)) +
-  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted"))+
-  scale_shape_manual(values=c(1, 16, 15, 2)) +
-  scale_color_manual(values=c('black','black', 'grey70', 'grey70'))+
-  scale_size_manual(values=c(2,2,2,2)) +
+  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted", "dotted"))+
+  scale_shape_manual(values=c(1, 16, 15, 2,8)) +
+  scale_color_manual(values=c('black','black', 'grey70', 'grey70','black'))+
+  scale_size_manual(values=c(2,2,2,2,2)) +
   theme(legend.title=element_blank(),
         panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
