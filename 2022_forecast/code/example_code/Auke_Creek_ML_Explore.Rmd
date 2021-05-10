@@ -4,6 +4,8 @@ title: Illustration of data preparation and modeling process for Auke Creek Pink
 output:
   html_document:
     df_print: paged
+  pdf_document:
+    df_print: paged
 ---
 
 ```{r load_libraries,message=FALSE}
@@ -68,8 +70,14 @@ This temperature time series begins in 1985, requiring truncation of the Auke Cr
 library(ncdf4)
 library(RCurl)
 library(tidync)
+year.forecast <- "2022_forecast" 
+data.directory <- file.path(year.forecast, 'data')
+results.directory <- file.path(year.forecast,  'results', '/')
 
-myregions <- read_excel("data/sst_spatial_regions.xlsx")
+# read in data file with SST region
+read_excel(file.path('C:/preseason_forecasts_pink_salmon_SEAK/2022_forecast/data/sst_spatial_regions.xlsx')) -> myregions
+
+
 newdat <- data.frame()
 #  Download the data for a fixed spatial and temporal period.
 #  (note this is a lot of data and will take a few minutes to download if you do the whole thing)
@@ -113,7 +121,7 @@ for(i in 1:nrow(myregions)){
 }
 
 newdat %>% 
-  saveRDS("data/sst_regions_oisst_85_20.RDS")
+  saveRDS(., paste0(data.directory, "sst_regions_oisst_85_20.RDS"))
 ```
 
 Read in upwelling data and average for November - March as per Kohan et al 2017.Data source: https://oceanview.pfeg.noaa.gov/products/upwelling/dnld
