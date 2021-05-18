@@ -1,5 +1,8 @@
 # make sure functions refer to correct forecast folder
 # MASE function #https://stackoverflow.com/questions/11092536/forecast-accuracy-no-mase-with-two-vectors-as-arguments
+# add MAPE the last 5 years
+# https://stackoverflow.com/questions/12994929/whats-the-gaps-for-the-forecast-error-metrics-mape-and-wmape
+
 MASE <- function(f,y) { # f = vector with forecasts, y = vector with actuals
   if(length(f)!=length(y)){ stop("Vector length is not equal") }
   n <- length(f)
@@ -26,12 +29,14 @@ jacklm.reg<-function(data,model.formula,jacknife.index=0){
       # model.names: names of selected models
   
       # this function needs to be edited to select harvest data based on the model.formula
-model.summary <- function(harvest,variables,model.formulas,model.names){
+model.summary <- function(harvest,variables,model.formulas,model.names,w){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
+  weights<-w[-n]
   data<-variables[-n,]
   fit.out<-list()
+  sum_w<-sum(weights)
   for(i in 1:length(model.formulas)) {
     fit<-lm(model.formulas[[i]],data=data)
     fit.out[[i]]<-fit
@@ -42,6 +47,9 @@ model.summary <- function(harvest,variables,model.formulas,model.names){
     }
     mape_LOOCV<-mean(abs(obs-vector.jack)/obs)
     mape<-mean(abs(obs-fit$fitted.values)/obs)
+    wmape1<-((abs(obs-fit$fitted.values)/obs)*weights)
+    wmape2<-sum(wmape1)
+    wmape<-wmape2/sum_w
     mase<-MASE(f = (fit$fitted.values), y = obs) # function
     mase2<-Metrics::mase(obs,fit$fitted.values,1 )
     model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='prediction',level=.8))
@@ -49,7 +57,7 @@ model.summary <- function(harvest,variables,model.formulas,model.names){
     model.results<-rbind(model.results,c(model.pred,R2=model.sum$r.squared,AdjR2=model.sum$adj.r.squared, AIC=AIC(fit),AICc=AICcmodavg::AICc(fit),BIC=BIC(fit),
                                          p = pf(model.sum$fstatistic[1], model.sum$fstatistic[2],model.sum$fstatistic[3],lower.tail = FALSE), sigma = sigma,
                                          MAPE=mape,MAPE_LOOCV=mape_LOOCV,
-                                         MASE = mase, MASE2=mase2))
+                                         MASE = mase, MASE2=mase2, wMAPE= wmape))
   }
   
   row.names(model.results)<-model.names

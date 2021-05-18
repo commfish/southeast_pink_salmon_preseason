@@ -26,6 +26,7 @@ library(dplyr)
 library(extrafont)
 library(ggrepel)
 library(Metrics) # MASE calc
+library(MetricsWeighted)
 #extrafont::font_import()
 windowsFonts(Times=windowsFont("TT Times New Roman"))
 theme_set(theme_report(base_size = 14))
@@ -78,7 +79,29 @@ model.names <- c(m1='CPUE',
                m20='CPUE + NSEAK_SST_AMJJ',
                m21='CPUE + SST_Jordan_MJJ',
                m22='CPUE + SST_Jordan_May',
-               m23='CPUE + SST_Jordan_AMJJ')
+               m23='CPUE + SST_Jordan_AMJJ',
+               m2i='CPUE * ISTI3_May',
+               m3i='CPUE * ISTI10_May',
+               m4i='CPUE * ISTI15_May',
+               m5i='CPUE * ISTI20_May',
+               m6i='CPUE * ISTI3_MJJ',
+               m7i='CPUE * ISTI10_MJJ',
+               m8i='CPUE * ISTI15_MJJ',
+               m9i='CPUE * ISTI20_MJJ',
+               m10i='CPUE * IS3_May',
+               m11i='CPUE * IS3_MJJ',
+               m12i='CPUE  Chatham_Strait_SST_MJJ',
+               m13i='CPUE + Chatham_Strait_SST_May',
+               m14i='CPUE + Chatham_Strait_SST_AMJJ',
+               m15i='CPUE + Icy_Strait_SST_MJJ',
+               m16i='CPUE + Icy_Strait_SST_May',
+               m17i='CPUE + Icy_Strait_SST_AMJJ',
+               m18i='CPUE + NSEAK_SST_MJJ',
+               m19i='CPUE + NSEAK_SST_May',
+               m20i='CPUE + NSEAK_SST_AMJJ',
+               m21i='CPUE + SST_Jordan_MJJ',
+               m22i='CPUE + SST_Jordan_May',
+               m23i='CPUE + SST_Jordan_AMJJ')
 model.formulas <- c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE + ISTI3_May,
                  SEAKCatch_log ~ CPUE + ISTI10_May,
@@ -104,7 +127,7 @@ model.formulas <- c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE + SST_Jordan_AMJJ) # temp. data 
 
 # summary statistics and bootstrap of SEAK pink salmon harvest forecast models
-seak.model.summary <- model.summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names)
+seak.model.summary <- model.summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values)
 
 # summary of model fits (i.e., coefficients, p-value)
 log_data %>% 
@@ -202,13 +225,14 @@ write.csv(., paste0(results.directory, "/model_summary_table1.csv"), row.names =
 read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
 results %>% 
   dplyr::rename(terms = 'X') %>% 
-  dplyr::select(terms, fit,	fit_LPI,	fit_UPI, AdjR2, AICc, BIC,	p.value,	sigma,	MAPE,	MAPE_LOOCV,	MASE) %>%
+  dplyr::select(terms, fit,	fit_LPI,	fit_UPI, AdjR2, AICc, BIC,	p.value,	sigma,	MAPE,	MAPE_LOOCV,	MASE, wMAPE) %>%
   mutate(AdjR2 = round(AdjR2,3),
          sigma = round(sigma,3),
          AICc = round(AICc,2),
          MAPE = round(MAPE,3),
          MASE = round(MASE,3),
-         MAPE_LOOCV = round(MAPE_LOOCV,3)) %>%
+         MAPE_LOOCV = round(MAPE_LOOCV,3),
+         wMAPE = round(wMAPE, 3)) %>%
   mutate(model = c('m1','m2','m3','m4','m5','m6','m7','m8',
                    'm9','m10','m11','m12','m13','m14','m15','m16',' m17',
                    'm18','m19','m20','m21','m22','m23')) %>%
@@ -218,8 +242,126 @@ results %>%
   mutate(fit = round(fit_log,3), 
          fit_LPI = round(fit_log_LPI,3),
          fit_UPI = round(fit_log_UPI,3)) %>% 
-  dplyr::select(model, terms, fit,	fit_LPI,	fit_UPI, AdjR2, AICc, p.value,	sigma,	MAPE,	MAPE_LOOCV,	MASE) %>%
+  dplyr::select(model, terms, fit,	AdjR2, AICc,MASE ,wMAPE, MAPE_LOOCV) %>%
   write.csv(paste0(results.directory, "/model_summary_table2.csv"), row.names = F)
 
-# add MASE the last 5 years
+# forecast figure
+read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
+results %>% 
+  dplyr::rename(terms = 'X') %>% 
+  dplyr::select(terms, fit,	fit_LPI,	fit_UPI, sigma) %>%
+  mutate(model = c('1','2','3','4','5','6','7','8',
+                   '9','10','11','12','13','14','15','16',' 17',
+                   '18','19','20','21','22','23')) %>%
+  mutate(model= as.numeric(model),
+         fit_log = exp(fit)*exp(0.5*sigma*sigma),
+         fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), 
+         fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% 
+  dplyr::select(model, terms, fit_log,fit_log_LPI, 	fit_log_UPI) %>% 
+  as.data.frame() %>%
+  ggplot(., aes(x=model)) +
+  geom_bar(aes(y = fit_log, fill = "SEAK pink catch"),
+           stat = "identity", colour ="black",
+           width = 1, position = position_dodge(width = 0.1)) +
+  scale_colour_manual("", values=c("SEAK pink catch" = "lightgrey", "fit" = "black")) +
+  scale_fill_manual("",values="lightgrey")+
+  theme_bw() + theme(legend.key=element_blank(),
+                     legend.title=element_blank(),
+                     legend.position = "none") +
+  geom_hline(aes(yintercept=mean(fit_log)), color="grey50", lty = 2) +
+  geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, size=1, color="blue")+
+  scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40,45,50,55), limits = c(0,55))+ 
+  labs(x = "Models", y = "2021 SEAK Pink Salmon Forecast (millions)")  -> plot1
+ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, width = 6, units = "in")
 
+# summary of interaction model fits (i.e., coefficients, p-value)
+log_data %>% 
+  dplyr::filter(JYear < year.data) -> log_data_subset 
+
+lm(SEAKCatch_log ~ CPUE, data = log_data_subset) -> m1
+lm(SEAKCatch_log ~ CPUE * ISTI3_May, data = log_data_subset) -> m2
+lm(SEAKCatch_log ~ CPUE * ISTI10_May, data = log_data_subset) -> m3
+lm(SEAKCatch_log ~ CPUE * ISTI15_May, data = log_data_subset) -> m4
+lm(SEAKCatch_log ~ CPUE * ISTI20_May, data = log_data_subset) -> m5
+lm(SEAKCatch_log ~ CPUE * ISTI3_MJJ, data = log_data_subset) -> m6
+lm(SEAKCatch_log ~ CPUE * ISTI10_MJJ, data = log_data_subset) -> m7
+lm(SEAKCatch_log ~ CPUE * ISTI15_MJJ, data = log_data_subset) -> m8
+lm(SEAKCatch_log ~ CPUE * ISTI20_MJJ, data = log_data_subset) -> m9
+lm(SEAKCatch_log ~ CPUE * IS3_May, data = log_data_subset) -> m10
+lm(SEAKCatch_log ~ CPUE * IS3_MJJ, data = log_data_subset) -> m11
+lm(SEAKCatch_log ~ CPUE * Chatham_Strait_SST_MJJ, data = log_data_subset) -> m12
+lm(SEAKCatch_log ~ CPUE * Chatham_Strait_SST_May, data = log_data_subset) -> m13
+lm(SEAKCatch_log ~ CPUE * Chatham_Strait_SST_AMJJ, data = log_data_subset) -> m14
+lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_MJJ, data = log_data_subset) -> m15
+lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_May, data = log_data_subset) -> m16
+lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_AMJJ, data = log_data_subset) -> m17
+lm(SEAKCatch_log ~ CPUE * NSEAK_SST_MJJ, data = log_data_subset) -> m18
+lm(SEAKCatch_log ~ CPUE * NSEAK_SST_May, data = log_data_subset) -> m19
+lm(SEAKCatch_log ~ CPUE * NSEAK_SST_AMJJ, data = log_data_subset) -> m20
+lm(SEAKCatch_log ~ CPUE * SST_Jordan_MJJ, data = log_data_subset) -> m21
+lm(SEAKCatch_log ~ CPUE * SST_Jordan_May, data = log_data_subset) -> m22
+lm(SEAKCatch_log ~ CPUE * SST_Jordan_AMJJ, data = log_data_subset) -> m23
+
+
+tidy(m1) -> model1
+tidy(m2) -> model2
+tidy(m3) -> model3
+tidy(m4) -> model4
+tidy(m5) -> model5
+tidy(m6) -> model6
+tidy(m7) -> model7
+tidy(m8) -> model8
+tidy(m9) -> model9
+tidy(m10) -> model10
+tidy(m11) -> model11
+tidy(m12) -> model12
+tidy(m13) -> model13
+tidy(m14) -> model14
+tidy(m15) -> model15
+tidy(m16) -> model16
+tidy(m17) -> model17
+tidy(m18) -> model18
+tidy(m19) -> model19
+tidy(m20) -> model20
+tidy(m21) -> model21
+tidy(m22) -> model22
+tidy(m23) -> model23
+
+rbind(model1, model2) %>% 
+  rbind(., model3) %>% 
+  rbind(., model4) %>% 
+  rbind(., model5) %>% 
+  rbind(., model6) %>% 
+  rbind(., model7) %>% 
+  rbind(., model8) %>%   
+  rbind(., model9) %>% 
+  rbind(., model10) %>% 
+  rbind(., model11) %>% 
+  rbind(., model12) %>% 
+  rbind(., model13) %>% 
+  rbind(., model14) %>%   
+  rbind(., model15) %>% 
+  rbind(., model16) %>% 
+  rbind(., model17) %>% 
+  rbind(., model18) %>% 
+  rbind(., model19) %>% 
+  rbind(., model20) %>% 
+  rbind(., model21) %>% 
+  rbind(., model22) %>% 
+  rbind(., model23) %>%   
+  mutate(model = c('m1','m1','m2','m2','m2','m2','m3','m3','m3','m3',
+                   'm4','m4','m4','m4','m5','m5','m5','m5','m6','m6','m6','m6',
+                   'm7','m7','m7','m7', 'm8','m8','m8','m8','m9','m9',' m9','m9',
+                   'm10','m10','m10','m10','m11','m11','m11','m11', 'm12','m12',' m12','m12',
+                   'm13','m13','m13','m13','m14','m14','m14','m14', 'm15','m15',' m15','m15',
+                   'm16','m16','m16','m16','m17','m17','m17','m17',
+                   'm18','m18',' m18','m18',
+                   'm19','m19','m19','m19',
+                   'm20','m20','m20','m20', 'm21','m21',' m21','m21',
+                   'm22','m22','m22','m22','m23','m23','m23','m23')) %>% 
+  dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
+  mutate(estimate = round(estimate,8),
+         std.error = round(std.error,3),
+         statistic = round(statistic,3),
+         p.value = round(p.value,3)) %>%
+  write.csv(., paste0(results.directory, "/model_summary_table3.csv"), row.names = F)
