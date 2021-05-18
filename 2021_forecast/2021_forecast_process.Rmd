@@ -129,7 +129,7 @@ Figure 5: A) SEAK pink salmon harvest (millions) by year with the model fit (lin
 3) Sea surface temperature (SST) from satellite data (May temperature near the SECM stations);  
 4) Sea surface temperature (SST) from satellite data (May-July temperature near the SECM stations).
 
-In addition to these environmental variables, it would be beneficial to add additional performance metrics to rank the models (e.g., number of years the model performed the best; number of leverage point years (run the the two competing models without the leverage years and review the performance metrics)). Also, a retrospective analysis.
+In addition to these environmental variables, it would be beneficial to add additional performance metrics to rank the models (e.g., number of years the model performed the best; number of leverage point years (run the  two competing models without the leverage years and review the performance metrics)). Also, a retrospective analysis.
 
 #References
 Burnham, K. P., and D. R. Anderson. 2004. Multimodel inference: Understanding AIC and BIC in model selection. Sociological Methods and Research 33: 261-304.
