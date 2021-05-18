@@ -58,7 +58,7 @@ $$MAPE = \frac{1}{n} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|$$
 where $A_t$ is the observed values and $F_t$ are the predicted values. The performance metric *wMAPE* was calculated as
 
 $$wMAPE =\sum_{t=1}^{n} \frac{1}{w_t} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|w_t.$$
-The AICc in Table 2 is the AICc value and not the $\Delta_i$AICc. The performance metric AICc suggests that models m19 and m13 are the recommended models. The performance metrics *MASE* and *MAPE_LOOCV* suggest that models m16, m22, m19 and m13 are the recommended models. The performance metric *wMAPE* suggests that models m20, m16, m22, and m19 are the recommended models.
+The AICc in Table 2 is the AICc value and not the $\Delta_i$AICc. The performance metric AICc suggests that models m19, m16, and m13 are the recommended models. The performance metrics *MASE* and *MAPE_LOOCV* suggest that models m16, m22, m19 and m13 are the recommended models. The performance metric *wMAPE* suggests that models m20, m16, m22, and m19 are the recommended models.
 
 ```{r SummaryMetrics}
 tbls_seak$model_summary_table2 %>% 
