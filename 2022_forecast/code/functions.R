@@ -29,7 +29,7 @@ jacklm.reg<-function(data,model.formula,jacknife.index=0){
       # model.names: names of selected models
   
       # this function needs to be edited to select harvest data based on the model.formula
-model.summary <- function(harvest,variables,model.formulas,model.names,w){
+f_model_summary <- function(harvest,variables,model.formulas,model.names,w){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
@@ -64,6 +64,187 @@ model.summary <- function(harvest,variables,model.formulas,model.names,w){
   dimnames(model.results)[[2]][1:3]<-c('fit','fit_LPI','fit_UPI')
   as.data.frame(model.results)-> x
   write.csv(x, file=paste0(results.directory, "/seak_model_summary.csv"))}
+
+f_model_sensitivity <- function(harvest,variables,model.formulas,model.names,w){
+  n<-dim(variables)[1]
+  model.results<-numeric()
+  obs<-harvest[-n]
+  weights<-w[-n]
+  data<-variables[-n,]
+  fit.out<-list()
+  sum_w<-sum(weights)
+  for(i in 1:length(model.formulas)) {
+    fit<-lm(model.formulas[[i]],data=data)
+    fit.out[[i]]<-fit
+    model.sum<-summary(fit)
+    vector.jack<-numeric()
+    for(j in 1:(n-1)){
+      vector.jack[j]<-jacklm.reg(data=data,model.formula=model.formulas[[i]],jacknife.index=j)
+    }
+    mape_LOOCV<-mean(abs(obs-vector.jack)/obs)
+    mape<-mean(abs(obs-fit$fitted.values)/obs)
+    wmape1<-((abs(obs-fit$fitted.values)/obs)*weights)
+    wmape2<-sum(wmape1)
+    wmape<-wmape2/sum_w
+    mase<-MASE(f = (fit$fitted.values), y = obs) # function
+    mase2<-Metrics::mase(obs,fit$fitted.values,1 )
+    model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='prediction',level=.8))
+    sigma <- sigma(fit)
+    model.results<-rbind(model.results,c(model.pred,R2=model.sum$r.squared,AdjR2=model.sum$adj.r.squared, AIC=AIC(fit),AICc=AICcmodavg::AICc(fit),BIC=BIC(fit),
+                                         p = pf(model.sum$fstatistic[1], model.sum$fstatistic[2],model.sum$fstatistic[3],lower.tail = FALSE), sigma = sigma,
+                                         MAPE=mape,MAPE_LOOCV=mape_LOOCV,
+                                         MASE = mase, MASE2=mase2, wMAPE= wmape))
+  }
+  
+  row.names(model.results)<-model.names
+  dimnames(model.results)[[2]][1:3]<-c('fit','fit_LPI','fit_UPI')
+  as.data.frame(model.results)-> x
+  write.csv(x, file=paste0(results.directory, "/seak_model_summary_sensitivity.csv"))}
+
+# output diagnostics function
+f_model_diagnostics <- function(best_model, model_name){
+  augment(best_model) %>% 
+  mutate(resid = round((.resid),3),
+         hat_values = round((.hat),3),
+         Cooks_distance = round((.cooksd),3),
+         std_resid = round((.std.resid),3),
+         fitted = round((.fitted),3),
+         year=1998:year.data, 
+         juvenile_year = 1997:year.data.one,
+         model = model_name) %>%
+    dplyr::select(17, 15,16,10:14) %>%
+  #dplyr::select(model, year, juvenile_year,resid, hat_values, Cooks_distance, std_resid, fitted) %>%
+  write.csv(paste0(results.directory, "/model_summary_table_", model_name, ".csv"), row.names = F)}
+
+# output diagnostic plots
+f_resid_year_diagnostics_plot<-function(best_model, model_name){
+  augment(best_model) %>% 
+    mutate(resid = (.std.resid)) %>% 
+    ggplot(., aes(x = CPUE, y = resid)) +
+    geom_hline(yintercept = 0, lty=2) + 
+    geom_point(color ="grey50") + ggtitle(model_name) +
+    geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
+    scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4), limits = c(-4,4)) +
+    scale_x_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
+    labs(y = "Standardized residuals", x =  "ln(CPUE+1)") + theme(legend.position="none") +
+    theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                       panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+    geom_text(aes(x = 0.4, y = 4, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
+
+  augment(best_model) %>% 
+  mutate(resid = (.std.resid),
+         count = 1997:year.data.one)%>% 
+  ggplot(aes(x = count, y = resid)) + ggtitle(model_name) +
+  geom_bar(stat = "identity", colour = "grey50", 
+           fill = "lightgrey",alpha=.7,
+           width = 0.8, position = position_dodge(width = 0.2)) + 
+  scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
+  scale_y_continuous(breaks = c(-4,-3,-2,-1,0, 1,2,3,4), limits = c(-4,4))+
+  labs(y = "Standardized residuals", x =  "Juvenile year") + theme_bw () +theme(text = element_text(size=10),
+                                                                                axis.text.x = element_text(angle=90, hjust=1),
+                                                                                panel.border = element_blank(), panel.grid.major = element_blank(),
+                                                                                panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  geom_text(aes(x = 1997, y = 4, label="c)"),family="Times New Roman", colour="black", size=5)-> plot2
+
+# residuals against fitted
+augment(best_model) %>% 
+  mutate(resid = (.resid),
+         fit = (.fitted)) %>% 
+  ggplot(aes(x = fit, y = resid)) +
+  geom_point(color ="grey50")  + ggtitle(model_name) +
+  geom_smooth(aes(colour = fit, fill = fit),colour="black") +
+  geom_hline(yintercept = 0, lty=2) + 
+  scale_y_continuous(breaks = c(-1,-0.5,0,0.5,1), limits = c(-1,1))+
+  scale_x_continuous(breaks = c(2,3,4,5,5), limits = c(2,5))+
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  labs(y = "Residuals", x =  "Fitted values") +
+  geom_text(aes(x = 2.1, y = 1, label="d)"),family="Times New Roman", colour="black", size=5)-> plot3
+
+# residuals against temp
+augment(best_model) %>% 
+  mutate(resid = (.std.resid),
+         temp = .[[3]]) %>% 
+  ggplot(aes(x = temp, y = resid)) +
+  geom_point(color ="grey50")  + ggtitle(model_name) +
+  geom_smooth(aes(colour = temp, fill = temp),colour="black") +
+  geom_hline(yintercept = 0, lty=2) + 
+  scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4), limits = c(-4,4)) +
+  scale_x_continuous(breaks = c(5,6,7,8,9,10,11,12), limits = c(5,12)) +
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  labs(y = "Standardized residuals", x =  "Temperature") +
+  geom_text(aes(x = 5, y = 4, label="b)"),family="Times New Roman", colour="black", size=5)-> plot4
+
+augment(best_model) %>% 
+  mutate(temp = .[[3]]) %>% 
+  ggplot(aes(x = temp, y = SEAKCatch_log)) +
+  geom_point(color ="grey50") +  ggtitle(model_name) +
+  geom_smooth(aes(colour = temp, fill = temp), colour="black") +
+  scale_y_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
+  scale_x_continuous(breaks = c(5,6,7,8,9,10,11,12), limits = c(5,12)) +
+  labs(y = "ln(Harvest)", x =  "Temperature") + theme(legend.position="none") +
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  geom_text(aes(x = 5, y = 6, label="e)"),family="Times New Roman", colour="black", size=5)-> plot5
+
+augment(best_model) %>%  
+  ggplot(aes(x = CPUE, y = SEAKCatch_log)) +
+  geom_point(color ="grey50") +   ggtitle(model_name) +
+  geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
+  scale_y_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
+  labs(y = "ln(Harvest)", x =  "ln(CPUE+1)") + theme(legend.position="none") +
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  geom_text(aes(x = 0, y = 6, label="f)"),family="Times New Roman", colour="black", size=5) -> plot6
+
+cowplot::plot_grid(plot1, plot4, plot2,plot3,plot5, plot6,  align = "vh", nrow = 3, ncol=2)
+ggsave(paste0(results.directory, "fitted_", model_name,".png"), dpi = 500, height = 8, width = 6, units = "in")}
+
+# Cook's distance and leverage plot
+f_resid_leverage_diagnostics_plot<-function(best_model, model_name, k, p){
+  level <- 4/(sample_size-k-1) # source: Ren et al. 2016# k = predictors in model (not including intercept)
+augment(best_model) %>% 
+  mutate(cooksd = (.cooksd),
+         count = (1997:year.data.one),
+         name= ifelse(cooksd >level, count, "")) %>% 
+  ggplot(aes(x = count, y = cooksd, label=name)) +ggtitle(model_name) +
+  geom_bar(stat = "identity", colour = "grey50", 
+           fill = "lightgrey",alpha=.7,
+           width = 0.8, position = position_dodge(width = 0.2)) + 
+  geom_text(size = 2, position = position_stack(vjust = 1.05)) + 
+  geom_hline(yintercept = level, lty=2) +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                                                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
+  scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0, 1.25, 1.50), limits = c(0,1.5))+
+  labs(y = "Cook's distance", x =  "Juvenile year") + theme(text = element_text(size=10),
+                                                            axis.text.x = element_text(angle=90, hjust=1))+
+  geom_text(aes(x = 1997, y = 1.5, label="a)"),family="Times New Roman", colour="black", size=5) -> plot1
+
+# leverage plot
+#  p is the number of parameters in the model including intercept
+level <- 2*p/sample_size # source: Ren et al. 2016
+# leverage plot
+augment(best_model) %>% 
+  mutate(hat= (.hat),
+         count = 1997:year.data.one,
+         name= ifelse(hat > level, count, "")) %>% # may need to adjust valeu; see hat value equation above
+  ggplot(aes(x = count, y = hat, label=name)) +ggtitle(model_name) +
+  geom_bar(stat = "identity", colour = "grey50", 
+           fill = "lightgrey",alpha=.7,
+           width = 0.8, position = position_dodge(width = 0.2)) + 
+  geom_text(size = 2, position = position_stack(vjust = 1.05)) + 
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
+  geom_hline(yintercept = 0.26, lty=2) +
+  scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
+  labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=10),
+                                                       axis.text.x = element_text(angle=90, hjust=1))+
+  geom_text(aes(x = 1997, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
+cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
+ggsave(paste0(results.directory, "influential_", model_name,".png"), dpi = 500, height = 3, width = 6, units = "in")}
+
 # Bootstrap Functions
    # boostraplm function
        # cpuedata: a list of individual catch observations by year
@@ -127,5 +308,50 @@ eda.norm <- function(x, ...)
   lines(y, pnorm(y, mean(x), sqrt(var(x))))
   shapiro.test(x)
 }
+# function check for one model
+f_model_one_step_ahead <- function(harvest,variables,model, start, end){
+  n<-dim(variables)[1]
+  model.results<-numeric()
+  obs<-harvest[-n]
+  data<-variables[-n,]
+  fit.out<-list()
+  for (i in (end+1):tail(data$JYear)[6])
+  {
+    fit<-lm(model,data = data[data$JYear >= start & data$JYear < i,])
+    data$model1_sim[data$JYear == i] <- predict(fit, newdata = data[data$JYear == i,])
+  }
+  return(data)
+  data %>% 
+    dplyr::filter(JYear > end) -> output
+  mape(output$model1_sim,output$SEAKCatch_log)
+} 
+# function check for one model
+seak_model_summary2 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~ CPUE, start = 1997, end = 2014)
+
+# function for multile models
+f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,model.names, start, end){
+  n<-dim(variables)[1]
+  model.results<-numeric()
+  obs<-harvest[-n]
+  data<-variables[-n,]
+  fit.out<-list()
+  for(i in 1:length(model.formulas)) 
+  {
+    for (j in (end+1):tail(data$JYear)[6])
+    {
+      fit<-lm(model.formulas[[i]],data = data[data$JYear >= start & data$JYear < j,])
+      fit.out[[i]]<-fit
+      data$model1_sim[data$JYear == j] <- predict(fit, newdata = data[data$JYear == j,])
+    }
+    #return(data)
+    data %>% 
+      dplyr::filter(JYear > end) -> output
+    MAPE<-mape(output$model1_sim,output$SEAKCatch_log)
+    model.results<-rbind(model.results, MAPE= MAPE)
+  } 
+  row.names(model.results)<-model.names
+  dimnames(model.results)[[2]][1]<-c('MAPE')
+  as.data.frame(model.results)-> x
+  write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead.csv"))}
 
 

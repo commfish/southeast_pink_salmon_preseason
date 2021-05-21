@@ -21,7 +21,7 @@ theme_set(theme_report(base_size = 14))
 # set up directories----
 year.forecast <- "2022_forecast" 
 data.directory <- file.path(year.forecast, 'data', '/')
-results.directory <- file.path(year.forecast,  'results', '/')
+results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 #------------------------------------------------------------------------------------------------------------------------------------------
 # DOWNLOAD SST DATA FROM THE NOAA SITE AND CREATE CSV FILE FOR YEARS 1997 to 2020 (May - July data)
 #------------------------------------------------------------------------------------------------------------------------------------------
