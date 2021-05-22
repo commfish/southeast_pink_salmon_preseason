@@ -132,7 +132,6 @@ lm(SEAKCatch_log ~ CPUE + SST_Jordan_MJJ, data = log_data_subset) -> m21
 lm(SEAKCatch_log ~ CPUE + SST_Jordan_May, data = log_data_subset) -> m22
 lm(SEAKCatch_log ~ CPUE + SST_Jordan_AMJJ, data = log_data_subset) -> m23
 
-
 tidy(m1) -> model1
 tidy(m2) -> model2
 tidy(m3) -> model3
@@ -272,10 +271,22 @@ results %>%
   labs(x = "Models", y = "2021 SEAK Pink Salmon Forecast (millions)")  -> plot1
 ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, width = 6, units = "in")
 
-# summary of interaction model fits (i.e., coefficients, p-value)
-log_data %>% 
-  dplyr::filter(JYear < year.data) -> log_data_subset 
+# one step ahead MAPE
+# https://stackoverflow.com/questions/37661829/r-multivariate-one-step-ahead-forecasts-and-accuracy
+# end year is the year the data is used through (e.g., end = 2004 means that the regression is runs through JYear 2014 and years 2015-2019 are
+# forecasted in the one step ahead process)
+f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2014)
 
+read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
+read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> model_summary_table2
+results %>% 
+  mutate(MAPE_one_step_ahead = round(MAPE,3)) %>%
+  dplyr::select(MAPE_one_step_ahead) %>%
+  cbind(., model_summary_table2) %>%
+  dplyr::select(model, AdjR2,  AICc,  MASE, wMAPE, MAPE_LOOCV, MAPE_one_step_ahead) %>%
+  write.csv(paste0(results.directory, "/model_summary_table5.csv"), row.names = F)
+
+# summary of interaction model fits (i.e., coefficients, p-value)
 lm(SEAKCatch_log ~ CPUE, data = log_data_subset) -> m1
 lm(SEAKCatch_log ~ CPUE * ISTI3_May, data = log_data_subset) -> m2i
 lm(SEAKCatch_log ~ CPUE * ISTI10_May, data = log_data_subset) -> m3i
@@ -362,4 +373,4 @@ rbind(model1, model2) %>%
          std.error = round(std.error,3),
          statistic = round(statistic,3),
          p.value = round(p.value,3)) %>%
-  write.csv(., paste0(results.directory, "/model_summary_table4.csv"), row.names = F)
+  write.csv(., paste0(results.directory, "/interaction_models.csv"), row.names = F)

@@ -1,7 +1,7 @@
 ---
 title: "Preliminary Discussion about the 2022 Forecast Process"
 author: "Sara Miller"
-date: "May 17, 2021"
+date: "May 21, 2021"
 output:
   bookdown::pdf_document2:
     fig_caption: yes
@@ -36,7 +36,13 @@ To determine the process for the 2022 Southeast Alaska (SEAK) preseason pink sal
 # Executive Summary
 Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019). We used a similar approach to Murphy et al. (2019), but assumed a log-normal error. This approach is based on a multiple regression model with juvenile pink salmon catch-per-unit-effort (CPUE) and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Murphy et al. 2020) or satellite sea surface temperature data (SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, Monthly, 1985-Present’ time series (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html). Based on prior discussions, the index of juvenile abundance (i.e., CPUE) was based on the pooled-species vessel calibration coefficient.
 
-Leave-one-out cross validation (hindcast) and model performance metrics were used to evaluate the forecast accuracy of models. These metrics included Akaike Information Criterion corrected for small sample sizes (AICc values; Burnham and Anderson 2004), the mean absolute scaled error (*MASE* metric; Hyndman and Kohler 2006), the weighted mean absolute percentage error (*wMAPE*; based on the last 5 years), leave one out cross validation *MAPE* (*MAPE_LOOCV*), one step ahead forecasts (*MAPE_one_step_ahead*) for the last five years (juvenile years 2015 through 2019), and significant coefficients (i.e., covariates) in the model. Overall, the performance metrics recommended models m13, m16, m19, m20, and m22.
+Leave-one-out cross validation (hindcast) and model performance metrics were used to evaluate the forecast accuracy of models. These metrics included Akaike Information Criterion corrected for small sample sizes (AICc values; Burnham and Anderson 2004), the mean absolute scaled error (*MASE* metric; Hyndman and Kohler 2006), the weighted mean absolute percentage error (*wMAPE*; based on the last 5 years), leave one out cross validation *MAPE* (*MAPE_LOOCV*), one step ahead forecasts (*MAPE_one_step_ahead*) for the last five years (juvenile years 2015 through 2019), and significant coefficients (i.e., covariates) in the model. 
+
+**Conclusions:**
+
+* Overall, the performance metrics recommended models m13 (Chatham_Strait_SST_May), m16 (Icy_Strait_SST_May), m19 (NSEAK_SST_May), m20 (NSEAK_SST_AMJJ), and m22 (SST_Jordan_May). These five models were additive models with CPUE and a temperature variable.
+
+* With the exclusion of juvenile years 1998 and 2016, the performance metrics still recommended models m13 (Chatham_Strait_SST_May), m16 (Icy_Strait_SST_May), m19 (NSEAK_SST_May), m20 (NSEAK_SST_AMJJ), and m22 (SST_Jordan_May).
 
 # Analysis
 ## Hierarchical models
@@ -44,7 +50,7 @@ Forty five hierarchical models were investigated. The full model was:
 
 $$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2},$$
 
-where ${X_1}$ is the average CPUE for catches in either the June or July survey, whichever month had the highest average catches in a given year, and was based on the pooled-species vessel calibration coefficient, ${X_2}$ is a temperature index, and $\beta_3$ is the interaction term between CPUE and a temperature index. The CPUE data were log-transformed in the model, but temperature data was not. The simplest model did not contain a temperature variable (model m1). None of the interactions were significant (see Appendix Table 5); therefore only additive models (23 models; Table 1) were considered further. 
+where ${X_1}$ is the average CPUE for catches in either the June or July survey, whichever month had the highest average catches in a given year, and was based on the pooled-species vessel calibration coefficient, ${X_2}$ is a temperature index, and $\beta_3$ is the interaction term between CPUE and the temperature index. The CPUE data were log-transformed in the model, but temperature data was not. The simplest model did not contain a temperature variable (model m1). None of the interactions were significant (see Appendix Table 5 for detailed output); therefore only additive models (23 models; Table 1) were considered further. 
  
 ```{r coefficients}
 tbls_seak$model_summary_table1 %>% 
@@ -52,20 +58,20 @@ tbls_seak$model_summary_table1 %>%
 ```
 
 ## Performance metrics
-The model summary results (Tables 2 and 3) using the performance metrics AICc, *MASE*, *wMAPE*, and *MAPE_LOOCV* are shown in Table 2. For all of these metrics, the smallest value is the preferred model. Models with  $\Delta_i$AICc $\leq$ 2 have substantial support, those in which 4 $\leq$   $\Delta_i$AICc $\leq$  7 have considerably less support, and models with  $\Delta_i$AICc > 10 have essentially no support (Burnham and Anderson 2004). The performance metric *MAPE* was calculated as
+The model summary results (Tables 2 and 3) using the performance metrics AICc, *MASE*, *wMAPE*, *MAPE_LOOCV*, and *MAPE_one_step_ahead* are shown in Table 2. For all of these metrics, the smallest value is the preferred model. Models with  $\Delta_i$AICc $\leq$ 2 have substantial support, those in which 4 $\leq$   $\Delta_i$AICc $\leq$  7 have considerably less support, and models with  $\Delta_i$AICc > 10 have essentially no support (Burnham and Anderson 2004). The performance metric *MAPE* was calculated as:
 
 $$MAPE = \frac{1}{n} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|$$
-where $A_t$ is the observed values and $F_t$ are the predicted values. The performance metric *wMAPE* was calculated as
+where $A_t$ is the observed value and $F_t$ is the predicted value. The performance metric *wMAPE* was calculated as:
 
 $$wMAPE =\sum_{t=1}^{n} \frac{1}{w_t} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|w_t.$$
-The AICc in Table 2 is the AICc value and not the $\Delta_i$AICc. The performance metric AICc suggests that models m19, m16, and m13 are the recommended models (Table 2). The performance metrics *MASE* and *MAPE_LOOCV* suggest that models m13, m16, m19, and m22 are the recommended models (Table 2). The performance metric *wMAPE* suggests that models m16, m19, m20, and m22 are the recommended models (Table 2). The performance metric *MAPE_one_step_ahead* suggests that models m16, m20, and m22 are the recommended models (Table 2) Detailed outputs for models m13, m16, m19, m20, and m22 are in the appendix (Tables 6 to 10 and Figures 2 through 11). 
+where *w_t* is the weight for each year. For the *wMAPE* metric, the last 5 years (juvenile years 2015-2019) were given a weight of 1 and all other years, a weight of 0.001. Therefore, compared to the performance metric *MAPE_LOOCV*, the performance of the models in the last 5 years was given more weight in the *wMAPE* metric.  
+
+The AICc in Table 2 is the AICc value and not the $\Delta_i$AICc. The performance metric AICc suggests that models m13, m16, and m19 are the recommended models (Table 2). The performance metrics *MASE* and *MAPE_LOOCV* suggest that models m13, m16, m19, and m22 are the recommended models (Table 2). The performance metric *wMAPE* suggests that models m16, m19, m20, and m22 are the recommended models (Table 2). The performance metric *MAPE_one_step_ahead* suggests that models m16, m20, and m22 are the recommended models (Table 2). Detailed outputs for recommended models m13, m16, m19, m20, and m22 are in the appendix (Tables 6 to 10 and Figures 2 through 11). 
 
 ```{r SummaryMetrics}
 tbls_seak$model_summary_table5 %>% 
    knitr::kable(format = 'pandoc', caption = 'Summary of model outputs and forecast error measures. These metrics included Akaike Information Criterion corrected for small sample sizes (AICc values), the mean absolute scaled error (MASE metric), the weighted mean absolute percentage error (wMAPE; based on the last 5 years), leave one out cross validation MAPE (MAPE_LOOCV), and one step ahead forecasts (MAPE_one_step_ahead).', row.names = F)
 ```
-
-\pagebreak
 
 ```{r SummaryMetrics2}
 tbls_seak$model_summary_table3 %>% 
@@ -74,14 +80,22 @@ tbls_seak$model_summary_table3 %>%
 
 \pagebreak
 ## Sensitivity analysis
-A sensitivity analysis was to determine if the juvenile year 1998 was influential. For the sensitivity analysis, juvenile year 1998 and 2016 (high leverage values in a majority of the 5 preferred models) was removed, the models rerun, and the performance metrics calculated (Table 4).The performance metric AICc suggests that model m16 and m22 is the recommended model. The performance metrics *MASE* and *MAPE_LOOCV* suggest that models m13, m16, m19, and m22 are the recommended models. The performance metric *wMAPE* suggests that models m16, m19, m20, and m22 are the recommended models. Therefore, based on the performance metrics, models m13, m16, m19, m20, and m22 are recommended.
+A sensitivity analysis was done to determine if the juvenile years 1998 and 2016 were influential in the models. For the sensitivity analysis, juvenile years 1998 and 2016 (high leverage values in a majority of the five preferred models) were removed, the models rerun, and the performance metrics recalculated (Table 4).The performance metric AICc suggests that models m16 and m22 are the recommended model. The performance metrics *MASE* and *MAPE_LOOCV* suggest that models m13, m16, m19, and m22 are the recommended models. The performance metric *wMAPE* suggests that models m16, m19, m20, and m22 are the recommended models. The performance metric *MAPE_one_step_ahead* suggests that models m16, m20, and m22 are the recommended models. Therefore, based on the performance metrics, models m13, m16, m19, m20, and m22 are recommended.
 
 ```{r coefficients6}
-tbls_seak$model_summary_table_sensitivity2 %>% 
-   knitr::kable(format = 'pandoc', caption = 'Summary of model outputs and forecast error measures for the sensitivity analysis (exclusion of juvenile year 1998 and 2016). These metrics included Akaike Information Criterion corrected for small sample sizes (AICc values), the mean absolute scaled error (MASE metric), the weighted mean absolute percentage error (wMAPE; based on the last 5 years), and leave one out cross validation MAPE (MAPE_LOOCV).', row.names = F)
+tbls_seak$model_summary_table_sensitivity4 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Summary of model outputs and forecast error measures for the sensitivity analysis (exclusion of juvenile years 1998 and 2016). These metrics included Akaike Information Criterion corrected for small sample sizes (AICc values), the mean absolute scaled error (MASE metric), the weighted mean absolute percentage error (wMAPE; based on the last 5 years), leave one out cross validation MAPE (MAPE_LOOCV), and one step ahead forecasts (MAPE_one_step_ahead).', row.names = F)
 ```
 
 \pagebreak
+
+```{r coefficients7}
+tbls_seak$model_summary_table_sensitivity3 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Summary of model forecasts including the 80 percent prediction intervals (corrected for log transformation bias in a linear-model) for the sensitivity analysis (exclusion of juvenile years 1998 and 2016).', row.names = F)
+```
+
+\pagebreak
+
 
 ```{r pred, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/forecast_models.png"))
@@ -108,8 +122,8 @@ Wertheimer A. C., J. A. Orsi, M. V. Sturdevant, and E. A. Fergusson. 2006. Forec
 
 # Appendix
 ```{r coefficientsI}
-tbls_seak$model_summary_table4 %>% 
-   knitr::kable(format = 'pandoc', caption = 'Parameter estimates for the 23 interaction models.', row.names = F)
+tbls_seak$interaction_models %>% 
+   knitr::kable(format = 'pandoc', caption = 'Parameter estimates for the 23 interaction models. None of the interactions were significant.', row.names = F)
 ```
 
 ```{r coefficients1}

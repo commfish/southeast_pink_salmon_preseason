@@ -9,6 +9,15 @@ MASE <- function(f,y) { # f = vector with forecasts, y = vector with actuals
   return(mean(abs((y - f) / ((1/(n-1)) * sum(abs(y[2:n]-y[1:n-1]))))))
 }
 
+mape <- function(actual, predicted){
+  mean(abs((actual - predicted)/actual))}
+
+mape_summary <- function (data,lev = NULL, model = NULL) {
+  out <- mape((data$obs),(data$pred))  
+  names(out) <- "MAPE"
+  out
+}
+
 # linear regression jacknife prediction function
      # data: table of variables for forecast model
      # model.formula: linear regression model formulas included in the summary
@@ -129,7 +138,7 @@ f_resid_year_diagnostics_plot<-function(best_model, model_name){
     labs(y = "Standardized residuals", x =  "ln(CPUE+1)") + theme(legend.position="none") +
     theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-    geom_text(aes(x = 0.4, y = 4, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
+    geom_text(aes(x = 0.4, y = 4, label="a)"),family="Times New Roman", colour="black", size=5) -> plot1
 
   augment(best_model) %>% 
   mutate(resid = (.std.resid),
@@ -144,7 +153,7 @@ f_resid_year_diagnostics_plot<-function(best_model, model_name){
                                                                                 axis.text.x = element_text(angle=90, hjust=1),
                                                                                 panel.border = element_blank(), panel.grid.major = element_blank(),
                                                                                 panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 1997, y = 4, label="c)"),family="Times New Roman", colour="black", size=5)-> plot2
+  geom_text(aes(x = 1997, y = 4, label="c)"),family="Times New Roman", colour="black", size=5) -> plot2
 
 # residuals against fitted
 augment(best_model) %>% 
@@ -164,7 +173,7 @@ augment(best_model) %>%
 # residuals against temp
 augment(best_model) %>% 
   mutate(resid = (.std.resid),
-         temp = .[[3]]) %>% 
+         temp = .[[3]]) %>% # third column should be temperature variable
   ggplot(aes(x = temp, y = resid)) +
   geom_point(color ="grey50")  + ggtitle(model_name) +
   geom_smooth(aes(colour = temp, fill = temp),colour="black") +
@@ -174,7 +183,7 @@ augment(best_model) %>%
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   labs(y = "Standardized residuals", x =  "Temperature") +
-  geom_text(aes(x = 5, y = 4, label="b)"),family="Times New Roman", colour="black", size=5)-> plot4
+  geom_text(aes(x = 5, y = 4, label="b)"),family="Times New Roman", colour="black", size=5) -> plot4
 
 augment(best_model) %>% 
   mutate(temp = .[[3]]) %>% 
@@ -186,7 +195,7 @@ augment(best_model) %>%
   labs(y = "ln(Harvest)", x =  "Temperature") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 5, y = 6, label="e)"),family="Times New Roman", colour="black", size=5)-> plot5
+  geom_text(aes(x = 5, y = 6, label="e)"),family="Times New Roman", colour="black", size=5) -> plot5
 
 augment(best_model) %>%  
   ggplot(aes(x = CPUE, y = SEAKCatch_log)) +
@@ -199,12 +208,12 @@ augment(best_model) %>%
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_text(aes(x = 0, y = 6, label="f)"),family="Times New Roman", colour="black", size=5) -> plot6
 
-cowplot::plot_grid(plot1, plot4, plot2,plot3,plot5, plot6,  align = "vh", nrow = 3, ncol=2)
+cowplot::plot_grid(plot1, plot4, plot2, plot3, plot5, plot6,  align = "vh", nrow = 3, ncol=2)
 ggsave(paste0(results.directory, "fitted_", model_name,".png"), dpi = 500, height = 8, width = 6, units = "in")}
 
 # Cook's distance and leverage plot
 f_resid_leverage_diagnostics_plot<-function(best_model, model_name, k, p){
-  level <- 4/(sample_size-k-1) # source: Ren et al. 2016# k = predictors in model (not including intercept)
+  level <- 4/(sample_size-k-1) # source: Ren et al. 2016# k = # of predictors in model (not including intercept)
 augment(best_model) %>% 
   mutate(cooksd = (.cooksd),
          count = (1997:year.data.one),
@@ -223,7 +232,7 @@ augment(best_model) %>%
   geom_text(aes(x = 1997, y = 1.5, label="a)"),family="Times New Roman", colour="black", size=5) -> plot1
 
 # leverage plot
-#  p is the number of parameters in the model including intercept
+#  p = number of parameters in the model including intercept
 level <- 2*p/sample_size # source: Ren et al. 2016
 # leverage plot
 augment(best_model) %>% 
@@ -279,16 +288,6 @@ boot.summary <- function(cpuedata,variables,model.formulas,model.names,quantiles
   boot.summary
   write.csv(boot.summary, file.path(results.directory, "seak_model_bootsummary.csv")) }
 
-
-mape <- function(actual, predicted){
-  mean(abs((actual - predicted)/actual))}
-
-mape_summary <- function (data,lev = NULL, model = NULL) {
-  out <- mape((data$obs),(data$pred))  
-  names(out) <- "MAPE"
-  out
-}
-
 #normality test
 eda.norm <- function(x, ...)
 {
@@ -308,7 +307,7 @@ eda.norm <- function(x, ...)
   lines(y, pnorm(y, mean(x), sqrt(var(x))))
   shapiro.test(x)
 }
-# function check for one model
+# function check for one model (one step ahead MAPE)
 f_model_one_step_ahead <- function(harvest,variables,model, start, end){
   n<-dim(variables)[1]
   model.results<-numeric()
@@ -320,15 +319,15 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end){
     fit<-lm(model,data = data[data$JYear >= start & data$JYear < i,])
     data$model1_sim[data$JYear == i] <- predict(fit, newdata = data[data$JYear == i,])
   }
-  return(data)
+  #return(data)
   data %>% 
     dplyr::filter(JYear > end) -> output
-  mape(output$model1_sim,output$SEAKCatch_log)
+  mape(output$SEAKCatch_log,output$model1_sim)
 } 
-# function check for one model
-seak_model_summary2 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~ CPUE, start = 1997, end = 2014)
+# function check for one model (one step ahead MAPE)
+seak_model_summary2 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + ISTI3_May, start = 1997, end = 2014)
 
-# function for multile models
+# function for multiple models (one step ahead MAPE)
 f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,model.names, start, end){
   n<-dim(variables)[1]
   model.results<-numeric()
@@ -346,7 +345,7 @@ f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,mod
     #return(data)
     data %>% 
       dplyr::filter(JYear > end) -> output
-    MAPE<-mape(output$model1_sim,output$SEAKCatch_log)
+    MAPE<-mape(output$SEAKCatch_log,output$model1_sim)
     model.results<-rbind(model.results, MAPE= MAPE)
   } 
   row.names(model.results)<-model.names
@@ -354,4 +353,30 @@ f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,mod
   as.data.frame(model.results)-> x
   write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead.csv"))}
 
+
+# function for multiple models (one step ahead MAPE)
+f_model_one_step_ahead_multiple_sensitive <- function(harvest,variables,model.formulas,model.names, start, end){
+  n<-dim(variables)[1]
+  model.results<-numeric()
+  obs<-harvest[-n]
+  data<-variables[-n,]
+  fit.out<-list()
+  for(i in 1:length(model.formulas)) 
+  {
+    for (j in (end+1):tail(data$JYear)[6])
+    {
+      fit<-lm(model.formulas[[i]],data = data[data$JYear >= start & data$JYear < j,])
+      fit.out[[i]]<-fit
+      data$model1_sim[data$JYear == j] <- predict(fit, newdata = data[data$JYear == j,])
+    }
+    #return(data)
+    data %>% 
+      dplyr::filter(JYear > end) -> output
+    MAPE<-mape(output$SEAKCatch_log,output$model1_sim)
+    model.results<-rbind(model.results, MAPE= MAPE)
+  } 
+  row.names(model.results)<-model.names
+  dimnames(model.results)[[2]][1]<-c('MAPE')
+  as.data.frame(model.results)-> x
+  write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead_sensitive.csv"))}
 
