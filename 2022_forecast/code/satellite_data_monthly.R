@@ -443,6 +443,9 @@ SST_data %>%
   filter(region == "NSEAK") -> NSEAK
 
 SST_data %>%
+  filter(region == "SSEAK") -> SSEAK
+
+SST_data %>%
   filter(region == "Upper_Chatham_Strait_SECM") -> Upper_Chatham_Strait_SECM
 
 SST_data %>%
@@ -455,6 +458,7 @@ scale <- as.PolySet(scale, projection="LL") # nautical mile scale for map
 Icy_Strait <- as.PolyData(Icy_Strait, projection="LL") # general SECM survey area (Icy Strait region)
 Chatham_Strait <- as.PolyData(Chatham_Strait, projection="LL") # Chatham Strait data
 NSEAK <- as.PolyData(NSEAK, projection="LL") # NSEAK data
+SSEAK <- as.PolyData(SSEAK, projection="LL") # SSEAK data
 Upper_Chatham_Strait_SECM <- as.PolyData(Upper_Chatham_Strait_SECM, projection="LL") #  Icy Strait SECM stations
 Icy_Strait_SECM <- as.PolyData(Icy_Strait_SECM, projection="LL") # Icy Strait SECM stations
 SST_Jordan <- as.PolyData(SST_Jordan, projection="LL") # Icy Strait SECM stations
@@ -522,5 +526,24 @@ addCompass(-137, 56.5, rot="trueN", cex=1)
 legend (-134.5, 58.9, legend=c("SST_Jordan locations", "SECM stations"),
         col=c(1,2), bty="n", cex=1, pch=c(1, 16))
 text(-136,57.1,"Pacific Ocean", cex=1.25, adj=1, font=1)
+text(-131.7, 59.2,"25 nm at 59°N", cex = 0.75, adj = 1, font = 1)
+dev.off()
+
+x<-c(-138, -129)   #coordinates of land data
+y<-c(54,59.5)
+
+# SEAK region
+region<-clipPolys(nepacLLhigh,xlim=x,ylim=y)      
+par(mfrow=c(1,1),omi=c(0,0,0,0))  
+png(paste0(results.directory, "SEAK.png"),width=6,height=8,units="in", res=600)                                                        
+plotMap(region,xlim=x, ylim=y, tck=-0.02, plt=c(.13,.98,.13,.98),projection="LL", cex=1.2,
+        xlab="Longitude (°W)", ylab="Latitude (°N)", cex.lab=1.5, font.lab=6, col=clr$land, bg=clr$sea)
+addPoints(SSEAK, xlim=x,ylim=y,col=1,pch=1, lwd=1, cex=0.75) # satellite SST data
+addPoints(NSEAK, xlim=x,ylim=y,col=1,pch=1, lwd=1, cex=0.75) # satellite SST data
+addLines(scale, xlim=x,ylim=y,col=1,lty=1, lwd=2, cex=1)
+addCompass(-136.5, 55, rot="trueN", cex=1)
+legend (-133, 58.8, legend=c("SEAK SST locations"),
+        col=c(1,2), bty="n", cex=1, pch=c(1, 16))
+text(-135,56,"Pacific Ocean", cex=1.25, adj=1, font=0.75)
 text(-131.7, 59.2,"25 nm at 59°N", cex = 0.75, adj = 1, font = 1)
 dev.off()
