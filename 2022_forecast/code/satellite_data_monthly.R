@@ -33,7 +33,7 @@ results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 # https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.graph; this site is helpful to map the area of interest
 
 # depending on the dates and the latitude and longitude chosen, the site will timeout after 60 seconds. Therefore, multiple files were downloaded and then merged later on in the code
-download.file(url = paste0("https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.nc?sea_surface_temperature%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(56.025)%5D%5B(-137.2):1:(-131.5)%5D,mask%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(56.025)%5D%5B(-137.2):1:(-131.5)%5D,sea_surface_temperature_anomaly%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(56.025)%5D%5B(-137.2):1:(-131.5)%5D"),
+download.file(url = paste0("https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.nc?sea_surface_temperature%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,mask%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,sea_surface_temperature_anomaly%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D"),
               method = "libcurl", mode="wb", destfile = (paste0(data.directory,'NOAA_DHW_monthly_97_20.nc')))
 
 # if the site times out, you can also go to the site, and manually download the data and save the file to the data folder
