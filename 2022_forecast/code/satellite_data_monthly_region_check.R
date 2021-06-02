@@ -1,6 +1,10 @@
 # Environmental Variables for SEAK Pink Salmon Forecast Models
 # Script written by Sara Miller (sara.miller@alaska.gov) with help from Jordan Watson (jordan.watson@noaa.gov)
 # April 12, 2021
+# Download one day of data from the site https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.graph as a csv file
+# and put the data in the file SST_data_map_test similar to the file sst_data_map.csv (POS should be 1, PID is 1 through n, X
+# is longitude and should be negative and X is latitude); include a variable and region name. This code will allow you to see the
+# data points that make up the region of interest. Then the points can be deleted as needed to represent a certain area.
 
 # load libraries----
 library("devtools")
