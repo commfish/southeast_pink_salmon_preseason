@@ -33,7 +33,6 @@ f_resid_leverage_diagnostics_plot(m16, 'm16', k = 2, p = 3)
 f_resid_leverage_diagnostics_plot(m19, 'm19', k = 2, p = 3)
 f_resid_leverage_diagnostics_plot(m20, 'm20', k = 2, p = 3)
 f_resid_leverage_diagnostics_plot(m22, 'm22', k = 2, p = 3)
-
 # additional tests
 # png(paste0(results.directory, "general_diagnostics.png"))
 # autoplot(best.model)

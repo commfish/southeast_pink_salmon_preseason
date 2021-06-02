@@ -39,7 +39,10 @@ model.names.sensitivity <- c(m1s='CPUE',
                m20s='CPUE + NSEAK_SST_AMJJ',
                m21s='CPUE + SST_Jordan_MJJ',
                m22s='CPUE + SST_Jordan_May',
-               m23s='CPUE + SST_Jordan_AMJJ')
+               m23s='CPUE + SST_Jordan_AMJJ',
+               m24s='CPUE + SEAK_SST_MJJ',
+               m25s='CPUE + SEAK_SST_May',
+               m26s='CPUE + SEAK_SST_AMJJ')
 model.formulas.sensitivity <- c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE + ISTI3_May,
                  SEAKCatch_log ~ CPUE + ISTI10_May,
@@ -62,7 +65,10 @@ model.formulas.sensitivity <- c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE + NSEAK_SST_AMJJ,
                  SEAKCatch_log ~ CPUE + SST_Jordan_MJJ,
                  SEAKCatch_log ~ CPUE + SST_Jordan_May,
-                 SEAKCatch_log ~ CPUE + SST_Jordan_AMJJ) # temp. data 
+                 SEAKCatch_log ~ CPUE + SST_Jordan_AMJJ,
+                 SEAKCatch_log ~ CPUE + SEAK_SST_MJJ,
+                 SEAKCatch_log ~ CPUE + SEAK_SST_May,
+                 SEAKCatch_log ~ CPUE + SEAK_SST_AMJJ) # temp. data 
 
 # summary statistics and bootstrap of SEAK pink salmon harvest forecast models
 seak_model_summary <- f_model_sensitivity(harvest=log_data_sensitivity$SEAKCatch_log, variables=log_data_sensitivity, model.formulas=model.formulas.sensitivity,model.names=model.names.sensitivity, w = log_data_sensitivity$weight_values)
@@ -94,6 +100,9 @@ lm(SEAKCatch_log ~ CPUE + NSEAK_SST_AMJJ, data = log_data_subset_sensitivity) ->
 lm(SEAKCatch_log ~ CPUE + SST_Jordan_MJJ, data = log_data_subset_sensitivity) -> m21s
 lm(SEAKCatch_log ~ CPUE + SST_Jordan_May, data = log_data_subset_sensitivity) -> m22s
 lm(SEAKCatch_log ~ CPUE + SST_Jordan_AMJJ, data = log_data_subset_sensitivity) -> m23s
+lm(SEAKCatch_log ~ CPUE + SEAK_SST_MJJ, data = log_data_subset_sensitivity) -> m24s
+lm(SEAKCatch_log ~ CPUE + SEAK_SST_May, data = log_data_subset_sensitivity) -> m25s
+lm(SEAKCatch_log ~ CPUE + SEAK_SST_AMJJ, data = log_data_subset_sensitivity) -> m26s
 
 tidy(m1s) -> model1s
 tidy(m2s) -> model2s
@@ -118,6 +127,9 @@ tidy(m20s) -> model20s
 tidy(m21s) -> model21s
 tidy(m22s) -> model22s
 tidy(m23s) -> model23s
+tidy(m24s) -> model24s
+tidy(m25s) -> model25s
+tidy(m26s) -> model26s
 
 rbind(model1s, model2s) %>% 
 rbind(., model3s) %>% 
@@ -140,7 +152,10 @@ rbind(., model19s) %>%
 rbind(., model20s) %>% 
 rbind(., model21s) %>% 
 rbind(., model22s) %>% 
-rbind(., model23s) %>%   
+rbind(., model23s) %>%  
+rbind(., model24s) %>% 
+rbind(., model25s) %>% 
+rbind(., model26s) %>%    
 mutate(model = c('m1s','m1s','m2s','m2s','m2s','m3s','m3s','m3s',
                  'm4s','m4s','m4s','m5s','m5s','m5s','m6s','m6s',' m6s',
                  'm7s','m7s','m7s','m8s','m8s','m8s','m9s','m9s',' m9s',
@@ -148,7 +163,8 @@ mutate(model = c('m1s','m1s','m2s','m2s','m2s','m3s','m3s','m3s',
                  'm13s','m13s','m13s','m14s','m14s','m14s','m15s','m15s',' m15s',
                  'm16s','m16s','m16s','m17s','m17s','m17s','m18s','m18s',' m18s',
                  'm19s','m19s','m19s','m20s','m20s','m20s','m21s','m21s',' m21s',
-                 'm22s','m22s','m22s','m23s','m23s','m23s')) %>% 
+                 'm22s','m22s','m22s','m23s','m23s','m23s','m24s','m24s',' m24s',
+                 'm25s','m25s','m25s','m26s','m26s','m26s')) %>% 
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
   mutate(estimate = round(estimate,8),
          std.error = round(std.error,3),
@@ -169,7 +185,7 @@ results %>%
          wMAPE = round(wMAPE, 3)) %>%
   mutate(model = c('m1s','m2s','m3s','m4s','m5s','m6s','m7s','m8s',
                    'm9s','m10s','m11s','m12s','m13s','m14s','m15s','m16s',' m17s',
-                   'm18s','m19s','m20s','m21s','m22s','m23s')) %>%
+                   'm18s','m19s','m20s','m21s','m22s','m23s','m24s','m25s','m26s')) %>%
   mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% # exponentiate the forecast
@@ -185,7 +201,7 @@ results %>%
   dplyr::select(terms, fit,	fit_LPI,	fit_UPI, sigma) %>%
   mutate(model = c('m1s','m2s','m3s','m4s','m5s','m6s','m7s','m8s',
                    'm9s','m10s','m11s','m12s','m13s','m14s','m15s','m16s',' m17s',
-                   'm18s','m19s','m20s','m21s','m22s','m23s')) %>%
+                   'm18s','m19s','m20s','m21s','m22s','m23s','m24s','m25s','m26s')) %>%
   mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% # exponentiate the forecast
@@ -202,7 +218,7 @@ results %>%
   dplyr::select(terms, fit,	fit_LPI,	fit_UPI, sigma) %>%
   mutate(model = c('1','2','3','4','5','6','7','8',
                    '9','10','11','12','13','14','15','16',' 17',
-                   '18','19','20','21','22','23')) %>%
+                   '18','19','20','21','22','23', '24', '25', '26')) %>%
   mutate(model= as.numeric(model),
          fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), 
@@ -221,6 +237,7 @@ results %>%
   geom_hline(aes(yintercept=mean(fit_log)), color="grey50", lty = 2) +
   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, size=1, color="blue")+
   scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40,45,50,55), limits = c(0,55))+ 
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28), limits = c(0,28))+ 
   labs(x = "Models", y = "2021 SEAK Pink Salmon Forecast (millions)")  -> plot1
 ggsave(paste0(results.directory, "forecast_models_sensitivity.png"), dpi = 500, height = 4, width = 6, units = "in")
 
