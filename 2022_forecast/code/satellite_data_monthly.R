@@ -27,14 +27,15 @@ results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 #------------------------------------------------------------------------------------------------------------------------------------------
 # 1997-1999 data----
 # download the data for a fixed spatial and temporal period	(SST data, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, daily, 1985-Present)
-# to do this, go to the site: https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html, set the latitude and longitude and time period, and filt type as .nc,
+# to do this, go to the site: set the latitude and longitude and time period, and fill type as .nc,
 # and then paste the URL in the section below
 
 # https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.graph; this site is helpful to map the area of interest
 
-# depending on the dates and the latitude and longitude chosen, the site will timeout after 60 seconds. Therefore, multiple files were downloaded and then merged later on in the code
-download.file(url = paste0("https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.nc?sea_surface_temperature%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,mask%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,sea_surface_temperature_anomaly%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D"),
-              method = "libcurl", mode="wb", destfile = (paste0(data.directory,'NOAA_DHW_monthly_97_20.nc')))
+# Depending on the dates and the latitude and longitude chosen, the site will timeout after 60 seconds. Therefore, download the data instead as a nc file,
+# save it to the data folder and skip lines 37-38 below
+#download.file(url = paste0("https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.nc?sea_surface_temperature%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,mask%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,sea_surface_temperature_anomaly%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D"),
+#              method = "libcurl", mode="wb", destfile = (paste0(data.directory,'NOAA_DHW_monthly_97_20.nc')))
 
 # if the site times out, you can also go to the site, and manually download the data and save the file to the data folder
 # extract netCDF data, convert date (seconds since 1970) to date time, and spatially average daily data to a single daily point for each set of years
@@ -61,8 +62,8 @@ SST_satellite %>%
 
 # create plot of entire data set  
 SST_satellite %>% 
-  ggplot(aes(longitude,latitude,color = SST)) + 
-  geom_point()
+  ggplot(aes(longitude,latitude, color = SST)) + 
+  geom_point()-> fig
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # MERGE MAP DATA COORDINATES (FOUR REGIONS) WITH THE SST DATA
 #--------------------------------------------------------------------------------------------------------------------------------------------
@@ -84,10 +85,7 @@ map_data %>%
   filter(region == 'SEAK') -> map_data_SEAK
 
 map_data %>%
-  filter(region == 'Chatham_Strait') -> map_data_Chatham_Strait
-
-map_data %>%
-  filter(region == 'SST_Jordan') -> map_data_SST_Jordan
+  filter(region == 'Chatham') -> map_data_Chatham
 
 # merge coordinates from the map_data with the SST data to create SST data by region of interest
 merge(map_data_Icy_Strait, SST_satellite, by = c("latitude", "longitude"), all.x = TRUE, all.y = TRUE) %>% 
@@ -102,27 +100,22 @@ merge(map_data_SEAK, SST_satellite, by = c("latitude", "longitude"), all.x = TRU
   dplyr::select(latitude, longitude, region, variable, year, month, SST) %>%
   filter(region == 'SEAK') -> SEAK_SST
 
-merge(map_data_Chatham_Strait, SST_satellite, by = c("latitude", "longitude"), all.x = TRUE, all.y = TRUE) %>% 
+merge(map_data_Chatham, SST_satellite, by = c("latitude", "longitude"), all.x = TRUE, all.y = TRUE) %>% 
   dplyr::select(latitude, longitude, region, variable, year, month, SST) %>%
-  filter(region == 'Chatham_Strait') -> Chatham_Strait_SST
-
-merge(map_data_SST_Jordan, SST_satellite, by = c("latitude", "longitude"), all.x = TRUE, all.y = TRUE) %>% 
-  dplyr::select(latitude, longitude, region, variable, year, month, SST) %>%
-  filter(region == 'SST_Jordan') -> SST_Jordan
+  filter(region == 'Chatham') -> Chatham_SST
 
 # combine region data sets into one csv file (data by lat, long, region, year, month, SST)
 rbind(Icy_Strait_SST, NSEAK_SST) %>%
 rbind(., SEAK_SST) %>%   
-rbind(., Chatham_Strait_SST) %>% 
-rbind(., SST_Jordan) %>% 
+rbind(., Chatham_SST) %>% 
   write.csv(., paste0(data.directory, 'sst_regions_oisst_97_20_monthly_data.csv'))
 
 #--------------------------------------------------------------------------------------------------------------------------------------------
-# SUMMARIZE SST DATA BY REGION, YEAR, MONTH FOR Icy_Strait, Chatham_Strait, AND NSEAK
+# SUMMARIZE SST DATA BY REGION, YEAR, MONTH
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # summarize SST data
 read.csv(paste0(data.directory, 'sst_regions_oisst_97_20_monthly_data.csv')) %>%
-  filter(region %in% c('Icy_Strait', 'Chatham_Strait', 'NSEAK', 'SEAK')) %>% 
+  filter(region %in% c('Icy_Strait', 'Chatham', 'NSEAK', 'SEAK')) %>% 
   group_by(region, year, month) %>%
   summarise(msst = mean(SST), .groups = 'drop') %>%
   as.data.frame() -> SST_satellite_grouped
@@ -145,98 +138,67 @@ SST_satellite_grouped %>%
   group_by(region, year) %>%
   summarise(SST_AMJJ = mean(msst), .groups = 'drop') -> SST_AMJJ
 
+# average SST for April-June by region
+SST_satellite_grouped %>%
+  filter(month %in% c(4,5,6)) %>% 
+  group_by(region, year) %>%
+  summarise(SST_AMJ = mean(msst), .groups = 'drop') -> SST_AMJ
+
 # combine data sets into one csv file
 merge(SST_MJJ, SST_May, by = c("region", "year")) %>%
   merge(., SST_AMJJ, by = c("region", "year")) %>%
+  merge(., SST_AMJ, by = c("region", "year")) %>%
   write.csv(., paste0(results.directory, 'sst_regions_oisst_97_20_monthly_data_summary.csv'))
 
 # create tables by region for the report
 read.csv(paste0(results.directory, 'sst_regions_oisst_97_20_monthly_data_summary.csv')) %>%
-  dplyr::select(region, year, SST_MJJ, SST_May, SST_AMJJ) -> tempdata
+  dplyr::select(region, year, SST_MJJ, SST_May, SST_AMJJ, SST_AMJ) -> tempdata
 
 tempdata %>%
   filter(region == "Icy_Strait") %>%
   mutate(Icy_Strait_SST_MJJ = round(SST_MJJ, 2),
          Icy_Strait_SST_May = round(SST_May, 2),
-         Icy_Strait_SST_AMJJ = round(SST_AMJJ, 2)) %>%
-  dplyr::select(year, Icy_Strait_SST_MJJ, Icy_Strait_SST_May, Icy_Strait_SST_AMJJ) %>%
+         Icy_Strait_SST_AMJJ = round(SST_AMJJ, 2),
+         Icy_Strait_SST_AMJ = round(SST_AMJ, 2)) %>%
+  dplyr::select(year, Icy_Strait_SST_MJJ, Icy_Strait_SST_May, Icy_Strait_SST_AMJJ, Icy_Strait_SST_AMJ) %>%
   write.csv(., paste0(results.directory, 'sst_oisst_97_20_Icy_Strait_monthly_summary.csv'), row.names = FALSE)
 
 tempdata %>%
-  filter(region == "Chatham_Strait") %>%
-  mutate(Chatham_Strait_SST_MJJ = round(SST_MJJ, 2),
-         Chatham_Strait_SST_May = round(SST_May, 2),
-         Chatham_Strait_SST_AMJJ = round(SST_AMJJ, 2)) %>%
-  dplyr::select(year, Chatham_Strait_SST_MJJ, Chatham_Strait_SST_May, Chatham_Strait_SST_AMJJ) %>%
+  filter(region == "Chatham") %>%
+  mutate(Chatham_SST_MJJ = round(SST_MJJ, 2),
+         Chatham_SST_May = round(SST_May, 2),
+         Chatham_SST_AMJJ = round(SST_AMJJ, 2),
+         Chatham_SST_AMJ = round(SST_AMJ, 2)) %>%
+  dplyr::select(year, Chatham_SST_MJJ, Chatham_SST_May, Chatham_SST_AMJJ, Chatham_SST_AMJ) %>%
   write.csv(., paste0(results.directory, 'sst_oisst_97_20_Chatham_monthly_summary.csv'), row.names = FALSE)
 
 tempdata %>%
   filter(region == "NSEAK") %>%
   mutate(NSEAK_SST_MJJ = round(SST_MJJ, 2),
          NSEAK_SST_May = round(SST_May, 2),
-         NSEAK_SST_AMJJ = round(SST_AMJJ, 2)) %>%
-  dplyr::select(year, NSEAK_SST_MJJ, NSEAK_SST_May, NSEAK_SST_AMJJ) %>%
+         NSEAK_SST_AMJJ = round(SST_AMJJ, 2),
+         NSEAK_SST_AMJ = round(SST_AMJ, 2)) %>%
+  dplyr::select(year, NSEAK_SST_MJJ, NSEAK_SST_May, NSEAK_SST_AMJJ, NSEAK_SST_AMJ) %>%
   write.csv(., paste0(results.directory, 'sst_oisst_97_20_NSEAK_monthly_summary.csv'), row.names = FALSE) # row.name = F gets rid of the first column X1 that is not needed
 
 tempdata %>%
   filter(region == "SEAK") %>%
   mutate(SEAK_SST_MJJ = round(SST_MJJ, 2),
          SEAK_SST_May = round(SST_May, 2),
-         SEAK_SST_AMJJ = round(SST_AMJJ, 2)) %>%
-  dplyr::select(year, SEAK_SST_MJJ, SEAK_SST_May, SEAK_SST_AMJJ) %>%
+         SEAK_SST_AMJJ = round(SST_AMJJ, 2),
+         SEAK_SST_AMJ = round(SST_AMJ, 2)) %>%
+  dplyr::select(year, SEAK_SST_MJJ, SEAK_SST_May, SEAK_SST_AMJJ, SEAK_SST_AMJ) %>%
   write.csv(., paste0(results.directory, 'sst_oisst_97_20_SEAK_monthly_summary.csv'), row.names = FALSE) 
-
-#------------------------------------------------------------------------------------------------------------------------------------------
-# SUMMARIZE SST DATA BY REGION, YEAR, MONTH FOR SST_JORDAN REGION
-#------------------------------------------------------------------------------------------------------------------------------------------
-# summarize SST data
-read.csv(paste0(data.directory, 'sst_regions_oisst_97_20_monthly_data.csv')) %>%
-  filter(region %in% c('SST_Jordan')) %>% 
-  group_by(year, month, variable) %>%
-  summarise(mean_msst = mean(SST), .groups = 'drop') %>%
-  as.data.frame() %>%
-  group_by(year, month) %>%
-  summarise(msst = mean(mean_msst), .groups = 'drop') -> SST_satellite_grouped
-
-# average SST for May, June, July by region
-SST_satellite_grouped %>%
-  filter(month %in% c(5,6,7)) %>% 
-  group_by(year) %>%
-  summarise(SST_MJJ = mean(msst), .groups = 'drop') -> SST_MJJ
-
-# average SST for May by region
-SST_satellite_grouped %>%
-  filter(month %in% c(5)) %>% 
-  group_by(year) %>%
-  summarise(SST_May = mean(msst), .groups = 'drop') -> SST_May
-
-# average SST for April-July by region
-SST_satellite_grouped %>%
-  filter(month %in% c(4,5,6,7)) %>% 
-  group_by(year) %>%
-  summarise(SST_AMJJ = mean(msst), .groups = 'drop') -> SST_AMJJ
-
-# combine data sets into one csv file
-merge(SST_MJJ, SST_May, by = c("year")) %>%
-  merge(., SST_AMJJ, by = c("year")) %>%
-  mutate(region = 'SST_Jordan',
-        SST_Jordan_MJJ = round(SST_MJJ, 2),
-        SST_Jordan_May = round(SST_May, 2),
-        SST_Jordan_AMJJ = round(SST_AMJJ, 2)) %>%
-  dplyr::select(year, SST_Jordan_MJJ, SST_Jordan_May, SST_Jordan_AMJJ) %>%
-  write.csv(., paste0(results.directory, 'sst_oisst_97_20_SST_Jordan_monthly_summary.csv'), row.names = FALSE)
 #---------------------------------------------------------------------------------------------------------------------------------------------
 # COMBINE DATA SETS FOR FIG
 #---------------------------------------------------------------------------------------------------------------------------------------------
 read.csv(paste0(results.directory, 'sst_oisst_97_20_Icy_Strait_monthly_summary.csv')) -> Icy_Strait
-read.csv(paste0(results.directory, 'sst_oisst_97_20_Chatham_monthly_summary.csv')) -> Chatham_Strait
+read.csv(paste0(results.directory, 'sst_oisst_97_20_Chatham_monthly_summary.csv')) -> Chatham
 read.csv(paste0(results.directory, 'sst_oisst_97_20_NSEAK_monthly_summary.csv')) -> NSEAK
-read.csv(paste0(results.directory, 'sst_oisst_97_20_SEAK_monthly_summary.csv')) -> SEAK
-read.csv(paste0(results.directory, 'sst_oisst_97_20_SST_Jordan_monthly_summary.csv')) %>%
+read.csv(paste0(results.directory, 'sst_oisst_97_20_SEAK_monthly_summary.csv')) %>% # SEAK region
   merge (., Icy_Strait) %>%
-  merge (., Chatham_Strait) %>% 
-  merge (., NSEAK) %>% 
-  merge (., SEAK) -> fig_data
+  merge (., Chatham) %>% 
+  merge (., NSEAK) -> fig_data
 
 read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
   dplyr::select(year, year, ISTI3_May, ISTI10_May, ISTI15_May, ISTI20_May, IS3_May) %>%
@@ -271,46 +233,23 @@ merge(.,fig_data) %>%
           legend.position=c(0.85,0.18))  +
   scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
   scale_y_continuous(breaks = c(4,5,6,7, 8, 9,10,11,12,13), limits = c(4,13))+
-  geom_text(aes(x = 1997, y = 13, label="A)"),family="Times New Roman", colour="black", size=4) +
+  #geom_text(aes(x = 1997, y = 13, label="A)"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot1
 
-read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  merge(.,fig_data) %>%
-  dplyr::select(year, IS3_MJJ, IS3_May, SST_Jordan_MJJ, SST_Jordan_May) %>%
-  gather("var", "value", -c(year)) %>% 
-  ggplot(., aes(y = value, x = year, group =var)) +
-  geom_point(aes(shape = var, color = var, size=var)) +
-  geom_line(aes(linetype = var, color = var)) +
-  scale_linetype_manual(values=c("solid", "solid", "dotted", "dotted" ))+
-  scale_shape_manual(values=c(1, 16, 1, 16)) +
-  scale_color_manual(values=c('black','black', 'grey70', 'grey70'))+
-  scale_size_manual(values=c(2,2,2,2)) +
-  theme(legend.title=element_blank(),
-        panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
-        legend.text=element_text(size=12), 
-        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
-        axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
-        legend.position=c(0.85,0.18))  +
-  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
-  scale_y_continuous(breaks = c(4,5,6,7, 8, 9,10,11,12,13), limits = c(4,13))+
-  geom_text(aes(x = 1997, y = 13, label="B)"),family="Times New Roman", colour="black", size=4) +
-  labs(y = "Temperature (Celsius)", x ="") -> plot2
-cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 2, ncol=1)
-ggsave(paste0(results.directory, "monthly_temp.png"), dpi = 500, height = 6, width = 6.5, units = "in")
+cowplot::plot_grid(plot1,  align = "vh", nrow = 1, ncol=1)
+ggsave(paste0(results.directory, "monthly_temp.png"), dpi = 500, height = 4, width = 6.5, units = "in")
 
-# create a figure of SST_MJJ, SST_May, SST_AMJJ by region
+# create a figure of SST_MJJ, SST_May, SST_AMJJ, SST_AMJ by region
 fig_data %>%
-  dplyr::select(year, Icy_Strait_SST_May, Chatham_Strait_SST_May, NSEAK_SST_May, SST_Jordan_May, SEAK_SST_May) %>%
+  dplyr::select(year, Icy_Strait_SST_May, Chatham_SST_May, NSEAK_SST_May, SEAK_SST_May) %>%
   gather("var", "value", -c(year)) %>% 
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size = var)) +
   geom_line(aes(linetype = var, color = var)) +
-  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted", "solid"))+
-  scale_shape_manual(values=c(1, 16, 15, 2, 8)) +
-  scale_color_manual(values=c('black','black', 'grey70', 'black', 'grey70')) +
-  scale_size_manual(values=c(2,2,2,2,2 )) +
+  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted"))+
+  scale_shape_manual(values=c(1, 16, 15, 2)) +
+  scale_color_manual(values=c('black','black', 'grey70', 'black')) +
+  scale_size_manual(values=c(2,2,2,2)) +
   theme(legend.title=element_blank(),
         panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
@@ -325,15 +264,15 @@ fig_data %>%
   labs(y = "Temperature (Celsius)", x ="") -> plot1
 
 fig_data %>%
-  dplyr::select(year, Icy_Strait_SST_MJJ, Chatham_Strait_SST_MJJ, NSEAK_SST_MJJ, SST_Jordan_MJJ, SEAK_SST_MJJ) %>%
+  dplyr::select(year, Icy_Strait_SST_MJJ, Chatham_SST_MJJ, NSEAK_SST_MJJ, SEAK_SST_MJJ) %>%
   gather("var", "value", -c(year)) %>% 
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size = var)) +
   geom_line(aes(linetype = var, color = var)) +
-  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted","solid"))+
-  scale_shape_manual(values=c(1, 16, 15, 2,8)) +
-  scale_color_manual(values=c('black','black', 'grey70', 'black','grey70'))+
-  scale_size_manual(values=c(2,2,2,2,2)) +
+  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted"))+
+  scale_shape_manual(values=c(1, 16, 15, 2)) +
+  scale_color_manual(values=c('black','black', 'grey70', 'black'))+
+  scale_size_manual(values=c(2,2,2,2)) +
   theme(legend.title=element_blank(),
         panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
@@ -348,15 +287,15 @@ fig_data %>%
   labs(y = "Temperature (Celsius)", x ="") -> plot2
 
 fig_data %>%
-  dplyr::select(year, Icy_Strait_SST_AMJJ, Chatham_Strait_SST_AMJJ, NSEAK_SST_AMJJ, SST_Jordan_AMJJ, SEAK_SST_AMJJ) %>%
+  dplyr::select(year, Icy_Strait_SST_AMJJ, Chatham_SST_AMJJ, NSEAK_SST_AMJJ, SEAK_SST_AMJJ) %>%
   gather("var", "value", -c(year)) %>% 
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size = var)) +
   geom_line(aes(linetype = var, color = var)) +
-  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted", "solid"))+
+  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted"))+
   scale_shape_manual(values=c(1, 16, 15, 2, 8)) +
-  scale_color_manual(values=c('black','black', 'grey70','black', 'grey70'))+
-  scale_size_manual(values=c(2,2,2,2,2)) +
+  scale_color_manual(values=c('black','black', 'grey70','black'))+
+  scale_size_manual(values=c(2,2,2,2)) +
   theme(legend.title=element_blank(),
         panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
@@ -367,9 +306,32 @@ fig_data %>%
   legend.position=c(0.6,0.85))  +
   scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
-  geom_text(aes(x = 2001.5, y = 12, label="C) April, May, June, July temperature"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(x = 2001.5, y = 12, label="D) April, May, June, July temperature"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot3
-cowplot::plot_grid(plot1,plot2,plot3, align = "v", nrow = 3, ncol=1)
+
+fig_data %>%
+  dplyr::select(year, Icy_Strait_SST_AMJ, Chatham_SST_AMJ, NSEAK_SST_AMJ, SEAK_SST_AMJ) %>%
+  gather("var", "value", -c(year)) %>% 
+  ggplot(., aes(y = value, x = year, group = var)) +
+  geom_point(aes(shape = var, color = var, size = var)) +
+  geom_line(aes(linetype = var, color = var)) +
+  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted"))+
+  scale_shape_manual(values=c(1, 16, 15, 2, 8)) +
+  scale_color_manual(values=c('black','black', 'grey70','black'))+
+  scale_size_manual(values=c(2,2,2,2)) +
+  theme(legend.title=element_blank(),
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
+        legend.text=element_text(size=10), 
+        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
+        axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
+        legend.position=c(0.6,0.85))  +
+  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
+  scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
+  geom_text(aes(x = 2001, y = 12, label="C) April, May, June temperature"),family="Times New Roman", colour="black", size=4) +
+  labs(y = "Temperature (Celsius)", x ="") -> plot4
+cowplot::plot_grid(plot1,plot2,plot4, plot3, align = "v", nrow = 4, ncol=1)
 ggsave(paste0(results.directory, "monthly_temp_regions.png"), dpi = 500, height = 8, width = 7, units = "in")
 
 # create a figure of ISTI_May and ISTI_MJJ for the SECM survey
@@ -454,7 +416,7 @@ SST_data %>%
   filter(region == "Icy_Strait") -> Icy_Strait
 
 SST_data %>%
-  filter(region == "Chatham_Strait") -> Chatham_Strait
+  filter(region == "Chatham") -> Chatham
 
 SST_data %>%
   filter(region == "NSEAK") -> NSEAK
@@ -469,20 +431,16 @@ SST_data %>%
   filter(region == "Icy_Strait_SECM") -> Icy_Strait_SECM
 
 SST_data %>%
-  filter(region == "SST_Jordan") -> SST_Jordan
-
-SST_data %>%
   filter(region == "SEAK") -> SEAK
 
 scale <- as.PolySet(scale, projection="LL") # nautical mile scale for map
 Icy_Strait <- as.PolyData(Icy_Strait, projection="LL") # general SECM survey area (Icy Strait region)
-Chatham_Strait <- as.PolyData(Chatham_Strait, projection="LL") # Chatham Strait data
+Chatham <- as.PolyData(Chatham, projection="LL") # Chatham Strait data
 NSEAK <- as.PolyData(NSEAK, projection="LL") # NSEAK data
 SSEAK <- as.PolyData(SSEAK, projection="LL") # SSEAK data
 SEAK <- as.PolyData(SEAK, projection="LL") # SSEAK data
 Upper_Chatham_Strait_SECM <- as.PolyData(Upper_Chatham_Strait_SECM, projection="LL") #  Icy Strait SECM stations
 Icy_Strait_SECM <- as.PolyData(Icy_Strait_SECM, projection="LL") # Icy Strait SECM stations
-SST_Jordan <- as.PolyData(SST_Jordan, projection="LL") # Icy Strait SECM stations
 
 x<-c(-138, -131.5)   #coordinates of land data
 y<-c(56,59.5)
@@ -504,13 +462,13 @@ text(-136,57.1,"Pacific Ocean", cex=1.25, adj=1, font=1)
 text(-131.7, 59.2,"25 nm at 59°N", cex = 0.75, adj = 1, font = 1)
 dev.off()
 
-# Chatham_Strait region
+# Chatham region
 region<-clipPolys(nepacLLhigh,xlim=x,ylim=y)      
 par(mfrow=c(1,1),omi=c(0,0,0,0))  
 png(paste0(results.directory, "Chatham.png"),width=6,height=8,units="in", res=600)                                                        
 plotMap(region,xlim=x, ylim=y, tck=-0.02, plt=c(.13,.98,.13,.98),projection="LL", cex=1.2,
         xlab="Longitude (°W)", ylab="Latitude (°N)", cex.lab=1.5, font.lab=6, col=clr$land, bg=clr$sea)
-addPoints(Chatham_Strait, xlim=x,ylim=y,col=1,pch=1, lwd=1, cex=0.75) # satellite SST data
+addPoints(Chatham, xlim=x,ylim=y,col=1,pch=1, lwd=1, cex=0.75) # satellite SST data
 addLines(scale, xlim=x,ylim=y,col=1,lty=1, lwd=2, cex=1)
 addCompass(-137, 56.5, rot="trueN", cex=1)
 legend (-134.8, 58.95, legend=c("Chatham Strait SST locations"),
@@ -529,22 +487,6 @@ addPoints(NSEAK, xlim=x,ylim=y,col=1,pch=1, lwd=1, cex=0.75) # satellite SST dat
 addLines(scale, xlim=x,ylim=y,col=1,lty=1, lwd=2, cex=1)
 addCompass(-137, 56.5, rot="trueN", cex=1)
 legend (-134.2, 58.9, legend=c("NSEAK SST locations"),
-        col=c(1,2), bty="n", cex=1, pch=c(1, 16))
-text(-136,57.1,"Pacific Ocean", cex=1.25, adj=1, font=1)
-text(-131.7, 59.2,"25 nm at 59°N", cex = 0.75, adj = 1, font = 1)
-dev.off()
-
-# SST_Jordan region
-region<-clipPolys(nepacLLhigh,xlim=x,ylim=y)      
-par(mfrow=c(1,1),omi=c(0,0,0,0))  
-png(paste0(results.directory, "SST_Jordan.png"),width=6,height=8,units="in", res=600)                                                        
-plotMap(region,xlim=x, ylim=y, tck=-0.02, plt=c(.13,.98,.13,.98),projection="LL", cex=1.2,
-        xlab="Longitude (°W)", ylab="Latitude (°N)", cex.lab=1.5, font.lab=6, col=clr$land, bg=clr$sea)
-addPoints(Icy_Strait_SECM, xlim=x,ylim=y,col=2,pch=16, cex=0.75) # station points
-addPoints(SST_Jordan, xlim=x,ylim=y,col=1,pch=1, lwd=1, cex=0.75) # satellite SST data
-addLines(scale, xlim=x,ylim=y,col=1,lty=1, lwd=2, cex=1)
-addCompass(-137, 56.5, rot="trueN", cex=1)
-legend (-134.5, 58.9, legend=c("SST_Jordan locations", "SECM stations"),
         col=c(1,2), bty="n", cex=1, pch=c(1, 16))
 text(-136,57.1,"Pacific Ocean", cex=1.25, adj=1, font=1)
 text(-131.7, 59.2,"25 nm at 59°N", cex = 0.75, adj = 1, font = 1)
@@ -569,17 +511,3 @@ text(-135,56,"Pacific Ocean", cex=1.25, adj=1, font=0.75)
 text(-131.7, 59.2,"25 nm at 59°N", cex = 0.75, adj = 1, font = 1)
 dev.off()
 
-# SEAK region
-region<-clipPolys(nepacLLhigh,xlim=x,ylim=y)      
-par(mfrow=c(1,1),omi=c(0,0,0,0))  
-png(paste0(results.directory, "SEAK_map.png"),width=6,height=8,units="in", res=600)                                                        
-plotMap(region,xlim=x, ylim=y, tck=-0.02, plt=c(.13,.98,.13,.98),projection="LL", cex=1.2,
-        xlab="Longitude (°W)", ylab="Latitude (°N)", cex.lab=1.5, font.lab=6, col=clr$land, bg=clr$sea)
-addPoints(SEAK, xlim=x,ylim=y,col=1,pch=1, lwd=1, cex=0.5) # satellite SST data
-addLines(scale, xlim=x,ylim=y,col=1,lty=1, lwd=2, cex=1)
-addCompass(-136.5, 55, rot="trueN", cex=1)
-legend (-133, 58.8, legend=c("SEAK SST locations"),
-        col=c(1,2), bty="n", cex=1, pch=c(1, 16))
-text(-135,56,"Pacific Ocean", cex=1.25, adj=1, font=0.75)
-text(-131.7, 59.2,"25 nm at 59°N", cex = 0.75, adj = 1, font = 1)
-dev.off()
