@@ -1,4 +1,4 @@
-# Southeast Pink Salmon Preseason Forecast
+# Southeast Alaska Pink Salmon Preseason Forecast
 Please direct any questions to: Sara Miller (sara.miller@alaska.gov).
 
 Last updated: June 2021
