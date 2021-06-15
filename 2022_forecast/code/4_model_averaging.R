@@ -16,7 +16,7 @@ results %>%
   mutate(var_yhat = stdev * stdev) %>%
   mutate(model = c('m1','m2','m3','m4','m5','m6','m7','m8',
                    'm9','m10','m11','m12','m13','m14','m15','m16',' m17',
-                   'm18','m19','m20','m21','m22','m23','m24','m25','m26')) %>% 
+                   'm18','m19','m20','m21','m22','m23','m24','m25')) %>% 
   mutate(fit_bias_corrected = fit+((sigma*sigma)/2)) %>%         
   mutate(delta = AICc-min(AICc)) %>%
   mutate(relLik = exp(-0.5 * delta)) %>%
@@ -32,12 +32,13 @@ results %>%
          exp_fit_UPI_80 = exp(fit_UPI_80)) %>%
   write.csv(paste0(results.directory, "/model_summary_table4.csv"), row.names = F)
 
-
+# STOP HERE*******************************************************************************
+#****************************************************************************************
 # MuMIN package
 # use the model.sel function to conduct model selection
 # and put output into object out.put
 out.put<-model.sel(m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15,m16,
-                   m17,m18,m19,m20,m21,m22,m23,m24,m25,m26)
+                   m17,m18,m19,m20,m21,m22,m23,m24,m25)
 out.put
 
 # select models with delta AICc less than 5

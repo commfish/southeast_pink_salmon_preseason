@@ -201,11 +201,11 @@ read.csv(paste0(results.directory, 'sst_oisst_97_20_SEAK_monthly_summary.csv')) 
   merge (., NSEAK) -> fig_data
 
 read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, year, ISTI3_May, ISTI10_May, ISTI15_May, ISTI20_May, IS3_May) %>%
+  dplyr::select(year, year, ISTI3_May, ISTI10_May, ISTI15_May, ISTI20_May) %>%
   write.csv(., paste0(results.directory, 'SECMvar2021_May.csv'), row.names = FALSE)
 
 read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, ISTI3_MJJ, ISTI10_MJJ, ISTI15_MJJ, ISTI20_MJJ, IS3_MJJ) %>%
+  dplyr::select(year, ISTI3_MJJ, ISTI10_MJJ, ISTI15_MJJ, ISTI20_MJJ) %>%
   write.csv(., paste0(results.directory, 'SECMvar2021_MJJ.csv'), row.names = FALSE)
 
 #-------------------------------------------------------------------------------------------------------------
@@ -336,7 +336,7 @@ ggsave(paste0(results.directory, "monthly_temp_regions.png"), dpi = 500, height 
 
 # create a figure of ISTI_May and ISTI_MJJ for the SECM survey
 read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, ISTI3_May, ISTI10_May, ISTI15_May, ISTI20_May, IS3_May) %>%
+  dplyr::select(year, ISTI3_May, ISTI10_May, ISTI15_May, ISTI20_May) %>%
   gather("var", "value", -c(year)) %>% 
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size=var)) +
@@ -359,7 +359,7 @@ read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
   labs(y = "Temperature (Celsius)", x ="") -> plot1
 
 read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, ISTI3_MJJ, ISTI10_MJJ, ISTI15_MJJ, ISTI20_MJJ, IS3_MJJ) %>%
+  dplyr::select(year, ISTI3_MJJ, ISTI10_MJJ, ISTI15_MJJ, ISTI20_MJJ) %>%
   gather("var", "value", -c(year)) %>% 
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size=var)) +

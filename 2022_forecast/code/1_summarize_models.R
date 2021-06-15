@@ -36,6 +36,8 @@ year.forecast <- "2022_forecast"
 year.data <- 2020  
 year.data.one <- year.data - 1
 sample_size <-  23 # number of data points in model
+forecast2021 <- 28 # input last year's forecast for the forecast plot
+model_average <- 18.8 # input the model averaged forecast from the code 4_model_averaging
 
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
@@ -63,23 +65,22 @@ model.names <- c(m1='CPUE',
                m7='CPUE + ISTI10_MJJ',
                m8='CPUE + ISTI15_MJJ',
                m9='CPUE + ISTI20_MJJ',
-               m10='CPUE + IS3_May',
-               m11='CPUE + IS3_MJJ',
-               m12='CPUE + Chatham_Strait_SST_MJJ',
-               m13='CPUE + Chatham_Strait_SST_May',
-               m14='CPUE + Chatham_Strait_SST_AMJJ',
+               m10='CPUE + Chatham_SST_May',
+               m11='CPUE + Chatham_SST_MJJ',
+               m12='CPUE + Chatham_SST_AMJ',
+               m13='CPUE + Chatham_SST_AMJJ',
+               m14='CPUE + Icy_Strait_SST_May',
                m15='CPUE + Icy_Strait_SST_MJJ',
-               m16='CPUE + Icy_Strait_SST_May',
+               m16='CPUE + Icy_Strait_SST_AMJ',
                m17='CPUE + Icy_Strait_SST_AMJJ',
-               m18='CPUE + NSEAK_SST_MJJ',
-               m19='CPUE + NSEAK_SST_May',
-               m20='CPUE + NSEAK_SST_AMJJ',
-               m21='CPUE + SST_Jordan_MJJ',
-               m22='CPUE + SST_Jordan_May',
-               m23='CPUE + SST_Jordan_AMJJ',
-               m24='CPUE + SEAK_SST_MJJ',
-               m25='CPUE + SEAK_SST_May',
-               m26='CPUE + SEAK_SST_AMJJ')
+               m18='CPUE + NSEAK_SST_May',
+               m19='CPUE + NSEAK_SST_MJJ',
+               m20='CPUE + NSEAK_SST_AMJ',
+               m21='CPUE + NSEAK_SST_AMJJ',
+               m22='CPUE + SEAK_SST_May',
+               m23='CPUE + SEAK_SST_MJJ',
+               m24='CPUE + SEAK_SST_AMJ',
+               m25='CPUE + SEAK_SST_AMJJ')
 model.formulas <- c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE + ISTI3_May,
                  SEAKCatch_log ~ CPUE + ISTI10_May,
@@ -89,22 +90,21 @@ model.formulas <- c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE + ISTI10_MJJ,
                  SEAKCatch_log ~ CPUE + ISTI15_MJJ,
                  SEAKCatch_log ~ CPUE + ISTI20_MJJ,
-                 SEAKCatch_log ~ CPUE + IS3_May,
-                 SEAKCatch_log ~ CPUE + IS3_MJJ,
-                 SEAKCatch_log ~ CPUE + Chatham_Strait_SST_MJJ,
-                 SEAKCatch_log ~ CPUE + Chatham_Strait_SST_May,
-                 SEAKCatch_log ~ CPUE + Chatham_Strait_SST_AMJJ,
-                 SEAKCatch_log ~ CPUE + Icy_Strait_SST_MJJ,
+                 SEAKCatch_log ~ CPUE + Chatham_SST_May,
+                 SEAKCatch_log ~ CPUE + Chatham_SST_MJJ,
+                 SEAKCatch_log ~ CPUE + Chatham_SST_AMJ,
+                 SEAKCatch_log ~ CPUE + Chatham_SST_AMJJ,
                  SEAKCatch_log ~ CPUE + Icy_Strait_SST_May,
+                 SEAKCatch_log ~ CPUE + Icy_Strait_SST_MJJ,
+                 SEAKCatch_log ~ CPUE + Icy_Strait_SST_AMJ,
                  SEAKCatch_log ~ CPUE + Icy_Strait_SST_AMJJ,
-                 SEAKCatch_log ~ CPUE + NSEAK_SST_MJJ,
                  SEAKCatch_log ~ CPUE + NSEAK_SST_May,
+                 SEAKCatch_log ~ CPUE + NSEAK_SST_MJJ,
+                 SEAKCatch_log ~ CPUE + NSEAK_SST_AMJ,
                  SEAKCatch_log ~ CPUE + NSEAK_SST_AMJJ,
-                 SEAKCatch_log ~ CPUE + SST_Jordan_MJJ,
-                 SEAKCatch_log ~ CPUE + SST_Jordan_May,
-                 SEAKCatch_log ~ CPUE + SST_Jordan_AMJJ,
-                 SEAKCatch_log ~ CPUE + SEAK_SST_MJJ,
                  SEAKCatch_log ~ CPUE + SEAK_SST_May,
+                 SEAKCatch_log ~ CPUE + SEAK_SST_MJJ,
+                 SEAKCatch_log ~ CPUE + SEAK_SST_AMJ,
                  SEAKCatch_log ~ CPUE + SEAK_SST_AMJJ) # temp. data 
 
 # summary statistics and bootstrap of SEAK pink salmon harvest forecast models
@@ -123,23 +123,22 @@ lm(SEAKCatch_log ~ CPUE + ISTI3_MJJ, data = log_data_subset) -> m6
 lm(SEAKCatch_log ~ CPUE + ISTI10_MJJ, data = log_data_subset) -> m7
 lm(SEAKCatch_log ~ CPUE + ISTI15_MJJ, data = log_data_subset) -> m8
 lm(SEAKCatch_log ~ CPUE + ISTI20_MJJ, data = log_data_subset) -> m9
-lm(SEAKCatch_log ~ CPUE + IS3_May, data = log_data_subset) -> m10
-lm(SEAKCatch_log ~ CPUE + IS3_MJJ, data = log_data_subset) -> m11
-lm(SEAKCatch_log ~ CPUE + Chatham_Strait_SST_MJJ, data = log_data_subset) -> m12
-lm(SEAKCatch_log ~ CPUE + Chatham_Strait_SST_May, data = log_data_subset) -> m13
-lm(SEAKCatch_log ~ CPUE + Chatham_Strait_SST_AMJJ, data = log_data_subset) -> m14
+lm(SEAKCatch_log ~ CPUE + Chatham_SST_May, data = log_data_subset) -> m10
+lm(SEAKCatch_log ~ CPUE + Chatham_SST_MJJ, data = log_data_subset) -> m11
+lm(SEAKCatch_log ~ CPUE + Chatham_SST_AMJ, data = log_data_subset) -> m12
+lm(SEAKCatch_log ~ CPUE + Chatham_SST_AMJJ, data = log_data_subset) -> m13
+lm(SEAKCatch_log ~ CPUE + Icy_Strait_SST_May, data = log_data_subset) -> m14
 lm(SEAKCatch_log ~ CPUE + Icy_Strait_SST_MJJ, data = log_data_subset) -> m15
-lm(SEAKCatch_log ~ CPUE + Icy_Strait_SST_May, data = log_data_subset) -> m16
+lm(SEAKCatch_log ~ CPUE + Icy_Strait_SST_AMJ, data = log_data_subset) -> m16
 lm(SEAKCatch_log ~ CPUE + Icy_Strait_SST_AMJJ, data = log_data_subset) -> m17
-lm(SEAKCatch_log ~ CPUE + NSEAK_SST_MJJ, data = log_data_subset) -> m18
-lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset) -> m19
-lm(SEAKCatch_log ~ CPUE + NSEAK_SST_AMJJ, data = log_data_subset) -> m20
-lm(SEAKCatch_log ~ CPUE + SST_Jordan_MJJ, data = log_data_subset) -> m21
-lm(SEAKCatch_log ~ CPUE + SST_Jordan_May, data = log_data_subset) -> m22
-lm(SEAKCatch_log ~ CPUE + SST_Jordan_AMJJ, data = log_data_subset) -> m23
-lm(SEAKCatch_log ~ CPUE + SEAK_SST_MJJ, data = log_data_subset) -> m24
-lm(SEAKCatch_log ~ CPUE + SEAK_SST_May, data = log_data_subset) -> m25
-lm(SEAKCatch_log ~ CPUE + SEAK_SST_AMJJ, data = log_data_subset) -> m26
+lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset) -> m18
+lm(SEAKCatch_log ~ CPUE + NSEAK_SST_MJJ, data = log_data_subset) -> m19
+lm(SEAKCatch_log ~ CPUE + NSEAK_SST_AMJ, data = log_data_subset) -> m20
+lm(SEAKCatch_log ~ CPUE + NSEAK_SST_AMJJ, data = log_data_subset) -> m21
+lm(SEAKCatch_log ~ CPUE + SEAK_SST_May, data = log_data_subset) -> m22
+lm(SEAKCatch_log ~ CPUE + SEAK_SST_MJJ, data = log_data_subset) -> m23
+lm(SEAKCatch_log ~ CPUE + SEAK_SST_AMJ, data = log_data_subset) -> m24
+lm(SEAKCatch_log ~ CPUE + SEAK_SST_AMJJ, data = log_data_subset) -> m25
 
 tidy(m1) -> model1
 tidy(m2) -> model2
@@ -166,7 +165,6 @@ tidy(m22) -> model22
 tidy(m23) -> model23
 tidy(m24) -> model24
 tidy(m25) -> model25
-tidy(m26) -> model26
 
 rbind(model1, model2) %>% 
 rbind(., model3) %>% 
@@ -192,7 +190,6 @@ rbind(., model22) %>%
 rbind(., model23) %>% 
 rbind(., model24) %>% 
 rbind(., model25) %>% 
-rbind(., model26) %>%  
 mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3',
                  'm4','m4','m4','m5','m5','m5','m6','m6',' m6',
                  'm7','m7','m7','m8','m8','m8','m9','m9',' m9',
@@ -201,7 +198,7 @@ mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3',
                  'm16','m16','m16','m17','m17','m17','m18','m18',' m18',
                  'm19','m19','m19','m20','m20','m20','m21','m21',' m21',
                  'm22','m22','m22','m23','m23','m23','m24','m24','m24',
-                 'm25','m25','m25','m26','m26','m26')) %>% 
+                 'm25','m25','m25')) %>% 
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
   mutate(estimate = round(estimate,8),
          std.error = round(std.error,3),
@@ -225,7 +222,7 @@ results %>%
          wMAPE = round(wMAPE, 3)) %>%
   mutate(model = c('m1','m2','m3','m4','m5','m6','m7','m8',
                    'm9','m10','m11','m12','m13','m14','m15','m16',' m17',
-                   'm18','m19','m20','m21','m22','m23','m24','m25','m26')) %>%
+                   'm18','m19','m20','m21','m22','m23','m24','m25')) %>%
   mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% # exponentiate the forecast
@@ -248,7 +245,7 @@ results %>%
          wMAPE = round(wMAPE, 3)) %>%
   mutate(model = c('m1','m2','m3','m4','m5','m6','m7','m8',
                    'm9','m10','m11','m12','m13','m14','m15','m16',' m17',
-                   'm18','m19','m20','m21','m22','m23','m24','m25','m26')) %>%
+                   'm18','m19','m20','m21','m22','m23','m24','m25')) %>%
   mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% # exponentiate the forecast
@@ -266,7 +263,7 @@ results %>%
   dplyr::select(terms, fit,	fit_LPI,	fit_UPI, sigma) %>%
   mutate(model = c('1','2','3','4','5','6','7','8',
                    '9','10','11','12','13','14','15','16',' 17',
-                   '18','19','20','21','22','23','24','25','26')) %>%
+                   '18','19','20','21','22','23','24','25')) %>%
   mutate(model= as.numeric(model),
          fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), 
@@ -282,10 +279,11 @@ results %>%
   theme_bw() + theme(legend.key=element_blank(),
                      legend.title=element_blank(),
                      legend.position = "none") +
-  geom_hline(aes(yintercept=mean(fit_log)), color="grey50", lty = 2) +
+  geom_hline(aes(yintercept=model_average), color="grey50", lty = 2) +
+  geom_hline(aes(yintercept=forecast2021), color="grey50", lty = 1) +
   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, size=1, color="blue")+
   scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40,45,50,55), limits = c(0,55))+ 
-  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28), limits = c(0,28))+ 
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26), limits = c(0,26))+ 
   labs(x = "Models", y = "2021 SEAK Pink Salmon Forecast (millions)")  -> plot1
 ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, width = 6, units = "in")
 
@@ -313,23 +311,22 @@ lm(SEAKCatch_log ~ CPUE * ISTI3_MJJ, data = log_data_subset) -> m6i
 lm(SEAKCatch_log ~ CPUE * ISTI10_MJJ, data = log_data_subset) -> m7i
 lm(SEAKCatch_log ~ CPUE * ISTI15_MJJ, data = log_data_subset) -> m8i
 lm(SEAKCatch_log ~ CPUE * ISTI20_MJJ, data = log_data_subset) -> m9i
-lm(SEAKCatch_log ~ CPUE * IS3_May, data = log_data_subset) -> m10i
-lm(SEAKCatch_log ~ CPUE * IS3_MJJ, data = log_data_subset) -> m11i
-lm(SEAKCatch_log ~ CPUE * Chatham_Strait_SST_MJJ, data = log_data_subset) -> m12i
-lm(SEAKCatch_log ~ CPUE * Chatham_Strait_SST_May, data = log_data_subset) -> m13i
-lm(SEAKCatch_log ~ CPUE * Chatham_Strait_SST_AMJJ, data = log_data_subset) -> m14i
+lm(SEAKCatch_log ~ CPUE * Chatham_SST_May, data = log_data_subset) -> m10i
+lm(SEAKCatch_log ~ CPUE * Chatham_SST_MJJ, data = log_data_subset) -> m11i
+lm(SEAKCatch_log ~ CPUE * Chatham_SST_AMJ, data = log_data_subset) -> m12i
+lm(SEAKCatch_log ~ CPUE * Chatham_SST_AMJJ, data = log_data_subset) -> m13i
+lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_May, data = log_data_subset) -> m14i
 lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_MJJ, data = log_data_subset) -> m15i
-lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_May, data = log_data_subset) -> m16i
+lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_AMJ, data = log_data_subset) -> m16i
 lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_AMJJ, data = log_data_subset) -> m17i
-lm(SEAKCatch_log ~ CPUE * NSEAK_SST_MJJ, data = log_data_subset) -> m18i
-lm(SEAKCatch_log ~ CPUE * NSEAK_SST_May, data = log_data_subset) -> m19i
-lm(SEAKCatch_log ~ CPUE * NSEAK_SST_AMJJ, data = log_data_subset) -> m20i
-lm(SEAKCatch_log ~ CPUE * SST_Jordan_MJJ, data = log_data_subset) -> m21i
-lm(SEAKCatch_log ~ CPUE * SST_Jordan_May, data = log_data_subset) -> m22i
-lm(SEAKCatch_log ~ CPUE * SST_Jordan_AMJJ, data = log_data_subset) -> m23i
-lm(SEAKCatch_log ~ CPUE * SEAK_SST_MJJ, data = log_data_subset) -> m24i
-lm(SEAKCatch_log ~ CPUE * SEAK_SST_May, data = log_data_subset) -> m25i
-lm(SEAKCatch_log ~ CPUE * SEAK_SST_AMJJ, data = log_data_subset) -> m26i
+lm(SEAKCatch_log ~ CPUE * NSEAK_SST_May, data = log_data_subset) -> m18i
+lm(SEAKCatch_log ~ CPUE * NSEAK_SST_MJJ, data = log_data_subset) -> m19i
+lm(SEAKCatch_log ~ CPUE * NSEAK_SST_AMJ, data = log_data_subset) -> m20i
+lm(SEAKCatch_log ~ CPUE * NSEAK_SST_AMJJ, data = log_data_subset) -> m21i
+lm(SEAKCatch_log ~ CPUE * SEAK_SST_May, data = log_data_subset) -> m22i
+lm(SEAKCatch_log ~ CPUE * SEAK_SST_MJJ, data = log_data_subset) -> m23i
+lm(SEAKCatch_log ~ CPUE * SEAK_SST_AMJ, data = log_data_subset) -> m24i
+lm(SEAKCatch_log ~ CPUE * SEAK_SST_AMJJ, data = log_data_subset) -> m25i
 
 tidy(m2i) -> model2
 tidy(m3i) -> model3
@@ -355,7 +352,6 @@ tidy(m22i) -> model22
 tidy(m23i) -> model23
 tidy(m24i) -> model24
 tidy(m25i) -> model25
-tidy(m26i) -> model26
 
 rbind(model2, model3) %>% 
   rbind(., model4) %>% 
@@ -380,7 +376,6 @@ rbind(model2, model3) %>%
   rbind(., model23) %>%  
   rbind(., model24) %>% 
   rbind(., model25) %>% 
-  rbind(., model26) %>% 
   mutate(model = c('m2i','m2i','m2i','m2i','m3i','m3i','m3i','m3i',
                    'm4i','m4i','m4i','m4i','m5i','m5i','m5i','m5i','m6i','m6i','m6i','m6i',
                    'm7i','m7i','m7i','m7i', 'm8i','m8i','m8i','m8i','m9i','m9i',' m9i','m9i',
@@ -391,7 +386,7 @@ rbind(model2, model3) %>%
                    'm19i','m19i','m19i','m19i',
                    'm20i','m20i','m20i','m20i', 'm21i','m21i','m21i','m21i',
                    'm22i','m22i','m22i','m22i','m23i','m23i','m23i','m23i','m24i','m24i','m24i','m24i',
-                   'm25i','m25i','m25i','m25i','m26i','m26i','m26i','m26i')) %>% 
+                   'm25i','m25i','m25i','m25i')) %>% 
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
   mutate(estimate = round(estimate,8),
          std.error = round(std.error,3),
