@@ -289,8 +289,9 @@ ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, 
 
 # one step ahead MAPE
 # https://stackoverflow.com/questions/37661829/r-multivariate-one-step-ahead-forecasts-and-accuracy
-# end year is the year the data is used through (e.g., end = 2004 means that the regression is runs through JYear 2014 and years 2015-2019 are
+# end year is the year the data is used through (e.g., end = 2004 means that the regression is runs through JYear 2014 and Jyears 2015-2019 are
 # forecasted in the one step ahead process)
+# https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
 f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2014)
 
 read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results

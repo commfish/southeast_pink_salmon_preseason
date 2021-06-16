@@ -3,7 +3,7 @@ title: "Preliminary Discussion about the 2022 Forecast Process"
 author: "Sara Miller"
 date: "June 4, 2021"
 output:
-  bookdown::pdf_document2: 
+  bookdown::word_document2: 
     fig_caption: yes
     toc: yes
 header-includes: \usepackage{float}
@@ -65,7 +65,29 @@ $$MAPE = \frac{1}{n} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|$$
 where $A_t$ is the observed value and $F_t$ is the predicted value. The performance metric *wMAPE* was calculated as:
 
 $$wMAPE =\sum_{t=1}^{n} \frac{1}{w_t} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|w_t.$$
-where $w_t$ is the weight for each year. For the *wMAPE* metric, the last 5 years (juvenile years 2015-2019) were given a weight of 1 and all other years, a weight of 0.001. Therefore, compared to the performance metric *MAPE_LOOCV*, the performance of the model in the last 5 years was given more weight in the *wMAPE* metric.  
+where $w_t$ is the weight for each year. For the *wMAPE* metric, the last 5 years (juvenile years 2015-2019) were given a weight of 1 and all other years, a weight of 0.001. Therefore, compared to the performance metric *MAPE_LOOCV*, the performance of the model in the last 5 years was given more weight in the *wMAPE* metric. 
+
+The performance metric *MAPE_LOOCV* uses five steps.
+
+1. The dataset is split into a training set. The training set uses all but one observation of the full dataset.
+
+2. Run the regression model based on the training set.
+
+3. Use the regression model based on the training set to predict $F_t$ for the one observation left out of the model.
+
+4. Repeat the process $n$ times based on the number of observations in the dataset, leaving out a different observation from the training set each time. 
+
+5. Calculate MAPE, based on the average of all the training datasets (i.e., one MAPE is calculated for each training set and then these are averaged.)
+
+The performance metric *MAPE_one_step_ahead* involves three steps:
+
+1. Estimate the regression parameters at time $t$ from data up to time $t-1$. 
+
+2. Make a prediction of $F_t$ at time $t$ based on the predictor variables at time $t$ and the estimate of the regression parameters at time $t$.
+
+3. Calculate the MAPE based on the prediction of $F_t$ at time $t$ and the observed value of $A_t$ at time $t$. 
+
+3. The *MAPE_one_step_ahead* will then be an average of the MAPE calculated from data up through juvenile year 2014 (e.g., juvenile year 2014 is $t-1$ and the forecast is for juvenile year 2015; $t$), data up through juvenile year 2015 (e.g., juvenile year 2015 is $t-1$ and the forecast is for juvenile year 2016; $t$), data up through juvenile year 2016, data up through juvenile year 2017, data up through juvenile year 2018, and data up through juvenile year 2019.
 
 The AICc in Table 2 is the AICc value and not the $\Delta_i$AICc. The performance metric AICc suggests that models m10, m14, and m18 are the recommended models (Table 2). The performance metrics *MASE* and *MAPE_LOOCV* suggest that models m10, m14, and m18 are the recommended models (Table 2). The performance metric *wMAPE* suggests that models m14, m20, and m21 are the recommended models (Table 2). The performance metric *MAPE_one_step_ahead* suggests that models m14 and m21 are the recommended models (Table 2). Detailed outputs for recommended models m10, m14, m18, m20, and m21, are in the appendix (Tables 7 to 11, and Figures 2 through 11). 
 

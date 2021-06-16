@@ -2,7 +2,7 @@
 # MASE function #https://stackoverflow.com/questions/11092536/forecast-accuracy-no-mase-with-two-vectors-as-arguments
 # add MAPE the last 5 years
 # https://stackoverflow.com/questions/12994929/whats-the-gaps-for-the-forecast-error-metrics-mape-and-wmape
-
+# https://www.statology.org/leave-one-out-cross-validation/
 MASE <- function(f,y) { # f = vector with forecasts, y = vector with actuals
   if(length(f)!=length(y)){ stop("Vector length is not equal") }
   n <- length(f)
@@ -319,13 +319,13 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end){
     fit<-lm(model,data = data[data$JYear >= start & data$JYear < i,])
     data$model1_sim[data$JYear == i] <- predict(fit, newdata = data[data$JYear == i,])
   }
-  #return(data)
+  return(data)
   data %>% 
     dplyr::filter(JYear > end) -> output
   mape(output$SEAKCatch_log,output$model1_sim)
 } 
 # function check for one model (one step ahead MAPE)
-seak_model_summary2 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + ISTI3_May, start = 1997, end = 2014)
+seak_model_summary2 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2014)
 
 # function for multiple models (one step ahead MAPE)
 f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,model.names, start, end){
