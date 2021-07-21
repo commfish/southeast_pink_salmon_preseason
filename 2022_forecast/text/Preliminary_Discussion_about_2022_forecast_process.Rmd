@@ -3,7 +3,7 @@ title: "Preliminary Discussion about the 2022 Forecast Process"
 author: "Sara Miller"
 date: "June 4, 2021"
 output:
-  bookdown::word_document2: 
+  bookdown::pdf_document2:
     fig_caption: yes
     toc: yes
 header-includes: \usepackage{float}

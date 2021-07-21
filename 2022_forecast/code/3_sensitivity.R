@@ -236,7 +236,7 @@ results %>%
   labs(x = "Models", y = "2021 SEAK Pink Salmon Forecast (millions)")  -> plot1
 ggsave(paste0(results.directory, "forecast_models_sensitivity.png"), dpi = 500, height = 4, width = 6, units = "in")
 
-seak_model_summary <- f_model_one_step_ahead_multiple_sensitive(harvest=log_data_sensitivity$SEAKCatch_log, variables=log_data_sensitivity, model.formulas=model.formulas.sensitivity,model.names=model.names.sensitivity, start = 1997, end = 2014)
+seak_model_summary <- f_model_one_step_ahead_multiple_sensitive(harvest=log_data_sensitivity$SEAKCatch_log, variables=log_data_sensitivity, model.formulas=model.formulas.sensitivity,model.names=model.names.sensitivity, start = 1997, end = 2013)
 
 read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead_sensitive.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
 read.csv(file.path(results.directory,'model_summary_table_sensitivity2.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> model_summary_table2

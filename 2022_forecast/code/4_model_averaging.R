@@ -6,31 +6,41 @@ source('2022_forecast/code/functions.r')
 # https://rdrr.io/github/padpadpadpad/rTPC/f/vignettes/model_averaging_selection.Rmd
 # https://stats.stackexchange.com/questions/155305/how-does-r-calculate-prediction-intervals-in-the-forecast-package
 # https://www.investopedia.com/ask/answers/042415/what-difference-between-standard-error-means-and-standard-deviation.asp
+read.csv(file.path(results.directory,'model_summary_table5.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>% 
+  dplyr::select(model, AdjR2, MASE, MAPE_one_step_ahead) %>% 
+  mutate(MASE_weight = MASE/sum(MASE),
+         MAPE_one_step_ahead_weight = MAPE_one_step_ahead/sum(MAPE_one_step_ahead)) -> summary_table
 
-read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
-results %>% 
+read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>% 
   dplyr::rename(terms = 'X') %>% 
   dplyr::select(terms, fit,	se.fit, fit_LPI,	fit_UPI, AICc,	sigma, df) %>%
+  cbind(., summary_table) %>%
   mutate(sigma = round(sigma,3),
-         stdev = (se.fit * sqrt(df +1)))%>%
-  mutate(var_yhat = stdev * stdev) %>%
-  mutate(model = c('m1','m2','m3','m4','m5','m6','m7','m8',
-                   'm9','m10','m11','m12','m13','m14','m15','m16',' m17',
-                   'm18','m19','m20','m21','m22','m23','m24','m25')) %>% 
-  mutate(fit_bias_corrected = fit+((sigma*sigma)/2)) %>%         
-  mutate(delta = AICc-min(AICc)) %>%
-  mutate(relLik = exp(-0.5 * delta)) %>%
-  mutate(aicc_weight = relLik/sum(relLik)) %>%
-  mutate(aicc_weights_pred = sum(fit_bias_corrected*aicc_weight)) %>%
-  mutate(step1 = ((fit_bias_corrected - aicc_weights_pred)^2) + var_yhat) %>%
-  mutate(step2 = sqrt(step1) *aicc_weight) %>%
+         stdev = (se.fit * sqrt(df +1))) %>%
+  mutate(var_yhat = stdev * stdev)  %>% 
+  mutate(fit_bias_corrected = fit+((sigma*sigma)/2)) %>%
+  mutate(MAPE_one_step_ahead_weight_pred = sum(fit_bias_corrected*MAPE_one_step_ahead_weight)) %>%
+  mutate(step1 = ((fit_bias_corrected - MAPE_one_step_ahead_weight_pred)^2) + var_yhat) %>%
+  mutate(step2 = sqrt(step1) * MAPE_one_step_ahead_weight) %>%
   mutate(var_y_pred = (sum(step2))^2) %>%
-  mutate(fit_LPI_80 = (aicc_weights_pred)-(1.28*sqrt(var_y_pred)),
-         fit_UPI_80 = (aicc_weights_pred)+(1.28*sqrt(var_y_pred))) %>%
-  mutate(exp_fit = exp(aicc_weights_pred),
+  mutate(fit_LPI_80 = (MAPE_one_step_ahead_weight_pred)-(1.28*sqrt(var_y_pred)),
+         fit_UPI_80 = (MAPE_one_step_ahead_weight_pred)+(1.28*sqrt(var_y_pred))) %>%
+  mutate(exp_fit = exp(MAPE_one_step_ahead_weight_pred),
          exp_fit_LPI_80 = exp(fit_LPI_80),
          exp_fit_UPI_80 = exp(fit_UPI_80)) %>%
   write.csv(paste0(results.directory, "/model_summary_table4.csv"), row.names = F)
+
+
+
+
+
+
+
+
+
+
+
+
 
 # STOP HERE*******************************************************************************
 #****************************************************************************************

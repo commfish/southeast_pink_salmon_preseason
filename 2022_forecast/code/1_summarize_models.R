@@ -279,7 +279,7 @@ results %>%
   theme_bw() + theme(legend.key=element_blank(),
                      legend.title=element_blank(),
                      legend.position = "none") +
-  geom_hline(aes(yintercept=model_average), color="grey50", lty = 2) +
+  #geom_hline(aes(yintercept=model_average), color="grey50", lty = 2) +
   geom_hline(aes(yintercept=forecast2021), color="grey50", lty = 1) +
   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, size=1, color="blue")+
   scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40,45,50,55), limits = c(0,55))+ 
@@ -292,7 +292,7 @@ ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, 
 # end year is the year the data is used through (e.g., end = 2004 means that the regression is runs through JYear 2014 and Jyears 2015-2019 are
 # forecasted in the one step ahead process)
 # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
-f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2014)
+f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2013) # change to 6 years 
 
 read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
 read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> model_summary_table2
