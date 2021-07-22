@@ -1,7 +1,7 @@
 ---
 title: "Model-Averaged Predictions"
 author: "Sara Miller"
-date: "July 20, 2021"
+date: "July 22, 2021"
 output:
   bookdown::pdf_document2:
     fig_caption: yes
@@ -30,22 +30,21 @@ fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>%
 ```
 
 # Objective
-To determine the the weighting and variance for the model averaging approach which will be applied to the 2022 preaseason Southeast Alaska pink salmon harvest forecast. As data was not available, the examples and methods in this report are based on data used for the 2021 preseason Southeast Alaska pink salmon harvest forecast. Two issues still remain:  
+To determine the weighting and variance for the model averaging approach which will be applied to the 2022 preaseason Southeast Alaska pink salmon harvest forecast. As data was not available, the examples and methods in this report are based on data used for the 2021 preseason Southeast Alaska pink salmon harvest forecast. Two issues still remain:  
 
-1. How to weight by *MAPE_one_step_ahead* because the lower the *MAPE_one_step_ahead*, the better the model forecast performance (see *Model averaging (multi-model inference)* section below).  
+1. How should the model-averaged forecast be weighted by *MAPE_one_step_ahead* because the lower the *MAPE_one_step_ahead*, the better the model forecast performance (see *Model averaging (multi-model inference)* section below).  
 
-2. Is the variance calculated corrected in the excel template (see step 3 in *Model averaging (multi-model inference)* section below)?
+2. Is the variance (and 80% prediction interval) for the model-averaged forecast calculated corrected in the excel template (see step 3 in *Model averaging (multi-model inference)* section below)?
 
-# Executive Summary
+# Model Summary
 Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019). We used a similar approach to Murphy et al. (2019), but assumed a log-normal error. This approach is based on a multiple regression model with juvenile pink salmon catch-per-unit-effort (CPUE) and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021) or satellite sea surface temperature data (SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, Monthly, 1985-Present’ time series (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html). Based on prior discussions, the index of juvenile abundance (i.e., CPUE) was based on the pooled-species vessel calibration coefficient.
 
-# Analysis
 ## Hierarchical models
-Forty nine hierarchical models were investigated. The full model was:
+Forty nine hierarchical models were investigated (i.e., 24 additive models, CPUE only model, and 24 interaction models). The full model was:
 
-$$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2},$$
+$$E(Y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2},$$
 
-where ${X_1}$ is the average CPUE for catches in either the June or July survey, whichever month had the highest average catches in a given year, and was based on the pooled-species vessel calibration coefficient, ${X_2}$ is a temperature index, and $\beta_3$ is the interaction term between CPUE and the temperature index. The CPUE data were log-transformed in the model, but temperature data was not. The simplest model did not contain a temperature variable (model m1). None of the interactions were significant at $\alpha<=0.05$; therefore only additive models (25 models; Figure 1 and Table 1) were considered further. 
+where ${X_1}$ is the average CPUE for catches in either the June or July survey, whichever month had the highest average catches in a given year, and was based on the pooled-species vessel calibration coefficient, ${X_2}$ is a temperature index, and $\beta_3$ is the interaction term between CPUE and the temperature index. The CPUE data were log-transformed in the model, but temperature data were not. The simplest model did not contain a temperature variable (model m1). None of the interactions were significant at $\alpha<=0.05$; therefore only additive models (25 models; Figure 1 and Table 1) were considered further. 
  
 ## Performance metrics
 The performance metrics used to assess the forecast models were:  
@@ -63,7 +62,7 @@ The performance metrics used to assess the forecast models were:
 For all of these metrics, the smallest value is the preferred model. Models with  $\Delta_i$AICc $\leq$ 2 have substantial support, those in which 4 $\leq$   $\Delta_i$AICc $\leq$  7 have considerably less support, and models with  $\Delta_i$AICc > 10 have essentially no support (Burnham and Anderson 2004). The performance metric *MAPE* was calculated as:
 
 $$MAPE = \frac{1}{n} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|$$
-where $A_t$ is the observed value and $F_t$ is the predicted value. The performance metric *wMAPE* was calculated as:
+where $A_t$ is the observed value and $F_t$ is the predicted value at time $t$. The performance metric *wMAPE* was calculated as:
 
 $$wMAPE =\sum_{t=1}^{n} \frac{1}{w_t} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|w_t$$
 where $w_t$ is the weight for each year. For the *wMAPE* metric, the last 5 years (juvenile years 2015-2019) were given a weight of 1 and all other years, a weight of 0.001. Therefore, compared to the performance metric *MAPE_LOOCV*, the performance of the model in the last 5 years was given more weight in the *wMAPE* metric. 
@@ -112,20 +111,21 @@ Figure 1: The 2021 SEAK pink salmon harvest (millions) forecast by model. The 80
 ## Model averaging (multi-model inference)
 The process to weight the model-averaged forecast of Southeast Alaska pink salmon harvest in 2021, $\hat{\theta}$, and calculate the prediction interval around the model-averaged forecast is as follows:
 
-1. Determine the contending models, $M_k, k=1,...,K$, that will be weighted in the averaged forecast. In this case, the 25 additive models were included as contending models.  
+1. Determine the contending models, $M_k, k=1,...,K$, that will be weighted in the model-averaged forecast. In this case, the 25 additive models were included as contending models.  
 
-2. Determine weights associated with the estimates, $w_k$, derived from each contending model and scaled so that $\sum{w_k}=1$ (see *Model weighting approaches*). These weights are then multiplied by the estimate of the parameter $\hat{\theta}_k$, an estimate of $\theta$ (i.e., the harvest forecast for 2021) under model $k$,
+2. Determine weights associated with the estimates, $w_k$, derived from each contending model and scaled so that $\sum{w_k}=1$ (see *Model weighting approaches*). These weights are then multiplied by the estimate of the parameter $\hat{\theta}_k$, an estimate of $\theta$ (i.e., the harvest forecast for 2021) under model $k$ (corrected for log transformation bias in a linear-model), $$\hat{\theta} =\sum_{k}{w_k}\hat{\theta}_k.$$ Log transformation bias in a linear model  is corrected by (Miller 1984), $$\hat{E}(Y) = \exp(\hat{\alpha} + \hat{\beta}_1{X_1} + \hat{\beta}_2{X_2}+\frac{\hat{\sigma}^2}{2}).$$
 
-$$\hat{\theta} =\sum_{k}{w_k}\hat{\theta}_k.$$  
 
-3. The prediction interval around the model-averaged forecast, $\hat{\theta}$, is then based on equation 9 in Buckland et al. 1997 (derivation in Burnham and Anderson 2002:159-162), where the variance of the averaged model prediction $\hat{\theta}$, is $$\text{var}({\hat{\theta}})=\left({\sum_{k=1}^{K}{w_k}\sqrt{\text{var}{(\hat\theta}_k)+\gamma^2_k}}\right)^2,$$  where $\gamma_k=\hat{\theta}_k-\hat{\theta}.$ Although this approach has been criticized (Claeskens and Hjort 2008:207), it has been shown to work well in simulations (Lukacs et al. 2010; Fletcher and Dillingham 2011).
+
+
+3. The prediction interval around the model-averaged forecast, $\hat{\theta}$, is then based on equation 9 in Buckland et al. 1997 (derivation in Burnham and Anderson 2002:159-162), where the variance of the model-averaged prediction $\hat{\theta}$, is $$\text{var}({\hat{\theta}})=\left({\sum_{k=1}^{K}{w_k}\sqrt{\text{var}{(\hat\theta}_k)+\gamma^2_k}}\right)^2,$$  and where $\gamma_k=\hat{\theta}_k-\hat{\theta}.$ Although this approach has been criticized (Claeskens and Hjort 2008:207), it has been shown to work well in simulations (Lukacs et al. 2010; Fletcher and Dillingham 2011).
 
 ### Model weighting approaches
 Approaches to estimating model-averaged weights fall into four broad categories (Dormann et al. 2018).  
 
    a. Bayesian approach (i.e., model weights are probabilities sampled from the joint posterior of the models or approximate marginal likelihoods);  
    
-   b. Information-theoretic model weighting based on AIC where $\Delta_i = AICc_i-\min{AICc}$ where min $AICc$ is the smallest $AICc$ value in the contending models $k$. The Akaike weights are then calculated as $$w_i= \frac{\exp(-\Delta_i/2)}{\sum_{k=1}^{K}\exp(-\Delta_k/2)}.$$  
+   b. Information-theoretic model weighting based on AIC where $\Delta_i = \text{AICc}_i-\min{\text{AICc}}$ where min AICc is the smallest AICc value in the contending models $k$. The Akaike weights are then calculated as (Burnham and Anderson 2002), $$w_i= \frac{\exp(-\Delta_i/2)}{\sum_{k=1}^{K}\exp(-\Delta_k/2)}.$$  
    
    c. Model weights are chosen to "achieve the best predictive performance of the average (Dormann et al. 2018)."  
    
@@ -136,7 +136,7 @@ It was decided to weight the models by the performance metric *MAPE_one_step_ahe
 # References
 Akaike, H. 1973. Information theory and an extension of the maximum likelihood principle. In B. N. Pet rov & F. Caski (Eds.), Proceedings of the Second International Symposium on Information Theory (pp. 267-281). Budapest: Akademiai Kiado.
 
-Buckland, S.T., K. P. Burnham, and N. H. Augustin. 1997. Model selection: an integral part of inference. Biometrics: 603-618.
+Buckland, S. T., K. P. Burnham, and N. H. Augustin. 1997. Model selection: an integral part of inference. Biometrics: 603-618.
 
 Burnham, K. P., and D. R. Anderson, D. R. 2002. Model selection and multimodel inference: A practical information-theoretic approach. Second Edition. New York: Springer-Verlag
 
@@ -153,6 +153,8 @@ Fox, J. and S. Weisburg. 2019. An R Companion to Applied Regression, Third Editi
 Hyndman, R. J. and A. B. Koehler. 2006. Another look at measures of forecast accuracy. International Journal of Forecasting 22: 679-688.
 
 Lukacs, P. M., K. P. Burnham, and D. R. Anderson. 2010. Model selection bias and Freedman’s paradox. Annals of the Institute of Statistical Mathematics 62:117–125.
+
+Miller, D. M. 1984. Reducing transformation bias in curve fitting. The American Statistician 38: 124-126. 
 
 Murphy, J. M., E. A. Fergusson, A. Piston, A. Gray, and E. Farley.  2019. Southeast Alaska pink salmon growth and harvest forecast models.  North Pacific Anadromous Fish Commission Technical Report No. 15: 75-81.
 
