@@ -1,7 +1,7 @@
 ---
 title: "Environmental variables for SEAK Pink Salmon Preseason Forecast"
 author: "Sara Miller"
-date: "June 4, 2021"
+date: "October 4, 2021"
 output:
   bookdown::pdf_document2:
     fig_caption: yes
@@ -38,16 +38,16 @@ fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>%
 ```
 
 # Objective
-The overall objective is to optimize temperature variables by testing a variety of reasonable options using satellite sea surface temperature (SST) data or Southeast Alaska Coastal Monitoring project (SECM) data within the forecast model framework. This write-up is a summary of available SST variables based on satellite data (i.e., average of May (May), the average over the months of May, June, and July (MJJ), the average over the months of April through June (AMJ), or the average over the months of April through July (AMJJ) from 1997 through 2020) over four regions of Southeast Alaska (SEAK); Icy Strait, Icy and Chatham Straits, northern southeast Alaska (NSEAK), and SEAK. This write-up also includes a summary of SECM survey data from various months (i.e., the average of May (May) or the average over the months of May, June, and July (MJJ)), and depths (i.e., 3m, 10m, 15m, 20m) of the SECM transects (i.e., Icy Strait and Upper Chatham transects stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) from 1997 through 2020. 
+The overall objective is to test a variety of reasonable temperature variables, using satellite sea surface temperature (SST) data or Southeast Alaska Coastal Monitoring project (SECM) data, within the forecast model framework to forecast the 2022 pink salmon harvest in southeast Alaska (SEAK). This write-up is a summary of available SST variables based on satellite data (i.e., average of May (May), the average over the months of May, June, and July (MJJ), the average over the months of April through June (AMJ), or the average over the months of April through July (AMJJ) from 1997 through 2021) over four regions of SEAK; Icy Strait, Icy and Chatham Straits, northern southeast Alaska (NSEAK), and SEAK. This write-up also includes a summary of SECM survey data from various months (i.e., the average over the months of May, June, and July (MJJ)) at 20 m depths of the SECM transects (i.e., Icy Strait and Upper Chatham transects stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) from 1997 through 2021. 
 
 # Methods
 ## Satellite-derived SST data
-Satellite-derived sea surface temperature (SST) data were pulled from the 'SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, Monthly, 1985-Present' time series (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html; full citation in references). This satellite-derived SST data set was then matched to pre-determined coordinates from four spatial regions that corresponded with sixteen variables of interest (four regions; four temporal variables per region). 
+Satellite-derived sea surface temperature (SST) data for April 1997 through June 2021 were pulled from the 'SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, Monthly, 1985-Present' time series (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html; full citation in references). The data for July 2021 was not available at the time of the assessment, so the daily data (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html; full citation in references) was summarized by month and region, and then combined with the monthly data from April 1997 to June 2021 to create the SST dataset. This satellite-derived SST data set was then matched to pre-determined coordinates from four spatial regions that corresponded with sixteen variables of interest (four regions; four temporal variables per region). 
 
 ### Satellite-derived SST variables
-**Icy_Strait_SST_May**: The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. This variable is the average SST in May (Table 1; Figure 1; Figure 5a; Figure 7).
+**Icy_Strait_SST_May**: The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. This variable is the average SST in May (Table 1; Figure 1; Figure 5a).
 
-**Icy_Strait_SST_MJJ**: The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. This variable is the average SST in May through July (Table 1; Figure 1; Figure 5b; Figure 7).
+**Icy_Strait_SST_MJJ**: The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. This variable is the average SST in May through July (Table 1; Figure 1; Figure 5b).
 
 **Icy_Strait_SST_AMJ**: The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. This variable is the average SST in April through June (Table 1; Figure 1; Figure 5c).
 
@@ -78,72 +78,53 @@ Satellite-derived sea surface temperature (SST) data were pulled from the 'SST a
 **SEAK_SST_AMJJ**: The SEAK region encompasses Southeast Alaska from 59.475 to 54.725 degrees north latitude (Figure 4 and Figure 5d; Table 4). This variable is the average SST in April through July.
 
 ## SECM survey temperature data
-SECM survey temperature data were summarized by year (1997 to 2020), month (the month of May or over the months of May, June, and July), and depth (3m, 10m, 15m, and 20m) for the Icy Strait and Upper Chatham transects combined.
+SECM survey temperature data were summarized by year (1997 to 2021), month (average over the months of May, June, and July) at 20m depths for the Icy Strait and Upper Chatham transects combined.
 
 ### SECM survey temperature variables
 
-**ISTI3_May**: Average temperature at 3m during May at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6a; Figure 7; Table 5).
-
-**ISTI3_MJJ**: Average temperature at 3m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6b; Figure 7; Table 6).
-
-**ISTI10_May**: Average temperature in the upper 10m during May at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6a; Table 5).
-
-**ISTI10_MJJ**: Average temperature in the upper 10m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6b; Table 6).
-
-**ISTI15_May**: Average temperature in the upper 15m during May at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6a; Table 5).
-
-**ISTI15_MJJ**: Average temperature in the upper 15m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6b; Table 6).
-
-**ISTI20_May**: Average temperature in the upper 20m during May at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6a; Table 5).
-
-**ISTI20_MJJ**: Average temperature in the upper 20m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6b; Table 6).
+**ISTI20_MJJ**: Average temperature in the upper 20m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; Figure 6; Table 5).
 
 # Results  
 
 ## Satellite-derived SST data
-Satellite sea surface temperature data were summarized by region and year (i.e., average of May (May), the average over the months of May, June, and July (MJJ), the average over the months of April through June (AMJ), or the average over the months of April through July (AMJJ)) from 1997 to 2020 (Tables 1 through 4).
+Satellite sea surface temperature data were summarized by region and year (i.e., average of May (May), the average over the months of May, June, and July (MJJ), the average over the months of April through June (AMJ), or the average over the months of April through July (AMJJ)) from 1997 to 2021 (Tables 1 through 4).
+
+\pagebreak
 
 ```{r summary1}
-tbls_sst_regions$sst_oisst_97_20_Icy_Strait_monthly_summary %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Icy Strait region from 1997 to 2020 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 70 satellite stations (latitude/longitude combinations) in the Icy Strait region.', row.names = F, align = "c")
+tbls_sst_regions$sst_oisst_97_21_Icy_Strait_monthly_summary %>%
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Icy Strait region from 1997 to 2021 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 70 satellite stations (latitude/longitude combinations) in the Icy Strait region.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ```{r summary2}
-tbls_sst_regions$sst_oisst_97_20_Chatham_monthly_summary %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Chatham and Icy Straits region from 1997 to 2020 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ).  There are 313 satellite stations (latitude/longitude combinations) in the Chatham and Icy Straits region.', row.names = F, align = "c")
+tbls_sst_regions$sst_oisst_97_21_Chatham_monthly_summary %>%
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Chatham and Icy Straits region from 1997 to 2021 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ).  There are 313 satellite stations (latitude/longitude combinations) in the Chatham and Icy Straits region.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ```{r summary3}
-tbls_sst_regions$sst_oisst_97_20_NSEAK_monthly_summary %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the northern Southeast Alaska (NSEAK) region from 1997 to 2020 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 1,344 satellite stations (latitude/longitude combinations) in the NSEAK region.', row.names = F, align = "c")
+tbls_sst_regions$sst_oisst_97_21_NSEAK_monthly_summary %>%
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the northern Southeast Alaska (NSEAK) region from 1997 to 2021 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 1,344 satellite stations (latitude/longitude combinations) in the NSEAK region.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ```{r summary4}
-tbls_sst_regions$sst_oisst_97_20_SEAK_monthly_summary %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the Southeast Alaska (SEAK) region from 1997 to 2020 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 2,669 satellite stations (latitude/longitude combinations) in the SEAK region.', row.names = F, align = "c")
+tbls_sst_regions$sst_oisst_97_21_SEAK_monthly_summary %>%
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the Southeast Alaska (SEAK) region from 1997 to 2021 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 2,669 satellite stations (latitude/longitude combinations) in the SEAK region.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ## SECM survey temperature data
-SECM survey temperature data were summarized by year (1997 to 2020), month (the month of May or over the months of May, June, and July), and depth (3m, 10m, 15m, and 20m; Tables 5 and 6).
+SECM survey temperature data were summarized by year (1997 to 2021), month (average over the months of May, June, and July) at 20m depths; Table 5).
 
-```{r summary6}
-tbls_sst_SECM$SECMvar2021_May %>%
-   knitr::kable(format = 'pandoc', caption = 'The SECM survey temperature data were summarized by year (1997 to 2020), month (May), and depth (3m, 10m, 15m, and 20m) for the Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD).', row.names = F, align = "c")
-```
-
-\pagebreak
-
-```{r summary7}
+```{r summary5}
 tbls_sst_SECM$SECMvar2021_MJJ %>%
-   knitr::kable(format = 'pandoc', caption = 'The SECM survey temperature data were summarized by year (1997 to 2020), month (the months of May, June, and July; MJJ), and depth (3m, 10m, 15m, and 20m) for the Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD).', row.names = F, align = "c")
+   knitr::kable(format = 'pandoc', caption = 'The SECM survey temperature data were summarized by year (1997 to 2021), month (the months of May, June, and July; MJJ) at 20m depths for the Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD).', row.names = F, align = "c")
 ```
 
 ```{r fig1, fig.cap="The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. The Southeast Coastal Monitoring (SECM) project transects (Upper Chatham Strait and Icy Strait) are shown as red points for comparison to the satellite stations (i.e., data points; black circles)."}
@@ -162,23 +143,22 @@ knitr::include_graphics(here(results.directory, "NSEAK.png"))
 knitr::include_graphics(here(results.directory, "SEAK.png"))
 ```
 
-```{r fig5, fig.cap="A. The May temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2020. B. The May, June, and July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2020. C. The April through June temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2020. D. The April through July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2020."}
+```{r fig5, fig.cap="A. The May temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2021. B. The May, June, and July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2021. C. The April through June temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2021. D. The April through July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2021."}
 knitr::include_graphics(here(results.directory, "monthly_temp_regions.png"))
 ```
 
-```{r fig6, fig.cap="A. Average temperature (degrees Celsius) at 3m and in the upper 10m, 15m, or 20m during May at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI) from 1997 through 2020. B. Average temperature at 3m, and in the upper 10m, 15m, or 20m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI)."}
+```{r fig6, fig.cap="Average temperature (degrees Celsius) at 20m during May, June, and July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI) from 1997 through 2021."}
 knitr::include_graphics(here(results.directory, "monthly_SECM_temp_regions.png"))
 ```
 
-```{r fig8, fig.cap="Average temperature data (degrees Celsius) from 1997 through 2020 for the month of May (May) and averaged over the months of May, June, and July (MJJ) for the Icy Strait region compared to the SECM survey region. The variable 'ISTI3 May' is the May Icy Strait Temperature Index (average temperature at 3m in the Icy Strait and Upper Chatham stations). The variable 'ISTI3 MJJ' is the average May, June, and July Icy Strait Temperature Index (average temperature at 3m in the Icy Strait and Upper Chatham stations). The variable 'Icy Strait SST May' is the satellite sea surface temperature data averaged over the entire Icy Strait region for the month of May. The variable 'Icy Strait SST MJJ' is the satellite sea surface temperature averaged over the entire Icy Strait region for the months of May, June, and July. "}
-knitr::include_graphics(here(results.directory, "monthly_temp.png"))
-```
 
 # Acknowledgements
-Jordan Watson (NOAA) helped with the code to process the satellite data into a usable format. The data was accessed through NOAA's Coral Reef Watch (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html. Emily Fergusson summarized the SECM survey data by year, month, and depth. All code and associated data are located here: https://github.com/commfish/southeast_pink_salmon_preseason in the 2022_forecast folder.
+Jordan Watson (NOAA) helped with the code to process the satellite data into a usable format. The data was accessed through NOAA's Coral Reef Watch (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html and https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html). Emily Fergusson summarized the SECM survey data by year, month, and depth. All code and associated data are located here: https://github.com/commfish/southeast_pink_salmon_preseason in the 2022_forecast folder.
 
 # References
-NOAA Coral Reef Watch. 2021, updated daily. NOAA Coral Reef Watch Version 3.1 Monthly 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, May 1997-July 2020. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2021-04-09 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html.
+NOAA Coral Reef Watch (NOAA_DHW_monthly dataset). 2021, updated daily. NOAA Coral Reef Watch Version 3.1 Monthly 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, May 1997-June 2021. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2021-10-01 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html.
+
+NOAA Coral Reef Watch (NOAA_DHW dataset). 2021, updated daily. NOAA Coral Reef Watch Daily Near-real-Time Global 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, July 2021. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2021-10-01 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html.
 
 Piston, A. W., J. Murphy, J. Moss, W. Strasburger, S. C. Heinl, E. Fergusson, S. Miller, A. Gray, and C. Waters. 2021. Operational Plan: Southeast coastal monitoring, 2021. ADF&G, Regional Operational Plan No. ROP.CF.1J.2021.02, Douglas.
 

@@ -1,6 +1,6 @@
 # Environmental Variables for SEAK Pink Salmon Forecast Models
-# Script written by Sara Miller (sara.miller@alaska.gov) with help from Jordan Watson (jordan.watson@noaa.gov)
-# April 12, 2021
+# Script written by Sara Miller (sara.miller@alaska.gov) with assistance from Jordan Watson (jordan.watson@noaa.gov)
+# October 1, 2021
 
 # load libraries----
 library("devtools")
@@ -23,23 +23,24 @@ year.forecast <- "2022_forecast"
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 #------------------------------------------------------------------------------------------------------------------------------------------
-# DOWNLOAD SST DATA FROM THE NOAA SITE AND CREATE CSV FILE FOR YEARS 1997 to 2020 (May - July data)
+# DOWNLOAD SST DATA FROM THE NOAA SITE AND CREATE CSV FILE FOR YEARS 1997 to 2021 (April - July data)
 #------------------------------------------------------------------------------------------------------------------------------------------
-# 1997-1999 data----
+# 1997-2021 data----
 # download the data for a fixed spatial and temporal period	(SST data, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, daily, 1985-Present)
-# to do this, go to the site: set the latitude and longitude and time period, and fill type as .nc,
+# to do this, go to the site: https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html;
+# set the latitude (60, 54) and longitude (-137.2, -130) and time period (April 1997 - July 2021), and fill type as .nc,
 # and then paste the URL in the section below
 
 # https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.graph; this site is helpful to map the area of interest
 
 # Depending on the dates and the latitude and longitude chosen, the site will timeout after 60 seconds. Therefore, download the data instead as a nc file,
 # save it to the data folder and skip lines 37-38 below
-#download.file(url = paste0("https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.nc?sea_surface_temperature%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,mask%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,sea_surface_temperature_anomaly%5B(1997-04-01T00:00:00Z):1:(2020-07-31T00:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D"),
-#              method = "libcurl", mode="wb", destfile = (paste0(data.directory,'NOAA_DHW_monthly_97_20.nc')))
+# download.file(url = paste0("https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.htmlTable?sea_surface_temperature%5B(1997-04-15T23:00:00Z):1:(2021-06-15T23:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,mask%5B(1997-04-15T23:00:00Z):1:(2021-06-15T23:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,sea_surface_temperature_anomaly%5B(1997-04-15T23:00:00Z):1:(2021-06-15T23:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D"),
+#              method = "libcurl", mode="wb", destfile = (paste0(data.directory,'NOAA_DHW_monthly_97_21.nc')))
 
 # if the site times out, you can also go to the site, and manually download the data and save the file to the data folder
 # extract netCDF data, convert date (seconds since 1970) to date time, and spatially average daily data to a single daily point for each set of years
-tidync(paste0(data.directory,'NOAA_DHW_monthly_97_20.nc')) %>% 
+tidync(paste0(data.directory,'NOAA_DHW_monthly_97_21.nc')) %>% 
   hyper_tibble() %>% 
   mutate(date=lubridate::as_datetime(time)) %>%
   group_by(date, latitude, longitude) %>% 
@@ -55,10 +56,50 @@ tidync(paste0(data.directory,'NOAA_DHW_monthly_97_20.nc')) %>%
          latitude = round(latitude, 3))  %>%
   group_by(latitude, longitude, year, month) %>% # average across the month for each lat/long combination
   summarise(SST = mean(SST), .groups = 'drop') %>%
-  as.data.frame() -> SST_satellite
+  as.data.frame() -> SST_satellite1
+
+SST_satellite1 %>%
+  write.csv(., paste0(data.directory, 'sst_oisst_97_21_partly_monthly_data.csv'))
+
+# If the data is not available for the current months (as was in 2021; July 2021 monthly data was not
+# available October 1, 2021), the daily data for only July 2021 was downloaded into a nc file and then
+# combined with the monthly data from 1997 through June 2021. Otherwise, if all months are available,
+# the code below is not needed;NOAA Coral Reef Watch Operational Daily Near-Real-Time Global 5-km Satellite Coral Bleaching Monitoring Products
+# https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.htmlTable?CRW_BAA%5B(2021-07-01T12:00:00Z):1:(2021-07-31T12:00:00Z)
+# %5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,CRW_BAA_mask%5B(2021-07-01T12:00:00Z):1:(2021-07-31T12:00:00Z)%5D%5B(60):1:(54)
+# %5D%5B(-137.2):1:(-130)%5D,CRW_BAA_7D_MAX%5B(2021-07-01T12:00:00Z):1:(2021-07-31T12:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:
+# (-130)%5D,CRW_BAA_7D_MAX_mask%5B(2021-07-01T12:00:00Z):1:(2021-07-31T12:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,CRW_DHW%5B
+# (2021-07-01T12:00:00Z):1:(2021-07-31T12:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,CRW_DHW_mask%5B(2021-07-01T12:00:00Z):1:
+# (2021-07-31T12:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,CRW_HOTSPOT%5B(2021-07-01T12:00:00Z):1:(2021-07-31T12:00:00Z)%5D%5B
+# (60):1:(54)%5D%5B(-137.2):1:(-130)%5D,CRW_HOTSPOT_mask%5B(2021-07-01T12:00:00Z):1:(2021-07-31T12:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:
+# (-130)%5D,CRW_SEAICE%5B(2021-07-01T12:00:00Z):1:(2021-07-31T12:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,CRW_SST%5B(2021-07-01T12:00:00Z):
+# 1:(2021-07-31T12:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D,CRW_SSTANOMALY%5B(2021-07-01T12:00:00Z):1:(2021-07-31T12:00:00Z)%5D%5B(60):1:
+# (54)%5D%5B(-137.2):1:(-130)%5D,CRW_SSTANOMALY_mask%5B(2021-07-01T12:00:00Z):1:(2021-07-31T12:00:00Z)%5D%5B(60):1:(54)%5D%5B(-137.2):1:(-130)%5D
+tidync(paste0(data.directory,'NOAA_CRW_daily_21.nc')) %>% 
+  hyper_tibble() %>% 
+  mutate(date=lubridate::as_datetime(time)) %>%
+  group_by(date, latitude, longitude) %>% 
+  summarise(SST=round(mean(CRW_SST),4)) %>%
+  as.data.frame() %>% 
+  mutate(year = as.numeric(format(date,'%Y')),
+         month = as.numeric(format(date,'%m')),
+         day = as.numeric(format(date,'%d'))) %>% 
+  filter(month >= 4 & month <= 7) %>% 
+  filter(!is.na(SST)) %>%
+  dplyr::select(latitude, longitude, SST, year, month, day) %>%
+  mutate(longitude = round(longitude, 3), # merge does not work correctly unless the latitude and longitude are exactly the same so round the lat/longs to 3 digits
+         latitude = round(latitude, 3))  %>%
+  group_by(latitude, longitude, year, month) %>% # average across the month for each lat/long combination
+  summarise(SST=round(mean(SST),2),.groups = 'drop') %>% # round the SST to 2 digits
+  as.data.frame() -> SST_satellite2
+
+SST_satellite2 %>%
+  write.csv(., paste0(data.directory, 'sst_oisst_07_21_monthly_data.csv'))
+
+rbind(SST_satellite1, SST_satellite2) -> SST_satellite # combine data from April 1997 through June 2021 with the July 2021 data file
 
 SST_satellite %>%
-  write.csv(., paste0(data.directory, 'sst_oisst_97_20_monthly_data.csv'))
+  write.csv(., paste0(data.directory, 'sst_oisst_97_21_monthly_data.csv')) # final data set
 
 # create plot of entire data set  
 SST_satellite %>% 
@@ -108,13 +149,12 @@ merge(map_data_Chatham, SST_satellite, by = c("latitude", "longitude"), all.x = 
 rbind(Icy_Strait_SST, NSEAK_SST) %>%
 rbind(., SEAK_SST) %>%   
 rbind(., Chatham_SST) %>% 
-  write.csv(., paste0(data.directory, 'sst_regions_oisst_97_20_monthly_data.csv'))
-
+  write.csv(., paste0(data.directory, 'sst_regions_oisst_97_21_monthly_data.csv'))
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # SUMMARIZE SST DATA BY REGION, YEAR, MONTH
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # summarize SST data
-read.csv(paste0(data.directory, 'sst_regions_oisst_97_20_monthly_data.csv')) %>%
+read.csv(paste0(data.directory, 'sst_regions_oisst_97_21_monthly_data.csv')) %>%
   filter(region %in% c('Icy_Strait', 'Chatham', 'NSEAK', 'SEAK')) %>% 
   group_by(region, year, month) %>%
   summarise(msst = mean(SST), .groups = 'drop') %>%
@@ -148,10 +188,10 @@ SST_satellite_grouped %>%
 merge(SST_MJJ, SST_May, by = c("region", "year")) %>%
   merge(., SST_AMJJ, by = c("region", "year")) %>%
   merge(., SST_AMJ, by = c("region", "year")) %>%
-  write.csv(., paste0(results.directory, 'sst_regions_oisst_97_20_monthly_data_summary.csv'))
+  write.csv(., paste0(results.directory, 'sst_regions_oisst_97_21_monthly_data_summary.csv'))
 
 # create tables by region for the report
-read.csv(paste0(results.directory, 'sst_regions_oisst_97_20_monthly_data_summary.csv')) %>%
+read.csv(paste0(results.directory, 'sst_regions_oisst_97_21_monthly_data_summary.csv')) %>%
   dplyr::select(region, year, SST_MJJ, SST_May, SST_AMJJ, SST_AMJ) -> tempdata
 
 tempdata %>%
@@ -161,7 +201,7 @@ tempdata %>%
          Icy_Strait_SST_AMJJ = round(SST_AMJJ, 2),
          Icy_Strait_SST_AMJ = round(SST_AMJ, 2)) %>%
   dplyr::select(year, Icy_Strait_SST_MJJ, Icy_Strait_SST_May, Icy_Strait_SST_AMJJ, Icy_Strait_SST_AMJ) %>%
-  write.csv(., paste0(results.directory, 'sst_oisst_97_20_Icy_Strait_monthly_summary.csv'), row.names = FALSE)
+  write.csv(., paste0(results.directory, 'sst_oisst_97_21_Icy_Strait_monthly_summary.csv'), row.names = FALSE)
 
 tempdata %>%
   filter(region == "Chatham") %>%
@@ -170,7 +210,7 @@ tempdata %>%
          Chatham_SST_AMJJ = round(SST_AMJJ, 2),
          Chatham_SST_AMJ = round(SST_AMJ, 2)) %>%
   dplyr::select(year, Chatham_SST_MJJ, Chatham_SST_May, Chatham_SST_AMJJ, Chatham_SST_AMJ) %>%
-  write.csv(., paste0(results.directory, 'sst_oisst_97_20_Chatham_monthly_summary.csv'), row.names = FALSE)
+  write.csv(., paste0(results.directory, 'sst_oisst_97_21_Chatham_monthly_summary.csv'), row.names = FALSE)
 
 tempdata %>%
   filter(region == "NSEAK") %>%
@@ -179,7 +219,7 @@ tempdata %>%
          NSEAK_SST_AMJJ = round(SST_AMJJ, 2),
          NSEAK_SST_AMJ = round(SST_AMJ, 2)) %>%
   dplyr::select(year, NSEAK_SST_MJJ, NSEAK_SST_May, NSEAK_SST_AMJJ, NSEAK_SST_AMJ) %>%
-  write.csv(., paste0(results.directory, 'sst_oisst_97_20_NSEAK_monthly_summary.csv'), row.names = FALSE) # row.name = F gets rid of the first column X1 that is not needed
+  write.csv(., paste0(results.directory, 'sst_oisst_97_21_NSEAK_monthly_summary.csv'), row.names = FALSE) # row.name = F gets rid of the first column X1 that is not needed
 
 tempdata %>%
   filter(region == "SEAK") %>%
@@ -188,57 +228,20 @@ tempdata %>%
          SEAK_SST_AMJJ = round(SST_AMJJ, 2),
          SEAK_SST_AMJ = round(SST_AMJ, 2)) %>%
   dplyr::select(year, SEAK_SST_MJJ, SEAK_SST_May, SEAK_SST_AMJJ, SEAK_SST_AMJ) %>%
-  write.csv(., paste0(results.directory, 'sst_oisst_97_20_SEAK_monthly_summary.csv'), row.names = FALSE) 
+  write.csv(., paste0(results.directory, 'sst_oisst_97_21_SEAK_monthly_summary.csv'), row.names = FALSE) 
 #---------------------------------------------------------------------------------------------------------------------------------------------
 # COMBINE DATA SETS FOR FIG
 #---------------------------------------------------------------------------------------------------------------------------------------------
-read.csv(paste0(results.directory, 'sst_oisst_97_20_Icy_Strait_monthly_summary.csv')) -> Icy_Strait
-read.csv(paste0(results.directory, 'sst_oisst_97_20_Chatham_monthly_summary.csv')) -> Chatham
-read.csv(paste0(results.directory, 'sst_oisst_97_20_NSEAK_monthly_summary.csv')) -> NSEAK
-read.csv(paste0(results.directory, 'sst_oisst_97_20_SEAK_monthly_summary.csv')) %>% # SEAK region
+read.csv(paste0(results.directory, 'sst_oisst_97_21_Icy_Strait_monthly_summary.csv')) -> Icy_Strait
+read.csv(paste0(results.directory, 'sst_oisst_97_21_Chatham_monthly_summary.csv')) -> Chatham
+read.csv(paste0(results.directory, 'sst_oisst_97_21_NSEAK_monthly_summary.csv')) -> NSEAK
+read.csv(paste0(results.directory, 'sst_oisst_97_21_SEAK_monthly_summary.csv')) %>% # SEAK region
   merge (., Icy_Strait) %>%
   merge (., Chatham) %>% 
   merge (., NSEAK) -> fig_data
-
-read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, year, ISTI3_May, ISTI10_May, ISTI15_May, ISTI20_May) %>%
-  write.csv(., paste0(results.directory, 'SECMvar2021_May.csv'), row.names = FALSE)
-
-read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, ISTI3_MJJ, ISTI10_MJJ, ISTI15_MJJ, ISTI20_MJJ) %>%
-  write.csv(., paste0(results.directory, 'SECMvar2021_MJJ.csv'), row.names = FALSE)
-
 #-------------------------------------------------------------------------------------------------------------
 # CREATE FIGURES OF TEMPERATURE DATA BY REGION
 #-------------------------------------------------------------------------------------------------------------
-# create a figure of SST_MJJ and SST_May by region and for the SECM survey
-read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-merge(.,fig_data) %>%
-  dplyr::select(year, ISTI3_MJJ, ISTI3_May, Icy_Strait_SST_MJJ, Icy_Strait_SST_May) %>%
-  gather("var", "value", -c(year)) %>% 
-  ggplot(., aes(y = value, x = year, group =var)) +
-    geom_point(aes(shape = var, color = var, size=var)) +
-    geom_line(aes(linetype = var, color = var)) +
-    scale_linetype_manual(values=c("solid", "solid", "dotted", "dotted" ))+
-    scale_shape_manual(values=c(1, 16, 1, 16)) +
-    scale_color_manual(values=c('black','black', 'grey70', 'grey70'))+
-    scale_size_manual(values=c(2,2,2,2)) +
-    theme(legend.title=element_blank(),
-                     panel.border = element_blank(), panel.grid.major = element_blank(),
-                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                     text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
-                     legend.text=element_text(size=12), 
-                     axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
-                     axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
-          legend.position=c(0.85,0.18))  +
-  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
-  scale_y_continuous(breaks = c(4,5,6,7, 8, 9,10,11,12,13), limits = c(4,13))+
-  #geom_text(aes(x = 1997, y = 13, label="A)"),family="Times New Roman", colour="black", size=4) +
-  labs(y = "Temperature (Celsius)", x ="") -> plot1
-
-cowplot::plot_grid(plot1,  align = "vh", nrow = 1, ncol=1)
-ggsave(paste0(results.directory, "monthly_temp.png"), dpi = 500, height = 4, width = 6.5, units = "in")
-
 # create a figure of SST_MJJ, SST_May, SST_AMJJ, SST_AMJ by region
 fig_data %>%
   dplyr::select(year, Icy_Strait_SST_May, Chatham_SST_May, NSEAK_SST_May, SEAK_SST_May) %>%
@@ -258,7 +261,7 @@ fig_data %>%
         axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
         legend.position=c(0.5,0.78))  +
-  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
+  scale_x_continuous(breaks = 1997:2021, labels = 1997:2021) +
   scale_y_continuous(breaks = c(6,7, 8, 9,10,11,12), limits = c(6,12))+
   geom_text(aes(x = 1999, y = 12, label="A) May temperature"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot1
@@ -281,7 +284,7 @@ fig_data %>%
         axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
         legend.position=c(0.8,0.3))  +
-  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
+  scale_x_continuous(breaks = 1997:2021, labels = 1997:2021) +
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11, 12), limits = c(6,12))+
   geom_text(aes(x = 2000.5, y = 12, label="B) May, June, July temperature"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot2
@@ -304,7 +307,7 @@ fig_data %>%
         axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
   legend.position=c(0.6,0.85))  +
-  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
+  scale_x_continuous(breaks = 1997:2021, labels = 1997:2021) +
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
   geom_text(aes(x = 2001.5, y = 12, label="D) April, May, June, July temperature"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot3
@@ -327,39 +330,16 @@ fig_data %>%
         axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
         legend.position=c(0.6,0.85))  +
-  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
+  scale_x_continuous(breaks = 1997:2021, labels = 1997:2021) +
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
   geom_text(aes(x = 2001, y = 12, label="C) April, May, June temperature"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot4
 cowplot::plot_grid(plot1,plot2,plot4, plot3, align = "v", nrow = 4, ncol=1)
 ggsave(paste0(results.directory, "monthly_temp_regions.png"), dpi = 500, height = 8, width = 7, units = "in")
 
-# create a figure of ISTI_May and ISTI_MJJ for the SECM survey
-read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, ISTI3_May, ISTI10_May, ISTI15_May, ISTI20_May) %>%
-  gather("var", "value", -c(year)) %>% 
-  ggplot(., aes(y = value, x = year, group = var)) +
-  geom_point(aes(shape = var, color = var, size=var)) +
-  geom_line(aes(linetype = var, color = var)) +
-  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted", "dotted"))+
-  scale_shape_manual(values=c(1, 16, 15, 2, 8)) +
-  scale_color_manual(values=c('black','black', 'grey70', 'grey70', 'black'))+
-  scale_size_manual(values=c(2,2,2,2,2)) +
-  theme(legend.title=element_blank(),
-        panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
-        legend.text=element_text(size=12), 
-        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
-        axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
-        legend.position=c(0.9,0.2))  +
-  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
-  scale_y_continuous(breaks = c(5,6,7, 8, 9,10,11,12,13), limits = c(5,13))+
-  geom_text(aes(x = 1999, y = 13, label="A) May temperature"),family="Times New Roman", colour="black", size=4) +
-  labs(y = "Temperature (Celsius)", x ="") -> plot1
-
-read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
-  dplyr::select(year, ISTI3_MJJ, ISTI10_MJJ, ISTI15_MJJ, ISTI20_MJJ) %>%
+# create a figure of ISTI_MJJ for the SECM survey
+read.csv(paste0(data.directory, 'SECMvar2021_MJJ.csv')) %>%
+  dplyr::select(year, ISTI20_MJJ) %>%
   gather("var", "value", -c(year)) %>% 
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size=var)) +
@@ -376,12 +356,12 @@ read.csv(paste0(data.directory, 'SECMvar2021.csv')) %>%
         axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
         legend.position=c(0.9,0.2))  +
-  scale_x_continuous(breaks = 1997:2020, labels = 1997:2020) +
+  scale_x_continuous(breaks = 1997:2021, labels = 1997:2021) +
   scale_y_continuous(breaks = c(5,6,7, 8, 9,10,11,12,13), limits = c(5,13))+
-  geom_text(aes(x = 2000.5, y = 13, label="B) May, June, July temperature"),family="Times New Roman", colour="black", size=4) +
-  labs(y = "Temperature (Celsius)", x ="") -> plot2
-cowplot::plot_grid(plot1,plot2, align = "vh", nrow = 2, ncol=1)
-ggsave(paste0(results.directory, "monthly_SECM_temp_regions.png"), dpi = 500, height = 7, width = 7, units = "in")
+  #geom_text(aes(x = 2000.5, y = 13, label="May, June, July temperature"),family="Times New Roman", colour="black", size=4) +
+  labs(y = "Temperature (Celsius)", x ="") -> plot1
+cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
+ggsave(paste0(results.directory, "monthly_SECM_temp_regions.png"), dpi = 500, height = 5, width = 5, units = "in")
 #-------------------------------------------------------------------------------------------------------------------------------------------
 ## CREATE A MAP OF THE SATELLITE DATA STATIONS
 #-------------------------------------------------------------------------------------------------------------------------------------------
