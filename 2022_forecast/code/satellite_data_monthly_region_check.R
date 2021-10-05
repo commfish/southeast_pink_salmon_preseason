@@ -52,17 +52,27 @@ cos(radians) -> cosine # take the cosine of the value in radians
 cosine * 69.172 -> miles  # 1 degree of Longitude = ~ 0.79585 * 69.172 = ~ 55.051 miles
 miles * 0.86897624 -> nm # -131 to -132 = ~ 31 nm 
 
-read.csv(file.path(data.directory,'SST_data_map_test.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> SST_data
+read.csv(file.path(data.directory,'SST_data_map.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> SST_data
 
 SST_data %>%
-  filter(region == "Icy_Strait") -> Icy_Strait
+  filter(region == "SSEAK") -> SSEAK
 
 SST_data %>%
-  filter(region == "Chatham") -> Chatham
+  filter(region == "SEAK") -> SEAK
 
-Icy_Strait <- as.PolyData(Icy_Strait, projection="LL") # SSEAK data
+SST_data %>%
+  filter(region == "NSEAK") -> NSEAK
 
-Chatham <- as.PolyData(Chatham, projection="LL") # SSEAK data
+SST_data %>%
+  filter(region == "question") -> question
+
+SSEAK <- as.PolyData(SSEAK, projection="LL") # SSEAK data
+
+NSEAK <- as.PolyData(NSEAK, projection="LL") # SSEAK data
+
+SEAK <- as.PolyData(SEAK, projection="LL") # SSEAK data
+
+question <- as.PolyData(question, projection="LL") # SSEAK data
 
 x<-c(-138, -129)   #coordinates of land data
 y<-c(54,59.5)
@@ -73,8 +83,9 @@ par(mfrow=c(1,1),omi=c(0,0,0,0))
 png(paste0(results.directory, "test_map.png"),width=6,height=8,units="in", res=600)                                                        
 plotMap(region,xlim=x, ylim=y, tck=-0.02, plt=c(.13,.98,.13,.98),projection="LL", cex=1.2,
         xlab="Longitude (°W)", ylab="Latitude (°N)", cex.lab=1.5, font.lab=6, col=clr$land, bg=clr$sea)
-addPoints(Icy_Strait, xlim=x,ylim=y,col=2,pch=16, lwd=1, cex=0.25) # satellite SST data
-addPoints(Chatham, xlim=x,ylim=y,col=1,pch=1, lwd=1, cex=0.75) # satellite SST data
+#addPoints(SEAK, xlim=x,ylim=y,col=2,pch=1, lwd=1, cex=0.25) # satellite SST data
+addPoints(question, xlim=x,ylim=y,col=2,pch=8, lwd=1, cex=0.5) # satellite SST data
+#addPoints(NSEAK, xlim=x,ylim=y,col=1,pch=1, lwd=1, cex=0.25) # satellite SST data
 #addLines(scale, xlim=x,ylim=y,col=1,lty=1, lwd=2, cex=1)
 addCompass(-136.5, 55, rot="trueN", cex=1)
 legend (-133, 58.8, legend=c("test SST locations"),

@@ -413,6 +413,7 @@ SST_data %>%
 SST_data %>%
   filter(region == "SEAK") -> SEAK
 
+
 scale <- as.PolySet(scale, projection="LL") # nautical mile scale for map
 Icy_Strait <- as.PolyData(Icy_Strait, projection="LL") # general SECM survey area (Icy Strait region)
 Chatham <- as.PolyData(Chatham, projection="LL") # Chatham Strait data

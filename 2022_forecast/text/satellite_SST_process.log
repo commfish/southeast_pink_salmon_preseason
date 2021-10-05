@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.7.29)  4 OCT 2021 13:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2021.7.29)  4 OCT 2021 16:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -754,7 +754,7 @@ Overfull \hbox (2.38583pt too wide) in alignment at lines 180--207
 
 [4] [5] [6] [7]
 <C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_data/
-/Icy_Strait.png, id=102, 433.62pt x 578.16pt>
+/Icy_Strait.png, id=104, 433.62pt x 578.16pt>
 File: C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_
 data//Icy_Strait.png Graphic file (type png)
 <use C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_d
@@ -763,7 +763,7 @@ Package pdftex.def Info: C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/r
 esults/temperature_data//Icy_Strait.png  used on input line 375.
 (pdftex.def)             Requested size: 433.63878pt x 578.18504pt.
 <C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_data/
-/Chatham.png, id=103, 433.62pt x 578.16pt>
+/Chatham.png, id=105, 433.62pt x 578.16pt>
 File: C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_
 data//Chatham.png Graphic file (type png)
 <use C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_d
@@ -772,7 +772,7 @@ Package pdftex.def Info: C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/r
 esults/temperature_data//Chatham.png  used on input line 379.
 (pdftex.def)             Requested size: 433.63878pt x 578.18504pt.
 <C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_data/
-/NSEAK.png, id=104, 433.62pt x 578.16pt>
+/NSEAK.png, id=106, 433.62pt x 578.16pt>
 File: C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_
 data//NSEAK.png Graphic file (type png)
 <use C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_d
@@ -781,7 +781,7 @@ Package pdftex.def Info: C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/r
 esults/temperature_data//NSEAK.png  used on input line 383.
 (pdftex.def)             Requested size: 433.63878pt x 578.18504pt.
 <C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_data/
-/SEAK.png, id=105, 433.62pt x 578.16pt>
+/SEAK.png, id=107, 433.62pt x 578.16pt>
 File: C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_
 data//SEAK.png Graphic file (type png)
 <use C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_d
@@ -790,7 +790,7 @@ Package pdftex.def Info: C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/r
 esults/temperature_data//SEAK.png  used on input line 387.
 (pdftex.def)             Requested size: 433.63878pt x 578.18504pt.
 <C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_data/
-/monthly_temp_regions.png, id=106, 505.89pt x 578.16pt>
+/monthly_temp_regions.png, id=108, 505.89pt x 578.16pt>
 File: C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_
 data//monthly_temp_regions.png Graphic file (type png)
 <use C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_d
@@ -807,7 +807,7 @@ Overfull \hbox (36.15688pt too wide) in paragraph at lines 391--391
 LaTeX Warning: Float too large for page by 24.25504pt on input line 392.
 
 <C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_data/
-/monthly_SECM_temp_regions.png, id=107, 361.35pt x 361.35pt>
+/monthly_SECM_temp_regions.png, id=109, 361.35pt x 361.35pt>
 File: C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_
 data//monthly_SECM_temp_regions.png Graphic file (type png)
 <use C:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperature_d
@@ -820,67 +820,61 @@ esults/temperature_data//monthly_SECM_temp_regions.png  used on input line 395.
 1}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.407 
+l.404 
        <c:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperatur
 e_data//Icy_Strait.png>] [10pdfTeX warning (ext4): destination with the same id
 entifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.407 
+l.404 
        <c:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperatur
 e_data//Chatham.png>] [11pdfTeX warning (ext4): destination with the same ident
 ifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.407 
+l.404 
        <c:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperatur
 e_data//NSEAK.png>] [12pdfTeX warning (ext4): destination with the same identif
 ier (name{figure.4}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.407 
+l.404 
        <c:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperatur
 e_data//SEAK.png>] [13pdfTeX warning (ext4): destination with the same identifi
 er (name{figure.5}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.407 
+l.404 
        <c:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperatur
 e_data//monthly_temp_regions.png>] [14pdfTeX warning (ext4): destination with t
 he same identifier (name{figure.6}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.407 
+l.404 
        <c:/preseason_SEAK_pink_salmon_forecast/2022_forecast/results/temperatur
-e_data//monthly_SECM_temp_regions.png>]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 4
-12.
-(c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [15] [16] (./satellite_SST_process.aux)
+e_data//monthly_SECM_temp_regions.png>] [15] (./satellite_SST_process.aux)
 Package rerunfilecheck Info: File `satellite_SST_process.out' has not changed.
 (rerunfilecheck)             Checksum: 702AC07E9A9DA8DF40AB7DC9C568DA90;1258.
  ) 
 Here is how much of TeX's memory you used:
- 12205 strings out of 480477
- 185357 string characters out of 5896541
- 502842 words of memory out of 5000000
- 29592 multiletter control sequences out of 15000+600000
- 449140 words of font info for 67 fonts, out of 8000000 for 9000
+ 12161 strings out of 480477
+ 184628 string characters out of 5896541
+ 500772 words of memory out of 5000000
+ 29553 multiletter control sequences out of 15000+600000
+ 448821 words of font info for 66 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 60i,7n,66p,1056b,474s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 60i,7n,66p,1045b,332s stack positions out of 5000i,500n,10000p,200000b,80000s
 {c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-
 ec.enc}<c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/publi
 c/lm/lmbx10.pfb><c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist/fonts/ty
 pe1/public/lm/lmbx12.pfb><c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist
 /fonts/type1/public/lm/lmr10.pfb><c:/Users/semiller1/AppData/Roaming/TinyTeX/te
 xmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/semiller1/AppData/Roaming/Ti
-nyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/semiller1/AppData/Ro
-aming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on satellite_SST_process.pdf (16 pages, 1259941 bytes).
+nyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb>
+Output written on satellite_SST_process.pdf (15 pages, 1227721 bytes).
 PDF statistics:
- 212 PDF objects out of 1000 (max. 8388607)
- 168 compressed objects within 2 object streams
- 51 named destinations out of 1000 (max. 500000)
+ 205 PDF objects out of 1000 (max. 8388607)
+ 164 compressed objects within 2 object streams
+ 50 named destinations out of 1000 (max. 500000)
  103 words of extra memory for PDF output out of 10000 (max. 10000000)
 
