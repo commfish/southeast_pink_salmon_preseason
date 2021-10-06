@@ -1,5 +1,5 @@
 ---
-title: "Environmental variables for SEAK Pink Salmon Preseason Forecast"
+title: "Environmental variables for the  \n2022 SEAK Pink Salmon Preseason Forecast"
 author: "Sara Miller"
 date: "October 4, 2021"
 output:

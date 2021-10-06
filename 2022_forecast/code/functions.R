@@ -319,13 +319,13 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end){
     fit<-lm(model,data = data[data$JYear >= start & data$JYear < i,])
     data$model1_sim[data$JYear == i] <- predict(fit, newdata = data[data$JYear == i,])
   }
-  return(data)
+  #return(data)
   data %>% 
     dplyr::filter(JYear > end) -> output
   mape(output$SEAKCatch_log,output$model1_sim)
 } 
 # function check for one model (one step ahead MAPE)
-#seak_model_summary2 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2013)
+seak_model_summary2 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2015)
 
 # function for multiple models (one step ahead MAPE)
 f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,model.names, start, end){

@@ -1,6 +1,6 @@
 # SECM Pink salmon forecast models
 # Script written by Jim Murphy updated: 10/18/19
-# adapted by Sara Miller 5/12/2021
+# adapted by Sara Miller 10/05/2021
 # pink_cal_pooled_species
 
 # load libraries
@@ -37,7 +37,10 @@ year.data <- 2021
 year.data.one <- year.data - 1
 sample_size <-  24 # number of data points in model
 forecast2021 <- 28 # input last year's forecast for the forecast plot
-model_average <- 18.8 # input the model averaged forecast from the code 4_model_averaging
+model_average_equal <- 14.37 # input the model averaged forecast from the code 2_model_averaging
+model_average_inverse_MAPE <- 14.35 # input the model averaged forecast from the code 2_model_averaging
+model_average_equal_MAPE <- 14.46 # input the model averaged forecast from the code 2_model_averaging
+model_AICc <- 15.43
 
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
@@ -241,17 +244,20 @@ results %>%
   theme_bw() + theme(legend.key=element_blank(),
                      legend.title=element_blank(),
                      legend.position = "none") +
-  #geom_hline(aes(yintercept=model_average), color="grey50", lty = 2) +
+  geom_hline(aes(yintercept=model_average_equal), color="red", lty = 2) +
+  geom_hline(aes(yintercept=model_average_inverse_MAPE), color="black", lty = 3) +
+  geom_hline(aes(yintercept=model_average_equal_MAPE), color="grey50", lty = 4) +
+  geom_hline(aes(yintercept=model_AICc), color="blue", lty = 2) +
   geom_hline(aes(yintercept=forecast2021), color="grey50", lty = 1) +
   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, size=1, color="blue")+
-  scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40,45,50,55), limits = c(0,55))+ 
+  scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40), limits = c(0,40))+ 
   scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18), limits = c(0,19))+ 
   labs(x = "Models", y = "2022 SEAK Pink Salmon Forecast (millions)")  -> plot1
 ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, width = 6, units = "in")
 
 # one step ahead MAPE
 # https://stackoverflow.com/questions/37661829/r-multivariate-one-step-ahead-forecasts-and-accuracy
-# end year is the year the data is used through (e.g., end = 2004 means that the regression is runs through JYear 2014 and Jyears 2015-2019 are
+# end year is the year the data is used through (e.g., end = 2014 means that the regression is runs through JYear 2014 and Jyears 2015-2019 are
 # forecasted in the one step ahead process)
 # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
 f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2015) # change to 6 years 
@@ -265,69 +271,89 @@ results %>%
   dplyr::select(model, AdjR2,  AICc,  MASE, wMAPE, MAPE_LOOCV, MAPE_one_step_ahead) %>%
   write.csv(paste0(results.directory, "/model_summary_table5.csv"), row.names = F)
 
-# summary of interaction model fits (i.e., coefficients, p-value)
-lm(SEAKCatch_log ~ CPUE * ISTI20_MJJ, data = log_data_subset) -> m2i
-lm(SEAKCatch_log ~ CPUE * Chatham_SST_May, data = log_data_subset) -> m3i
-lm(SEAKCatch_log ~ CPUE * Chatham_SST_MJJ, data = log_data_subset) -> m4i
-lm(SEAKCatch_log ~ CPUE * Chatham_SST_AMJ, data = log_data_subset) -> m5i
-lm(SEAKCatch_log ~ CPUE * Chatham_SST_AMJJ, data = log_data_subset) -> m6i
-lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_May, data = log_data_subset) -> m7i
-lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_MJJ, data = log_data_subset) -> m8i
-lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_AMJ, data = log_data_subset) -> m9i
-lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_AMJJ, data = log_data_subset) -> m10i
-lm(SEAKCatch_log ~ CPUE * NSEAK_SST_May, data = log_data_subset) -> m11i
-lm(SEAKCatch_log ~ CPUE * NSEAK_SST_MJJ, data = log_data_subset) -> m12i
-lm(SEAKCatch_log ~ CPUE * NSEAK_SST_AMJ, data = log_data_subset) -> m13i
-lm(SEAKCatch_log ~ CPUE * NSEAK_SST_AMJJ, data = log_data_subset) -> m14i
-lm(SEAKCatch_log ~ CPUE * SEAK_SST_May, data = log_data_subset) -> m15i
-lm(SEAKCatch_log ~ CPUE * SEAK_SST_MJJ, data = log_data_subset) -> m16i
-lm(SEAKCatch_log ~ CPUE * SEAK_SST_AMJ, data = log_data_subset) -> m17i
-lm(SEAKCatch_log ~ CPUE * SEAK_SST_AMJJ, data = log_data_subset) -> m18i
+# # summary of interaction model fits (i.e., coefficients, p-value)
+# lm(SEAKCatch_log ~ CPUE * ISTI20_MJJ, data = log_data_subset) -> m2i
+# lm(SEAKCatch_log ~ CPUE * Chatham_SST_May, data = log_data_subset) -> m3i
+# lm(SEAKCatch_log ~ CPUE * Chatham_SST_MJJ, data = log_data_subset) -> m4i
+# lm(SEAKCatch_log ~ CPUE * Chatham_SST_AMJ, data = log_data_subset) -> m5i
+# lm(SEAKCatch_log ~ CPUE * Chatham_SST_AMJJ, data = log_data_subset) -> m6i
+# lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_May, data = log_data_subset) -> m7i
+# lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_MJJ, data = log_data_subset) -> m8i
+# lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_AMJ, data = log_data_subset) -> m9i
+# lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_AMJJ, data = log_data_subset) -> m10i
+# lm(SEAKCatch_log ~ CPUE * NSEAK_SST_May, data = log_data_subset) -> m11i
+# lm(SEAKCatch_log ~ CPUE * NSEAK_SST_MJJ, data = log_data_subset) -> m12i
+# lm(SEAKCatch_log ~ CPUE * NSEAK_SST_AMJ, data = log_data_subset) -> m13i
+# lm(SEAKCatch_log ~ CPUE * NSEAK_SST_AMJJ, data = log_data_subset) -> m14i
+# lm(SEAKCatch_log ~ CPUE * SEAK_SST_May, data = log_data_subset) -> m15i
+# lm(SEAKCatch_log ~ CPUE * SEAK_SST_MJJ, data = log_data_subset) -> m16i
+# lm(SEAKCatch_log ~ CPUE * SEAK_SST_AMJ, data = log_data_subset) -> m17i
+# lm(SEAKCatch_log ~ CPUE * SEAK_SST_AMJJ, data = log_data_subset) -> m18i
+# 
+# tidy(m2i) -> model2
+# tidy(m3i) -> model3
+# tidy(m4i) -> model4
+# tidy(m5i) -> model5
+# tidy(m6i) -> model6
+# tidy(m7i) -> model7
+# tidy(m8i) -> model8
+# tidy(m9i) -> model9
+# tidy(m10i) -> model10
+# tidy(m11i) -> model11
+# tidy(m12i) -> model12
+# tidy(m13i) -> model13
+# tidy(m14i) -> model14
+# tidy(m15i) -> model15
+# tidy(m16i) -> model16
+# tidy(m17i) -> model17
+# tidy(m18i) -> model18
+# 
+# rbind(model2, model3) %>% 
+#   rbind(., model4) %>% 
+#   rbind(., model5) %>% 
+#   rbind(., model6) %>% 
+#   rbind(., model7) %>% 
+#   rbind(., model8) %>%   
+#   rbind(., model9) %>% 
+#   rbind(., model10) %>% 
+#   rbind(., model11) %>% 
+#   rbind(., model12) %>% 
+#   rbind(., model13) %>% 
+#   rbind(., model14) %>%   
+#   rbind(., model15) %>% 
+#   rbind(., model16) %>% 
+#   rbind(., model17) %>% 
+#   rbind(., model18) %>% 
+#   mutate(model = c('m2i','m2i','m2i','m2i','m3i','m3i','m3i','m3i',
+#                    'm4i','m4i','m4i','m4i','m5i','m5i','m5i','m5i','m6i','m6i','m6i','m6i',
+#                    'm7i','m7i','m7i','m7i', 'm8i','m8i','m8i','m8i','m9i','m9i',' m9i','m9i',
+#                    'm10i','m10i','m10i','m10i','m11i','m11i','m11i','m11i', 'm12i','m12i',' m12i','m12i',
+#                    'm13i','m13i','m13i','m13i','m14i','m14i','m14i','m14i', 'm15i','m15i','m15i','m15i',
+#                    'm16i','m16i','m16i','m16i','m17i','m17i','m17i','m17i',
+#                    'm18i','m18i','m18i','m18i')) %>% 
+#   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
+#   mutate(estimate = round(estimate,8),
+#          std.error = round(std.error,3),
+#          statistic = round(statistic,3),
+#          p.value = round(p.value,3)) %>%
+#   write.csv(., paste0(results.directory, "/interaction_models.csv"), row.names = F)
 
-tidy(m2i) -> model2
-tidy(m3i) -> model3
-tidy(m4i) -> model4
-tidy(m5i) -> model5
-tidy(m6i) -> model6
-tidy(m7i) -> model7
-tidy(m8i) -> model8
-tidy(m9i) -> model9
-tidy(m10i) -> model10
-tidy(m11i) -> model11
-tidy(m12i) -> model12
-tidy(m13i) -> model13
-tidy(m14i) -> model14
-tidy(m15i) -> model15
-tidy(m16i) -> model16
-tidy(m17i) -> model17
-tidy(m18i) -> model18
+# Data file
+read.csv(file.path(data.directory,'var2021_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
 
-rbind(model2, model3) %>% 
-  rbind(., model4) %>% 
-  rbind(., model5) %>% 
-  rbind(., model6) %>% 
-  rbind(., model7) %>% 
-  rbind(., model8) %>%   
-  rbind(., model9) %>% 
-  rbind(., model10) %>% 
-  rbind(., model11) %>% 
-  rbind(., model12) %>% 
-  rbind(., model13) %>% 
-  rbind(., model14) %>%   
-  rbind(., model15) %>% 
-  rbind(., model16) %>% 
-  rbind(., model17) %>% 
-  rbind(., model18) %>% 
-  mutate(model = c('m2i','m2i','m2i','m2i','m3i','m3i','m3i','m3i',
-                   'm4i','m4i','m4i','m4i','m5i','m5i','m5i','m5i','m6i','m6i','m6i','m6i',
-                   'm7i','m7i','m7i','m7i', 'm8i','m8i','m8i','m8i','m9i','m9i',' m9i','m9i',
-                   'm10i','m10i','m10i','m10i','m11i','m11i','m11i','m11i', 'm12i','m12i',' m12i','m12i',
-                   'm13i','m13i','m13i','m13i','m14i','m14i','m14i','m14i', 'm15i','m15i','m15i','m15i',
-                   'm16i','m16i','m16i','m16i','m17i','m17i','m17i','m17i',
-                   'm18i','m18i','m18i','m18i')) %>% 
-  dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
-  mutate(estimate = round(estimate,8),
-         std.error = round(std.error,3),
-         statistic = round(statistic,3),
-         p.value = round(p.value,3)) %>%
-  write.csv(., paste0(results.directory, "/interaction_models.csv"), row.names = F)
+# restructure the data (for write-up)
+variables %>%
+  mutate(Harvest = round(SEAKCatch, 2),
+         CPUE = round(CPUEcal, 2)) %>%
+  dplyr::select(c(Year, Harvest, CPUE)) %>%
+  write.csv(., paste0(results.directory, "/data_used.csv"), row.names = F)
+
+# # test of predict results
+# model.m1 = lm(SEAKCatch_log ~ CPUE, data = log_data_subset)
+# best.model <- m1 # this can be added after steps 1 and 2 after the best model is determined
+# last_year_data_cpue <- 0.875454122
+# sigma<- sigma(best.model) # best model
+# CPUE <- last_year_data_cpue # last year of data
+# newdata <- data.frame(CPUE)
+# predicted<-predict(model.m1, newdata, interval="prediction", level = 0.80)
+# predicted

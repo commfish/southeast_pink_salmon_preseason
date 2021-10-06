@@ -1,0 +1,5 @@
+Method,fit,fit_LPI,fit_UPI
+equal-weighting,14.37,6.75,30.59
+inverse MAPE_one_step_ahead,14.35,6.8,30.31
+equal-weighting (MAPE <0.14),14.46,6.99,29.92
+equal-weighting (change AICc < or equal to 4),15.43,7.86,30.3
