@@ -1,7 +1,7 @@
 ---
 title: "SEAK Pink Salmon 2022 Forecast--final"
 author: "Sara Miller"
-date: "November 2, 2021"
+date: "November 3, 2021"
 output:
   pdf_document: default
   word_document: default
@@ -111,13 +111,6 @@ tbls_seak$model_summary_table3 %>%
    knitr::kable(format = 'pandoc', caption = 'Summary of model forecasts including the 80 percent prediction intervals (corrected for log transformation bias in a linear-model).', row.names = F)
 ```
 
-
-```{r pred, echo=FALSE}
-knitr::include_graphics(here(results.directory, "/forecast_models.png"))
-```
-
-Figure 1: The 2022 SEAK pink salmon harvest (millions) forecast by model with 80% prediction intervals (corrected for log transformation bias in a linear-model) around each forecast. The SEAK pink salmon harvest in 2021 (based on the November 18, 2020 advisory announcement) was a point estimate of 28 million fish (80% prediction interval: 19–42 million fish; grey horizontal line).
-
 ## Model Diagnostics
 Model diagnostics for model m2 included residual plots, the curvature test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage plots. Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). These observations may have significant impact on model fitting and may need to be excluded. 
 \pagebreak
@@ -129,31 +122,31 @@ tbls_seak$model_summary_table4 %>%
 ### Cook's distance
 Cook's distance is a measure of influence, or the product of both leverage and outlier. Cook's distance,
 $$D_i=\ \frac{e_{PSi}^2}{k+1}\ast\frac{h_i}{1-h_i},$$				
-where $e_{PSi}^2$ is the standardized Pearson residuals, $h_i$ are the hat values (measure of leverage), and $k$ is the number of predictor variables in the model, is a measure of overall influence of the $i_{th}$ data point on all $n$ fitted values (Fox and Weisburg 2019). A large value of Cook's distance indicates that the data point is an influential observation. Cook's distance values greater than $4/(n-k-1)$, where $n$ is the number of observations (i.e., 24), was used as a benchmark for identifying the subset of influential observations (Ren et al. 2016). Therefore, a Cook's distance cut-off of 0.19 was used; observations with a Cook's distance greater than 0.19 were investigated further (Figure 2a). 
+where $e_{PSi}^2$ is the standardized Pearson residuals, $h_i$ are the hat values (measure of leverage), and $k$ is the number of predictor variables in the model, is a measure of overall influence of the $i_{th}$ data point on all $n$ fitted values (Fox and Weisburg 2019). A large value of Cook's distance indicates that the data point is an influential observation. Cook's distance values greater than $4/(n-k-1)$, where $n$ is the number of observations (i.e., 24), was used as a benchmark for identifying the subset of influential observations (Ren et al. 2016). Therefore, a Cook's distance cut-off of 0.19 was used; observations with a Cook's distance greater than 0.19 were investigated further (Figure 1a). 
 
 ### Leverage
-An observation that is distant from the average covariate pattern is considered to have high leverage or hat-value. If an individual observation has a leverage value $h_i$ greater than 2 or 3 times $p/n$ (Ren et al. 2016), it may be a concern (where $p$ is the number of parameters in the model including the intercept (i.e., 3), and $n$ is the number of observations in the model (i.e., 24); $p/n$ = 3/24 = 0.13 for this study). Therefore, a leverage cut-off of 0.26 was used; observations with a leverage value greater than 0.26 were investigated further (Figure 2b).
+An observation that is distant from the average covariate pattern is considered to have high leverage or hat-value. If an individual observation has a leverage value $h_i$ greater than 2 or 3 times $p/n$ (Ren et al. 2016), it may be a concern (where $p$ is the number of parameters in the model including the intercept (i.e., 3), and $n$ is the number of observations in the model (i.e., 24); $p/n$ = 3/24 = 0.13 for this study). Therefore, a leverage cut-off of 0.26 was used; observations with a leverage value greater than 0.26 were investigated further (Figure 1b).
 
 ```{r influential, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/influential.png"))
 ```
 
-Figure 2: Diagnostics plots of influential observations including a) Cook's Distance (with a cut-off value of 0.19), and b) leverage values (with a cut-off value of 0.26) from model m2.
+Figure 1: Diagnostics plots of influential observations including a) Cook's Distance (with a cut-off value of 0.19), and b) leverage values (with a cut-off value of 0.26) from model m2.
 
 ### Influential datapoints
-To determine if a variable has a relationship with residuals, a lack-of fit curvature test was performed. In this test, terms that are non-significant suggest a properly specified model. The CPUE term was significant in the lack-of-fit curvature test ($P$<0.05), suggesting some lack of fit for this term (Figure 3a). Diagnostics indicated that two of the data points were above the cut-off value for the Cook's distance (Figure 2a). One observation had a high leverage value (Figure 2b). Based on the Bonferroni outlier test, none of the data points had a studentized residual with a significant Bonferroni $P$-value suggesting that none of the data points impacted the model fitting; although observations 1, 2, 18, 21, and 24 and were the most extreme (juvenile years 1997, 1998, 2014, 2017, and 2020 corresponding to years 1998, 1999, 2015, 2018, and 2021) based on standardized residuals (Figure 4a; Table 5). Based on the lightly curved fitted lines in the residual versus fitted plot (Figure 4b), the fitted plot shows some lack of fit of the model.
+To determine if a variable has a relationship with residuals, a lack-of fit curvature test was performed. In this test, terms that are non-significant suggest a properly specified model. The CPUE term was significant in the lack-of-fit curvature test ($P$<0.05), suggesting some lack of fit for this term (Figure 2a). Diagnostics indicated that two of the data points were above the cut-off value for the Cook's distance (Figure 1a). One observation had a high leverage value (Figure 1b). Based on the Bonferroni outlier test, none of the data points had a studentized residual with a significant Bonferroni $P$-value suggesting that none of the data points impacted the model fitting; although observations 1, 2, 18, 21, and 24 and were the most extreme (juvenile years 1997, 1998, 2014, 2017, and 2020 corresponding to years 1998, 1999, 2015, 2018, and 2021) based on standardized residuals (Figure 3a; Table 5). Based on the lightly curved fitted lines in the residual versus fitted plot (Figure 3b), the fitted plot shows some lack of fit of the model.
 
 ```{r predicted1, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/predicted.png"))
 ```
 
-Figure 3: Standardized residuals versus predicted plots for a) CPUE and b) temperature.
+Figure 2: Standardized residuals versus predicted plots for a) CPUE and b) temperature.
 
 ```{r fitted, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/fitted.png"))
 ```
 
-Figure 4: a) Standardized residuals versus juvenile year and b) residuals versus fitted values for model m2. Positive residuals indicate that the observed harvest was larger than predicted by the model.
+Figure 3: a) Standardized residuals versus juvenile year and b) residuals versus fitted values for model m2. Positive residuals indicate that the observed harvest was larger than predicted by the model.
 
 ## Results
 The best regression model based on the performance metrics looked at and significant coefficients in the model was model m2 (i.e., the model containing CPUE, and a May through July temperature variable). The adjusted $R^2$ value for model m2 was 0.81 (Table 3) indicating overall a good model fit. Based upon a model that includes juvenile pink salmon CPUE and May through July temperature (model m2), the 2022 SEAK pink salmon harvest is predicted to be in the weak range with a point estimate of 15.58 million fish (80% prediction interval: 10.30 to 23.57 million fish). 
@@ -162,7 +155,7 @@ The best regression model based on the performance metrics looked at and signifi
 knitr::include_graphics(here(results.directory, "/figs/catch_plot_pred.png"))
 ```
 
-Figure 5: A) SEAK pink salmon harvest (millions) by year with the model fit (line). The predicted 2022 forecast is symbolized as a grey circle with an 80% prediction interval (10.30 to 23.57 million fish). B) SEAK pink salmon harvest (millions) against the fitted values from model m2 by year. The dotted line is a one to one line. 
+Figure 4: A) SEAK pink salmon harvest (millions) by year with the model fit (line). The predicted 2022 forecast is symbolized as a grey circle with an 80% prediction interval (10.30 to 23.57 million fish). B) SEAK pink salmon harvest (millions) against the fitted values from model m2 by year. The dotted line is a one to one line. 
 
 # References
 Akaike, H. 1973. Information theory and an extension of the maximum likelihood principle. In B. N. Pet rov & F. Caski (Eds.), Proceedings of the Second International Symposium on Information Theory (pp. 267-281). Budapest: Akademiai Kiado.
