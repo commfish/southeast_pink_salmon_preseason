@@ -27,6 +27,8 @@ library(extrafont)
 library(ggrepel)
 library(Metrics) # MASE calc
 library(MetricsWeighted)
+library(gridExtra)
+library(effects) 
 #extrafont::font_import()
 windowsFonts(Times=windowsFont("TT Times New Roman"))
 theme_set(theme_report(base_size = 14))
@@ -60,7 +62,7 @@ model.formulas <- c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE + ISTI20_MJJ)
 
 # summary statistics and bootstrap of SEAK pink salmon harvest forecast models
-seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values)
+#seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values)
 
 # summary of model fits (i.e., coefficients, p-value)
 log_data %>% 
@@ -198,3 +200,31 @@ variables %>%
  fit_value
  lwr_pi
  upr_pi
+ 
+ 
+# partial residual plots of best model
+mod = lm(SEAKCatch_log ~ CPUE + ISTI20_MJJ, data = log_data_subset)
+closest <- function(x, x0) apply(outer(x, x0, FUN=function(x, x0) abs(x - x0)), 1, which.min)
+eff1 = effect("CPUE", mod, partial.residuals=T)
+x.fit <- unlist(eff1$x.all)
+trans <- I
+x <- data.frame(lower = eff1$lower, upper = eff1$upper, fit = eff1$fit, CPUE = eff1$x$CPUE)
+xy <- data.frame(x = x.fit, y = x$fit[closest(trans(x.fit), x$CPUE)] + eff1$residuals)
+plot(eff1, xlab ="CPUE", ylab ="ln (SEAK harvest)", main = "")-> plot1
+cowplot::plot_grid(plot1,  align = "vh", nrow = 1, ncol=1)
+ggsave(paste0(results.directory, "partial residual plots (a).png"), dpi = 500, height = 5, width = 6, units = "in")
+
+eff2 = effect("ISTI20_MJJ", mod, partial.residuals=T)
+x.fit <- unlist(eff2$x.all)
+trans <- I
+x <- data.frame(lower = eff2$lower, upper = eff2$upper, fit = eff2$fit, ISTI20_MJJ = eff2$x$ISTI20_MJJ)
+xy <- data.frame(x = x.fit, y = x$fit[closest(trans(x.fit), x$ISTI20_MJJ)] + eff2$residuals)
+plot(eff2, xlab ="ISTI", ylab ="ln (SEAK harvest)", main = "")-> plot2
+cowplot::plot_grid(plot2,  align = "vh", nrow = 1, ncol=1)
+ggsave(paste0(results.directory, "partial residual plots (b).png"), dpi = 500, height = 5, width = 6, units = "in")
+
+
+jpeg("my_plot.jpeg", quality = 75)
+crPlots(lm(SEAKCatch_log ~ CPUE + ISTI20_MJJ, data = log_data_subset), 
+          variable="CPUE")
+dev.off()
