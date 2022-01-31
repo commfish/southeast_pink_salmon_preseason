@@ -203,6 +203,8 @@ variables %>%
  
  
 # partial residual plots of best model
+# http://math.furman.edu/~dcs/courses/math47/R/library/car/html/cr.plots.html
+# https://stackoverflow.com/questions/43950459/use-ggplot-to-plot-partial-effects-obtained-with-effects-library
 mod = lm(SEAKCatch_log ~ CPUE + ISTI20_MJJ, data = log_data_subset)
 closest <- function(x, x0) apply(outer(x, x0, FUN=function(x, x0) abs(x - x0)), 1, which.min)
 eff1 = effect("CPUE", mod, partial.residuals=T)

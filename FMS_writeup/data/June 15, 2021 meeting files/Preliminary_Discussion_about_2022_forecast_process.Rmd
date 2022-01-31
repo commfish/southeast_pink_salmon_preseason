@@ -1,0 +1,272 @@
+---
+title: "Preliminary Discussion about the 2022 Forecast Process"
+author: "Sara Miller"
+date: "June 4, 2021"
+output:
+  bookdown::pdf_document2:
+    fig_caption: yes
+    toc: yes
+header-includes: \usepackage{float}
+---
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
+library(here)
+library(fs)
+library(tidyverse)
+library(knitr)
+library(ggplot2)
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE, error=FALSE)
+year.forecast <- "2022_forecast" 
+data.directory <- file.path(year.forecast, 'data', '/')
+results.directory <- file.path(year.forecast, 'results', '/')
+```
+
+```{r data}
+
+fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>% 
+  set_names(nm = (basename(.) %>% 
+                    tools::file_path_sans_ext())) %>%
+  map(read_csv) -> tbls_seak
+
+```
+
+# Objective
+To determine the process for the 2022 Southeast Alaska (SEAK) preseason pink salmon forecast using data through 2020. 
+
+# Executive Summary
+Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019). We used a similar approach to Murphy et al. (2019), but assumed a log-normal error. This approach is based on a multiple regression model with juvenile pink salmon catch-per-unit-effort (CPUE) and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Murphy et al. 2020) or satellite sea surface temperature data (SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, Monthly, 1985-Present’ time series (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html). See the document satellite_SST_process_4_June_2021 for details about the temperature variables. Based on prior discussions, the index of juvenile abundance (i.e., CPUE) was based on the pooled-species vessel calibration coefficient.
+
+Leave-one-out cross validation (hindcast) and model performance metrics were used to evaluate the forecast accuracy of models. These metrics included Akaike Information Criterion corrected for small sample sizes (AICc values; Burnham and Anderson 2004), the mean absolute scaled error (*MASE* metric; Hyndman and Kohler 2006), the weighted mean absolute percentage error (*wMAPE*; based on the last 5 years), leave one out cross validation *MAPE* (*MAPE_LOOCV*), one step ahead forecasts (*MAPE_one_step_ahead*) for the last five years (juvenile years 2015 through 2019), and significant coefficients (i.e., covariates) in the model. A sensitivity analysis was also done to determine if the juvenile years 1998 and 2016 were influential in the models.
+
+**Conclusions:**
+
+* Overall, the performance metrics recommended models m10 (Chatham_SST_May), m14 (Icy_Strait_SST_May), m18 (NSEAK_SST_May), m20 (NSEAK_SST_AMJ), and m21 (NSEAK_SST_AMJJ). These five models were additive models with CPUE and a temperature variable.
+
+* With the exclusion of juvenile years 1998 and 2016, the performance metrics recommended models m10s (Chatham_SST_May), m14s (Icy_Strait_SST_May), m16s (Icy_Strait_SST_AMJ), m18s (NSEAK_SST_May), m20s (NSEAK_SST_AMJ), and m21s (NSEAK_SST_AMJJ) are recommended.
+
+* The model averaged forecast prediction for 2021, weighting based of AICc weights (Akaike 1973; Burnham and Anderson 2002) of all 25 additive models, is 18.80 million fish (prediction interval: 11.81-29.94 million fish). 
+
+# Analysis
+## Hierarchical models
+Forty nine hierarchical models were investigated. The full model was:
+
+$$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2} + \beta_3{X_1X_2},$$
+
+where ${X_1}$ is the average CPUE for catches in either the June or July survey, whichever month had the highest average catches in a given year, and was based on the pooled-species vessel calibration coefficient, ${X_2}$ is a temperature index, and $\beta_3$ is the interaction term between CPUE and the temperature index. The CPUE data were log-transformed in the model, but temperature data was not. The simplest model did not contain a temperature variable (model m1). None of the interactions were significant at $alpha<=0.05$ (see Appendix Table 6 for detailed output); therefore only additive models (25 models; Table 1 and Figure 1) were considered further. 
+ 
+```{r coefficients}
+tbls_seak$model_summary_table1 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Parameter estimates for the 25 potential models.', row.names = F)
+```
+
+## Performance metrics
+The model summary results (Tables 2 and 3) using the performance metrics AICc, *MASE*, *wMAPE*, *MAPE_LOOCV*, and *MAPE_one_step_ahead* are shown in Table 2. For all of these metrics, the smallest value is the preferred model. Models with  $\Delta_i$AICc $\leq$ 2 have substantial support, those in which 4 $\leq$   $\Delta_i$AICc $\leq$  7 have considerably less support, and models with  $\Delta_i$AICc > 10 have essentially no support (Burnham and Anderson 2004). The performance metric *MAPE* was calculated as:
+
+$$MAPE = \frac{1}{n} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|$$
+where $A_t$ is the observed value and $F_t$ is the predicted value. The performance metric *wMAPE* was calculated as:
+
+$$wMAPE =\sum_{t=1}^{n} \frac{1}{w_t} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|w_t.$$
+where $w_t$ is the weight for each year. For the *wMAPE* metric, the last 5 years (juvenile years 2015-2019) were given a weight of 1 and all other years, a weight of 0.001. Therefore, compared to the performance metric *MAPE_LOOCV*, the performance of the model in the last 5 years was given more weight in the *wMAPE* metric. 
+
+The performance metric *MAPE_LOOCV* uses five steps.
+
+1. The dataset is split into a training set. The training set uses all but one observation of the full dataset.
+
+2. Run the regression model based on the training set.
+
+3. Use the regression model based on the training set to predict $F_t$ for the one observation left out of the model.
+
+4. Repeat the process $n$ times based on the number of observations in the dataset, leaving out a different observation from the training set each time. 
+
+5. Calculate MAPE, based on the average of all the training datasets (i.e., one MAPE is calculated for each training set and then these are averaged.)
+
+The performance metric *MAPE_one_step_ahead* involves three steps:
+
+1. Estimate the regression parameters at time $t$ from data up to time $t-1$. 
+
+2. Make a prediction of $F_t$ at time $t$ based on the predictor variables at time $t$ and the estimate of the regression parameters at time $t$.
+
+3. Calculate the MAPE based on the prediction of $F_t$ at time $t$ and the observed value of $A_t$ at time $t$. 
+
+3. The *MAPE_one_step_ahead* will then be an average of the MAPE calculated from data up through juvenile year 2014 (e.g., juvenile year 2014 is $t-1$ and the forecast is for juvenile year 2015; $t$), data up through juvenile year 2015 (e.g., juvenile year 2015 is $t-1$ and the forecast is for juvenile year 2016; $t$), data up through juvenile year 2016, data up through juvenile year 2017, data up through juvenile year 2018, and data up through juvenile year 2019.
+
+The AICc in Table 2 is the AICc value and not the $\Delta_i$AICc. The performance metric AICc suggests that models m10, m14, and m18 are the recommended models (Table 2). The performance metrics *MASE* and *MAPE_LOOCV* suggest that models m10, m14, and m18 are the recommended models (Table 2). The performance metric *wMAPE* suggests that models m14, m20, and m21 are the recommended models (Table 2). The performance metric *MAPE_one_step_ahead* suggests that models m14 and m21 are the recommended models (Table 2). Detailed outputs for recommended models m10, m14, m18, m20, and m21, are in the appendix (Tables 7 to 11, and Figures 2 through 11). 
+
+\pagebreak
+
+```{r SummaryMetrics}
+tbls_seak$model_summary_table5 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Summary of model outputs and forecast error measures. These metrics included Akaike Information Criterion corrected for small sample sizes (AICc values), the mean absolute scaled error (MASE metric), the weighted mean absolute percentage error (wMAPE; based on the last 5 years), leave one out cross validation MAPE (MAPE_LOOCV), and one step ahead forecasts (MAPE_one_step_ahead).', row.names = F)
+```
+
+\pagebreak
+
+```{r SummaryMetrics2}
+tbls_seak$model_summary_table3 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Summary of model forecasts including the 80 percent prediction intervals (corrected for log transformation bias in a linear-model).', row.names = F)
+```
+
+\pagebreak
+## Sensitivity analysis
+A sensitivity analysis was done to determine if the juvenile years 1998 and 2016 were influential in the models. For the sensitivity analysis, juvenile years 1998 and 2016 (high leverage values in a majority of the five preferred models) were removed, the models rerun, and the performance metrics recalculated (Tables 4 and 5).The performance metric AICc suggests that model m14s is the recommended model. The performance metrics *MASE* and *MAPE_LOOCV* suggest that models m10s, m14s, and m18s are the recommended models. The performance metric *wMAPE* suggests that models m14s, m16s, and m20s are the recommended models. The performance metric *MAPE_one_step_ahead* suggests that models m16s, and m21s are the recommended models. Therefore, based on the performance metrics, models m10s, m14s, m16s, m18s, m20s, and m21s are recommended.
+
+```{r coefficients8}
+tbls_seak$model_summary_table_sensitivity4 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Summary of model outputs and forecast error measures for the sensitivity analysis (exclusion of juvenile years 1998 and 2016). These metrics included Akaike Information Criterion corrected for small sample sizes (AICc values), the mean absolute scaled error (MASE metric), the weighted mean absolute percentage error (wMAPE; based on the last 5 years), leave one out cross validation MAPE (MAPE_LOOCV), and one step ahead forecasts (MAPE_one_step_ahead).', row.names = F)
+```
+
+\pagebreak
+
+```{r coefficients7}
+tbls_seak$model_summary_table_sensitivity3 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Summary of model forecasts including the 80 percent prediction intervals (corrected for log transformation bias in a linear-model) for the sensitivity analysis (exclusion of juvenile years 1998 and 2016).', row.names = F)
+```
+
+\pagebreak
+
+
+```{r pred, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/forecast_models.png"))
+```
+
+Figure 1: The 2021 SEAK pink salmon harvest (millions) forecast by model. The 80% prediction intervals (corrected for log transformation bias in a linear-model) around each forecast were calculated using the car package (Fox and Weisberg 2019) in program R (R Core Team 2020). The dotted horizontal line is the model average forecast across all models. The SEAK pink salmon harvest in 2021 (based on the November 18, 2020 advisory announcement) was a point estimate of 28 million fish (80% prediction interval: 19–42 million fish; grey horizontal line).
+
+## Model averaging (multi-model inference)
+The model averaged forecast prediction for 2021, weighting based of AICc weights (Akaike 1973; Burnham and Anderson 2002) of all 25 additive models, is 18.80 million fish (prediction interval: 11.81-29.94 million fish). The prediction interval is based on equation 9 in Buckland et al. 1997 (derivation in Burnham and Anderson 2002:159-162). 
+
+# References
+Akaike, H. 1973. Information theory and an extension of the maximum likelihood principle. In B. N. Pet rov & F. Caski (Eds.), Proceedings of the Second International Symposium on Information Theory (pp. 267-281). Budapest: Akademiai Kiado.
+
+Buckland, S.T., K. P. Burnham, and N. H. Augustin. 1997. Model selection: an integral part of inference. Biometrics: 603-618.
+
+Burnham, K. P., and D. R. Anderson, D. R. 2002. Model selection and multimodel inference: A practical information-theoretic approach. Second Edition. New York: Springer-Verlag
+
+Burnham, K. P., and D. R. Anderson. 2004. Multimodel inference: Understanding AIC and BIC in model selection. Sociological Methods and Research 33: 261-304.
+
+Fox, J. and S. Weisburg. 2019. An R Companion to Applied Regression, Third Edition. Thousand Oaks CA: Sage Publications, Inc.
+
+Hyndman, R. J. and A. B. Koehler. 2006. Another look at measures of forecast accuracy. International Journal of Forecasting 22: 679-688.
+
+Murphy, J. M., E. A. Fergusson, A. Piston, A. Gray, and E. Farley.  2019. Southeast Alaska pink salmon growth and harvest forecast models.  North Pacific Anadromous Fish Commission Technical Report No. 15: 75-81.
+
+NOAA Coral Reef Watch. 2021, updated daily. NOAA Coral Reef Watch Version 3.1 Monthly 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, May 1997-July 2020. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2021-04-09 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html.
+
+Orsi, J. A., E. A. Fergusson, A. C. Wertheimer, E. V. Farley, and P. R. Mundy. 2016. Forecasting pink salmon production in Southeast Alaska using ecosystem indicators in times of climate change. N. Pac. Anadr. Fish Comm. Bull. 6: 483–499. (Available at https://npafc.org)
+
+R Core Team. 2020. R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL: http://www.r-project.org/index.html 
+
+Wertheimer A. C., J. A. Orsi, M. V. Sturdevant, and E. A. Fergusson. 2006. Forecasting pink salmon harvest in Southeast Alaska from juvenile salmon abundance and associated environmental parameters. In Proceedings of the 22nd Northeast Pacific Pink and Chum Workshop. Edited by H. Geiger (Rapporteur). Pac. Salmon Comm. Vancouver, British Columbia. pp. 65–72.
+
+# Appendix
+```{r coefficientsI}
+tbls_seak$interaction_models %>% 
+   knitr::kable(format = 'pandoc', caption = 'Parameter estimates for the 24 interaction models. None of the interactions were significant.', row.names = F)
+```
+
+```{r coefficients1}
+tbls_seak$model_summary_table_m10%>% 
+   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m10. Fitted values are log-transformed.', row.names = F)
+```
+
+\pagebreak
+
+```{r coefficients2}
+tbls_seak$model_summary_table_m14 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m14. Fitted values are log-transformed.', row.names = F)
+```
+
+\pagebreak
+
+```{r coefficients3}
+tbls_seak$model_summary_table_m18 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m18. Fitted values are log-transformed.', row.names = F)
+```
+
+\pagebreak
+
+```{r coefficients4}
+tbls_seak$model_summary_table_m20 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m20. Fitted values are log-transformed.', row.names = F)
+```
+
+\pagebreak
+
+```{r coefficients5}
+tbls_seak$model_summary_table_m21 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m21. Fitted values are log-transformed.', row.names = F)
+```
+
+\pagebreak
+
+```{r fitted2, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/fitted_m10.png"))
+```
+
+Figure 2: Standardized residuals versus the predicted plots for a) CPUE and b) temperature. c) Standardized residuals versus juvenile year and d) residuals versus fitted values for model m10. Relationship between e) temperature and harvest and f) CPUE and harvest. The line in figures a, b, d, e, and f is a smoothing function applied to the relationship with a 95% confidence interval.
+
+```{r fitted3, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/fitted_m14.png"))
+```
+
+Figure 3: Standardized residuals versus the predicted plots for a) CPUE and b) temperature. c) Standardized residuals versus juvenile year and d) residuals versus fitted values for model m14. Relationship between e) temperature and harvest and f) CPUE and harvest. The line in figures a, b, d, e, and f is a smoothing function applied to the relationship with a 95% confidence interval.
+
+```{r fitted4, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/fitted_m18.png"))
+```
+
+Figure 4: Standardized residuals versus the predicted plots for a) CPUE and b) temperature. c) Standardized residuals versus juvenile year and d) residuals versus fitted values for model m18. Relationship between e) temperature and harvest and f) CPUE and harvest. The line in figures a, b, d, e, and f is a smoothing function applied to the relationship with a 95% confidence interval.
+
+```{r fitted5, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/fitted_m20.png"))
+```
+
+Figure 5: Standardized residuals versus the predicted plots for a) CPUE and b) temperature. c) Standardized residuals versus juvenile year and d) residuals versus fitted values for model m20. Relationship between e) temperature and harvest and f) CPUE and harvest. The line in figures a, b, d, e, and f is a smoothing function applied to the relationship with a 95% confidence interval.
+
+```{r fitted6, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/fitted_m21.png"))
+```
+
+Figure 6: Standardized residuals versus the predicted plots for a) CPUE and b) temperature. c) Standardized residuals versus juvenile year and d) residuals versus fitted values for model m21. Relationship between e) temperature and harvest and f) CPUE and harvest. The line in figures a, b, d, e, and f is a smoothing function applied to the relationship with a 95% confidence interval.
+
+```{r influential1, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/influential_m10.png"))
+```
+
+Figure 7: Diagnostics plots of influential observations including a) Cook’s Distance (with a cut-off value of
+0.20), and b) leverage values (with a cut-off value of 0.26) from model m10.
+
+```{r influential2, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/influential_m14.png"))
+```
+
+Figure 8: Diagnostics plots of influential observations including a) Cook’s Distance (with a cut-off value of
+0.20), and b) leverage values (with a cut-off value of 0.26) from model m14.
+
+
+```{r influential3, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/influential_m18.png"))
+```
+
+Figure 9: Diagnostics plots of influential observations including a) Cook’s Distance (with a cut-off value of
+0.20), and b) leverage values (with a cut-off value of 0.26) from model m18.
+
+
+```{r influential4, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/influential_m20.png"))
+```
+
+Figure 10: Diagnostics plots of influential observations including a) Cook’s Distance (with a cut-off value of
+0.20), and b) leverage values (with a cut-off value of 0.26) from model m20.
+
+
+```{r influential5, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/influential_m21.png"))
+```
+
+Figure 11: Diagnostics plots of influential observations including a) Cook’s Distance (with a cut-off value of
+0.20), and b) leverage values (with a cut-off value of 0.26) from model m21.
+
+\pagebreak
+
+```{r sess_info, echo=FALSE}
+#sessionInfo()
+```
