@@ -1,3 +1,0 @@
-"model","terms","AdjR2","AICc","MASE","wMAPE","MAPE_LOOCV"
-"m1","CPUE",0.594,32.56,0.389,0.191,0.118
-"m2","CPUE + ISTI20_MJJ",0.809,16.28,0.255,0.117,0.079
