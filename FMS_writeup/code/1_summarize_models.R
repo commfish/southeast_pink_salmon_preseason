@@ -257,83 +257,17 @@ ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, 
 # end year is the year the data is used through (e.g., end = 2014 means that the regression is runs through JYear 2014 and Jyears 2015-2019 are
 # forecasted in the one step ahead process)
 # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
-f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2015) # change to 6 years 
+f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2015, num =6)  # num should be final year of data - end (e.g. 2021-2015) years 
 
 read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
 read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> model_summary_table2
 results %>% 
   mutate(MAPE_one_step_ahead = round(MAPE,3)) %>%
-  dplyr::select(MAPE_one_step_ahead) %>%
+  dplyr::select(MAPE_one_step_ahead, inv_var) %>%
   cbind(., model_summary_table2) %>%
-  dplyr::select(model, AdjR2,  AICc,  MASE, wMAPE, MAPE_LOOCV, MAPE_one_step_ahead) %>%
+  dplyr::select(model, AdjR2,  AICc,  MASE, wMAPE, MAPE_LOOCV, MAPE_one_step_ahead, inv_var) %>%
   write.csv(paste0(results.directory, "/model_summary_table5.csv"), row.names = F)
 
-# # summary of interaction model fits (i.e., coefficients, p-value)
-# lm(SEAKCatch_log ~ CPUE * ISTI20_MJJ, data = log_data_subset) -> m2i
-# lm(SEAKCatch_log ~ CPUE * Chatham_SST_May, data = log_data_subset) -> m3i
-# lm(SEAKCatch_log ~ CPUE * Chatham_SST_MJJ, data = log_data_subset) -> m4i
-# lm(SEAKCatch_log ~ CPUE * Chatham_SST_AMJ, data = log_data_subset) -> m5i
-# lm(SEAKCatch_log ~ CPUE * Chatham_SST_AMJJ, data = log_data_subset) -> m6i
-# lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_May, data = log_data_subset) -> m7i
-# lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_MJJ, data = log_data_subset) -> m8i
-# lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_AMJ, data = log_data_subset) -> m9i
-# lm(SEAKCatch_log ~ CPUE * Icy_Strait_SST_AMJJ, data = log_data_subset) -> m10i
-# lm(SEAKCatch_log ~ CPUE * NSEAK_SST_May, data = log_data_subset) -> m11i
-# lm(SEAKCatch_log ~ CPUE * NSEAK_SST_MJJ, data = log_data_subset) -> m12i
-# lm(SEAKCatch_log ~ CPUE * NSEAK_SST_AMJ, data = log_data_subset) -> m13i
-# lm(SEAKCatch_log ~ CPUE * NSEAK_SST_AMJJ, data = log_data_subset) -> m14i
-# lm(SEAKCatch_log ~ CPUE * SEAK_SST_May, data = log_data_subset) -> m15i
-# lm(SEAKCatch_log ~ CPUE * SEAK_SST_MJJ, data = log_data_subset) -> m16i
-# lm(SEAKCatch_log ~ CPUE * SEAK_SST_AMJ, data = log_data_subset) -> m17i
-# lm(SEAKCatch_log ~ CPUE * SEAK_SST_AMJJ, data = log_data_subset) -> m18i
-# 
-# tidy(m2i) -> model2
-# tidy(m3i) -> model3
-# tidy(m4i) -> model4
-# tidy(m5i) -> model5
-# tidy(m6i) -> model6
-# tidy(m7i) -> model7
-# tidy(m8i) -> model8
-# tidy(m9i) -> model9
-# tidy(m10i) -> model10
-# tidy(m11i) -> model11
-# tidy(m12i) -> model12
-# tidy(m13i) -> model13
-# tidy(m14i) -> model14
-# tidy(m15i) -> model15
-# tidy(m16i) -> model16
-# tidy(m17i) -> model17
-# tidy(m18i) -> model18
-# 
-# rbind(model2, model3) %>% 
-#   rbind(., model4) %>% 
-#   rbind(., model5) %>% 
-#   rbind(., model6) %>% 
-#   rbind(., model7) %>% 
-#   rbind(., model8) %>%   
-#   rbind(., model9) %>% 
-#   rbind(., model10) %>% 
-#   rbind(., model11) %>% 
-#   rbind(., model12) %>% 
-#   rbind(., model13) %>% 
-#   rbind(., model14) %>%   
-#   rbind(., model15) %>% 
-#   rbind(., model16) %>% 
-#   rbind(., model17) %>% 
-#   rbind(., model18) %>% 
-#   mutate(model = c('m2i','m2i','m2i','m2i','m3i','m3i','m3i','m3i',
-#                    'm4i','m4i','m4i','m4i','m5i','m5i','m5i','m5i','m6i','m6i','m6i','m6i',
-#                    'm7i','m7i','m7i','m7i', 'm8i','m8i','m8i','m8i','m9i','m9i',' m9i','m9i',
-#                    'm10i','m10i','m10i','m10i','m11i','m11i','m11i','m11i', 'm12i','m12i',' m12i','m12i',
-#                    'm13i','m13i','m13i','m13i','m14i','m14i','m14i','m14i', 'm15i','m15i','m15i','m15i',
-#                    'm16i','m16i','m16i','m16i','m17i','m17i','m17i','m17i',
-#                    'm18i','m18i','m18i','m18i')) %>% 
-#   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
-#   mutate(estimate = round(estimate,8),
-#          std.error = round(std.error,3),
-#          statistic = round(statistic,3),
-#          p.value = round(p.value,3)) %>%
-#   write.csv(., paste0(results.directory, "/interaction_models.csv"), row.names = F)
 
 # Data file
 read.csv(file.path(data.directory,'var2021_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
