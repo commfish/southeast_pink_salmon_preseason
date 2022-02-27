@@ -74,6 +74,41 @@ f_model_summary <- function(harvest,variables,model.formulas,model.names,w){
   as.data.frame(model.results)-> x
   write.csv(x, file=paste0(results.directory, "/seak_model_summary.csv"))}
 
+f_model_summary_model_average <- function(harvest,variables,model.formulas,model.names,w, k){
+  n<-(dim(variables)[1])-k
+  model.results<-numeric()
+  obs<-harvest[-n]
+  weights<-w[-n]
+  data<-variables[-n,]
+  fit.out<-list()
+  sum_w<-sum(weights)
+  for(i in 1:length(model.formulas)) {
+    fit<-lm(model.formulas[[i]],data=data)
+    fit.out[[i]]<-fit
+    model.sum<-summary(fit)
+    vector.jack<-numeric()
+    for(j in 1:(n-1)){
+      vector.jack[j]<-jacklm.reg(data=data,model.formula=model.formulas[[i]],jacknife.index=j)
+    }
+    mape_LOOCV<-mean(abs(obs-vector.jack)/obs)
+    mape<-mean(abs(obs-fit$fitted.values)/obs)
+    wmape1<-((abs(obs-fit$fitted.values)/obs)*weights)
+    wmape2<-sum(wmape1)
+    wmape<-wmape2/sum_w
+    mase<-MASE(f = (fit$fitted.values), y = obs) # function
+    mase2<-Metrics::mase(obs,fit$fitted.values,1 )
+    model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='prediction',level=.8))
+    sigma <- sigma(fit)
+    model.results<-rbind(model.results,c(model.pred,R2=model.sum$r.squared,AdjR2=model.sum$adj.r.squared, AIC=AIC(fit),AICc=AICcmodavg::AICc(fit),BIC=BIC(fit),
+                                         p = pf(model.sum$fstatistic[1], model.sum$fstatistic[2],model.sum$fstatistic[3],lower.tail = FALSE), sigma = sigma,
+                                         MAPE=mape,MAPE_LOOCV=mape_LOOCV,
+                                         MASE = mase, MASE2=mase2, wMAPE= wmape))
+  }
+  
+  row.names(model.results)<-model.names
+  dimnames(model.results)[[2]][1:3]<-c('fit','fit_LPI','fit_UPI')
+  as.data.frame(model.results)-> x
+  write.csv(x, file=paste0(results.directory, "/seak_model_summary.csv"))}
 f_model_sensitivity <- function(harvest,variables,model.formulas,model.names,w){
   n<-dim(variables)[1]
   model.results<-numeric()

@@ -56,7 +56,6 @@ f_model_summary <- function(harvest,variables,model.formulas,model.names,w){
     }
     mape_LOOCV<-mean(abs(obs-vector.jack)/obs)
     mape<-mean(abs(obs-fit$fitted.values)/obs)
-    inverse_variance<-(sum((obs-fit$fitted.values)^2))/(n-2)
     wmape1<-((abs(obs-fit$fitted.values)/obs)*weights)
     wmape2<-sum(wmape1)
     wmape<-wmape2/sum_w
@@ -74,6 +73,34 @@ f_model_summary <- function(harvest,variables,model.formulas,model.names,w){
   dimnames(model.results)[[2]][1:3]<-c('fit','fit_LPI','fit_UPI')
   as.data.frame(model.results)-> x
   write.csv(x, file=paste0(results.directory, "/seak_model_summary.csv"))}
+
+f_model_summary_model_average <- function(harvest,variables,model.formulas,model.names,w){
+  n<-dim(variables)[1]
+  model.results<-numeric()
+  obs<-harvest[-n]
+  weights<-w[-n]
+  data<-variables[-n,]
+  fit.out<-list()
+  sum_w<-sum(weights)
+  for(i in 1:length(model.formulas)) {
+    fit<-lm(model.formulas[[i]],data=data)
+    fit.out[[i]]<-fit
+    model.sum<-summary(fit)
+    model.pred<-fitted(fit)
+    sigma <- sigma(fit)
+    model.results<-rbind(model.results,c(model.pred,R2=model.sum$r.squared,AdjR2=model.sum$adj.r.squared, AICc=AICcmodavg::AICc(fit),
+                                         p = pf(model.sum$fstatistic[1], model.sum$fstatistic[2],model.sum$fstatistic[3],lower.tail = FALSE), sigma = sigma))
+  }
+  
+  row.names(model.results)<-model.names
+  as.data.frame(model.results)-> x
+  x %>% 
+    mutate(model = c('m1','m2','m3','m4','m5','m6','m7','m8',
+                     'm9','m10','m11','m12','m13','m14','m15','m16','m17',
+                     'm18')) ->x
+    
+  write.csv(x, file = paste0(results.directory, "/seak_model_summary_hindcasts.csv"))}
+
 
 f_model_sensitivity <- function(harvest,variables,model.formulas,model.names,w){
   n<-dim(variables)[1]
@@ -309,30 +336,27 @@ eda.norm <- function(x, ...)
   shapiro.test(x)
 }
 # function check for one model (one step ahead MAPE)
-f_model_one_step_ahead <- function(harvest,variables,model, start, end,num){
+f_model_one_step_ahead <- function(harvest,variables,model, start, end){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
   data<-variables[-n,]
   fit.out<-list()
-  for (i in (end+1):tail(data$JYear)[num])
+  for (i in (end+1):tail(data$JYear)[6])
   {
     fit<-lm(model,data = data[data$JYear >= start & data$JYear < i,])
     data$model1_sim[data$JYear == i] <- predict(fit, newdata = data[data$JYear == i,])
   }
-  #return(data)
+  return(data)
   data %>% 
     dplyr::filter(JYear > end) -> output
-  #return(output)
   mape(output$SEAKCatch_log,output$model1_sim)
-  #return(output$model1_sim)
-  #inv_var(output$SEAKCatch_log,output$model1_sim,num)
 } 
 # function check for one model (one step ahead MAPE)
-seak_model_summary2 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2015, num =6) # num should be final year of data - end (e.g. 2021-2015)
+seak_model_summary2 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2015)
 
 # function for multiple models (one step ahead MAPE)
-f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,model.names, start, end,num){
+f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,model.names, start, end){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
@@ -340,7 +364,7 @@ f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,mod
   fit.out<-list()
   for(i in 1:length(model.formulas)) 
   {
-    for (j in (end+1):tail(data$JYear)[num])
+    for (j in (end+1):tail(data$JYear)[6])
     {
       fit<-lm(model.formulas[[i]],data = data[data$JYear >= start & data$JYear < j,])
       fit.out[[i]]<-fit
@@ -350,12 +374,10 @@ f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,mod
     data %>% 
       dplyr::filter(JYear > end) -> output
     MAPE<-mape(output$SEAKCatch_log,output$model1_sim)
-    inverse_variance<-inv_var(output$SEAKCatch_log,output$model1_sim,num)
-    #return(output$model1_sim))
-    model.results<-rbind(model.results,c(MAPE= MAPE,inverse_variance = inverse_variance))
+    model.results<-rbind(model.results, MAPE= MAPE)
   } 
   row.names(model.results)<-model.names
-  dimnames(model.results)[[2]][1:2]<-c('MAPE','inv_var')
+  dimnames(model.results)[[2]][1]<-c('MAPE')
   as.data.frame(model.results)-> x
   write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead.csv"))}
 
@@ -386,5 +408,3 @@ f_model_one_step_ahead_multiple_sensitive <- function(harvest,variables,model.fo
   as.data.frame(model.results)-> x
   write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead_sensitive.csv"))}
 
-inv_var <- function(actual, predicted,num){
-  1/((sum((actual - predicted)^2))/(num-2))} # should be n-1 but num=n+1

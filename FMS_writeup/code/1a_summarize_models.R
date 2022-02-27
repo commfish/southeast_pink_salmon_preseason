@@ -2,7 +2,7 @@
 # Script written by Jim Murphy updated: 10/18/19
 # adapted by Sara Miller 10/05/2021
 # pink_cal_pooled_species
-
+# http://www.sthda.com/english/articles/40-regression-analysis/166-predict-in-r-model-predictions-and-confidence-intervals/
 # load libraries
 library("devtools")
 devtools::install_github("commfish/fngr")
@@ -41,7 +41,7 @@ forecast2021 <- 28 # input last year's forecast for the forecast plot
 
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
-source('2022_forecast/code/functions.r')
+source('FMS_writeup/code/functions.r')
 
 # STEP 1: DATA
 # read in data
@@ -183,7 +183,7 @@ results %>%
          MAPE_LOOCV = round(MAPE_LOOCV,3),
          wMAPE = round(wMAPE, 3)) %>%
   mutate(model = c('m1','m2','m3','m4','m5','m6','m7','m8',
-                   'm9','m10','m11','m12','m13','m14','m15','m16',' m17',
+                   'm9','m10','m11','m12','m13','m14','m15','m16','m17',
                    'm18')) %>%
   mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
@@ -257,7 +257,7 @@ ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, 
 # end year is the year the data is used through (e.g., end = 2014 means that the regression is runs through JYear 2014 and Jyears 2015-2019 are
 # forecasted in the one step ahead process)
 # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
-f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2015, num =6)  # num should be final year of data - end (e.g. 2021-2015) years 
+f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2015)  # num should be final year of data - end (e.g. 2021-2015) years 
 
 read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
 read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> model_summary_table2
@@ -266,10 +266,10 @@ results %>%
   dplyr::select(MAPE_one_step_ahead, inv_var) %>%
   cbind(., model_summary_table2) %>%
   dplyr::select(model, AdjR2,  AICc,  MASE, wMAPE, MAPE_LOOCV, MAPE_one_step_ahead, inv_var) %>%
-  write.csv(paste0(results.directory, "/model_summary_table5.csv"), row.names = F)
+  write.csv(paste0(results.directory, "/model_summary_table4.csv"), row.names = F)
 
 
-# Data file
+# Data file (create a variable file for the write-up)
 read.csv(file.path(data.directory,'var2021_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
 
 # restructure the data (for write-up)
