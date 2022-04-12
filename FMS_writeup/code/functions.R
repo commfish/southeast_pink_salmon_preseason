@@ -12,6 +12,9 @@ MASE <- function(f,y) { # f = vector with forecasts, y = vector with actuals
 mape <- function(actual, predicted){
   mean(abs((actual - predicted)/actual))}
 
+inv_var <- function(actual, predicted){
+1/((sum(abs((actual - predicted)^2)))/(length(actual)-1))}
+
 mape_summary <- function (data,lev = NULL, model = NULL) {
   out <- mape((data$obs),(data$pred))  
   names(out) <- "MAPE"
@@ -61,7 +64,7 @@ f_model_summary <- function(harvest,variables,model.formulas,model.names,w){
     wmape<-wmape2/sum_w
     mase<-MASE(f = (fit$fitted.values), y = obs) # function
     mase2<-Metrics::mase(obs,fit$fitted.values,1 )
-    model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='prediction',level=.8))
+    model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='confidence',level=.80))
     sigma <- sigma(fit)
     model.results<-rbind(model.results,c(model.pred,R2=model.sum$r.squared,AdjR2=model.sum$adj.r.squared, AIC=AIC(fit),AICc=AICcmodavg::AICc(fit),BIC=BIC(fit),
                                          p = pf(model.sum$fstatistic[1], model.sum$fstatistic[2],model.sum$fstatistic[3],lower.tail = FALSE), sigma = sigma,
@@ -101,42 +104,6 @@ f_model_summary_model_average <- function(harvest,variables,model.formulas,model
     
   write.csv(x, file = paste0(results.directory, "/seak_model_summary_hindcasts.csv"))}
 
-
-f_model_sensitivity <- function(harvest,variables,model.formulas,model.names,w){
-  n<-dim(variables)[1]
-  model.results<-numeric()
-  obs<-harvest[-n]
-  weights<-w[-n]
-  data<-variables[-n,]
-  fit.out<-list()
-  sum_w<-sum(weights)
-  for(i in 1:length(model.formulas)) {
-    fit<-lm(model.formulas[[i]],data=data)
-    fit.out[[i]]<-fit
-    model.sum<-summary(fit)
-    vector.jack<-numeric()
-    for(j in 1:(n-1)){
-      vector.jack[j]<-jacklm.reg(data=data,model.formula=model.formulas[[i]],jacknife.index=j)
-    }
-    mape_LOOCV<-mean(abs(obs-vector.jack)/obs)
-    mape<-mean(abs(obs-fit$fitted.values)/obs)
-    wmape1<-((abs(obs-fit$fitted.values)/obs)*weights)
-    wmape2<-sum(wmape1)
-    wmape<-wmape2/sum_w
-    mase<-MASE(f = (fit$fitted.values), y = obs) # function
-    mase2<-Metrics::mase(obs,fit$fitted.values,1 )
-    model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='prediction',level=.8))
-    sigma <- sigma(fit)
-    model.results<-rbind(model.results,c(model.pred,R2=model.sum$r.squared,AdjR2=model.sum$adj.r.squared, AIC=AIC(fit),AICc=AICcmodavg::AICc(fit),BIC=BIC(fit),
-                                         p = pf(model.sum$fstatistic[1], model.sum$fstatistic[2],model.sum$fstatistic[3],lower.tail = FALSE), sigma = sigma,
-                                         MAPE=mape,MAPE_LOOCV=mape_LOOCV,
-                                         MASE = mase, MASE2=mase2, wMAPE= wmape))
-  }
-  
-  row.names(model.results)<-model.names
-  dimnames(model.results)[[2]][1:3]<-c('fit','fit_LPI','fit_UPI')
-  as.data.frame(model.results)-> x
-  write.csv(x, file=paste0(results.directory, "/seak_model_summary_sensitivity.csv"))}
 
 # output diagnostics function
 f_model_diagnostics <- function(best_model, model_name){
@@ -353,9 +320,8 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end){
   mape(output$SEAKCatch_log,output$model1_sim)
 } 
 # function check for one model (one step ahead MAPE)
-seak_model_summary2 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2015)
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJJ, start = 1997, end = 2009)
 
-# function for multiple models (one step ahead MAPE)
 f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,model.names, start, end){
   n<-dim(variables)[1]
   model.results<-numeric()
@@ -381,9 +347,29 @@ f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,mod
   as.data.frame(model.results)-> x
   write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead.csv"))}
 
+f_model_one_step_ahead_inv_var <- function(harvest,variables,model, start, end){
+  n<-dim(variables)[1]
+  model.results<-numeric()
+  obs<-harvest[-n]
+  data<-variables[-n,]
+  fit.out<-list()
+  for (i in (end+1):tail(data$JYear)[6])
+  {
+    fit<-lm(model,data = data[data$JYear >= start & data$JYear < i,])
+    data$model1_sim[data$JYear == i] <- predict(fit, newdata = data[data$JYear == i,])
+  }
+  #return(data)
+  data %>% 
+    dplyr::filter(JYear > end) -> output
+  inv_var(output$SEAKCatch_log,output$model1_sim)
+  
+} 
+# function check for one model (one step ahead MAPE)
+seak_model_summary2 <- f_model_one_step_ahead_inv_var(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2015)
 
-# function for multiple models (one step ahead MAPE)
-f_model_one_step_ahead_multiple_sensitive <- function(harvest,variables,model.formulas,model.names, start, end){
+
+# function for multiple models (one step ahead inverse_variance)
+f_model_one_step_ahead_multiple_inv_var <- function(harvest,variables,model.formulas,model.names, start, end){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
@@ -400,11 +386,13 @@ f_model_one_step_ahead_multiple_sensitive <- function(harvest,variables,model.fo
     #return(data)
     data %>% 
       dplyr::filter(JYear > end) -> output
-    MAPE<-mape(output$SEAKCatch_log,output$model1_sim)
-    model.results<-rbind(model.results, MAPE= MAPE)
+    inverse_variance<-inv_var(output$SEAKCatch_log,output$model1_sim)
+    model.results<-rbind(model.results, inverse_variance= inverse_variance)
   } 
   row.names(model.results)<-model.names
-  dimnames(model.results)[[2]][1]<-c('MAPE')
+  dimnames(model.results)[[2]][1]<-c('inv_var')
   as.data.frame(model.results)-> x
-  write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead_sensitive.csv"))}
+  write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead_inv_var.csv"))}
+
+
 

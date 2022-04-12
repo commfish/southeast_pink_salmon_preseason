@@ -1,6 +1,7 @@
 # source code and functions
-source('FMS_writeup/code/1_summarize_models.r')
+source('FMS_writeup/code/1a_summarize_models.r')
 source('FMS_writeup/code/functions.r')
+#https://stackoverflow.com/questions/38109501/how-does-predict-lm-compute-confidence-interval-and-prediction-interval
 # https://www.mm218.dev/posts/2021/01/model-averaging/
 # Mahoney (2021, Jan. 18). Mike Mahoney: Model averaging methods: how and why to build ensemble models. Retrieved from https://www.mm218.dev/posts/2021/01/model-averaging/
 # https://rdrr.io/github/padpadpadpad/rTPC/f/vignettes/model_averaging_selection.Rmd
@@ -18,10 +19,10 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.
   dplyr::rename(terms = 'X') %>% 
   dplyr::select(terms, fit,	se.fit, fit_LPI,	fit_UPI, sigma, df) %>%
   cbind(., summary_table) %>%
+  mutate(stdv = se.fit*sqrt(df))%>%
   mutate(sigma = round(sigma,3),
-         stdev = (se.fit * sqrt(df +1))) %>%
-  mutate(var_yhat = stdev * stdev)  %>% 
-  mutate(fit_bias_corrected = fit+((sigma*sigma)/2)) %>%
+         var_yhat = stdv * stdv)  %>% 
+  mutate(fit_bias_corrected = fit) %>%
   mutate(weight_pred = sum(fit_bias_corrected*weight)) %>%
   mutate(step1 = ((fit_bias_corrected - weight_pred)^2) + var_yhat) %>%
   mutate(step2 = sqrt(step1) * weight) %>%

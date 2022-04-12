@@ -19,7 +19,7 @@ library(mda)
 library(tidyverse)
 library(dLagM) # MASE calc
 library(ggplot2)
-library(car)
+#library(car)
 library(ggfortify)
 library(Hmisc)
 library(dplyr)
@@ -219,50 +219,52 @@ results %>%
 
 
 # forecast figure
-read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
-results %>% 
-  dplyr::rename(terms = 'X') %>% 
-  dplyr::select(terms, fit,	fit_LPI,	fit_UPI, sigma) %>%
-  mutate(model = c('1','2','3','4','5','6','7','8',
-                   '9','10','11','12','13','14','15','16','17',
-                   '18')) %>%
-  mutate(model= as.numeric(model),
-         fit_log = exp(fit)*exp(0.5*sigma*sigma),
-         fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), 
-         fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% 
-  dplyr::select(model, terms, fit_log,fit_log_LPI, 	fit_log_UPI) %>% 
-  as.data.frame() %>%
-  ggplot(., aes(x=model)) +
-  geom_bar(aes(y = fit_log, fill = "SEAK pink catch"),
-           stat = "identity", colour ="black",
-           width = 1, position = position_dodge(width = 0.1)) +
-  scale_colour_manual("", values=c("SEAK pink catch" = "lightgrey", "fit" = "black")) +
-  scale_fill_manual("",values="lightgrey")+
-  theme_bw() + theme(legend.key=element_blank(),
-                     legend.title=element_blank(),
-                     legend.position = "none") +
-  geom_hline(aes(yintercept=model_average_equal), color="red", lty = 2) +
-  geom_hline(aes(yintercept=model_average_inverse_MAPE), color="black", lty = 3) +
-  geom_hline(aes(yintercept=model_average_equal_MAPE), color="grey50", lty = 4) +
-  geom_hline(aes(yintercept=model_AICc), color="blue", lty = 2) +
-  geom_hline(aes(yintercept=forecast2021), color="grey50", lty = 1) +
-  geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, size=1, color="blue")+
-  scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40), limits = c(0,40))+ 
-  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18), limits = c(0,19))+ 
-  labs(x = "Models", y = "2022 SEAK Pink Salmon Forecast (millions)")  -> plot1
-ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, width = 6, units = "in")
+# read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
+# results %>% 
+#   dplyr::rename(terms = 'X') %>% 
+#   dplyr::select(terms, fit,	fit_LPI,	fit_UPI, sigma) %>%
+#   mutate(model = c('1','2','3','4','5','6','7','8',
+#                    '9','10','11','12','13','14','15','16','17',
+#                    '18')) %>%
+#   mutate(model= as.numeric(model),
+#          fit_log = exp(fit)*exp(0.5*sigma*sigma),
+#          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), 
+#          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% 
+#   dplyr::select(model, terms, fit_log,fit_log_LPI, 	fit_log_UPI) %>% 
+#   as.data.frame() %>%
+#   ggplot(., aes(x=model)) +
+#   geom_bar(aes(y = fit_log, fill = "SEAK pink catch"),
+#            stat = "identity", colour ="black",
+#            width = 1, position = position_dodge(width = 0.1)) +
+#   scale_colour_manual("", values=c("SEAK pink catch" = "lightgrey", "fit" = "black")) +
+#   scale_fill_manual("",values="lightgrey")+
+#   theme_bw() + theme(legend.key=element_blank(),
+#                      legend.title=element_blank(),
+#                      legend.position = "none") +
+#   geom_hline(aes(yintercept=model_average_equal), color="red", lty = 2) +
+#   geom_hline(aes(yintercept=model_average_inverse_MAPE), color="black", lty = 3) +
+#   geom_hline(aes(yintercept=model_average_equal_MAPE), color="grey50", lty = 4) +
+#   geom_hline(aes(yintercept=model_AICc), color="blue", lty = 2) +
+#   geom_hline(aes(yintercept=forecast2021), color="grey50", lty = 1) +
+#   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, size=1, color="blue")+
+#   scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40), limits = c(0,40))+ 
+#   scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18), limits = c(0,19))+ 
+#   labs(x = "Models", y = "2022 SEAK Pink Salmon Forecast (millions)")  -> plot1
+# ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, width = 6, units = "in")
 
 # one step ahead MAPE
 # https://stackoverflow.com/questions/37661829/r-multivariate-one-step-ahead-forecasts-and-accuracy
 # end year is the year the data is used through (e.g., end = 2014 means that the regression is runs through JYear 2014 and Jyears 2015-2019 are
 # forecasted in the one step ahead process)
 # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
-f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2015)  # num should be final year of data - end (e.g. 2021-2015) years 
+f_model_one_step_ahead_multiple_inv_var(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2015)  # num should be final year of data - end (e.g. 2021-2015) years 
+f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2014)  # num should be final year of data - end (e.g. 2021-2015) years 
 
-read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
+read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead_inv_var.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
 read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> model_summary_table2
-results %>% 
+read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
   mutate(MAPE_one_step_ahead = round(MAPE,3)) %>%
+  cbind(., results) %>%
   dplyr::select(MAPE_one_step_ahead, inv_var) %>%
   cbind(., model_summary_table2) %>%
   dplyr::select(model, AdjR2,  AICc,  MASE, wMAPE, MAPE_LOOCV, MAPE_one_step_ahead, inv_var) %>%
@@ -280,11 +282,34 @@ variables %>%
   write.csv(., paste0(results.directory, "/data_used.csv"), row.names = F)
 
 # # test of predict results
-# model.m1 = lm(SEAKCatch_log ~ CPUE, data = log_data_subset)
-# best.model <- m1 # this can be added after steps 1 and 2 after the best model is determined
-# last_year_data_cpue <- 0.875454122
-# sigma<- sigma(best.model) # best model
-# CPUE <- last_year_data_cpue # last year of data
-# newdata <- data.frame(CPUE)
-# predicted<-predict(model.m1, newdata, interval="prediction", level = 0.80)
-# predicted
+ model.m1 = lm(SEAKCatch_log ~ CPUE, data = log_data_subset)
+ best.model <- m1 # this can be added after steps 1 and 2 after the best model is determined
+ last_year_data_cpue <- 0.875454122
+ sigma<- sigma(best.model) # best model
+ CPUE <- last_year_data_cpue # last year of data
+ newdata <- data.frame(CPUE)
+ preds<-predict(model.m1, newdata, interval="confidence", level = 0.80, se.fit=T)
+ z <- predict(model.m1, newdata, se.fit = TRUE)
+ alpha <- 0.80  ## 90%
+ Qt <- c(-1, 1) * qt((1 - alpha) / 2, z$df, lower.tail = FALSE)
+ CI <- z$fit + outer(z$se.fit, Qt)
+ colnames(CI) <- c("lwr", "upr")
+ CI
+ 
+ # # test of predict results
+ model.m2 = lm(SEAKCatch_log ~ CPUE + ISTI20_MJJ, data = log_data_subset)
+ best.model <- m2 # this can be added after steps 1 and 2 after the best model is determined
+ last_year_data_cpue <- 0.875454122
+ sigma<- sigma(best.model) # best model
+ CPUE <- 0.875454122 # last year of data
+ ISTI20_MJJ <- 8.885509921 # last year of data
+ newdata <- data.frame(CPUE, ISTI20_MJJ)
+ preds<-predict(model.m2, newdata, interval="confidence", level = 0.80, se.fit=T)
+ z <- predict.lm(model.m2, newdata, se.fit = TRUE)
+ alpha <- 0.80  ## 90%
+ Qt <- c(-1, 1) * qt((1 - alpha) / 2, z$df, lower.tail = FALSE)
+ CI <- z$fit + outer(z$se.fit, Qt)
+ colnames(CI) <- c("lwr", "upr")
+ CI
+ z$df
+ 

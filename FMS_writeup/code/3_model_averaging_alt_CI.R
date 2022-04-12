@@ -65,7 +65,7 @@ read.csv(file.path(results.directory,'seak_model_summary_hindcasts.csv'), header
          F2020 = sum(Y2020*weight),
          F2021 = sum(Y2021*weight))%>%  #https://www.statology.org/gather-function-in-r/
   dplyr::select(-c(Y2017, Y2018, Y2019, Y2020, Y2021, weight)) %>% 
-  mutate(se_y_pred = (log(34.7)-F2017)^2+(log(8.1)-F2018)^2+(log(21.1)-F2019)^2+(log(8.0679)-F2020)^2+(log(48.4)-F2021)^2) %>% # sample standard deviation
+  mutate(se_y_pred = (log(34.734366)-F2017)^2+(log(8.0677)-F2018)^2+(log(21.141928)-F2019)^2+(log(8.062989)-F2020)^2+(log(48.503719)-F2021)^2) %>% # sample standard deviation
   dplyr::select(-c(F2017, F2018, F2019, F2020, F2021, model)) ->df3
 
 
@@ -79,8 +79,8 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.
   dplyr::select(terms, fit,	se.fit, fit_LPI,	fit_UPI, sigma, df) %>%
   cbind(., summary_table) %>%
   mutate(sigma = round(sigma,3),
-         stdev = (se.fit * sqrt(df +1))) %>%
-  mutate(fit_bias_corrected = fit+((sigma*sigma)/2)) %>%
+         stdev = (se.fit * sqrt(df))) %>%
+  mutate(fit_bias_corrected = fit) %>%
   mutate(weight_pred = sum(fit_bias_corrected*weight)) %>%
   cbind(., df3) %>%
   mutate(fit_LPI_80 = (weight_pred)-(1.28*se_y_pred),
