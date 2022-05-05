@@ -11,9 +11,9 @@ library(gam)
 library(MASS)
 library(MuMIn)
 library(AICcmodavg)
-library(forecast)
+#library(forecast)
 library(broom)
-library(caret)
+#library(caret)
 library(rpart)
 library(mda)
 library(tidyverse)
@@ -288,7 +288,7 @@ variables %>%
  sigma<- sigma(best.model) # best model
  CPUE <- last_year_data_cpue # last year of data
  newdata <- data.frame(CPUE)
- preds<-predict(model.m1, newdata, interval="confidence", level = 0.80, se.fit=T)
+ preds<-predict(model.m1, newdata, interval="prediction", level = 0.80, se.fit=T)
  z <- predict(model.m1, newdata, se.fit = TRUE)
  alpha <- 0.80  ## 90%
  Qt <- c(-1, 1) * qt((1 - alpha) / 2, z$df, lower.tail = FALSE)

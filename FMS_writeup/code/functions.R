@@ -64,7 +64,7 @@ f_model_summary <- function(harvest,variables,model.formulas,model.names,w){
     wmape<-wmape2/sum_w
     mase<-MASE(f = (fit$fitted.values), y = obs) # function
     mase2<-Metrics::mase(obs,fit$fitted.values,1 )
-    model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='confidence',level=.80))
+    model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='prediction',level=.80))
     sigma <- sigma(fit)
     model.results<-rbind(model.results,c(model.pred,R2=model.sum$r.squared,AdjR2=model.sum$adj.r.squared, AIC=AIC(fit),AICc=AICcmodavg::AICc(fit),BIC=BIC(fit),
                                          p = pf(model.sum$fstatistic[1], model.sum$fstatistic[2],model.sum$fstatistic[3],lower.tail = FALSE), sigma = sigma,
@@ -312,15 +312,19 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end){
   for (i in (end+1):tail(data$JYear)[6])
   {
     fit<-lm(model,data = data[data$JYear >= start & data$JYear < i,])
+    fit.out<-list()
     data$model1_sim[data$JYear == i] <- predict(fit, newdata = data[data$JYear == i,])
+    data$sigma[data$JYear == i] <- sigma(fit, newdata = data[data$JYear == i,])
   }
   return(data)
   data %>% 
     dplyr::filter(JYear > end) -> output
-  mape(output$SEAKCatch_log,output$model1_sim)
+  #mape(output$SEAKCatch_log,output$model1_sim)
 } 
 # function check for one model (one step ahead MAPE)
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJJ, start = 1997, end = 2009)
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJJ, start = 1997, end = 2005)
+
+
 
 f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,model.names, start, end){
   n<-dim(variables)[1]
