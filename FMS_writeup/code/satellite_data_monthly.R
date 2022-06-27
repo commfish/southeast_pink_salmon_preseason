@@ -14,12 +14,13 @@ library(PBSmapping)
 library(extrafont)
 library(ggrepel)
 library(lubridate)
-#extrafont::font_import() # only needs to be run once for extra fonts for figures
+library(ggpubr)
+# extrafont::font_import() # only needs to be run once for extra fonts for figures
 windowsFonts(Times=windowsFont("TT Times New Roman"))
 theme_set(theme_report(base_size = 14))
 
 # set up directories----
-year.forecast <- "2022_forecast" 
+year.forecast <- "FMS_writeup" 
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 #------------------------------------------------------------------------------------------------------------------------------------------
@@ -249,7 +250,11 @@ fig_data %>%
          Chatham = Chatham_SST_May,
          NSEAK =  NSEAK_SST_May,
          SEAK= SEAK_SST_May) %>% 
-  gather("var", "value", -c(year)) %>% 
+  gather("var", "value", -c(year)) %>%
+  mutate(var = factor(var,
+                      ordered = TRUE,
+                      levels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK"),
+                      labels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK"))) %>%
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size = var)) +
   geom_line(aes(linetype = var, color = var)) +
@@ -257,16 +262,16 @@ fig_data %>%
   scale_shape_manual(values=c(1, 16, 1, 24)) +
   scale_color_manual(values=c('black','black', 'grey70', 'black')) +
   scale_size_manual(values=c(0.02,2,0.02,2)) +
-  theme(legend.title=element_blank(),
+  theme(legend.title=element_blank(),legend.position = "bottom",
         panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
         text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
         legend.text=element_text(size=10), 
-        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
+        axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"))+
   scale_x_continuous(breaks = 1997:2021, labels = 1997:2021) +
   scale_y_continuous(breaks = c(6,7, 8, 9,10,11,12), limits = c(6,12))+
-  geom_text(aes(x = 1999.7, y = 12, label="A) May temperature"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(x = 1997.3, y = 12, label="D) May"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot1
 
 fig_data %>%
@@ -275,7 +280,11 @@ fig_data %>%
          Chatham = Chatham_SST_MJJ,
          NSEAK =  NSEAK_SST_MJJ,
          SEAK= SEAK_SST_MJJ) %>% 
-  gather("var", "value", -c(year)) %>% 
+  gather("var", "value", -c(year)) %>%
+  mutate(var = factor(var,
+                      ordered = TRUE,
+                      levels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK"),
+                      labels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK")))%>%
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size = var)) +
   geom_line(aes(linetype = var, color = var)) +
@@ -283,15 +292,15 @@ fig_data %>%
   scale_shape_manual(values=c(1, 16, 1, 24)) +
   scale_color_manual(values=c('black','black', 'grey70', 'black')) +
   scale_size_manual(values=c(0.02,2,0.02,2)) +
-  theme(legend.title=element_blank(),
+  theme(legend.title=element_blank(),legend.position = "none",
         panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
         text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
-        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
+        axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
   scale_x_continuous(breaks = 1997:2021, labels = 1997:2021) +
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11, 12), limits = c(6,12))+
-  geom_text(aes(x = 2001.5, y = 12, label="B) May, June, July temperature"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(x = 1999, y = 12, label="C) May, June, July"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot2
 
 fig_data %>%
@@ -300,7 +309,11 @@ fig_data %>%
          Chatham = Chatham_SST_AMJJ,
          NSEAK =  NSEAK_SST_AMJJ,
          SEAK= SEAK_SST_AMJJ) %>% 
-  gather("var", "value", -c(year)) %>% 
+  gather("var", "value", -c(year)) %>%
+  mutate(var = factor(var,
+                      ordered = TRUE,
+                      levels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK"),
+                      labels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK")))%>% 
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size = var)) +
   geom_line(aes(linetype = var, color = var)) +
@@ -308,15 +321,15 @@ fig_data %>%
   scale_shape_manual(values=c(1, 16, 1, 24)) +
   scale_color_manual(values=c('black','black', 'grey70', 'black')) +
   scale_size_manual(values=c(0.02,2,0.02,2)) +
-  theme(legend.title=element_blank(),
+  theme(legend.title=element_blank(),legend.position = "none",
         panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
         text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
-        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
+        axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"))  +
   scale_x_continuous(breaks = 1997:2021, labels = 1997:2021) +
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
-  geom_text(aes(x = 2002.5, y = 12, label="D) April, May, June, July temperature"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(x = 1999.8, y = 12, label="A) April, May, June, July"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot3
 
 fig_data %>%
@@ -325,7 +338,11 @@ fig_data %>%
          Chatham = Chatham_SST_AMJ,
          NSEAK =  NSEAK_SST_AMJ,
          SEAK= SEAK_SST_AMJ) %>% 
-  gather("var", "value", -c(year)) %>% 
+  gather("var", "value", -c(year)) %>%
+  mutate(var = factor(var,
+                      ordered = TRUE,
+                      levels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK"),
+                      labels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK")))%>%
   ggplot(., aes(y = value, x = year, group = var)) +
   geom_point(aes(shape = var, color = var, size = var)) +
   geom_line(aes(linetype = var, color = var)) +
@@ -333,18 +350,24 @@ fig_data %>%
   scale_shape_manual(values=c(1, 16, 1, 24)) +
   scale_color_manual(values=c('black','black', 'grey70', 'black')) +
   scale_size_manual(values=c(0.02,2,0.02,2)) +
-  theme(legend.title=element_blank(),
+  theme(legend.title=element_blank(),legend.position = "none",
         panel.border = element_blank(), panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
         text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
-        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
+        axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
   scale_x_continuous(breaks = 1997:2021, labels = 1997:2021) +
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
-  geom_text(aes(x = 2001.5, y = 12, label="C) April, May, June temperature"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(x = 1999, y = 12, label="B) April, May, June"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot4
-cowplot::plot_grid(plot1,plot2,plot4, plot3, align = "v", nrow = 4, ncol=1)
-ggsave(paste0(results.directory, "monthly_temp_regions.png"), dpi = 500, height = 8, width = 7, units = "in")
+# https://newbedev.com/one-shared-legend-for-a-cowplot-grid-in-r
+ggpubr::ggarrange(plot3, plot4, plot2, plot1,  # list of plots
+                  #labels = "AUTO", # labels
+                  common.legend = T, # COMMON LEGEND
+                  legend = "bottom", # legend position
+                  align = "v", nrow = 4) # Align them both, horizontal and vertical
+#cowplot::plot_grid(plot3, plot4, plot2, plot1, align = "v", nrow = 4, ncol=1)
+ggsave(paste0(results.directory, "monthly_temp_regions.png"), dpi = 500, height = 9, width = 7, units = "in")
 
 # create a figure of ISTI_MJJ for the SECM survey
 read.csv(paste0(data.directory, 'SECMvar2021_MJJ.csv')) %>%
@@ -365,7 +388,7 @@ read.csv(paste0(data.directory, 'SECMvar2021_MJJ.csv')) %>%
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
         legend.position="none") +
   scale_x_continuous(breaks = 1997:2021, labels = 1997:2021) +
-  scale_y_continuous(breaks = c(5,6,7, 8, 9,10,11,12,13), limits = c(5,13))+
+  scale_y_continuous(breaks = c(6,7, 8, 9,10,11,12,13), limits = c(6,12))+
   #geom_text(aes(x = 2000.5, y = 13, label="May, June, July temperature"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot1
 cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
