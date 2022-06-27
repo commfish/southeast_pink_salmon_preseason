@@ -1,6 +1,6 @@
-# Environmental Variables for SEAK Pink Salmon Forecast Models
+# Satellite SST variables
 # Script written by Sara Miller (sara.miller@alaska.gov) with assistance from Jordan Watson (jordan.watson@noaa.gov)
-# October 1, 2021
+# May 2022
 
 # load libraries----
 library("devtools")
@@ -19,7 +19,7 @@ windowsFonts(Times=windowsFont("TT Times New Roman"))
 theme_set(theme_report(base_size = 14))
 
 # set up directories----
-year.forecast <- "2022_forecast" 
+year.forecast <- "2023_forecast" 
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 #------------------------------------------------------------------------------------------------------------------------------------------
