@@ -254,17 +254,17 @@ ggsave(paste0(results.directory, "influential_", model_name,".png"), dpi = 500, 
        # cpuedata: a list of individual catch observations by year
        # variables: a dataframe of harvest, catch indices and forecast variables
        # model.formula: linear model formula
-bootstraplm<-function(cpuedata,variables,model.formula){
-  logplus1<-function(x) log(x+1)
-  catch1<-lapply(cpuedata,sample,replace=T)
-  catch2<-lapply(catch1,logplus1)
-  variables$CPUE<-unlist(lapply(catch2,mean))
-  d<-dim(variables)[1]
-  var.fit<-variables[-d,]
-  var.pred<-variables[d,]
-  boot.lm<-lm(model.formula,data=var.fit)
-  predict(boot.lm,newdata=var.pred)
-}
+# bootstraplm<-function(cpuedata,variables,model.formula){
+#   logplus1<-function(x) log(x+1)
+#   catch1<-lapply(cpuedata,sample,replace=T)
+#   catch2<-lapply(catch1,logplus1)
+#   variables$CPUE<-unlist(lapply(catch2,mean))
+#   d<-dim(variables)[1]
+#   var.fit<-variables[-d,]
+#   var.pred<-variables[d,]
+#   boot.lm<-lm(model.formula,data=var.fit)
+#   predict(boot.lm,newdata=var.pred)
+# }
 
 # bootstrap summary function: generates quantiles of boostrap distribution
       # cpuedata: list of individual cpue data to bootstrap
@@ -273,15 +273,15 @@ bootstraplm<-function(cpuedata,variables,model.formula){
       # model.names: vector of model names to bootstrap
       # quantiles: quantiles of the boostrap distribution used for confidence intervals
 # this function will need to be edited once the bootstraplm function is edited to support weighted transect data
-boot.summary <- function(cpuedata,variables,model.formulas,model.names,quantiles=c(.1,.9)){
-  boot.summary<-numeric()
-  for(i in 1:length(model.formulas))
-    boot.summary<-rbind(boot.summary,quantile(replicate(10000,
-                      bootstraplm(cpuedata=cpuedata,variables=variables,model.formula=model.formulas[[i]])),
-                      probs=quantiles))
-  row.names(boot.summary)<-model.names
-  boot.summary
-  write.csv(boot.summary, file.path(results.directory, "seak_model_bootsummary.csv")) }
+# boot.summary <- function(cpuedata,variables,model.formulas,model.names,quantiles=c(.1,.9)){
+#   boot.summary<-numeric()
+#   for(i in 1:length(model.formulas))
+#     boot.summary<-rbind(boot.summary,quantile(replicate(10000,
+#                       bootstraplm(cpuedata=cpuedata,variables=variables,model.formula=model.formulas[[i]])),
+#                       probs=quantiles))
+#   row.names(boot.summary)<-model.names
+#   boot.summary
+#   write.csv(boot.summary, file.path(results.directory, "seak_model_bootsummary.csv")) }
 
 #normality test
 eda.norm <- function(x, ...)
@@ -303,7 +303,7 @@ eda.norm <- function(x, ...)
   shapiro.test(x)
 }
 # function check for one model (one step ahead MAPE)
-f_model_one_step_ahead <- function(harvest,variables,model, start, end){
+f_model_one_step_ahead <- function(harvest,variables,model, start, end, model_num){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
@@ -318,11 +318,13 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end){
   }
   #return(data)
   data %>% 
-    dplyr::filter(JYear > end) -> output
-  mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
+    dplyr::filter(JYear > end) %>% 
+    as.data.frame() %>% 
+    write.csv(., file = paste0(results.directory, "/results_",model_num,".csv"))
+  # mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
 } 
 # function check for one model (one step ahead MAPE)
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2015)
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2011, model_num = "m1")
 
 
 
@@ -351,52 +353,52 @@ f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,mod
   as.data.frame(model.results)-> x
   write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead.csv"))}
 
-f_model_one_step_ahead_inv_var <- function(harvest,variables,model, start, end){
-  n<-dim(variables)[1]
-  model.results<-numeric()
-  obs<-harvest[-n]
-  data<-variables[-n,]
-  fit.out<-list()
-  for (i in (end+1):tail(data$JYear)[6])
-  {
-    fit<-lm(model,data = data[data$JYear >= start & data$JYear < i,])
-    data$model1_sim[data$JYear == i] <- predict(fit, newdata = data[data$JYear == i,])
-  }
-  #return(data)
-  data %>% 
-    dplyr::filter(JYear > end) -> output
-  inv_var(output$SEAKCatch_log,output$model1_sim)
-  
-} 
-# function check for one model (one step ahead MAPE)
-seak_model_summary2 <- f_model_one_step_ahead_inv_var(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2015)
-
-
-# function for multiple models (one step ahead inverse_variance)
-f_model_one_step_ahead_multiple_inv_var <- function(harvest,variables,model.formulas,model.names, start, end){
-  n<-dim(variables)[1]
-  model.results<-numeric()
-  obs<-harvest[-n]
-  data<-variables[-n,]
-  fit.out<-list()
-  for(i in 1:length(model.formulas)) 
-  {
-    for (j in (end+1):tail(data$JYear)[6])
-    {
-      fit<-lm(model.formulas[[i]],data = data[data$JYear >= start & data$JYear < j,])
-      fit.out[[i]]<-fit
-      data$model1_sim[data$JYear == j] <- predict(fit, newdata = data[data$JYear == j,])
-    }
-    #return(data)
-    data %>% 
-      dplyr::filter(JYear > end) -> output
-    inverse_variance<-inv_var(output$SEAKCatch_log,output$model1_sim)
-    model.results<-rbind(model.results, inverse_variance= inverse_variance)
-  } 
-  row.names(model.results)<-model.names
-  dimnames(model.results)[[2]][1]<-c('inv_var')
-  as.data.frame(model.results)-> x
-  write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead_inv_var.csv"))}
+# f_model_one_step_ahead_inv_var <- function(harvest,variables,model, start, end){
+#   n<-dim(variables)[1]
+#   model.results<-numeric()
+#   obs<-harvest[-n]
+#   data<-variables[-n,]
+#   fit.out<-list()
+#   for (i in (end+1):tail(data$JYear)[6])
+#   {
+#     fit<-lm(model,data = data[data$JYear >= start & data$JYear < i,])
+#     data$model1_sim[data$JYear == i] <- predict(fit, newdata = data[data$JYear == i,])
+#   }
+#   #return(data)
+#   data %>% 
+#     dplyr::filter(JYear > end) -> output
+#   inv_var(output$SEAKCatch_log,output$model1_sim)
+#   
+# } 
+# # function check for one model (one step ahead MAPE)
+# seak_model_summary2 <- f_model_one_step_ahead_inv_var(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2015)
+# 
+# 
+# # function for multiple models (one step ahead inverse_variance)
+# f_model_one_step_ahead_multiple_inv_var <- function(harvest,variables,model.formulas,model.names, start, end){
+#   n<-dim(variables)[1]
+#   model.results<-numeric()
+#   obs<-harvest[-n]
+#   data<-variables[-n,]
+#   fit.out<-list()
+#   for(i in 1:length(model.formulas)) 
+#   {
+#     for (j in (end+1):tail(data$JYear)[6])
+#     {
+#       fit<-lm(model.formulas[[i]],data = data[data$JYear >= start & data$JYear < j,])
+#       fit.out[[i]]<-fit
+#       data$model1_sim[data$JYear == j] <- predict(fit, newdata = data[data$JYear == j,])
+#     }
+#     #return(data)
+#     data %>% 
+#       dplyr::filter(JYear > end) -> output
+#     inverse_variance<-inv_var(output$SEAKCatch_log,output$model1_sim)
+#     model.results<-rbind(model.results, inverse_variance= inverse_variance)
+#   } 
+#   row.names(model.results)<-model.names
+#   dimnames(model.results)[[2]][1]<-c('inv_var')
+#   as.data.frame(model.results)-> x
+#   write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead_inv_var.csv"))}
 
 
 

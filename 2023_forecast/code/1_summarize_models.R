@@ -1,8 +1,9 @@
 # SECM Pink salmon forecast models
 # Script written by Jim Murphy updated: 10/18/19
-# adapted by Sara Miller 10/05/2021
+# adapted by Sara Miller 09/13/2022
 # pink_cal_pooled_species
 # http://www.sthda.com/english/articles/40-regression-analysis/166-predict-in-r-model-predictions-and-confidence-intervals/
+# updated all data files varyyyy_final.csv
 # load libraries
 library("devtools")
 devtools::install_github("commfish/fngr")
@@ -32,20 +33,20 @@ windowsFonts(Times=windowsFont("TT Times New Roman"))
 theme_set(theme_report(base_size = 14))
 
 # inputs
-year.forecast <- "FMS_writeup" 
-year.data <- 2021  
+year.forecast <- "2023_forecast" 
+year.data <- 2022  
 year.data.one <- year.data - 1
-sample_size <-  24 # number of data points in model
-forecast2021 <- 28 # input last year's forecast for the forecast plot
+sample_size <-  25 # number of data points in model
+forecast2022 <- 15.6 # input last year's forecast for the forecast plot
 
 
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
-source('FMS_writeup/code/functions.r')
+source('2023_forecast/code/functions.r')
 
 # STEP 1: DATA
 # read in data
-read.csv(file.path(data.directory,'var2021_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
+read.csv(file.path(data.directory,'var2022_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
 
 # restructure the data 
 variables$CPUE <- variables$CPUEcal # Use CPUEcal as CPUE index
@@ -257,8 +258,8 @@ results %>%
 # end year is the year the data is used through (e.g., end = 2014 means that the regression is runs through JYear 2014 and Jyears 2015-2019 are
 # forecasted in the one step ahead process)
 # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
-f_model_one_step_ahead_multiple_inv_var(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2015)  # num should be final year of data - end (e.g. 2021-2015) years 
-f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2014)  # num should be final year of data - end (e.g. 2021-2015) years 
+# f_model_one_step_ahead_multiple_inv_var(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2016)  # num should be final year of data - end (e.g. 2021-2015) years 
+f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2016)  # num should be final year of data - end (e.g. 2021-2015) years 
 
 read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead_inv_var.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
 read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> model_summary_table2
@@ -270,9 +271,30 @@ read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead.csv'), h
   dplyr::select(model, AdjR2,  AICc,  MASE, wMAPE, MAPE_LOOCV, MAPE_one_step_ahead, inv_var) %>%
   write.csv(paste0(results.directory, "/model_summary_table4.csv"), row.names = F)
 
+# run function f_model_one_step_ahead for each model 
+# comment out the "return(data)" if you want the MAPE
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2011, model_num = "m1")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + ISTI20_MJJ, start = 1997, end = 2011, model_num = "m2")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_May, start = 1997, end = 2011, model_num = "m3")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_MJJ, start = 1997, end = 2011, model_num = "m4")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_AMJ, start = 1997, end = 2011, model_num = "m5")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_AMJJ, start = 1997, end = 2011, model_num = "m6")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_May, start = 1997, end = 2011, model_num = "m7")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_MJJ, start = 1997, end = 2011, model_num = "m8")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_AMJ, start = 1997, end = 2011, model_num = "m9")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_AMJJ, start = 1997, end = 2011, model_num = "m10")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_May, start = 1997, end = 2011, model_num = "m11")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_MJJ, start = 1997, end = 2011, model_num = "m12")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_AMJ, start = 1997, end = 2011, model_num = "m13")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_AMJJ, start = 1997, end = 2011, model_num = "m14")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_May, start = 1997, end = 2011, model_num = "m15")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_MJJ, start = 1997, end = 2011, model_num = "m16")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJ, start = 1997, end = 2011, model_num = "m17")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJJ, start = 1997, end = 2011, model_num = "m18")
+
 
 # Data file (create a variable file for the write-up)
-read.csv(file.path(data.directory,'var2021_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
+read.csv(file.path(data.directory,'var2022_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
 
 # restructure the data (for write-up)
 variables %>%
@@ -282,34 +304,21 @@ variables %>%
   write.csv(., paste0(results.directory, "/data_used.csv"), row.names = F)
 
 # # test of predict results
- model.m1 = lm(SEAKCatch_log ~ CPUE, data = log_data_subset)
- best.model <- m1 # this can be added after steps 1 and 2 after the best model is determined
- last_year_data_cpue <- 0.875454122
+ model.m11 = lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset)
+ best.model <- m11 # this can be added after steps 1 and 2 after the best model is determined
+ last_year_data_cpue <- 1.45
  sigma<- sigma(best.model) # best model
  CPUE <- last_year_data_cpue # last year of data
+ NSEAK_SST_May <- 7.622693452
+ # last year of data
  newdata <- data.frame(CPUE)
- preds<-predict(model.m1, newdata, interval="prediction", level = 0.80, se.fit=T)
- z <- predict(model.m1, newdata, se.fit = TRUE)
+ preds<-predict(model.m11, newdata, interval="prediction", level = 0.80, se.fit=T)
+ z <- predict(model.m11, newdata, se.fit = TRUE)
  alpha <- 0.80  ## 90%
  Qt <- c(-1, 1) * qt((1 - alpha) / 2, z$df, lower.tail = FALSE)
  CI <- z$fit + outer(z$se.fit, Qt)
  colnames(CI) <- c("lwr", "upr")
  CI
  
- # # test of predict results
- model.m2 = lm(SEAKCatch_log ~ CPUE + ISTI20_MJJ, data = log_data_subset)
- best.model <- m2 # this can be added after steps 1 and 2 after the best model is determined
- last_year_data_cpue <- 0.875454122
- sigma<- sigma(best.model) # best model
- CPUE <- 0.875454122 # last year of data
- ISTI20_MJJ <- 8.885509921 # last year of data
- newdata <- data.frame(CPUE, ISTI20_MJJ)
- preds<-predict(model.m2, newdata, interval="confidence", level = 0.80, se.fit=T)
- z <- predict.lm(model.m2, newdata, se.fit = TRUE)
- alpha <- 0.80  ## 90%
- Qt <- c(-1, 1) * qt((1 - alpha) / 2, z$df, lower.tail = FALSE)
- CI <- z$fit + outer(z$se.fit, Qt)
- colnames(CI) <- c("lwr", "upr")
- CI
- z$df
+
  
