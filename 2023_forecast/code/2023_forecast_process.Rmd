@@ -2,7 +2,7 @@
 title: "SEAK Pink Salmon 2023 Forecast Process"
 author: "Sara Miller"
 date: "September 12, 2022"
-output: word_document
+output: pdf_document
 ---
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
 library(here)
@@ -11,7 +11,7 @@ library(tidyverse)
 library(knitr)
 library(ggplot2)
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE, error=FALSE)
-year.forecast <- "2022_forecast" 
+year.forecast <- "2023_forecast" 
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast, 'results', '/')
 ```
@@ -26,112 +26,110 @@ fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>%
 ```
 
 # Objective
-To forecast the Southeast Alaska (SEAK) pink salmon commercial harvest in 2022. 
+To forecast the Southeast Alaska (SEAK) pink salmon commercial harvest in 2023. 
 
 # Executive Summary
-Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019). We used a similar approach to Murphy et al. (2019), but assumed a log-normal error. This approach is based on a multiple regression model with juvenile pink salmon catch-per-unit-effort (CPUE) and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021) or from satellite sea surface temperature data (SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring, (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html; https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html). See the document satellite_SST_process_5_Oct_2021 for details about the temperature variables. Based on prior discussions, the index of juvenile abundance (i.e., CPUE) was based on the pooled-species vessel calibration coefficient.
+Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019). We used a similar approach to Murphy et al. (2019), but assumed a log-normal error. This approach is based on a multiple regression model with juvenile pink salmon catch-per-unit-effort (CPUE; a proxy for abundance) and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021) or from satellite sea surface temperature data (SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring, (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html; https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html). See the document satellite_SST_process--September_2022 for details about the temperature variables. Based on prior discussions, the index of juvenile abundance (i.e., CPUE) was based on the pooled-species vessel calibration coefficient.
 
-Leave-one-out cross validation (hindcast) and model performance metrics were used to evaluate the forecast accuracy of models. These metrics included Akaike Information Criterion corrected for small sample sizes (AICc values; Akaike 1973; Burnham and Anderson 2004), the mean absolute scaled error (*MASE* metric; Hyndman and Kohler 2006), the weighted mean absolute percentage error (*wMAPE*; based on the last 5 years), leave one out cross validation *MAPE* (*MAPE_LOOCV*), one step ahead forecasts (*MAPE_one_step_ahead*) for the last five years (years 2017 through 2021), and significant coefficients (i.e., covariates) in the model. The 2022 forecast was based on a ....
-
-**Conclusions:**  
-
-
-   
-```{r SummaryMetrics3}
-tbls_seak$model_summary_table6 %>% 
-   knitr::kable(format = 'pandoc', caption = 'Summary of model-averaged forecasts including the 80 percent prediction intervals (corrected for log transformation bias in a linear-model).', row.names = F)
-```
+The model performance metric one-step ahead mean absolute precent error (MAPE) for the last five years (years 2018 through 2022) and for the last ten years (years 2013 through 2022) was used to evaluate the forecast accuracy of the 18 individual models. The 2023 forecast was based on model m11; a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data. Based upon this model, the 2023 SEAK pink salmon harvest is predicted to be in the weak range with a point estimate of xxxx million fish (80% prediction interval: xxxx to xxxx million fish). 
 
 # Analysis
 
-## Model data
-The data used in the model are shown in table 2. 
+## Individual, multiple linear regression models
+Biophysical variables based on data from Southeast Alaska were used to forecast the harvest of adult pink salmon in Southeast Alaska, one year in advance, using individual, multiple linear regression models (models m1–m18; Table 1 and Table 2). The simplest regression model (model m1) consisted of only the predictor variable juvenile pink salmon CPUE $({X_1})$, while the other 17 regression models consisted of the predictor variable juvenile pink salmon CPUE and a temperature index $({X_2})$,
+
+
+$$E(Y_i) = \hat{\alpha}_i + \hat {\beta}_{1_i}{X_1} + \hat{\beta}_{2_i}{X_2}.\tag{1}$$
+
+The temperature index was either the SECM survey Icy Strait temperature Index (ISTI; Murphy et al. 2019) or one of the 16 satellite-derived SST data (Huang et al. 2017). Although the simplest model only contained CPUE, including temperature data with CPUE is likely a more accurate measure of juvenile abundance if temperature affects the proportion of juveniles that migrate through Icy Strait in a given year (Murphy et al. 2019). The response variable ($Y$; Southeast Alaska adult pink salmon harvest in millions) and CPUE data were natural log transformed in the model, but temperature data were not. The forecast $(\hat{\textit {Y}_{i}})$, and 80% prediction intervals (based on output from program R; R Core Team 2021) from the 18 regression models were exponentiated and bias-corrected (Miller 1984),
+$$\hat{F_i} = \rm exp (\hat{\textit {Y}_{\textit i}} + \frac{{\sigma_i}^2}{2}),\tag{2}$$
+
+where ${\hat {F_i}}$ is the preseason forecast (for each model $i$) in millions of fish, and $\sigma_i$ is the variance (for each model $i$).
+
 ```{r SummaryMetrics0}
 tbls_seak$data_used %>% 
-   knitr::kable(format = 'pandoc', caption = 'Model data. This does not include the temperature data.', row.names = F)
+   knitr::kable(format = 'pandoc', caption = 'Annual adult pink salmon harvest data from Southeast Alaska (millions of fish), 1998–2022, compared to juvenile pink salmon CPUE data collected from the SECM project in the prior year, 1997–2021. ', row.names = F)
 ```
 
-## Hierarchical models
-Eighteen hierarchical models were investigated. The full model was:
 
-$$E(y) = \alpha + \beta_1{X_1} + \beta_2{X_2},$$
+## Performance metric: One-step ahead MAPE
+The model summary results using the performance metric one-step ahead MAPE are shown in table 2; the smallest value is the preferred model. The performance metric one-step ahead MAPE was calculated as follows.
 
-where ${X_1}$ is the average CPUE for catches in either the June or July survey, whichever month had the highest average catches in a given year, and was based on the pooled-species vessel calibration coefficient, and ${X_2}$ is a temperature index. The CPUE data were log-transformed in the model, but temperature data were not. The simplest model did not contain a temperature variable (model m1; see Appendix for parameter estimates). 
+1. Estimate the regression parameters at time $t$-1 from data up to time $t$-1.  
 
-## Performance metrics
-The model summary results using the performance metrics AICc, *MASE*, *wMAPE*, *MAPE_LOOCV*, and *MAPE_one_step_ahead* (Table 3) are shown in table 4. For all of these metrics, the smallest value is the preferred model. Models with  $\Delta_i$AICc $\leq$ 2 have substantial support, those in which 4 $\leq$   $\Delta_i$AICc $\leq$  7 have considerably less support, and models with  $\Delta_i$AICc > 10 have essentially no support (Burnham and Anderson 2004). The performance metric *MAPE* was calculated as:
+2. Make a prediction of ${\hat{Y_t}}$ at time $t$ based on the predictor variables at time $t$ and the estimate of the regression parameters at time $t$-1 (i.e., the fitted regression equation).  
 
-$$MAPE = \frac{1}{n} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|$$
-where $A_t$ is the observed value and $F_t$ is the predicted value. The performance metric *wMAPE* was calculated as:
+3. Calculate the MAPE based on the prediction of ${\hat{Y_t}}$ at time $t$ and the observed value of ${Y_t}$ at time $t$,
 
-$$wMAPE =\sum_{t=1}^{n} \frac{1}{w_t} \sum_{t=1}^{n} |\frac{A_t-F_t}{A_t}|w_t.$$
-where $w_t$ is the weight for each year. For the *wMAPE* metric, the last 5 years (juvenile years 2016-2020) were given a weight of 1 and all other years, a weight of 0.001. Therefore, compared to the performance metric *MAPE_LOOCV*, the performance of the model in the last 5 years was given more weight in the *wMAPE* metric. 
+$$\text{MAPE} = |\frac{\rm exp{(\textit Y_{\textit t})} -\rm exp (\hat{\textit Y_{\textit t}} + \frac{{\sigma_t}^2}{2})}{\rm exp (\textit Y_{\textit t})}|.\tag{3}$$
 
-The performance metric *MAPE_LOOCV* uses five steps.
+4.	For each individual model, average the MAPEs calculated from the forecasts,
+$$\frac{1}{n} \sum_{t=1}^{n} |\frac{\rm exp{(\textit Y_{\textit t})} -\rm exp (\hat{\textit Y_{\textit t}} + \frac{{\sigma_t}^2}{2})}{\rm exp (\textit Y_{\textit t})}|,\tag{4}$$
+where $n$ is the number of forecasts in the average (5 forecasts for the 5-year MAPE and 10 forecasts for the 10-year MAPE). For example, to calculate the five year one-step-ahead MAPE for model m1 for the 2022 forecast, use data up through year 2016 (e.g., data up through year 2016 is $t$ -1 and the forecast is for $t$, or year 2017). Then, calculate a MAPE based on the 2017 forecast and the observed pink salmon harvest in 2017 using equation 3. Next, use data up through year 2017 (e.g., data up through year 2017 is $t$ -1 and the forecast is for year 2018; $t$) and calculate a MAPE based on the 2018 forecast and the observed pink salmon harvest in 2018 using equation 3. Repeat this process for each subsequent year through year 2020 to forecast 2021. Finally, average the five MAPEs to calculate a five year one-step-ahead MAPE for model m1. For the 10 year one-step-ahead MAPE for model m1, the process would be repeated, but the first forecast year would be 2012. 
 
-1. The dataset is split into a training set. The training set uses all but one observation of the full dataset.
-
-2. Run the regression model based on the training set.
-
-3. Use the regression model based on the training set to predict $F_t$ for the one observation left out of the model.
-
-4. Repeat the process $n$ times based on the number of observations in the dataset, leaving out a different observation from the training set each time. 
-
-5. Calculate *MAPE*, based on the average of all the training datasets (i.e., one *MAPE* is calculated for each training set and then these are averaged).
-
-The performance metric *MAPE_one_step_ahead* involves three steps:
-
-1. Estimate the regression parameters at time $t$ from data up to time $t-1$. 
-
-2. Make a prediction of $F_t$ at time $t$ based on the predictor variables at time $t$ and the estimate of the regression parameters at time $t$.
-
-3. Calculate the *MAPE* based on the prediction of $F_t$ at time $t$ and the observed value of $A_t$ at time $t$. 
-
-4. Repeat this for data up through year 2016 (e.g., data up through year 2016 is $t-1$ and the forecast is for year 2017; $t$), data up through year 2017 (e.g., data up through year 2017 is $t-1$ and the forecast is for year 2018; $t$), data up through year 2018 to forecast 2019, data up through year 2019 to forecast 2020, and data up through year 2020 to forecast 2021.
-
-3. The *MAPE_one_step_ahead* will then be an average of the *MAPE* calculated from these five forecasts. 
-
-The AICc in Table 3 is the AICc value and not the $\Delta_i$AICc. 
-\pagebreak
 ```{r SummaryMetrics1}
 tbls_seak$model_summary_table5 %>% 
-   knitr::kable(format = 'pandoc', caption = 'Summary of model outputs and forecast error measures. These metrics included Akaike Information Criterion corrected for small sample sizes (AICc values), the mean absolute scaled error (MASE metric), the weighted mean absolute percentage error (wMAPE; based on the last 5 years), leave one out cross validation MAPE (MAPE_LOOCV), and one step ahead forecasts (MAPE_one_step_ahead).', row.names = F)
+   knitr::kable(format = 'pandoc', caption = 'Summary of the adjusted R squared value and the 5-year and 10-year one-step ahead MAPEs for the 18 regression models.', row.names = F)
 ```
 
 \pagebreak
 
-```{r SummaryMetrics2}
-tbls_seak$model_summary_table3 %>% 
-   knitr::kable(format = 'pandoc', caption = 'Summary of model forecasts including the 80 percent prediction intervals (corrected for log transformation bias in a linear-model).', row.names = F)
+# Results
+The best model based on the 5-year and 10-year one-step ahead MAPE was model m11. 
+
+## Model Diagnostics
+Model diagnostics for model m11 included residual plots, the curvature test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage plots. Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). These observations may have significant impact on model fitting and may need to be excluded. 
+
+```{r details}
+tbls_seak$model_summary_table6 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m11. Juvenile years 1998, 1999, 2005, 2012, and 2019, and 2020 (years 1999, 2000, 2006, 2013, 2020, and 2021) show the largest standardized residual. Year refers to the forecast year. Fitted values are log-transformed.')
 ```
 
-## Log transformation bias in a linear-model
-To correct for log transformation bias in a linear-model, a bias correction (Miller 1984) was applied to the predicted 2022 SEAK harvest and its prediction interval (output from the car package (Fox and Weisberg 2019) in program R (R Core Team 2020)) from each of the eighteen models. The bias correction, applied to each value, is:
+### Cook's distance
+Cook's distance is a measure of influence, or the product of both leverage and outlier. Cook's distance,
+$$D_i=\ \frac{e_{PSi}^2}{k+1}\ast\frac{h_i}{1-h_i},\tag{5}$$				
+where $e_{PSi}^2$ is the standardized Pearson residuals, $h_i$ are the hat values (measure of leverage), and $k$ is the number of predictor variables in the model, is a measure of overall influence of the $i_{th}$ data point on all $n$ fitted values (Fox and Weisburg 2019). A large value of Cook's distance indicates that the data point is an influential observation. Cook's distance values greater than $4/(n-k-1)$, where $n$ is the number of observations (i.e., 25), was used as a benchmark for identifying the subset of influential observations (Ren et al. 2016). Therefore, a Cook's distance cut-off of 0.18 was used; observations with a Cook's distance greater than 0.18 were investigated further (Figure 1a). 
 
-$$\hat{E}(Y_m) = \rm exp (\hat{\mu_m} + \frac{\hat{\sigma_m}^2}{2})$$
-where ${\hat{\mu}}$ is the predicted value (or 80% upper or lower prediction interval value) from the individual model $m$. 
+### Leverage
+An observation that is distant from the average covariate pattern is considered to have high leverage or hat-value. If an individual observation has a leverage value $h_i$ greater than 2 or 3 times $p/n$ (Ren et al. 2016), it may be a concern (where $p$ is the number of parameters in the model including the intercept (i.e., 3), and $n$ is the number of observations in the model (i.e., 25); $p/n$ = 3/25 = 0.12 for this study). Therefore, a leverage cut-off of 0.24 was used; observations with a leverage value greater than 0.24 were investigated further (Figure 1b).
 
-
-
-
-```{r pred, echo=FALSE}
-knitr::include_graphics(here(results.directory, "/forecast_models.png"))
+```{r influential, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/influential.png"))
 ```
 
-Figure 1: The 2022 SEAK pink salmon harvest (millions) forecast by model with 80% prediction intervals (corrected for log transformation bias in a linear-model) around each forecast. The dotted horizontal lines are the model-averaged forecast across all models based on the four methods. The SEAK pink salmon harvest in 2021 (based on the November 18, 2020 advisory announcement) was a point estimate of 28 million fish (80% prediction interval: 19–42 million fish; grey horizontal line).
+Figure 1: Diagnostics plots of influential observations including a) Cook's Distance (with a cut-off value of 0.18), and b) leverage values (with a cut-off value of 0.24) from model m11.
+
+### Influential datapoints
+To determine if a variable has a relationship with residuals, a lack-of fit curvature test was performed. In this test, terms that are non-significant suggest a properly specified model. The CPUE term was significant in the lack-of-fit curvature test ($P$<0.05), suggesting some lack of fit for this term (Figure 2a). Diagnostics indicated that two of the data points were above the cut-off value for the Cook's distance (Figure 1a). Two observations had high leverage values (Figure 1b). Based on the Bonferroni outlier test, one of the data points had a studentized residual with a significant Bonferroni $P$-value suggesting that one of the data points impacted the model fitting; although observations 2, 3, 9, 16, 23, and 24 and were the most extreme (juvenile years 1998, 1999, 2005, 2012, 2019, and 2020) based on standardized residuals (Figure 3a; Table 5). Based on the lightly curved fitted lines in the residual versus fitted plot (Figure 3b), the fitted plot shows some lack of fit of the model.
+
+```{r predicted1, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/predicted.png"))
+```
+
+Figure 2: Standardized residuals versus predicted plots for a) CPUE and b) temperature.
+
+```{r fitted, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/fitted.png"))
+```
+
+Figure 3: a) Standardized residuals versus juvenile year and b) residuals versus fitted values for model m11. Positive residuals indicate that the observed harvest was larger than predicted by the model.
+
+
+The best regression model based on the performance metric one-step ahead MAPE was model m11 (i.e., the model containing CPUE, and a May NSEAK SST data). The adjusted $R^2$ value for model m11 was 0.79 (Table 2) indicating overall a good model fit. Based upon a model that includes juvenile pink salmon CPUE and May NSEAK SST (model m11), the 2023 SEAK pink salmon harvest is predicted to be in the weak range with a point estimate of xxxx million fish (80% prediction interval: xxxx to xxxx million fish). 
+
+```{r predicted2, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/catch_plot_pred.png"))
+```
+
+Figure 4: A) SEAK pink salmon harvest (millions) by year with the model fit (line). The predicted 2023 forecast is symbolized as a grey circle with an 80% prediction interval (xxx to xxx million fish). B) SEAK pink salmon harvest (millions) against the fitted values from model m11 by year. The dotted line is a one to one reference line. 
+
 
 # References
-Akaike, H. 1973. Information theory and an extension of the maximum likelihood principle. In B. N. Pet rov & F. Caski (Eds.), Proceedings of the Second International Symposium on Information Theory (pp. 267-281). Budapest: Akademiai Kiado.
-
-Buckland, S.T., K. P. Burnham, and N. H. Augustin. 1997. Model selection: an integral part of inference. Biometrics: 603-618.
-
-Burnham, K. P., and D. R. Anderson, D. R. 2002. Model selection and multimodel inference: A practical information-theoretic approach. Second Edition. New York: Springer-Verlag
-
-Burnham, K. P., and D. R. Anderson. 2004. Multimodel inference: Understanding AIC and BIC in model selection. Sociological Methods and Research 33: 261-304.
+Cook, R. D. 1977. Detection of influential observations in linear regression. Technometrics 19: 15-18.
 
 Fox, J. and S. Weisburg. 2019. An R Companion to Applied Regression, Third Edition. Thousand Oaks CA: Sage Publications, Inc.
 
-Hyndman, R. J. and A. B. Koehler. 2006. Another look at measures of forecast accuracy. International Journal of Forecasting 22: 679-688.
+Huang, B., P. W. Thorne, V. F. Banzon,, T. Boyer, G. Chepurin, J. H. Lawrimore, M. J. Menne, T. M. Smith, R. S. Vose, and H. M. Zhang. 2017. Extended reconstructed sea surface temperature, version 5 (ERSSTv5): upgrades, validations, and intercomparisons. Journal of Climate 30:8179–8205.
 
 Miller, D. M. 1984. Reducing transformation bias in curve fitting. The American Statistician 38: 124-126.
 
@@ -145,9 +143,13 @@ Orsi, J. A., E. A. Fergusson, A. C. Wertheimer, E. V. Farley, and P. R. Mundy. 2
 
 Piston, A. W., J. Murphy, J. Moss, W. Strasburger, S. C. Heinl, E. Fergusson, S. Miller, A. Gray, and C. Waters. 2021. Operational Plan: Southeast coastal monitoring, 2021. ADF&G, Regional Operational Plan No. ROP.CF.1J.2021.02, Douglas.
 
-R Core Team. 2020. R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL: http://www.r-project.org/index.html 
+R Core Team. 2021. R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL: http://www.r-project.org/index.html 
+
+Ren, Y. Y., L. C. Zhou, L. Yang, P. Y. Liu, B. W. Zhao and H. X. Liu. 2016. Predicting the aquatic toxicity mode of action using logistic regression and linear discriminant analysis, SAR and QSAR in Environmental Research, DOI: 10.1080/1062936X.2016.1229691
 
 Wertheimer A. C., J. A. Orsi, M. V. Sturdevant, and E. A. Fergusson. 2006. Forecasting pink salmon harvest in Southeast Alaska from juvenile salmon abundance and associated environmental parameters. In Proceedings of the 22nd Northeast Pacific Pink and Chum Workshop. Edited by H. Geiger (Rapporteur). Pac. Salmon Comm. Vancouver, British Columbia. pp. 65–72.
+
+Zhang, Z. 2016. Residuals and regression diagnostics: focusing on logistic regression. Annals of Translational Medicine 4: 195. 
 
 \pagebreak
 
@@ -155,7 +157,7 @@ Wertheimer A. C., J. A. Orsi, M. V. Sturdevant, and E. A. Fergusson. 2006. Forec
 
 ```{r SummaryMetrics4}
 tbls_seak$model_summary_table1 %>% 
-   knitr::kable(format = 'pandoc', caption = 'Parameter estimates for the 18 models.', row.names = F)
+   knitr::kable(format = 'pandoc', caption = 'Parameter estimates for the 18 individual models.', row.names = F)
 ```
 
 
