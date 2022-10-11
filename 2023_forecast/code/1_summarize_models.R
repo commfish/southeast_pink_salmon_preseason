@@ -1,9 +1,10 @@
 # SECM Pink salmon forecast models
 # Script written by Jim Murphy updated: 10/18/19
-# adapted by Sara Miller 09/13/2022
+# adapted by Sara Miller 10/10/2022
 # pink_cal_pooled_species
 # http://www.sthda.com/english/articles/40-regression-analysis/166-predict-in-r-model-predictions-and-confidence-intervals/
-# updated all data files varyyyy_final.csv
+# update all data files varyyyy_final.csv
+
 # load libraries
 library("devtools")
 devtools::install_github("commfish/fngr")
@@ -36,16 +37,14 @@ theme_set(theme_report(base_size = 14))
 year.forecast <- "2023_forecast"
 year.data <- 2022
 year.data.one <- year.data - 1
-sample_size <-  25 # number of data points in model
+sample_size <-  25 # number of data points in model (this is used for Cook's distance)
 forecast2022 <- 15.6 # input last year's forecast for the forecast plot
-
-
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
 source('2023_forecast/code/functions.r')
 
 # STEP 1: DATA
-# read in data
+# read in data (make sure this is up to date)
 read.csv(file.path(data.directory,'var2022_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
 
 # restructure the data
@@ -94,7 +93,7 @@ model.formulas <- c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE + SEAK_SST_AMJ,
                  SEAKCatch_log ~ CPUE + SEAK_SST_AMJJ) # temp. data
 
-# summary statistics and bootstrap of SEAK pink salmon harvest forecast models
+# summary statistics of SEAK pink salmon harvest forecast models (seak_model_summary.csv)
 seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values)
 
 # summary of model fits (i.e., coefficients, p-value)
@@ -218,7 +217,6 @@ results %>%
   dplyr::select(model, terms, fit,	fit_LPI, fit_UPI) %>%
   write.csv(paste0(results.directory, "/model_summary_table3.csv"), row.names = F)
 
-
 # forecast figure
 read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
  results %>%
@@ -245,8 +243,8 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.
    geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, size=1, color="blue")+
    scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40), limits = c(0,40))+
    scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18), limits = c(0,19))+
-   labs(x = "Models", y = "2023 SEAK Pink Salmon Forecast (millions)")  -> plot1
- ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, width = 6, units = "in")
+   labs(x = "Models", y = "2023 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
+ ggsave(paste0(results.directory, "figs/forecast_models.png"), dpi = 500, height = 4, width = 6, units = "in")
 
 # one step ahead MAPE
 # https://stackoverflow.com/questions/37661829/r-multivariate-one-step-ahead-forecasts-and-accuracy
@@ -255,19 +253,22 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.
 # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
 # f_model_one_step_ahead_multiple_inv_var(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2016)  # num should be final year of data - end (e.g. 2021-2015) years
 f_model_one_step_ahead_multiple(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2016)  # num should be final year of data - end (e.g. 2021-2015) years
+# if you run the function f_model_one_step_ahead, and do not comment out return(data), you can see how many years of data are used in the MAPE,
+# then you can use the f_model_one_step_ahead fucntion check.xlsx to make sure the
+# function is correct for the basec CPUE model
 
-read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead_inv_var.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
 read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> model_summary_table2
 read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
   mutate(MAPE_one_step_ahead = round(MAPE,3)) %>%
   cbind(., results) %>%
-  dplyr::select(MAPE_one_step_ahead, inv_var) %>%
+  dplyr::select(MAPE_one_step_ahead) %>%
   cbind(., model_summary_table2) %>%
-  dplyr::select(model, AdjR2,  AICc,  MASE, wMAPE, MAPE_LOOCV, MAPE_one_step_ahead, inv_var) %>%
+  dplyr::select(model, AdjR2,  AICc,  MASE, wMAPE, MAPE_LOOCV, MAPE_one_step_ahead) %>%
   write.csv(paste0(results.directory, "/model_summary_table4.csv"), row.names = F)
 
 # run function f_model_one_step_ahead for each model
 # comment out the "return(data)" if you want the MAPE
+# these results are used in the model_summary_table_month_year.xlsx
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2011, model_num = "m1")
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + ISTI20_MJJ, start = 1997, end = 2011, model_num = "m2")
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_May, start = 1997, end = 2011, model_num = "m3")
@@ -286,19 +287,19 @@ seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, va
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_MJJ, start = 1997, end = 2011, model_num = "m16")
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJ, start = 1997, end = 2011, model_num = "m17")
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJJ, start = 1997, end = 2011, model_num = "m18")
-
-
-
+# the results of the models need to be manually entered into the model_summary_table_month_year.xlsx sheet
 # # test of predict results
  model.m11 = lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset)
  best.model <- m11 # this can be added after steps 1 and 2 after the best model is determined
  last_year_data_cpue <- 1.45
  sigma<- sigma(best.model) # best model
  CPUE <- last_year_data_cpue # last year of data
- NSEAK_SST_May <- 7.622693452
+ NSEAK_SST_May <- 7.62
  # last year of data
  newdata <- data.frame(CPUE)
  preds<-predict(model.m11, newdata, interval="prediction", level = 0.80, se.fit=T)
+ preds
+ 
  z <- predict(model.m11, newdata, se.fit = TRUE)
  alpha <- 0.80  ## 90%
  Qt <- c(-1, 1) * qt((1 - alpha) / 2, z$df, lower.tail = FALSE)
@@ -306,4 +307,17 @@ seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, va
  colnames(CI) <- c("lwr", "upr")
  CI
 
-
+# restructure the data (for write-up)
+ variables %>%
+   mutate(Harvest = round(SEAKCatch, 2)) %>%
+   filter(Year<=year.data)%>%
+   dplyr::select(c(Year, Harvest)) %>%
+   write.csv(., paste0(results.directory, "/data_used_a.csv"), row.names = F)
+ 
+ variables %>%
+   mutate('Juvenile year' = Year-1,
+          CPUE = round(CPUEcal, 2),
+          Temperature = round(NSEAK_SST_May,2)) %>%
+   dplyr::select(c('Juvenile year', CPUE, Temperature)) %>%
+   write.csv(., paste0(results.directory, "/data_used_b.csv"), row.names = F)
+ 

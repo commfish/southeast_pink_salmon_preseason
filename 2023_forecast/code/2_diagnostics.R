@@ -9,19 +9,17 @@ lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset) -> m11
 f_model_diagnostics(m11, 'm11')
 
 augment(best.model) %>% 
-  mutate(SEAKCatch = round((exp(SEAKCatch_log)),1),
-         resid = round((.resid),2),
-         hat_values = round((.hat),2),
-         Cooks_distance = round((.cooksd),2),
-         std_resid = round((.std.resid),2),
+  mutate(Harvest = round((exp(SEAKCatch_log)),2),
+         Residuals = round((.resid),2),
+         'Hat values' = round((.hat),2),
+         'Cooks distance' = round((.cooksd),2),
+         'Std. residuals' = round((.std.resid),2),
          fitted = round((.fitted),5),
-         CPUE = round((CPUE),2),
-         temp = round((NSEAK_SST_May),2),
-         year=1998:year.data,
+         Year=1998:year.data,
          fit = exp(.fitted) * exp(0.5* sigma*sigma),
-         fit_bias_corrected = round(fit,2),
+         'Fitted values' = round(fit,2),
          juvenile_year = 1997:year.data.one) %>%
-  dplyr::select(year, SEAKCatch, CPUE, temp, resid, hat_values, Cooks_distance, std_resid, fit_bias_corrected) %>%
+  dplyr::select(Year, Harvest, Residuals, 'Hat values', 'Cooks distance', 'Std. residuals', 'Fitted values') %>%
   write.csv(paste0(results.directory, "/model_summary_table6.csv"), row.names = F)
 
 # # STEP #2: DIAGNOSTIC PLOTS
@@ -32,22 +30,13 @@ f_resid_year_diagnostics_plot(m11, 'm11')
 # # leverage and Cook's distance plots
 f_resid_leverage_diagnostics_plot(m11, 'm11', k = 2, p = 3)
 
-# # additional tests
-# # png(paste0(results.directory, "general_diagnostics.png"))
-# # autoplot(best.model)
-# # dev.off()
-# 
-# # outlierTest(m22) #Bonferroni p-values (term # 16)
-# # residualPlots(m22) #lack-of fit curvature test; terms that are non-significant suggest a properly specified model
-# # car::residualPlots(best.model, terms = ~ 1, fitted = T, id.n = 5, smoother = loessLine)
-
 # STEP #4: DIAGNOSTIC PLOTS OF BEST MODEL
 # Diagnostics: test model assumptions (normality, linearity, residuals)
 png(paste0(results.directory, "figs/general_diagnostics.png"))
 autoplot(best.model)
 dev.off()
 
-car::outlierTest(best.model) #Bonferroni p-values (term # 24)
+car::outlierTest(best.model) #Bonferroni p-values (term # 24); lack of fit test; https://stats.stackexchange.com/questions/288910/outlier-detection-using-outliertest-function
 car::residualPlots(best.model) #lack-of fit curvature test; terms that are non-significant suggest a properly specified model
 car::residualPlots(best.model, terms = ~ 1, fitted = T, id.n = 5, smoother = loessLine)
 
@@ -61,7 +50,7 @@ augment(best.model)%>%
   labs(y = "ln(Harvest)", x =  "ln(CPUE+1)") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 0, y = 5, label="a)"),family="Times New Roman", colour="black", size=5) -> plot1
+  geom_text(aes(x = 0, y = 5, label="A."),family="Times New Roman", colour="black", size=5) -> plot1
 
 # temp and catch
 augment(best.model)  %>% 
@@ -73,7 +62,7 @@ augment(best.model)  %>%
   labs(y = "ln(Harvest)", x =  "Temperature") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 7, y = 5, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
+  geom_text(aes(x = 7, y = 5, label="B."),family="Times New Roman", colour="black", size=5)-> plot2
 cowplot::plot_grid(plot1, plot2, align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "figs/cpue_temp.png"), dpi = 500, height = 3, width = 6, units = "in")
 
@@ -89,7 +78,7 @@ augment(best.model) %>%
   labs(y = "Standardized residuals", x =  "ln(CPUE+1)") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 0, y = 4, label="a)"),family="Times New Roman", colour="black", size=5)-> plot1
+  geom_text(aes(x = 0, y = 4, label="A."),family="Times New Roman", colour="black", size=5)-> plot1
 
 # residuals against covariate
 augment(best.model) %>% 
@@ -103,7 +92,7 @@ augment(best.model) %>%
   labs(y = "Standardized residuals", x =  "Temperature") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-  geom_text(aes(x = 7, y = 4, label="b)"),family="Times New Roman", colour="black", size=5) -> plot2
+  geom_text(aes(x = 7, y = 4, label="B."),family="Times New Roman", colour="black", size=5) -> plot2
 cowplot::plot_grid(plot1, plot2, align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "figs/predicted.png"), dpi = 500, height = 3, width = 6, units = "in")
 
@@ -121,7 +110,7 @@ augment(best.model) %>%
                                                                                 axis.text.x = element_text(angle=90, hjust=1),
                                                                                 panel.border = element_blank(), panel.grid.major = element_blank(),
                                                                                 panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 1997, y = 4, label="a)"),family="Times New Roman", colour="black", size=5)-> plot2
+  geom_text(aes(x = 1997, y = 4, label="A."),family="Times New Roman", colour="black", size=5)-> plot2
 
 # residuals against fitted
 augment(best.model) %>% 
@@ -136,13 +125,13 @@ augment(best.model) %>%
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   labs(y = "Residuals", x =  "Fitted values") +
-  geom_text(aes(x = 2, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot3
+  geom_text(aes(x = 2, y = 1, label="B."),family="Times New Roman", colour="black", size=5)-> plot3
 cowplot::plot_grid(plot2, plot3, align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "figs/fitted.png"), dpi = 500, height = 3, width = 6, units = "in")
 
 # Cook's distance plot
 k <- 2 # predictors in model
-level <- 4/(sample_size-k-1) # source: Ren et al. 2016
+level <- 4/(sample_size-k-1) # source: Ren et al. 2016 (Cook's distance value)
 
 augment(best.model) %>% 
   mutate(cooksd = (.cooksd),
@@ -159,16 +148,16 @@ augment(best.model) %>%
   scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0), limits = c(0,1))+
   labs(y = "Cook's distance", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                             axis.text.x = element_text(angle=90, hjust=1))+
-  geom_text(aes(x = 1997, y = 1, label="a)"),family="Times New Roman", colour="black", size=5) -> plot4
+  geom_text(aes(x = 1997, y = 1, label="A."),family="Times New Roman", colour="black", size=5) -> plot4
 
 # Leverage plot
 p <- 3 # the number of parameters in the model including intercept
-level <- 2*p/sample_size # source: Ren et al. 2016
-# leverage plot
+level <- 2*(p/sample_size) # source: Ren et al. 2016 (leverage value)
+
 augment(best.model) %>% 
   mutate(hat= (.hat),
          count = 1997:year.data.one,
-         name= ifelse(hat >0.27, count, "")) %>% # may need to adjust valeu; see hat value equation above
+         name= ifelse(hat >level, count, "")) %>% # may need to adjust valeu; see hat value equation above
   ggplot(aes(x = count, y = hat, label=name)) +
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
@@ -180,17 +169,17 @@ augment(best.model) %>%
   scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
   labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                        axis.text.x = element_text(angle=90, hjust=1))+
-  geom_text(aes(x = 1997, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot5
+  geom_text(aes(x = 1997, y = 1, label="B."),family="Times New Roman", colour="black", size=5)-> plot5
 cowplot::plot_grid(plot4, plot5,  align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "figs/influential.png"), dpi = 500, height = 3, width = 6, units = "in")
 
 # plot of harvest by year with prediction error 
 augment(best.model) %>% 
   mutate(year = 1998:year.data, 
-         catch = exp(SEAKCatch_log),
+         harvest = exp(SEAKCatch_log),
          fit = exp(.fitted) * exp(0.5* sigma*sigma)) %>%
   ggplot(aes(x=year)) +
-  geom_bar(aes(y = catch, fill = "SEAK pink catch"),
+  geom_bar(aes(y = harvest, fill = "SEAK pink harvest"),
            stat = "identity", colour ="black",
            width = 1, position = position_dodge(width = 0.1)) +
   geom_line(aes(y = fit, colour = "fit"), linetype = 1, size = 0.75) +
@@ -210,17 +199,17 @@ augment(best.model) %>%
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_segment(aes(x = year.data + 1, y = lwr_pi, yend = upr_pi, xend = year.data + 1), size=1, colour="black", lty=1) +
-  geom_text(aes(x = 1998, y = 140, label="a)"),family="Times New Roman", colour="black", size=5) -> plot1
+  geom_text(aes(x = 1998, y = 140, label="A."),family="Times New Roman", colour="black", size=5) -> plot1
 
 # plot of observed harvest by fitted values (with one to one line)
 augment(m2) %>% 
   mutate(year = 1997:year.data.one, 
-         catch = exp(SEAKCatch_log), 
+         harvest = exp(SEAKCatch_log), 
          sigma = .sigma,
          fit = exp(.fitted) * exp(0.5*sigma*sigma))  %>%
-  ggplot(aes(x=fit, y=catch)) +
+  ggplot(aes(x=fit, y=harvest)) +
   geom_point() +
-  geom_point(aes(y = catch), colour = "black", size = 1) +
+  geom_point(aes(y = harvest), colour = "black", size = 1) +
   scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                          panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
                                          axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
@@ -230,7 +219,7 @@ augment(m2) %>%
   scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   geom_abline(intercept = 0, lty=3) +
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  geom_text(aes(x = 2, y = 140, label="b)"),family="Times New Roman", colour="black", size=5) +
+  geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5) +
   geom_text(aes(y = 103, x = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
   geom_text(aes(y = 85, x = 134, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)

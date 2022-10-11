@@ -1,7 +1,7 @@
 ---
 title: "SEAK Pink Salmon 2023 Forecast Process"
 author: "Sara Miller"
-date: "September 12, 2022"
+date: "October 11, 2022"
 output: pdf_document
 ---
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
@@ -29,14 +29,14 @@ fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>%
 To forecast the Southeast Alaska (SEAK) pink salmon commercial harvest in 2023. 
 
 # Executive Summary
-Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019). We used a similar approach to Murphy et al. (2019), but assumed a log-normal error. This approach is based on a multiple regression model with juvenile pink salmon catch-per-unit-effort (CPUE; a proxy for abundance) and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021) or from satellite sea surface temperature data (SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring, (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html; https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html). See the document satellite_SST_process--September_2022 for details about the temperature variables. Based on prior discussions, the index of juvenile abundance (i.e., CPUE) was based on the pooled-species vessel calibration coefficient.
+Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019). We used a similar approach to Murphy et al. (2019), but assumed a log-normal error (Miller et al. 2022). This approach is based on a multiple regression model with juvenile pink salmon catch-per-unit-effort (CPUE; a proxy for abundance) and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021) or from satellite sea surface temperature (SST) data (Huang et al. 2017). See the document satellite_SST_process--September_2022 for details about the temperature variables. Based on prior discussions, the index of juvenile abundance (i.e., CPUE) was based on the pooled-species vessel calibration coefficient.
 
-The model performance metric one-step ahead mean absolute precent error (MAPE) for the last five years (years 2018 through 2022) and for the last ten years (years 2013 through 2022) was used to evaluate the forecast accuracy of the 18 individual models. The 2023 forecast was based on model m11; a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data. Based upon this model, the 2023 SEAK pink salmon harvest is predicted to be in the weak range with a point estimate of xxxx million fish (80% prediction interval: xxxx to xxxx million fish). 
+The model performance metric one-step ahead mean absolute percent error (MAPE) for the last five years (years 2018 through 2022) and for the last ten years (years 2013 through 2022) was used to evaluate the forecast accuracy of the 18 individual models. The 2023 forecast was based on model m11; a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data (Table 1 and Table 2). Based upon this model, the 2023 SEAK pink salmon harvest is predicted to be in the weak range with a point estimate of 18.8 million fish (80% prediction interval: 12.3 to 28.9 million fish). 
 
 # Analysis
 
 ## Individual, multiple linear regression models
-Biophysical variables based on data from Southeast Alaska were used to forecast the harvest of adult pink salmon in Southeast Alaska, one year in advance, using individual, multiple linear regression models (models m1–m18; Table 1 and Table 2). The simplest regression model (model m1) consisted of only the predictor variable juvenile pink salmon CPUE $({X_1})$, while the other 17 regression models consisted of the predictor variable juvenile pink salmon CPUE and a temperature index $({X_2})$,
+Biophysical variables based on data from Southeast Alaska were used to forecast the harvest of adult pink salmon in Southeast Alaska, one year in advance, using individual, multiple linear regression models (models m1–m18). The simplest regression model (model m1) consisted of only the predictor variable juvenile pink salmon CPUE $({X_1})$, while the other 17 regression models consisted of the predictor variable juvenile pink salmon CPUE and a temperature index $({X_2})$,
 
 
 $$E(Y_i) = \hat{\alpha}_i + \hat {\beta}_{1_i}{X_1} + \hat{\beta}_{2_i}{X_2}.\tag{1}$$
@@ -46,14 +46,20 @@ $$\hat{F_i} = \rm exp (\hat{\textit {Y}_{\textit i}} + \frac{{\sigma_i}^2}{2}),\
 
 where ${\hat {F_i}}$ is the preseason forecast (for each model $i$) in millions of fish, and $\sigma_i$ is the variance (for each model $i$).
 
-```{r SummaryMetrics0}
-tbls_seak$data_used %>% 
-   knitr::kable(format = 'pandoc', caption = 'Annual adult pink salmon harvest data from Southeast Alaska (millions of fish), 1998–2022, compared to juvenile pink salmon CPUE data collected from the SECM project in the prior year, 1997–2021. ', row.names = F)
+```{r data_a}
+tbls_seak$data_used_a %>% 
+   knitr::kable(format = 'pandoc', caption = 'Annual adult pink salmon harvest data from Southeast Alaska (millions of fish), 1998-2022.', row.names = F)
 ```
 
+\pagebreak
+
+```{r data_b}
+tbls_seak$data_used_b %>% 
+   knitr::kable(format = 'pandoc', caption = 'Juvenile pink salmon CPUE data collected from the SECM project and May satellite sea surface temperature data (°C) from the northern Southeast Alaska region in the juvenile years 1997–2022.', row.names = F)
+```
 
 ## Performance metric: One-step ahead MAPE
-The model summary results using the performance metric one-step ahead MAPE are shown in table 2; the smallest value is the preferred model. The performance metric one-step ahead MAPE was calculated as follows.
+The model summary results using the performance metric one-step ahead MAPE are shown in Table 3; the smallest value is the preferred model. The performance metric one-step ahead MAPE was calculated as follows.
 
 1. Estimate the regression parameters at time $t$-1 from data up to time $t$-1.  
 
@@ -72,8 +78,6 @@ tbls_seak$model_summary_table5 %>%
    knitr::kable(format = 'pandoc', caption = 'Summary of the adjusted R squared value and the 5-year and 10-year one-step ahead MAPEs for the 18 regression models.', row.names = F)
 ```
 
-\pagebreak
-
 # Results
 The best model based on the 5-year and 10-year one-step ahead MAPE was model m11. 
 
@@ -82,7 +86,7 @@ Model diagnostics for model m11 included residual plots, the curvature test, and
 
 ```{r details}
 tbls_seak$model_summary_table6 %>% 
-   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m11. Juvenile years 1998, 1999, 2005, 2012, and 2019, and 2020 (years 1999, 2000, 2006, 2013, 2020, and 2021) show the largest standardized residual. Year refers to the forecast year. Fitted values are log-transformed.')
+   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m11. Juvenile years 1998, 1999, 2005, 2012, and 2019, and 2020 (years 1999, 2000, 2006, 2013, 2020, and 2021) show the largest standardized residual (Std. residuals). Fitted values are bias-corrected.')
 ```
 
 ### Cook's distance
@@ -97,31 +101,31 @@ An observation that is distant from the average covariate pattern is considered 
 knitr::include_graphics(here(results.directory, "/figs/influential.png"))
 ```
 
-Figure 1: Diagnostics plots of influential observations including a) Cook's Distance (with a cut-off value of 0.18), and b) leverage values (with a cut-off value of 0.24) from model m11.
+Figure 1: Diagnostics plots of influential observations including A. Cook's distance (with a cut-off value of 0.18), and B. leverage values (with a cut-off value of 0.24) from model m11.
 
 ### Influential datapoints
-To determine if a variable has a relationship with residuals, a lack-of fit curvature test was performed. In this test, terms that are non-significant suggest a properly specified model. The CPUE term was significant in the lack-of-fit curvature test ($P$<0.05), suggesting some lack of fit for this term (Figure 2a). Diagnostics indicated that two of the data points were above the cut-off value for the Cook's distance (Figure 1a). Two observations had high leverage values (Figure 1b). Based on the Bonferroni outlier test, one of the data points had a studentized residual with a significant Bonferroni $P$-value suggesting that one of the data points impacted the model fitting; although observations 2, 3, 9, 16, 23, and 24 and were the most extreme (juvenile years 1998, 1999, 2005, 2012, 2019, and 2020) based on standardized residuals (Figure 3a; Table 5). Based on the lightly curved fitted lines in the residual versus fitted plot (Figure 3b), the fitted plot shows some lack of fit of the model.
+To determine if a variable has a relationship with residuals, a lack-of fit curvature test was performed. In this test, terms that are non-significant suggest a properly specified model. No terms were significant in the lack-of-fit curvature test ($P$<0.05) (Figure 2a; Figure 2b). Diagnostics indicated that two of the data points were above the cut-off value for the Cook's distance (Figure 1a; 1998 and 2020). Two observations had high leverage values (Figure 1b; 1998 and 2016). Based on the Bonferroni outlier test, one of the data points had a studentized residual with a significant Bonferroni $P$-value suggesting that one of the data points impacted the model fitting (observation 24; juvenile year 2020); although observations 2, 3, 9, 16, 23, and 24 and were the most extreme (juvenile years 1998, 1999, 2005, 2012, 2019, and 2020) based on standardized residuals (Figure 3a; Table 4). Based on the lightly curved fitted lines in the residual versus fitted plot (Figure 3b), the fitted plot shows some lack of fit of the model.
 
 ```{r predicted1, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/predicted.png"))
 ```
 
-Figure 2: Standardized residuals versus predicted plots for a) CPUE and b) temperature.
+Figure 2: Standardized residuals versus predicted plots for A. CPUE and B. temperature.
 
 ```{r fitted, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/fitted.png"))
 ```
 
-Figure 3: a) Standardized residuals versus juvenile year and b) residuals versus fitted values for model m11. Positive residuals indicate that the observed harvest was larger than predicted by the model.
+Figure 3: A. Standardized residuals versus juvenile year and B. residuals versus fitted values for model m11. Positive residuals indicate that the observed harvest was larger than predicted by the model.
 
 
-The best regression model based on the performance metric one-step ahead MAPE was model m11 (i.e., the model containing CPUE, and a May NSEAK SST data). The adjusted $R^2$ value for model m11 was 0.79 (Table 2) indicating overall a good model fit. Based upon a model that includes juvenile pink salmon CPUE and May NSEAK SST (model m11), the 2023 SEAK pink salmon harvest is predicted to be in the weak range with a point estimate of xxxx million fish (80% prediction interval: xxxx to xxxx million fish). 
+The best regression model based on the performance metric one-step ahead MAPE was model m11 (i.e., the model containing CPUE, and a May NSEAK SST data). The adjusted $R^2$ value for model m11 was 0.78 (Table 3) indicating overall a good model fit. Based upon a model that includes juvenile pink salmon CPUE and May NSEAK SST (model m11), the 2023 SEAK pink salmon harvest is predicted to be in the weak range with a point estimate of 18.8 million fish (80% prediction interval: 12.3 to 28.9 million fish). 
 
 ```{r predicted2, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/catch_plot_pred.png"))
 ```
 
-Figure 4: A) SEAK pink salmon harvest (millions) by year with the model fit (line). The predicted 2023 forecast is symbolized as a grey circle with an 80% prediction interval (xxx to xxx million fish). B) SEAK pink salmon harvest (millions) against the fitted values from model m11 by year. The dotted line is a one to one reference line. 
+Figure 4: A. SEAK pink salmon harvest (millions) by year with the model fit (line). The predicted 2023 forecast is symbolized as a grey circle with an 80% prediction interval (12.3 to 28.9 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m11 by year. The dotted line is a one to one reference line. 
 
 
 # References
@@ -133,11 +137,13 @@ Huang, B., P. W. Thorne, V. F. Banzon,, T. Boyer, G. Chepurin, J. H. Lawrimore, 
 
 Miller, D. M. 1984. Reducing transformation bias in curve fitting. The American Statistician 38: 124-126.
 
+Miller, S. E., J. M. Murphy, S. C. Heinl, A. W. Piston, E. A. Fergusson, R. E. Brenner, W. W. Strasburger, and J. H.Moss. 2022. Southeast Alaska pink salmon forecasting models. Alaska Department of Fish and Game, Fishery Manuscript No. 22-03, Anchorage.
+
 Murphy, J. M., E. A. Fergusson, A. Piston, A. Gray, and E. Farley.  2019. Southeast Alaska pink salmon growth and harvest forecast models.  North Pacific Anadromous Fish Commission Technical Report No. 15: 75-81.
 
-NOAA Coral Reef Watch (NOAA_DHW_monthly dataset). 2021, updated daily. NOAA Coral Reef Watch Version 3.1 Monthly 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, May 1997-June 2021. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2021-10-01 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html.
+NOAA Coral Reef Watch (NOAA_DHW_monthly dataset). 2022, updated daily. NOAA Coral Reef Watch Version 3.1 Monthly 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, May 1997-June 2021. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2022-09-12 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html.
 
-NOAA Coral Reef Watch (NOAA_DHW dataset). 2021, updated daily. NOAA Coral Reef Watch Daily Near-real-Time Global 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, July 2021. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2021-10-01 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html.
+NOAA Coral Reef Watch (NOAA_DHW dataset). 2022, updated daily. NOAA Coral Reef Watch Daily Near-real-Time Global 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, July 2021 to July 2022. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2022-09-12 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html.
 
 Orsi, J. A., E. A. Fergusson, A. C. Wertheimer, E. V. Farley, and P. R. Mundy. 2016. Forecasting pink salmon production in Southeast Alaska using ecosystem indicators in times of climate change. N. Pac. Anadr. Fish Comm. Bull. 6: 483–499. (Available at https://npafc.org)
 
@@ -160,6 +166,11 @@ tbls_seak$model_summary_table1 %>%
    knitr::kable(format = 'pandoc', caption = 'Parameter estimates for the 18 individual models.', row.names = F)
 ```
 
+```{r forecast_models, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/forecast_models.png"))
+```
+
+Figure 5: Bias-corrected forecasts (grey bars) for the eighteen regression models with 80% prediction intervals (blue lines). The 2023 forecast was based on model m11; a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data.
 
 
 ```{r sess_info, echo=FALSE}
