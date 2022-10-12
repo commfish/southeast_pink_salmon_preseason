@@ -153,6 +153,7 @@ augment(best.model) %>%
 # Leverage plot
 p <- 3 # the number of parameters in the model including intercept
 level <- 2*(p/sample_size) # source: Ren et al. 2016 (leverage value)
+# http://home.iitk.ac.in/~shalab/regression/Chapter6-Regression-Diagnostic%20for%20Leverage%20and%20Influence.pdf
 
 augment(best.model) %>% 
   mutate(hat= (.hat),

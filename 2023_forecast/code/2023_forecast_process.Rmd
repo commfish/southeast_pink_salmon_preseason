@@ -31,7 +31,7 @@ To forecast the Southeast Alaska (SEAK) pink salmon commercial harvest in 2023.
 # Executive Summary
 Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019). We used a similar approach to Murphy et al. (2019), but assumed a log-normal error (Miller et al. 2022). This approach is based on a multiple regression model with juvenile pink salmon catch-per-unit-effort (CPUE; a proxy for abundance) and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021) or from satellite sea surface temperature (SST) data (Huang et al. 2017). See the document satellite_SST_process--September_2022 for details about the temperature variables. Based on prior discussions, the index of juvenile abundance (i.e., CPUE) was based on the pooled-species vessel calibration coefficient.
 
-The model performance metric one-step ahead mean absolute percent error (MAPE) for the last five years (years 2018 through 2022) and for the last ten years (years 2013 through 2022) was used to evaluate the forecast accuracy of the 18 individual models. The 2023 forecast was based on model m11; a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data (Table 1 and Table 2). Based upon this model, the 2023 SEAK pink salmon harvest is predicted to be in the weak range with a point estimate of 18.8 million fish (80% prediction interval: 12.3 to 28.9 million fish). 
+The model performance metric one-step ahead mean absolute percent error (MAPE) for the last five years (years 2018 through 2022) and for the last ten years (years 2013 through 2022) was used to evaluate the forecast accuracy of the 18 individual models. Based upon this performance metrics, model m11 (a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data; Table 1 and Table 2) was the best performing model and a forecast using this model would be in the weak range with a point estimate of 18.8 million fish (80% prediction interval: 12.3 to 28.9 million fish). 
 
 # Analysis
 
@@ -79,10 +79,10 @@ tbls_seak$model_summary_table5 %>%
 ```
 
 # Results
-The best model based on the 5-year and 10-year one-step ahead MAPE was model m11. 
+Based upon the 5-year and 10-year one-step ahead MAPE, the best performing model was model m11. 
 
 ## Model Diagnostics
-Model diagnostics for model m11 included residual plots, the curvature test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage plots. Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). These observations may have significant impact on model fitting and may need to be excluded. 
+Model diagnostics for model m11 included residual plots, the curvature test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage plots. Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). 
 
 ```{r details}
 tbls_seak$model_summary_table6 %>% 
@@ -92,10 +92,10 @@ tbls_seak$model_summary_table6 %>%
 ### Cook's distance
 Cook's distance is a measure of influence, or the product of both leverage and outlier. Cook's distance,
 $$D_i=\ \frac{e_{PSi}^2}{k+1}\ast\frac{h_i}{1-h_i},\tag{5}$$				
-where $e_{PSi}^2$ is the standardized Pearson residuals, $h_i$ are the hat values (measure of leverage), and $k$ is the number of predictor variables in the model, is a measure of overall influence of the $i_{th}$ data point on all $n$ fitted values (Fox and Weisburg 2019). A large value of Cook's distance indicates that the data point is an influential observation. Cook's distance values greater than $4/(n-k-1)$, where $n$ is the number of observations (i.e., 25), was used as a benchmark for identifying the subset of influential observations (Ren et al. 2016). Therefore, a Cook's distance cut-off of 0.18 was used; observations with a Cook's distance greater than 0.18 were investigated further (Figure 1a). 
+where $e_{PSi}^2$ is the standardized Pearson residuals, $h_i$ are the hat values (measure of leverage), and $k$ is the number of predictor variables in the model, is a measure of overall influence of the $i_{th}$ data point on all $n$ fitted values (Fox and Weisburg 2019). A large value of Cook's distance indicates that the data point is an influential observation. Cook's distance values greater than $4/(n-k-1)$, where $n$ is the number of observations (i.e., 25), was used as a benchmark for identifying the subset of influential observations (Ren et al. 2016). Therefore, a Cook's distance cut-off of 0.18 was used; observations with a Cook's distance greater than 0.18 may be influential observations (Figure 1a). 
 
 ### Leverage
-An observation that is distant from the average covariate pattern is considered to have high leverage or hat-value. If an individual observation has a leverage value $h_i$ greater than 2 or 3 times $p/n$ (Ren et al. 2016), it may be a concern (where $p$ is the number of parameters in the model including the intercept (i.e., 3), and $n$ is the number of observations in the model (i.e., 25); $p/n$ = 3/25 = 0.12 for this study). Therefore, a leverage cut-off of 0.24 was used; observations with a leverage value greater than 0.24 were investigated further (Figure 1b).
+An observation that is distant from the average covariate pattern is considered to have high leverage or hat-value. If an individual observation has a leverage value $h_i$ greater than 2 or 3 times $p/n$ (Ren et al. 2016), it may be a concern (where $p$ is the number of parameters in the model including the intercept (i.e., 3), and $n$ is the number of observations in the model (i.e., 25); $p/n$ = 3/25 = 0.12 for this study). Therefore, a leverage cut-off of 0.24 was used; observations with a leverage value greater than 0.24 may affect the model properties (e.g., summary statistics, standard errors, predicted values) (Figure 1b).
 
 ```{r influential, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/influential.png"))
@@ -119,13 +119,13 @@ knitr::include_graphics(here(results.directory, "/figs/fitted.png"))
 Figure 3: A. Standardized residuals versus juvenile year and B. residuals versus fitted values for model m11. Positive residuals indicate that the observed harvest was larger than predicted by the model.
 
 
-The best regression model based on the performance metric one-step ahead MAPE was model m11 (i.e., the model containing CPUE, and a May NSEAK SST data). The adjusted $R^2$ value for model m11 was 0.78 (Table 3) indicating overall a good model fit. Based upon a model that includes juvenile pink salmon CPUE and May NSEAK SST (model m11), the 2023 SEAK pink salmon harvest is predicted to be in the weak range with a point estimate of 18.8 million fish (80% prediction interval: 12.3 to 28.9 million fish). 
+The best performing model, based on the performance metric one-step ahead MAPE, was model m11 (i.e., the model containing CPUE and May NSEAK SST). The adjusted $R^2$ value for model m11 was 0.78 (Table 3) indicating overall a good model fit. Based upon a model that includes juvenile pink salmon CPUE and May NSEAK SST (model m11), the 2023 SEAK pink salmon harvest would be in the weak range with a point estimate of 18.8 million fish (80% prediction interval: 12.3 to 28.9 million fish). 
 
 ```{r predicted2, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/catch_plot_pred.png"))
 ```
 
-Figure 4: A. SEAK pink salmon harvest (millions) by year with the model fit (line). The predicted 2023 forecast is symbolized as a grey circle with an 80% prediction interval (12.3 to 28.9 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m11 by year. The dotted line is a one to one reference line. 
+Figure 4: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m11). The predicted 2023 forecast is symbolized as a grey circle with an 80% prediction interval (12.3 to 28.9 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m11 by year. The dotted line is a one to one reference line. 
 
 
 # References
@@ -170,7 +170,7 @@ tbls_seak$model_summary_table1 %>%
 knitr::include_graphics(here(results.directory, "/figs/forecast_models.png"))
 ```
 
-Figure 5: Bias-corrected forecasts (grey bars) for the eighteen regression models with 80% prediction intervals (blue lines). The 2023 forecast was based on model m11; a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data.
+Figure 5: Bias-corrected forecasts (grey bars) for the eighteen regression models with 80% prediction intervals (blue lines). Based upon the performance metrics, the best performing model was model m11; a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data.
 
 
 ```{r sess_info, echo=FALSE}
