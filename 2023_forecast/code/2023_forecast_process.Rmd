@@ -1,8 +1,10 @@
 ---
-title: "SEAK Pink Salmon 2023 Forecast Process"
+title: "SEAK Pink Salmon 2023 Forecast Process--DRAFT"
 author: "Sara Miller"
-date: "October 11, 2022"
-output: pdf_document
+date: "October 12, 2022"
+output:
+  word_document: default
+  pdf_document: default
 ---
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
 library(here)
@@ -41,7 +43,7 @@ Biophysical variables based on data from Southeast Alaska were used to forecast 
 
 $$E(Y_i) = \hat{\alpha}_i + \hat {\beta}_{1_i}{X_1} + \hat{\beta}_{2_i}{X_2}.\tag{1}$$
 
-The temperature index was either the SECM survey Icy Strait temperature Index (ISTI; Murphy et al. 2019) or one of the 16 satellite-derived SST data (Huang et al. 2017). Although the simplest model only contained CPUE, including temperature data with CPUE is likely a more accurate measure of juvenile abundance if temperature affects the proportion of juveniles that migrate through Icy Strait in a given year (Murphy et al. 2019). The response variable ($Y$; Southeast Alaska adult pink salmon harvest in millions) and CPUE data were natural log transformed in the model, but temperature data were not. The forecast $(\hat{\textit {Y}_{i}})$, and 80% prediction intervals (based on output from program R; R Core Team 2021) from the 18 regression models were exponentiated and bias-corrected (Miller 1984),
+The temperature index was either the SECM survey Icy Strait temperature Index (ISTI; Murphy et al. 2019) or one of the 16 satellite-derived SST data (Huang et al. 2017). Although the simplest model only contained CPUE, including temperature data with CPUE has been shown to result in a substantial improvement in the accuracy of model predictions (Murphy et al. 2019). The response variable ($Y$; Southeast Alaska adult pink salmon harvest in millions) and CPUE data were natural log transformed in the model, but temperature data were not. The forecast $(\hat{\textit {Y}_{i}})$, and 80% prediction intervals (based on output from program R; R Core Team 2021) from the 18 regression models were exponentiated and bias-corrected (Miller 1984),
 $$\hat{F_i} = \rm exp (\hat{\textit {Y}_{\textit i}} + \frac{{\sigma_i}^2}{2}),\tag{2}$$
 
 where ${\hat {F_i}}$ is the preseason forecast (for each model $i$) in millions of fish, and $\sigma_i$ is the variance (for each model $i$).
@@ -110,7 +112,7 @@ To determine if a variable has a relationship with residuals, a lack-of fit curv
 knitr::include_graphics(here(results.directory, "/figs/predicted.png"))
 ```
 
-Figure 2: Standardized residuals versus predicted plots for A. CPUE and B. temperature.
+Figure 2: Standardized residuals versus predicted plots for A. CPUE and B. temperature (average May SST in northern Southeast Alaska) for model m11.
 
 ```{r fitted, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/fitted.png"))

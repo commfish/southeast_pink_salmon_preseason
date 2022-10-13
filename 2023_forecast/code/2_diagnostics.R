@@ -1,4 +1,11 @@
-# # source code and functions
+# 
+# inputs
+fit_value_model<-18.811 #best model outputs (bias-corrected); value of forecast
+lwr_pi_80<-12.259 # 80% PI
+upr_pi_80<-28.864 # 80% PI
+best.model<-m11
+
+# source code and functions
 source('2023_forecast/code/1_summarize_models.r')
 source('2023_forecast/code/functions.r')
 
@@ -16,7 +23,7 @@ augment(best.model) %>%
          'Std. residuals' = round((.std.resid),2),
          fitted = round((.fitted),5),
          Year=1998:year.data,
-         fit = exp(.fitted) * exp(0.5* sigma*sigma),
+         fit = exp(.fitted) * exp(0.5* .sigma*.sigma),
          'Fitted values' = round(fit,2),
          juvenile_year = 1997:year.data.one) %>%
   dplyr::select(Year, Harvest, Residuals, 'Hat values', 'Cooks distance', 'Std. residuals', 'Fitted values') %>%
@@ -174,6 +181,7 @@ augment(best.model) %>%
 cowplot::plot_grid(plot4, plot5,  align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "figs/influential.png"), dpi = 500, height = 3, width = 6, units = "in")
 
+
 # plot of harvest by year with prediction error 
 augment(best.model) %>% 
   mutate(year = 1998:year.data, 
@@ -195,19 +203,21 @@ augment(best.model) %>%
                      axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
                      axis.title.x = element_text(size=9, colour="black",family="Times New Roman"),
                      legend.position=c(0.6,0.9)) +
-  geom_point(x=year.data +1, y=fit_value, pch=21, size=3, colour = "black", fill="grey") +
+  geom_point(x=year.data +1, y=fit_value_model, pch=21, size=2.5, colour = "black", fill="grey") +
   scale_x_continuous(breaks = seq(1998, year.data+1, 1)) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  geom_segment(aes(x = year.data + 1, y = lwr_pi, yend = upr_pi, xend = year.data + 1), size=1, colour="black", lty=1) +
+  geom_segment(aes(x = year.data + 1, y = lwr_pi_80, yend = upr_pi_80, xend = year.data + 1), size=1, colour="black", lty=1) +
   geom_text(aes(x = 1998, y = 140, label="A."),family="Times New Roman", colour="black", size=5) -> plot1
 
 # plot of observed harvest by fitted values (with one to one line)
-augment(m2) %>% 
-  mutate(year = 1997:year.data.one, 
+# the year labels are manually put in, so uncomment the geom_text_repel to make sure the correct
+# labels are there
+augment(best.model) %>% 
+  mutate(year = 1998:year.data, 
          harvest = exp(SEAKCatch_log), 
          sigma = .sigma,
-         fit = exp(.fitted) * exp(0.5*sigma*sigma))  %>%
+         fit = exp(.fitted) * exp(0.5*.sigma*.sigma)) %>%
   ggplot(aes(x=fit, y=harvest)) +
   geom_point() +
   geom_point(aes(y = harvest), colour = "black", size = 1) +
@@ -219,10 +229,13 @@ augment(m2) %>%
   scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   geom_abline(intercept = 0, lty=3) +
+  # geom_text_repel(aes(y = harvest, label = year),
+  #                nudge_x = 1, size = 3, show.legend = FALSE) +
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5) +
-  geom_text(aes(y = 103, x = 57, label="2013"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(y = 85, x = 134, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
+  geom_text(aes(y = 55, x = 20, label="2021"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(y = 103, x = 62, label="2013"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(y = 85, x = 125, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "figs/catch_plot_pred.png"), dpi = 500, height = 3, width = 6, units = "in")
 
