@@ -317,7 +317,8 @@ seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, va
  variables %>%
    mutate('Juvenile year' = Year-1,
           CPUE = round(CPUEcal, 2),
-          Temperature = round(NSEAK_SST_May,2)) %>%
-   dplyr::select(c('Juvenile year', CPUE, Temperature)) %>%
+          NSEAK_SST_May = round(NSEAK_SST_May,2),
+          ISTI20_MJJ = round(ISTI20_MJJ,2)) %>%
+   dplyr::select(c('Juvenile year', CPUE, NSEAK_SST_May, ISTI20_MJJ)) %>%
    write.csv(., paste0(results.directory, "/data_used_b.csv"), row.names = F)
  

@@ -133,7 +133,7 @@ f_resid_year_diagnostics_plot<-function(best_model, model_name){
     labs(y = "Standardized residuals", x =  "ln(CPUE+1)") + theme(legend.position="none") +
     theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-    geom_text(aes(x = 0.4, y = 4, label="a)"),family="Times New Roman", colour="black", size=5) -> plot1
+    geom_text(aes(x = 0.2, y = 4, label="A."),family="Times New Roman", colour="black", size=5) -> plot1
 
   augment(best_model) %>% 
   mutate(resid = (.std.resid),
@@ -145,10 +145,10 @@ f_resid_year_diagnostics_plot<-function(best_model, model_name){
   scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
   scale_y_continuous(breaks = c(-4,-3,-2,-1,0, 1,2,3,4), limits = c(-4,4))+
   labs(y = "Standardized residuals", x =  "Juvenile year") + theme_bw () +theme(text = element_text(size=10),
-                                                                                axis.text.x = element_text(angle=90, hjust=1),
+                                                                                axis.text.x = element_text(angle=90, hjust=1, size=6),
                                                                                 panel.border = element_blank(), panel.grid.major = element_blank(),
                                                                                 panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 1997, y = 4, label="c)"),family="Times New Roman", colour="black", size=5) -> plot2
+  geom_text(aes(x = 1997, y = 4, label="C."),family="Times New Roman", colour="black", size=5) -> plot2
 
 # residuals against fitted
 augment(best_model) %>% 
@@ -163,7 +163,7 @@ augment(best_model) %>%
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   labs(y = "Residuals", x =  "Fitted values") +
-  geom_text(aes(x = 2.1, y = 1, label="d)"),family="Times New Roman", colour="black", size=5)-> plot3
+  geom_text(aes(x = 2.1, y = 1, label="D."),family="Times New Roman", colour="black", size=5)-> plot3
 
 # residuals against temp
 augment(best_model) %>% 
@@ -178,7 +178,7 @@ augment(best_model) %>%
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   labs(y = "Standardized residuals", x =  "Temperature") +
-  geom_text(aes(x = 5, y = 4, label="b)"),family="Times New Roman", colour="black", size=5) -> plot4
+  geom_text(aes(x = 5.2, y = 4, label="B."),family="Times New Roman", colour="black", size=5) -> plot4
 
 augment(best_model) %>% 
   mutate(temp = .[[3]]) %>% 
@@ -190,7 +190,7 @@ augment(best_model) %>%
   labs(y = "ln(Harvest)", x =  "Temperature") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 5, y = 6, label="e)"),family="Times New Roman", colour="black", size=5) -> plot5
+  geom_text(aes(x = 5, y = 6, label="E."),family="Times New Roman", colour="black", size=5) -> plot5
 
 augment(best_model) %>%  
   ggplot(aes(x = CPUE, y = SEAKCatch_log)) +
@@ -201,10 +201,10 @@ augment(best_model) %>%
   labs(y = "ln(Harvest)", x =  "ln(CPUE+1)") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 0, y = 6, label="f)"),family="Times New Roman", colour="black", size=5) -> plot6
+  geom_text(aes(x = 0, y = 6, label="F."),family="Times New Roman", colour="black", size=5) -> plot6
 
-cowplot::plot_grid(plot1, plot4, plot2, plot3, plot5, plot6,  align = "vh", nrow = 3, ncol=2)
-ggsave(paste0(results.directory, "fitted_", model_name,".png"), dpi = 500, height = 8, width = 6, units = "in")}
+cowplot::plot_grid(plot1, plot4, plot2, plot3, align = "vh", nrow = 2, ncol=2)
+ggsave(paste0(results.directory, "figs/fitted_", model_name,".png"), dpi = 500, height = 5, width = 5, units = "in")}
 
 # Cook's distance and leverage plot
 f_resid_leverage_diagnostics_plot<-function(best_model, model_name, k, p){
@@ -217,14 +217,14 @@ augment(best_model) %>%
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
-  geom_text(size = 2, position = position_stack(vjust = 1.05)) + 
+  geom_text(size = 2, position = position_stack(vjust = 1.1)) + 
   geom_hline(yintercept = level, lty=2) +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
   scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0, 1.25, 1.50), limits = c(0,1.5))+
   labs(y = "Cook's distance", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                             axis.text.x = element_text(angle=90, hjust=1))+
-  geom_text(aes(x = 1997, y = 1.5, label="a)"),family="Times New Roman", colour="black", size=5) -> plot1
+  geom_text(aes(x = 1997, y = 1.5, label="A."),family="Times New Roman", colour="black", size=5) -> plot1
 
 # leverage plot
 #  p = number of parameters in the model including intercept
@@ -238,16 +238,16 @@ augment(best_model) %>%
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
-  geom_text(size = 2, position = position_stack(vjust = 1.05)) + 
+  geom_text(size = 2, position = position_stack(vjust =1.1)) + 
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_hline(yintercept = 0.26, lty=2) +
   scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
   labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                        axis.text.x = element_text(angle=90, hjust=1))+
-  geom_text(aes(x = 1997, y = 1, label="b)"),family="Times New Roman", colour="black", size=5)-> plot2
+  geom_text(aes(x = 1997, y = 1, label="B."),family="Times New Roman", colour="black", size=5)-> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "influential_", model_name,".png"), dpi = 500, height = 3, width = 6, units = "in")}
+ggsave(paste0(results.directory, "figs/influential_", model_name,".png"), dpi = 500, height = 3, width = 6, units = "in")}
 
 # Bootstrap Functions
    # boostraplm function
@@ -316,7 +316,7 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end, model_nu
     data$model1_sim[data$JYear == i] <- predict(fit, newdata = data[data$JYear == i,])
     data$sigma[data$JYear == i] <- sigma(fit, newdata = data[data$JYear == i,])
   }
-  #return(data)
+  return(data)
   data %>% 
     dplyr::filter(JYear > end) %>% 
     as.data.frame() %>% 
@@ -324,7 +324,7 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end, model_nu
   # mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
 } 
 # function check for one model (one step ahead MAPE)
-#seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2011, model_num = "m1")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2011, model_num = "m1")
 
 
 
@@ -399,6 +399,7 @@ f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,mod
 #   dimnames(model.results)[[2]][1]<-c('inv_var')
 #   as.data.frame(model.results)-> x
 #   write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead_inv_var.csv"))}
+
 
 
 
