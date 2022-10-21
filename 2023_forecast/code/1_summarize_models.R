@@ -4,7 +4,7 @@
 # pink_cal_pooled_species
 # http://www.sthda.com/english/articles/40-regression-analysis/166-predict-in-r-model-predictions-and-confidence-intervals/
 # update all data files varyyyy_final.csv
-
+# summary table 5 needs to be updated manually from the excel sheet model_summary_table_month_year.xlsx
 # load libraries
 library("devtools")
 devtools::install_github("commfish/fngr")
@@ -269,7 +269,7 @@ read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead.csv'), h
 # run function f_model_one_step_ahead for each model
 # these return results_model.csv files for the one step ahead forecast
 # comment out the "return(data)" of the function in the functions.R file if you want the one-step-ahead-MAPE
-# these results are used in the model_summary_table_month_year.xlsx file
+# these results are used in the model_summary_table_month_year.xlsx file; they need to be input by hand into the excel sheet 
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2011, model_num = "m1")
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + ISTI20_MJJ, start = 1997, end = 2011, model_num = "m2")
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_May, start = 1997, end = 2011, model_num = "m3")
@@ -290,23 +290,23 @@ seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, va
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJJ, start = 1997, end = 2011, model_num = "m18")
 # the results of the models need to be manually entered into the model_summary_table_month_year.xlsx sheet
 # # test of predict results
- model.m11 = lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset)
- best.model <- m11 # this can be added after steps 1 and 2 after the best model is determined
- last_year_data_cpue <- 1.45
- sigma<- sigma(best.model) # best model
- CPUE <- last_year_data_cpue # last year of data
- NSEAK_SST_May <- 7.62
- # last year of data
- newdata <- data.frame(CPUE)
- preds<-predict(model.m11, newdata, interval="prediction", level = 0.80, se.fit=T)
- preds
- 
- z <- predict(model.m11, newdata, se.fit = TRUE)
- alpha <- 0.80  ## 90%
- Qt <- c(-1, 1) * qt((1 - alpha) / 2, z$df, lower.tail = FALSE)
- CI <- z$fit + outer(z$se.fit, Qt)
- colnames(CI) <- c("lwr", "upr")
- CI
+ # model.m11 = lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset)
+ # best.model <- m11 # this can be added after steps 1 and 2 after the best model is determined
+ # last_year_data_cpue <- 1.45
+ # sigma<- sigma(best.model) # best model
+ # CPUE <- last_year_data_cpue # last year of data
+ # NSEAK_SST_May <- 7.62
+ # # last year of data
+ # newdata <- data.frame(CPUE)
+ # preds<-predict(model.m11, newdata, interval="prediction", level = 0.80, se.fit=T)
+ # preds
+ # 
+ # z <- predict(model.m11, newdata, se.fit = TRUE)
+ # alpha <- 0.80  ## 90%
+ # Qt <- c(-1, 1) * qt((1 - alpha) / 2, z$df, lower.tail = FALSE)
+ # CI <- z$fit + outer(z$se.fit, Qt)
+ # colnames(CI) <- c("lwr", "upr")
+ # CI
 
 # restructure the data (for write-up)
  variables %>%

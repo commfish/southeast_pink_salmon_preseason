@@ -1,3 +1,4 @@
+# run diagnostics on the best model
 # inputs
 fit_value_model<-18.811 #best model outputs (bias-corrected); value of forecast (from table 3)
 lwr_pi_80<-12.259 # 80% PI from table 3
@@ -16,7 +17,7 @@ source('2023_forecast/code/functions.r')
 lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset) -> m11
 
 # MODEL DIAGNOSTICS TABLES
-f_model_diagnostics(m11, 'm11')
+# f_model_diagnostics(m11, 'm11')
 
 as.numeric(sigma(best_model))-> sigma
 augment(best_model) %>% 

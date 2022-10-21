@@ -74,8 +74,9 @@ $$\text{MAPE} = |\frac{\rm exp{(\textit Y_{\textit t})} -\rm exp (\hat{\textit Y
 4.	For each individual model, average the MAPEs calculated from the forecasts,
 $$\frac{1}{n} \sum_{t=1}^{n} |\frac{\rm exp{(\textit Y_{\textit t})} -\rm exp (\hat{\textit Y_{\textit t}} + \frac{{\sigma_t}^2}{2})}{\rm exp (\textit Y_{\textit t})}|,\tag{4}$$
 where $n$ is the number of forecasts in the average (5 forecasts for the 5-year MAPE and 10 forecasts for the 10-year MAPE). For example, to calculate the five year one-step-ahead MAPE for model m1 for the 2022 forecast, use data up through year 2016 (e.g., data up through year 2016 is $t$ -1 and the forecast is for $t$, or year 2017). Then, calculate a MAPE based on the 2017 forecast and the observed pink salmon harvest in 2017 using equation 3. Next, use data up through year 2017 (e.g., data up through year 2017 is $t$ -1 and the forecast is for year 2018; $t$) and calculate a MAPE based on the 2018 forecast and the observed pink salmon harvest in 2018 using equation 3. Repeat this process for each subsequent year through year 2020 to forecast 2021. Finally, average the five MAPEs to calculate a five year one-step-ahead MAPE for model m1. For the 10 year one-step-ahead MAPE for model m1, the process would be repeated, but the first forecast year would be 2012. 
-
 ```{r SummaryMetrics1}
+# the following table needs to be updated from the excel sheet 
+# model_summary_table_month_year.xlsx
 tbls_seak$model_summary_table5 %>% 
    knitr::kable(format = 'pandoc', caption = 'Summary of the adjusted R squared value and the 5-year and 10-year one-step ahead MAPEs for the 18 regression models.', row.names = F)
 ```
@@ -206,6 +207,73 @@ knitr::include_graphics(here(results.directory, "/figs/catch_plot_pred_m2.png"))
 ```
 
 Figure A4: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the base model (model m2). The predicted 2023 forecast is symbolized as a grey circle with an 80% prediction interval (12.9 to 28.5 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m2 by year. The dotted line is a one to one reference line. 
+
+# Appendix B
+```{r MAPE1, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/MAPE_forecasts.png"))
+```
+
+Figure B1: A. SEAK pink salmon harvest (millions) by year with forecasts for models m1, m2, and m11 for the last ten years.
+
+```{r MAPE2, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/year_minus_1.png"))
+```
+
+Figure B2: SEAK pink salmon harvest (millions) by year with the model hindcasts (lines) for models m1, m2, and m11 and the 2022 forecasts (points) based on the data from years 1998 through 2021.
+
+```{r MAPE3, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/year_minus_2.png"))
+```
+
+Figure B3: SEAK pink salmon harvest (millions) by year with the model hindcasts (lines) for models m1, m2, and m11 and the 2021 forecasts (points) based on the data from years 1998 through 2020.
+
+```{r MAPE4, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/year_minus_3.png"))
+```
+
+Figure B4: SEAK pink salmon harvest (millions) by year with the model hindcasts (lines) for models m1, m2, and m11 and the 2020 forecasts (points) based on the data from years 1998 through 2019.
+
+```{r MAPE5, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/year_minus_4.png"))
+```
+
+Figure B5: SEAK pink salmon harvest (millions) by year with the model hindcasts (lines) for models m1, m2, and m11 and the 2019 forecasts (points) based on the data from years 1998 through 2018.
+
+```{r MAPE6, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/year_minus_5.png"))
+```
+
+Figure B6: SEAK pink salmon harvest (millions) by year with the model hindcasts (lines) for models m1, m2, and m11 and the 2018 forecasts (points) based on the data from years 1998 through 2017.
+
+```{r MAPE7, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/year_minus_6.png"))
+```
+
+Figure B7: SEAK pink salmon harvest (millions) by year with the model hindcasts (lines) for models m1, m2, and m11 and the 2017 forecasts (points) based on the data from years 1998 through 2016.
+
+```{r MAPE8, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/year_minus_7.png"))
+```
+
+Figure B8: SEAK pink salmon harvest (millions) by year with the model hindcasts (lines) for models m1, m2, and m11 and the 2016 forecasts (points) based on the data from years 1998 through 2015.
+
+```{r MAPE9, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/year_minus_8.png"))
+```
+
+Figure B9: SEAK pink salmon harvest (millions) by year with the model hindcasts (lines) for models m1, m2, and m11 and the 2015 forecasts (points) based on the data from years 1998 through 2014.
+
+```{r MAPE10, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/year_minus_9.png"))
+```
+
+Figure B10: SEAK pink salmon harvest (millions) by year with the model hindcasts (lines) for models m1, m2, and m11 and the 2014 forecasts (points) based on the data from years 1998 through 2013.
+
+```{r MAPE11, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/year_minus_10.png"))
+```
+
+Figure B11: SEAK pink salmon harvest (millions) by year with the model hindcasts (lines) for models m1, m2, and m11 and the 2013 forecasts (points) based on the data from years 1998 through 2012.
 
 ```{r sess_info, echo=FALSE}
 #sessionInfo()

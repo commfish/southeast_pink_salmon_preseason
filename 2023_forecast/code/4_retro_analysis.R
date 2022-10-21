@@ -2,6 +2,9 @@
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
 library("RColorBrewer") 
+# this file is created from the spreadsheet model_summary_table_month_year.xlsx
+read.csv(file.path(data.directory,'forecasts.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> forecasts
+
 
 # model m1
 read.csv(file.path(data.directory,'var2022_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
@@ -186,7 +189,6 @@ rbind(results1, results2, results3, results4, results5,results6, results7, resul
          label = ifelse(type == "forecast", 
                         prettyNum(matbio_tons, big.mark = ",", digits = 1), NA)) -> df
 
-read.csv(file.path(data.directory,'forecasts.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> forecasts
 
 # plot of harvest by year with prediction error 
 augment(m11) %>% 
@@ -469,3 +471,32 @@ augment(m11) %>%
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank()) +
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)") 
 ggsave(paste0(results.directory, "figs/year_minus_1.png"), dpi = 500, height = 3, width = 6, units = "in")  
+
+
+augment(m11) %>% 
+  mutate(year = 1998:year.data, 
+         harvest = exp(SEAKCatch_log)) %>%
+  filter(year>2012)%>%
+  ggplot(aes(x=year)) +
+  geom_bar(aes(y = harvest, fill = "SEAK pink harvest"),
+           stat = "identity", colour ="black",
+           width = 1, position = position_dodge(width = 0.1)) +
+   geom_point(data = forecasts, 
+             aes(x = Year, y = fitted_values, colour = model_name, shape =model_name), size=3) +
+  geom_line(data = forecasts, 
+             aes(x = Year, y = fitted_values, colour = model_name, line_type =model_name), size=0.75) +
+  scale_shape_manual(values =c(16,16,16)) +
+  scale_colour_brewer(palette = "Dark2") +
+  scale_fill_manual("",values="lightgrey")+
+  theme_bw() + theme(legend.key=element_blank(),
+                     legend.title=element_blank(),
+                     legend.box="horizontal", panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                     text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1),
+                     axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
+                     axis.title.x = element_text(size=9, colour="black",family="Times New Roman"),
+                     legend.position=c(0.77,0.80)) +
+  scale_x_continuous(breaks = seq(2013, year.data, 1)) +
+  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank()) +
+  labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)") 
+ggsave(paste0(results.directory, "figs/MAPE_forecasts.png"), dpi = 500, height = 3, width = 6, units = "in")  
