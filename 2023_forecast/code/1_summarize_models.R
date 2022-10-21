@@ -267,8 +267,9 @@ read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead.csv'), h
   write.csv(paste0(results.directory, "/model_summary_table4.csv"), row.names = F)
 
 # run function f_model_one_step_ahead for each model
-# comment out the "return(data)" if you want the MAPE
-# these results are used in the model_summary_table_month_year.xlsx
+# these return results_model.csv files for the one step ahead forecast
+# comment out the "return(data)" of the function in the functions.R file if you want the one-step-ahead-MAPE
+# these results are used in the model_summary_table_month_year.xlsx file
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2011, model_num = "m1")
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + ISTI20_MJJ, start = 1997, end = 2011, model_num = "m2")
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_May, start = 1997, end = 2011, model_num = "m3")
