@@ -1,7 +1,7 @@
 ---
 title: "SEAK Pink Salmon 2023 Forecast Process--DRAFT"
 author: "Sara Miller"
-date: "October 17, 2022"
+date: "November 1, 2022"
 output:
   pdf_document: default
   word_document: default
@@ -33,7 +33,7 @@ To forecast the Southeast Alaska (SEAK) pink salmon commercial harvest in 2023.
 # Executive Summary
 Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019). We used a similar approach to Murphy et al. (2019), but assumed a log-normal error (Miller et al. 2022). This approach is based on a multiple regression model with juvenile pink salmon catch-per-unit-effort (CPUE; a proxy for abundance) and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021) or from satellite sea surface temperature (SST) data (Huang et al. 2017). See the document satellite_SST_process--September_2022 for details about the temperature variables. Based on prior discussions, the index of juvenile abundance (i.e., CPUE) was based on the pooled-species vessel calibration coefficient.
 
-The model performance metric one-step ahead mean absolute percent error (MAPE) for the last five years (years 2018 through 2022) and for the last ten years (years 2013 through 2022) was used to evaluate the forecast accuracy of the 18 individual models. Based upon this performance metrics, model m11 (a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data; Table 1 and Table 2) was the best performing model and a forecast using this model would be in the weak range with a point estimate of 18.8 million fish (80% prediction interval: 12.3 to 28.9 million fish). As the pink salmon forecasting group is still investigating the use of satellite SST as a covariate in the model, the base model, m2 (a model that included CPUE and the average temperature in the upper 20 m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI20_MJJ; appendix A), was used to forecast the SEAK pink salmon harvest in 2023. The forecast using the base model (m2) would be in the weak range with a point estimate of 19.1 million fish (80% prediction interval: 12.9 to 28.5 million fish).
+The model performance metric, one-step ahead mean absolute percent error (MAPE), for the last five years (years 2018 through 2022) and for the last ten years (years 2013 through 2022) was used to evaluate the forecast accuracy of the 18 individual models. Based upon this performance metric, model m11 (a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data; Table 1 and Table 2) was the best performing model and a forecast using this model would be in the weak range with a point estimate of 18.8 million fish (80% prediction interval: 12.3 to 28.9 million fish). As the pink salmon forecasting group is still investigating the use of satellite SST as a covariate in the model, the base model, m2 (a model that included CPUE and the average temperature in the upper 20 m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI20_MJJ; appendix A)), was used to forecast the SEAK pink salmon harvest in 2023. The forecast using the base model (m2) was very close to the forecast using model m11. Using model m2, the forecast would be in the weak range with a point estimate of 19.2 million fish (80% prediction interval: 12.9 to 28.6 million fish).
 
 # Analysis
 
@@ -89,7 +89,7 @@ Model diagnostics for model m11 included residual plots, the curvature test, and
 
 ```{r details}
 tbls_seak$model_summary_table6_m11 %>% 
-   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m11. Juvenile years 1998, 2005, 2012, and 2019, and 2020 (years 1999, 2006, 2013, 2020, and 2021) show the largest standardized residual (Std. residuals). Fitted values are bias-corrected.')
+   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m11. Juvenile years 1998, 2005, 2012, 2019, and 2020 (years 1999, 2006, 2013, 2020, and 2021) show the largest standardized residual (Std. residuals). Fitted values are bias-corrected.')
 ```
 
 ### Cook's distance
@@ -133,13 +133,13 @@ Huang, B., P. W. Thorne, V. F. Banzon,, T. Boyer, G. Chepurin, J. H. Lawrimore, 
 
 Miller, D. M. 1984. Reducing transformation bias in curve fitting. The American Statistician 38: 124-126.
 
-Miller, S. E., J. M. Murphy, S. C. Heinl, A. W. Piston, E. A. Fergusson, R. E. Brenner, W. W. Strasburger, and J. H.Moss. 2022. Southeast Alaska pink salmon forecasting models. Alaska Department of Fish and Game, Fishery Manuscript No. 22-03, Anchorage.
+Miller, S. E., J. M. Murphy, S. C. Heinl, A. W. Piston, E. A. Fergusson, R. E. Brenner, W. W. Strasburger, and J. H. Moss. 2022. Southeast Alaska pink salmon forecasting models. Alaska Department of Fish and Game, Fishery Manuscript No. 22-03, Anchorage.
 
 Murphy, J. M., E. A. Fergusson, A. Piston, A. Gray, and E. Farley.  2019. Southeast Alaska pink salmon growth and harvest forecast models.  North Pacific Anadromous Fish Commission Technical Report No. 15: 75-81.
 
-NOAA Coral Reef Watch (NOAA_DHW_monthly dataset). 2022, updated daily. NOAA Coral Reef Watch Version 3.1 Monthly 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, May 1997-June 2021. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2022-09-12 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html.
+NOAA Coral Reef Watch (NOAA_DHW_monthly data set). 2022, updated daily. NOAA Coral Reef Watch Version 3.1 Monthly 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, May 1997-June 2021. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2022-09-12 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html.
 
-NOAA Coral Reef Watch (NOAA_DHW dataset). 2022, updated daily. NOAA Coral Reef Watch Daily Near-real-Time Global 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, July 2021 to July 2022. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2022-09-12 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html.
+NOAA Coral Reef Watch (NOAA_DHW data set). 2022, updated daily. NOAA Coral Reef Watch Daily Near-real-Time Global 5km SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring Time Series Data, July 2021 to July 2022. College Park, Maryland, USA: NOAA/NESDIS/STAR Coral Reef Watch program. Data set accessed 2022-09-12 at https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html.
 
 Orsi, J. A., E. A. Fergusson, A. C. Wertheimer, E. V. Farley, and P. R. Mundy. 2016. Forecasting pink salmon production in Southeast Alaska using ecosystem indicators in times of climate change. N. Pac. Anadr. Fish Comm. Bull. 6: 483–499. (Available at https://npafc.org)
 
@@ -166,7 +166,7 @@ tbls_seak$model_summary_table1 %>%
 knitr::include_graphics(here(results.directory, "/figs/forecast_models.png"))
 ```
 
-Figure A1: Bias-corrected forecasts (grey bars) for the eighteen regression models with 80% prediction intervals (blue lines). Based upon the performance metrics, the best performing model was model m11; a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite sea surface temperature (SST) data. As the pink salmon forecasting group is still investigating the use of satellite SST as a covariate in the model, the base model, m2 (a model that included CPUE and the average temperature in the upper 20 m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI20_MJJ), was used to forecast the SEAK pink salmon harvest in 2023. The forecast using the base model (m2) would be in the weak range with a point estimate of 19.1 million fish (80% prediction interval: 12.9 to 28.5 million fish).
+Figure A1: Bias-corrected forecasts (grey bars) for the eighteen regression models with 80% prediction intervals (blue lines). Based upon the performance metrics, the best performing model was model m11; a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite sea surface temperature (SST) data. As the pink salmon forecasting group is still investigating the use of satellite SST as a covariate in the model, the base model, m2 (a model that included CPUE and the average temperature in the upper 20 m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI20_MJJ)), was used to forecast the SEAK pink salmon harvest in 2023. The forecast using the base model (m2) would be in the weak range with a point estimate of 19.2 million fish (80% prediction interval: 12.9 to 28.6 million fish).
 
 ## Model Diagnostics for Model m2
 Model diagnostics for model m2 included residual plots, the curvature test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage plots. Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). 
@@ -206,14 +206,14 @@ Figure A3: Standardized residuals versus predicted plots for A. CPUE and B. temp
 knitr::include_graphics(here(results.directory, "/figs/catch_plot_pred_m2.png"))
 ```
 
-Figure A4: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the base model (model m2). The predicted 2023 forecast is symbolized as a grey circle with an 80% prediction interval (12.9 to 28.5 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m2 by year. The dotted line is a one to one reference line. 
+Figure A4: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the base model (model m2). The predicted 2023 forecast is symbolized as a grey circle with an 80% prediction interval (12.9 to 28.6 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m2 by year. The dotted line is a one to one reference line. 
 
 # Appendix B
 ```{r MAPE1, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/MAPE_forecasts.png"))
 ```
 
-Figure B1: A. SEAK pink salmon harvest (millions) by year with forecasts for models m1, m2, and m11 for the last ten years.
+Figure B1: A. SEAK pink salmon harvest (millions) by year with forecasts for models m1 (CPUE only model), m2 (a model that includes CPUE and the average temperature in the upper 20 m during May through July in Icy Strait), and m11 (a model that includes CPUE and a May temperature index based on northern Southeast Alaska satellite SST data) for the last ten years. 
 
 ```{r MAPE2, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/figs/year_minus_1.png"))

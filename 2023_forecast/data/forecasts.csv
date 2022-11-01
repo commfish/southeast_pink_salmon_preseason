@@ -1,31 +1,31 @@
-Year,fitted_values,year_minus,type,model_name,forecast_model
-2013,51.46,10,forecast,m1,2012
-2014,30.42,9,forecast,m1,2013
-2015,62.37,8,forecast,m1,2014
-2016,34.8,7,forecast,m1,2015
-2017,73.44,6,forecast,m1,2016
-2018,15.55,5,forecast,m1,2017
-2019,18.93,4,forecast,m1,2018
-2020,19.08,3,forecast,m1,2019
-2021,27.51,2,forecast,m1,2020
-2022,16.5,1,forecast,m1,2021
-2013,65.11,10,forecast,m2,2012
-2014,30.28,9,forecast,m2,2013
-2015,58.82,8,forecast,m2,2014
-2016,24.25,7,forecast,m2,2015
-2017,41.07,6,forecast,m2,2016
-2018,15.62,5,forecast,m2,2017
-2019,16.71,4,forecast,m2,2018
-2020,10.16,3,forecast,m2,2019
-2021,28.12,2,forecast,m2,2020
-2022,15.58,1,forecast,m2,2021
-2013,60.23,10,forecast,m11,2012
-2014,38.17,9,forecast,m11,2013
-2015,41.15,8,forecast,m11,2014
-2016,13.76,7,forecast,m11,2015
-2017,39.6,6,forecast,m11,2016
-2018,9.44,5,forecast,m11,2017
-2019,15.01,4,forecast,m11,2018
-2020,10.46,3,forecast,m11,2019
-2021,17.51,2,forecast,m11,2020
-2022,16.21,1,forecast,m11,2021
+Year,fitted_values,year_minus,type,model_name,forecast_model,,forecast_model_name
+2013,51.45909609,10,forecast,m1,2012,,CPUE
+2014,30.41808586,9,forecast,m1,2013,,CPUE
+2015,62.37064003,8,forecast,m1,2014,,CPUE
+2016,34.80133787,7,forecast,m1,2015,,CPUE
+2017,73.44226739,6,forecast,m1,2016,,CPUE
+2018,15.55429443,5,forecast,m1,2017,,CPUE
+2019,18.93219345,4,forecast,m1,2018,,CPUE
+2020,19.08008669,3,forecast,m1,2019,,CPUE
+2021,27.51179893,2,forecast,m1,2020,,CPUE
+2022,16.50458673,1,forecast,m1,2021,,CPUE
+2013,65.1085686,10,forecast,m2,2012,,ISTI
+2014,30.27781442,9,forecast,m2,2013,,ISTI
+2015,58.81684842,8,forecast,m2,2014,,ISTI
+2016,24.24608389,7,forecast,m2,2015,,ISTI
+2017,41.07497415,6,forecast,m2,2016,,ISTI
+2018,15.62411734,5,forecast,m2,2017,,ISTI
+2019,16.70559072,4,forecast,m2,2018,,ISTI
+2020,10.15654044,3,forecast,m2,2019,,ISTI
+2021,28.1221572,2,forecast,m2,2020,,ISTI
+2022,15.57613854,1,forecast,m2,2021,,ISTI
+2013,60.23101612,10,forecast,m11,2012,,NSEAK May SST
+2014,38.17208413,9,forecast,m11,2013,,NSEAK May SST
+2015,41.14801482,8,forecast,m11,2014,,NSEAK May SST
+2016,13.76221546,7,forecast,m11,2015,,NSEAK May SST
+2017,39.59547829,6,forecast,m11,2016,,NSEAK May SST
+2018,9.435039342,5,forecast,m11,2017,,NSEAK May SST
+2019,15.00735122,4,forecast,m11,2018,,NSEAK May SST
+2020,10.46361937,3,forecast,m11,2019,,NSEAK May SST
+2021,17.50556444,2,forecast,m11,2020,,NSEAK May SST
+2022,16.21374018,1,forecast,m11,2021,,NSEAK May SST

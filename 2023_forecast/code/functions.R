@@ -241,7 +241,7 @@ augment(best_model) %>%
   geom_text(size = 2, position = position_stack(vjust =1.1)) + 
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_hline(yintercept = 0.26, lty=2) +
+  geom_hline(yintercept = level, lty=2) +
   scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
   labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                        axis.text.x = element_text(angle=90, hjust=1))+

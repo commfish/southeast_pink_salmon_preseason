@@ -472,7 +472,7 @@ augment(m11) %>%
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)") 
 ggsave(paste0(results.directory, "figs/year_minus_1.png"), dpi = 500, height = 3, width = 6, units = "in")  
 
-
+# add the model descriptions to legend
 augment(m11) %>% 
   mutate(year = 1998:year.data, 
          harvest = exp(SEAKCatch_log)) %>%
@@ -482,9 +482,9 @@ augment(m11) %>%
            stat = "identity", colour ="black",
            width = 1, position = position_dodge(width = 0.1)) +
    geom_point(data = forecasts, 
-             aes(x = Year, y = fitted_values, colour = model_name, shape =model_name), size=3) +
+             aes(x = Year, y = fitted_values, colour = forecast_model_name, shape =forecast_model_name), size=3) +
   geom_line(data = forecasts, 
-             aes(x = Year, y = fitted_values, colour = model_name, line_type =model_name), size=0.75) +
+             aes(x = Year, y = fitted_values, colour = forecast_model_name, line_type = forecast_model_name), size=0.75) +
   scale_shape_manual(values =c(16,16,16)) +
   scale_colour_brewer(palette = "Dark2") +
   scale_fill_manual("",values="lightgrey")+
@@ -495,8 +495,8 @@ augment(m11) %>%
                      text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1),
                      axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
                      axis.title.x = element_text(size=9, colour="black",family="Times New Roman"),
-                     legend.position=c(0.77,0.80)) +
+                     legend.position=c(0.76,0.75)) +
   scale_x_continuous(breaks = seq(2013, year.data, 1)) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank()) +
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)") 
-ggsave(paste0(results.directory, "figs/MAPE_forecasts.png"), dpi = 500, height = 3, width = 6, units = "in")  
+ggsave(paste0(results.directory, "figs/MAPE_forecasts.png"), dpi = 500, height = 3, width = 7, units = "in")  

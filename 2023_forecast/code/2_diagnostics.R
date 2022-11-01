@@ -1,8 +1,8 @@
 # run diagnostics on the best model
 # inputs
-fit_value_model<-18.811 #best model outputs (bias-corrected); value of forecast (from table 3)
-lwr_pi_80<-12.259 # 80% PI from table 3
-upr_pi_80<-28.864 # 80% PI from table 3
+fit_value_model<-18.841 #best model outputs (bias-corrected); value of forecast (from table 3)
+lwr_pi_80<-12.273 # 80% PI from table 3
+upr_pi_80<-28.922 # 80% PI from table 3
 best_model<-m11
 model<-'m11'
 year.forecast <- "2023_forecast"
@@ -100,7 +100,7 @@ augment(best_model) %>%
   scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   geom_abline(intercept = 0, lty=3) +
-  #geom_text_repel(aes(y = harvest, label = year),
+  # geom_text_repel(aes(y = harvest, label = year),
   #                nudge_x = 1, size = 3, show.legend = FALSE) +
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL)+
   geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5)+
