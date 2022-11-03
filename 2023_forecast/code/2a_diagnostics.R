@@ -93,10 +93,10 @@ augment(best_model) %>%
   # geom_text_repel(aes(y = harvest, label = year),
   #                nudge_x = 1, size = 3, show.legend = FALSE) +
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL)+
-  geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5) +
-  geom_text(aes(y = 55, x = 22, label="2021"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(y = 103, x = 64, label="2013"),family="Times New Roman", colour="black", size=4) +
-  geom_text(aes(y = 85, x = 123, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
+  geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5) -> plot2
+  #geom_text(aes(y = 55, x = 22, label="2021"),family="Times New Roman", colour="black", size=4) +
+  #geom_text(aes(y = 103, x = 64, label="2013"),family="Times New Roman", colour="black", size=4) +
+  #geom_text(aes(y = 85, x = 123, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 3, width = 6, units = "in")
 

@@ -1,5 +1,5 @@
 ---
-title: "SEAK Pink Salmon 2023 Forecast Process--DRAFT"
+title: "SEAK Pink Salmon 2023 Forecast Process"
 author: "Sara Miller"
 date: "November 1, 2022"
 output:

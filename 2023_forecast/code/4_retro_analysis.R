@@ -484,18 +484,19 @@ augment(m11) %>%
    geom_point(data = forecasts, 
              aes(x = Year, y = fitted_values, colour = forecast_model_name, shape =forecast_model_name), size=3) +
   geom_line(data = forecasts, 
-             aes(x = Year, y = fitted_values, colour = forecast_model_name, line_type = forecast_model_name), size=0.75) +
-  scale_shape_manual(values =c(16,16,16)) +
-  scale_colour_brewer(palette = "Dark2") +
+             aes(x = Year, y = fitted_values, colour = forecast_model_name, linetype = forecast_model_name), size=0.75) +
+  scale_shape_manual(values =c(16,8,2)) +
+  scale_colour_manual(values =c("black", "darkgrey", "black")) +
+  scale_linetype_manual(values=c("dotted", "solid", "dashed")) + 
   scale_fill_manual("",values="lightgrey")+
   theme_bw() + theme(legend.key=element_blank(),
                      legend.title=element_blank(),
                      legend.box="horizontal", panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                     text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1),
+                     text = element_text(size=10),
                      axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
                      axis.title.x = element_text(size=9, colour="black",family="Times New Roman"),
-                     legend.position=c(0.76,0.75)) +
+                     legend.position=c(0.70,0.80)) +
   scale_x_continuous(breaks = seq(2013, year.data, 1)) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank()) +
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)") 
