@@ -5,7 +5,6 @@ library("RColorBrewer")
 # this file is created from the spreadsheet model_summary_table_month_year.xlsx
 read.csv(file.path(data.directory,'forecasts.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> forecasts
 
-
 # model m1
 read.csv(file.path(data.directory,'var2022_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
 variables$CPUE <- variables$CPUEcal # Use CPUEcal as CPUE index

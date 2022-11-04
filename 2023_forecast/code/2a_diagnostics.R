@@ -1,8 +1,8 @@
 # run diagnostics on the other 'best' models
 # inputs
 fit_value_model<-19.187 #best model outputs (bias-corrected); value of forecast from table 3
-lwr_pi_80<-12.88 # 80% PI from table 3
-upr_pi_80<-28.584 # 80% PI from table 3
+lwr_pi_80<-12.88 # 80% PI from model_summary_table3
+upr_pi_80<-28.584 # 80% PI from model_summary_table3
 best_model<-m2
 model<-'m2'
 

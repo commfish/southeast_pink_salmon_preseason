@@ -1,8 +1,8 @@
 # run diagnostics on the best model
 # inputs
-fit_value_model<-18.841 #best model outputs (bias-corrected); value of forecast (from table 3)
-lwr_pi_80<-12.273 # 80% PI from table 3
-upr_pi_80<-28.922 # 80% PI from table 3
+fit_value_model<-18.841 #best model outputs (bias-corrected); value of forecast (from model_summary_table3)
+lwr_pi_80<-12.273 # 80% PI from model_summary_table3
+upr_pi_80<-28.922 # 80% PI from model_summary_table3
 best_model<-m11
 model<-'m11'
 year.forecast <- "2023_forecast"
