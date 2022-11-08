@@ -1,7 +1,7 @@
 ---
 title: "SEAK Pink Salmon 2023 Forecast Process"
 author: "Sara Miller"
-date: "November 1, 2022"
+date: "November 7, 2022"
 output:
   pdf_document: default
   word_document: default
@@ -33,7 +33,7 @@ To forecast the Southeast Alaska (SEAK) pink salmon commercial harvest in 2023.
 # Executive Summary
 Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019). We used a similar approach to Murphy et al. (2019), but assumed a log-normal error (Miller et al. 2022). This approach is based on a multiple regression model with juvenile pink salmon catch-per-unit-effort (CPUE; a proxy for abundance) and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021) or from satellite sea surface temperature (SST) data (Huang et al. 2017). See the document satellite_SST_process--September_2022 for details about the temperature variables. Based on prior discussions, the index of juvenile abundance (i.e., CPUE) was based on the pooled-species vessel calibration coefficient.
 
-The model performance metric, one-step ahead mean absolute percent error (MAPE), for the last five years (years 2018 through 2022) and for the last ten years (years 2013 through 2022) was used to evaluate the forecast accuracy of the 18 individual models. Based upon this performance metric, model m11 (a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data; Table 1 and Table 2) was the best performing model and a forecast using this model would be in the weak range with a point estimate of 18.8 million fish (80% prediction interval: 12.3 to 28.9 million fish). As the pink salmon forecasting group is still investigating the use of satellite SST as a covariate in the model, the base model, m2 (a model that included CPUE and the average temperature in the upper 20 m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI20_MJJ; appendix A)), was used to forecast the SEAK pink salmon harvest in 2023. The forecast using the base model (m2) was very close to the forecast using model m11. Using model m2, the forecast would be in the weak range with a point estimate of 19.2 million fish (80% prediction interval: 12.9 to 28.6 million fish).
+The model performance metric, one-step ahead mean absolute percent error (MAPE), for the last five years (years 2018 through 2022) and for the last ten years (years 2013 through 2022) was used to evaluate the forecast accuracy of the 18 individual models. Based upon this performance metric, model m11 (a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite SST data; Table 1 and Table 2) was the best performing model and a forecast using this model would be in the weak range with a point estimate of 18.8 million fish (80% prediction interval: 12.3 to 28.9 million fish). 
 
 # Analysis
 
@@ -169,7 +169,7 @@ knitr::include_graphics(here(results.directory, "/figs/forecast_models.png"))
 Figure A1: Bias-corrected forecasts (grey bars) for the eighteen regression models with 80% prediction intervals (blue lines). Based upon the performance metrics, the best performing model was model m11; a model that included CPUE and a May temperature index based on northern Southeast Alaska satellite sea surface temperature (SST) data. As the pink salmon forecasting group is still investigating the use of satellite SST as a covariate in the model, the base model, m2 (a model that included CPUE and the average temperature in the upper 20 m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI20_MJJ)), was used to forecast the SEAK pink salmon harvest in 2023. The forecast using the base model (m2) would be in the weak range with a point estimate of 19.2 million fish (80% prediction interval: 12.9 to 28.6 million fish).
 
 ## Model Diagnostics for Model m2
-Model diagnostics for model m2 included residual plots, the curvature test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage plots. Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). 
+As the pink salmon forecasting group is still investigating the use of satellite SST as a covariate in the model, the results of the base model, m2 (a model that included CPUE and the average temperature in the upper 20 m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI20_MJJ)), is also shown. The forecast using the base model (m2) was very close to the forecast using model m11. Using model m2, the forecast would be in the weak range with a point estimate of 19.2 million fish (80% prediction interval: 12.9 to 28.6 million fish). Model diagnostics for model m2 included residual plots, the curvature test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage plots. Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). 
 
 ```{r details_m2}
 tbls_seak$model_summary_table6_m2 %>% 

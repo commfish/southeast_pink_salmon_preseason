@@ -492,11 +492,11 @@ augment(m11) %>%
                      legend.title=element_blank(),
                      legend.box="horizontal", panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                     text = element_text(size=10),
-                     axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
-                     axis.title.x = element_text(size=9, colour="black",family="Times New Roman"),
+                     text = element_text(size=11),
+                     axis.title.y = element_text(size=11, colour="black",family="Times New Roman"),
+                     axis.title.x = element_text(size=11, colour="black",family="Times New Roman"),
                      legend.position=c(0.70,0.80)) +
-  scale_x_continuous(breaks = seq(2013, year.data, 1)) +
+  scale_x_continuous(breaks = seq(2013, year.data +1, 1)) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank()) +
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)") 
 ggsave(paste0(results.directory, "figs/MAPE_forecasts.png"), dpi = 500, height = 3, width = 7, units = "in")  

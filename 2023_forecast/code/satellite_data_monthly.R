@@ -510,11 +510,11 @@ par(mfrow=c(1,1),omi=c(0,0,0,0))
 png(paste0(results.directory, "NSEAK.png"),width=6,height=8,units="in", res=600)                                                        
 plotMap(region,xlim=x, ylim=y, tck=-0.02, plt=c(.13,.98,.13,.98),projection="LL", cex=1.2,
         xlab="Longitude (°W)", ylab="Latitude (°N)", cex.lab=1.5, font.lab=6, col=clr$land, bg=clr$sea)
-addPoints(NSEAK, xlim=x,ylim=y,col=1,pch=1, lwd=1, cex=0.75) # satellite SST data
+addPoints(NSEAK, xlim=x,ylim=y,col=1,pch=16, lwd=0.5, cex=0.5) # satellite SST data
 addLines(scale, xlim=x,ylim=y,col=1,lty=1, lwd=2, cex=1)
 addCompass(-137, 56.5, rot="trueN", cex=1)
-legend (-134.2, 58.9, legend=c("NSEAK SST locations"),
-        col=c(1,2), bty="n", cex=1, pch=c(1, 16))
+#legend (-134.2, 58.9, legend=c("NSEAK SST locations"),
+#        col=c(1,2), bty="n", cex=1, pch=c(1, 16))
 text(-136,57.1,"Pacific Ocean", cex=1.25, adj=1, font=1)
 text(-131.7, 59.2,"25 nm at 59°N", cex = 0.75, adj = 1, font = 1)
 dev.off()

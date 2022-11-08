@@ -58,12 +58,15 @@ augment(best_model) %>%
   theme_bw() + theme(legend.key=element_blank(),
                      legend.title=element_blank(),
                      legend.box="horizontal",
-                     panel.border = element_blank(), panel.grid.major = element_blank(),
-                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                     text = element_text(size=10),axis.text.x = element_text(angle=90, hjust=1),
+                     #panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), 
+                     panel.grid.major = element_blank(), 
+                     axis.line = element_line(colour = "black"),
+                     axis.text.x = element_text(angle=90, hjust=1, size =6),
                      axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
                      axis.title.x = element_text(size=9, colour="black",family="Times New Roman"),
-                     legend.position=c(0.6,0.9)) +
+                     panel.border = element_rect(colour = "black", size=1),
+                     legend.position=c(0.48,0.9)) +
   geom_point(x=year.data +1, y=fit_value_model, pch=21, size=2.5, colour = "black", fill="grey") +
   scale_x_continuous(breaks = seq(1998, year.data+1, 1)) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
@@ -82,9 +85,10 @@ augment(best_model) %>%
   ggplot(aes(x=fit, y=harvest)) +
   geom_point() +
   geom_point(aes(y = harvest), colour = "black", size = 1) +
-  scale_color_grey() +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+  scale_color_grey() +theme_bw() + theme(panel.grid.minor = element_blank(),
+                                         panel.grid.major = element_blank(), axis.line = element_line(colour = "black"),
                                          axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
+                                         panel.border = element_rect(colour = "black", fill=NA, size=1),
                                          axis.title.x = element_text(size=9, colour="black",family="Times New Roman")) +
   theme(legend.position="none") + theme(legend.title=element_blank())+
   scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
