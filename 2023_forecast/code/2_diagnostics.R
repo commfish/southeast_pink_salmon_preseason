@@ -76,14 +76,14 @@ augment(best_model) %>%
                      axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
                      axis.title.x = element_text(size=9, colour="black",family="Times New Roman"),
                      panel.border = element_rect(colour = "black", size=1),
-                     legend.position=c(0.48,0.9)) +
+                     legend.position=c(0.51,0.87)) +
   geom_point(x=year.data +1, y=fit_value_model, pch=21, size=2.5, colour = "black", fill="grey") +
   scale_x_continuous(breaks = seq(1998, year.data+1, 1)) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  geom_segment(aes(x = year.data + 1, y = lwr_pi_80, yend = upr_pi_80, xend = year.data + 1), size=1, colour="black", lty=1) +
-  geom_text(aes(x = 1998, y = 140, label="A."),family="Times New Roman", colour="black", size=5) -> plot1
-dev.off()
+  geom_text(aes(x = 1998, y = 140, label="A."),family="Times New Roman", colour="black", size=5) +
+  geom_segment(aes(x = year.data + 1, y = lwr_pi_80, yend = upr_pi_80, xend = year.data + 1), size=1, colour="black", lty=1)-> plot1
+#dev.off()
 # plot of observed harvest by fitted values (with one to one line)
 # the year labels are manually put in, so uncomment the geom_text_repel to make sure the correct
 # labels are there
@@ -112,7 +112,7 @@ geom_text(aes(y = 55, x = 20, label="2021"),family="Times New Roman", colour="bl
 geom_text(aes(y = 103, x = 62, label="2013"),family="Times New Roman", colour="black", size=4) +
 geom_text(aes(y = 85, x = 125, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 3, width = 6, units = "in")
+ggsave(paste0(results.directory, "figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
 dev.off()
 
 # these figures are made from the functions f_resid_year_diagnostics_plot(m11, 'm11'); and

@@ -102,6 +102,6 @@ augment(best_model) %>%
   #geom_text(aes(y = 103, x = 64, label="2013"),family="Times New Roman", colour="black", size=4) +
   #geom_text(aes(y = 85, x = 123, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 3, width = 6, units = "in")
+ggsave(paste0(results.directory, "figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
 
 
