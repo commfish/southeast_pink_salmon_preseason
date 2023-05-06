@@ -49,14 +49,14 @@ $$\hat{F_i} = \rm exp (\hat{\textit {Y}_{\textit i}} + \frac{{\sigma_i}^2}{2}),\
 where ${\hat {F_i}}$ is the preseason forecast (for each model $i$) in millions of fish, and $\sigma_i$ is the variance (for each model $i$).
 
 ```{r data_a}
-tbls_seak$data_used_a %>% 
+tbls_seak$data_used_harvest %>% 
    knitr::kable(format = 'pandoc', caption = 'Annual adult pink salmon harvest data from Southeast Alaska (millions of fish), 1998-2022.', row.names = F)
 ```
 
 \pagebreak
 
 ```{r data_b}
-tbls_seak$data_used_b %>% 
+tbls_seak$data_used_temp %>% 
    knitr::kable(format = 'pandoc', caption = 'Juvenile pink salmon CPUE data collected from the SECM project, May satellite sea surface temperature data (°C) from the northern Southeast Alaska region in the juvenile years 1997–2022 (NSEAK_SST_May), and average temperature in the upper 20 m during May through July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects) in the juvenile years 1997–2022 (ISTI20_MJJ).', row.names = F)
 ```
 
@@ -75,9 +75,9 @@ $$\text{MAPE} = |\frac{\rm exp{(\textit Y_{\textit t})} -\rm exp (\hat{\textit Y
 $$\frac{1}{n} \sum_{t=1}^{n} |\frac{\rm exp{(\textit Y_{\textit t})} -\rm exp (\hat{\textit Y_{\textit t}} + \frac{{\sigma_t}^2}{2})}{\rm exp (\textit Y_{\textit t})}|,\tag{4}$$
 where $n$ is the number of forecasts in the average (5 forecasts for the 5-year MAPE and 10 forecasts for the 10-year MAPE). For example, to calculate the five year one-step-ahead MAPE for model m1 for the 2022 forecast, use data up through year 2016 (e.g., data up through year 2016 is $t$ -1 and the forecast is for $t$, or year 2017). Then, calculate a MAPE based on the 2017 forecast and the observed pink salmon harvest in 2017 using equation 3. Next, use data up through year 2017 (e.g., data up through year 2017 is $t$ -1 and the forecast is for year 2018; $t$) and calculate a MAPE based on the 2018 forecast and the observed pink salmon harvest in 2018 using equation 3. Repeat this process for each subsequent year through year 2020 to forecast 2021. Finally, average the five MAPEs to calculate a five year one-step-ahead MAPE for model m1. For the 10 year one-step-ahead MAPE for model m1, the process would be repeated, but the first forecast year would be 2012. 
 ```{r SummaryMetrics1}
-# the following table needs to be updated from the excel sheet 
+# the following table needs to be updated from the excel sheet or just as R output from model_summary_table3 
 # model_summary_table_month_year.xlsx
-tbls_seak$model_summary_table5 %>% 
+tbls_seak$model_summary_table2 %>% 
    knitr::kable(format = 'pandoc', caption = 'Summary of the adjusted R squared value and the 5-year and 10-year one-step ahead MAPEs for the 18 regression models.', row.names = F)
 ```
 
@@ -88,7 +88,7 @@ Based upon the 5-year and 10-year one-step ahead MAPE, the best performing model
 Model diagnostics for model m11 included residual plots, the curvature test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage plots. Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). 
 
 ```{r details}
-tbls_seak$model_summary_table6_m11 %>% 
+tbls_seak$model_summary_table4_m11 %>% 
    knitr::kable(format = 'pandoc', caption = 'Detailed output for model m11. Juvenile years 1998, 2005, 2012, 2019, and 2020 (years 1999, 2006, 2013, 2020, and 2021) show the largest standardized residual (Std. residuals). Fitted values are bias-corrected.')
 ```
 

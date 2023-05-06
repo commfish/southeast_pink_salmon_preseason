@@ -3,6 +3,14 @@
 # add MAPE the last 5 years
 # https://stackoverflow.com/questions/12994929/whats-the-gaps-for-the-forecast-error-metrics-mape-and-wmape
 # https://www.statology.org/leave-one-out-cross-validation/
+# Depends on dplyr
+tickr <- function(
+    data, # dataframe
+    var, # column of interest
+    to # break point definition 
+)
+
+
 MASE <- function(f,y) { # f = vector with forecasts, y = vector with actuals
   if(length(f)!=length(y)){ stop("Vector length is not equal") }
   n <- length(f)
@@ -127,13 +135,13 @@ f_resid_year_diagnostics_plot<-function(best_model, model_name){
     ggplot(., aes(x = CPUE, y = resid)) +
     geom_hline(yintercept = 0, lty=2) + 
     geom_point(color ="grey50") + ggtitle(model_name) +
-    geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
+    geom_smooth(aes(colour = CPUE), colour="black") +
     scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4), limits = c(-4,4)) +
     scale_x_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
     labs(y = "Standardized residuals", x =  "ln(CPUE+1)") + theme(legend.position="none") +
     theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-    geom_text(aes(x = 0.2, y = 4, label="A."),family="Times New Roman", colour="black", size=5) -> plot1
+    geom_text(aes(x = 0.2, y = 4, label="A."),family="Times", colour="black", size=5) -> plot1
 
   augment(best_model) %>% 
   mutate(resid = (.std.resid),
@@ -148,7 +156,7 @@ f_resid_year_diagnostics_plot<-function(best_model, model_name){
                                                                                 axis.text.x = element_text(angle=90, hjust=1, size=6),
                                                                                 panel.border = element_blank(), panel.grid.major = element_blank(),
                                                                                 panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 1997, y = 4, label="C."),family="Times New Roman", colour="black", size=5) -> plot2
+  geom_text(aes(x = 1997, y = 4, label="C."),family="Times", colour="black", size=5) -> plot2
 
 # residuals against fitted
 augment(best_model) %>% 
@@ -156,14 +164,14 @@ augment(best_model) %>%
          fit = (.fitted)) %>% 
   ggplot(aes(x = fit, y = resid)) +
   geom_point(color ="grey50")  + ggtitle(model_name) +
-  geom_smooth(aes(colour = fit, fill = fit),colour="black") +
+  geom_smooth(aes(colour = fit,),colour="black") +
   geom_hline(yintercept = 0, lty=2) + 
   scale_y_continuous(breaks = c(-1,-0.5,0,0.5,1), limits = c(-1,1))+
   scale_x_continuous(breaks = c(2,3,4,5,5), limits = c(2,5))+
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   labs(y = "Residuals", x =  "Fitted values") +
-  geom_text(aes(x = 2.1, y = 1, label="D."),family="Times New Roman", colour="black", size=5)-> plot3
+  geom_text(aes(x = 2.1, y = 1, label="D."),family="Times", colour="black", size=5)-> plot3
 
 # residuals against temp
 augment(best_model) %>% 
@@ -171,40 +179,40 @@ augment(best_model) %>%
          temp = .[[3]]) %>% # third column should be temperature variable
   ggplot(aes(x = temp, y = resid)) +
   geom_point(color ="grey50")  + ggtitle(model_name) +
-  geom_smooth(aes(colour = temp, fill = temp),colour="black") +
+  geom_smooth(aes(colour = temp),colour="black") +
   geom_hline(yintercept = 0, lty=2) + 
   scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4), limits = c(-4,4)) +
   scale_x_continuous(breaks = c(5,6,7,8,9,10,11,12), limits = c(5,12)) +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   labs(y = "Standardized residuals", x =  "Temperature") +
-  geom_text(aes(x = 5.2, y = 4, label="B."),family="Times New Roman", colour="black", size=5) -> plot4
+  geom_text(aes(x = 5.2, y = 4, label="B."),family="Times", colour="black", size=5) -> plot4
 
 augment(best_model) %>% 
   mutate(temp = .[[3]]) %>% 
   ggplot(aes(x = temp, y = SEAKCatch_log)) +
   geom_point(color ="grey50") +  ggtitle(model_name) +
-  geom_smooth(aes(colour = temp, fill = temp), colour="black") +
+  geom_smooth(aes(colour = temp), colour="black") +
   scale_y_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
   scale_x_continuous(breaks = c(5,6,7,8,9,10,11,12), limits = c(5,12)) +
   labs(y = "ln(Harvest)", x =  "Temperature") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 5, y = 6, label="E."),family="Times New Roman", colour="black", size=5) -> plot5
+  geom_text(aes(x = 5, y = 6, label="E."),family="Times", colour="black", size=5) -> plot5
 
 augment(best_model) %>%  
   ggplot(aes(x = CPUE, y = SEAKCatch_log)) +
   geom_point(color ="grey50") +   ggtitle(model_name) +
-  geom_smooth(aes(colour = CPUE, fill = CPUE), colour="black") +
+  geom_smooth(aes(colour = CPUE), colour="black") +
   scale_y_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
   scale_x_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
   labs(y = "ln(Harvest)", x =  "ln(CPUE+1)") + theme(legend.position="none") +
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 0, y = 6, label="F."),family="Times New Roman", colour="black", size=5) -> plot6
+  geom_text(aes(x = 0, y = 6, label="F."),family="Times", colour="black", size=5) -> plot6
 
 cowplot::plot_grid(plot1, plot4, plot2, plot3, align = "vh", nrow = 2, ncol=2)
-ggsave(paste0(results.directory, "figs/fitted_", model_name,".png"), dpi = 500, height = 5, width = 5, units = "in")}
+ggsave(paste0(results.directory, "model_figs/fitted_", model_name,".png"), dpi = 500, height = 5, width = 5, units = "in")}
 
 # Cook's distance and leverage plot
 f_resid_leverage_diagnostics_plot<-function(best_model, model_name, k, p){
@@ -224,7 +232,7 @@ augment(best_model) %>%
   scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0, 1.25, 1.50), limits = c(0,1.5))+
   labs(y = "Cook's distance", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                             axis.text.x = element_text(angle=90, hjust=1))+
-  geom_text(aes(x = 1997, y = 1.5, label="A."),family="Times New Roman", colour="black", size=5) -> plot1
+  geom_text(aes(x = 1997, y = 1.5, label="A."),family="Times", colour="black", size=5) -> plot1
 
 # leverage plot
 #  p = number of parameters in the model including intercept
@@ -245,9 +253,9 @@ augment(best_model) %>%
   scale_x_continuous(breaks = 1997:year.data.one, labels = 1997:year.data.one) +
   labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=10),
                                                        axis.text.x = element_text(angle=90, hjust=1))+
-  geom_text(aes(x = 1997, y = 1, label="B."),family="Times New Roman", colour="black", size=5)-> plot2
+  geom_text(aes(x = 1997, y = 1, label="B."),family="Times", colour="black", size=5)-> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "figs/influential_", model_name,".png"), dpi = 500, height = 3, width = 6, units = "in")}
+ggsave(paste0(results.directory, "model_figs/influential_", model_name,".png"), dpi = 500, height = 3, width = 6, units = "in")}
 
 # Bootstrap Functions
    # boostraplm function
@@ -320,15 +328,14 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end, model_nu
   data %>% 
     dplyr::filter(JYear > end) %>% 
     as.data.frame() %>% 
-    write.csv(., file = paste0(results.directory, "/results_",model_num,".csv"))
+    write.csv(., file = paste0(results.directory.MAPE, "results_",model_num,".csv"))
   # mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
 } 
 # function check for one model (one step ahead MAPE)
 seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE+ISTI20_MJJ, start = 1997, end = 2011, model_num = "m2")
 
 
-
-f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,model.names, start, end){
+f_model_one_step_ahead_multiple5 <- function(harvest,variables,model.formulas,model.names, start, end){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
@@ -345,14 +352,43 @@ f_model_one_step_ahead_multiple <- function(harvest,variables,model.formulas,mod
     #return(data)
     data %>% 
       dplyr::filter(JYear > end) -> output
-    MAPE<-mape(output$SEAKCatch_log,output$model1_sim)
+    MAPE<-mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
+    #MAPE<-mape(output$SEAKCatch_log,output$model1_sim)
     model.results<-rbind(model.results, MAPE= MAPE)
   } 
   row.names(model.results)<-model.names
-  dimnames(model.results)[[2]][1]<-c('MAPE')
+  dimnames(model.results)[[2]][1]<-c('MAPE5')
   as.data.frame(model.results)-> x
-  write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead.csv"))}
-
+  write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead5.csv"))
+ 
+   }
+f_model_one_step_ahead_multiple10 <- function(harvest,variables,model.formulas,model.names, start, end){
+  n<-dim(variables)[1]
+  model.results<-numeric()
+  obs<-harvest[-n]
+  data<-variables[-n,]
+  fit.out<-list()
+  for(i in 1:length(model.formulas)) 
+  {
+    for (j in (end+1):tail(data$JYear)[6])
+    {
+      fit<-lm(model.formulas[[i]],data = data[data$JYear >= start & data$JYear < j,])
+      fit.out[[i]]<-fit
+      data$model1_sim[data$JYear == j] <- predict(fit, newdata = data[data$JYear == j,])
+    }
+    #return(data)
+    data %>% 
+      dplyr::filter(JYear > end) -> output
+    MAPE<-mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
+    #MAPE<-mape(output$SEAKCatch_log,output$model1_sim)
+    model.results<-rbind(model.results, MAPE= MAPE)
+  } 
+  row.names(model.results)<-model.names
+  dimnames(model.results)[[2]][1]<-c('MAPE10')
+  as.data.frame(model.results)-> x
+  write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead10.csv"))
+  
+}
 # f_model_one_step_ahead_inv_var <- function(harvest,variables,model, start, end){
 #   n<-dim(variables)[1]
 #   model.results<-numeric()

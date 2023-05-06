@@ -1,6 +1,6 @@
 # Environmental Variables for SEAK Pink Salmon Forecast Models
 # Script written by Sara Miller (sara.miller@alaska.gov) with assistance from Jordan Watson (jordan.watson@noaa.gov)
-# October 1, 2021
+# May 2023
 
 # load libraries----
 library("devtools")
@@ -32,13 +32,13 @@ results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 # set the latitude (54, 60) and longitude (-137.2, -130) and time period (April 1997 - June 2021), and fill type as .nc,
 # save the file as NOAA_DHW_monthly_97_21.nc in the data folder
 
-# July 2021 data----
+# July 2021 data (daily data)----
 # download the data for a fixed spatial and temporal period	(SST data, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, daily, 1985-Present)
 # to do this, go to the site: https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html;
 # set the latitude (54, 60) and longitude (-137.2, -130) and time period (July 1 2021 - July  31 2021), and fill type as .nc,
 # save the file as NOAA_CRW_daily_21.nc in the data folder
 
-# April 2022 - July 2022 data----
+# April 2022 - July 2022 data (daily data)----
 # download the data for a fixed spatial and temporal period	(SST data, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, daily, 1985-Present)
 # to do this, go to the site: https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html;
 # set the latitude (54, 60) and longitude (-137.2, -130) and time period (April 1 2022 - July  31 2022), and fill type as .nc,

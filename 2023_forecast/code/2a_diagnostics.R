@@ -5,6 +5,9 @@ lwr_pi_80<-12.88 # 80% PI from model_summary_table3
 upr_pi_80<-28.584 # 80% PI from model_summary_table3
 best_model<-m2
 model<-'m2'
+year.forecast <- "2023_forecast" # forecast year
+year.data <- 2022 # last year of data
+year.data.one <- year.data - 1
 
 # source code and functions
 source('2023_forecast/code/functions.r')
@@ -52,7 +55,7 @@ augment(best_model) %>%
   geom_bar(aes(y = harvest, fill = "SEAK pink harvest"),
            stat = "identity", colour ="black",
            width = 1, position = position_dodge(width = 0.1)) +
-  geom_line(aes(y = fit, colour = "fit"), linetype = 1, size = 0.75) +
+  geom_line(aes(y = fit, colour = "fit"), linetype = 1, linewidth = 0.75) +
   scale_colour_manual("", values=c("fit" = "black")) +
   scale_fill_manual("",values="lightgrey")+
   theme_bw() + theme(legend.key=element_blank(),
@@ -77,11 +80,11 @@ augment(best_model) %>%
 # plot of observed harvest by fitted values (with one to one line)
 # the year labels are manually put in, so uncomment the geom_text_repel to make sure the correct
 # labels are there
+as.numeric(sigma(best_model))-> sigma
 augment(best_model) %>% 
   mutate(year = 1998:year.data, 
          harvest = exp(SEAKCatch_log), 
-         sigma = .sigma,
-         fit = exp(.fitted) * exp(0.5*.sigma*.sigma)) %>%
+         fit = as.numeric(exp(.fitted) * exp(0.5*sigma*sigma))) %>%
   ggplot(aes(x=fit, y=harvest)) +
   geom_point() +
   geom_point(aes(y = harvest), colour = "black", size = 1) +
@@ -97,11 +100,12 @@ augment(best_model) %>%
   # geom_text_repel(aes(y = harvest, label = year),
   #                nudge_x = 1, size = 3, show.legend = FALSE) +
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL)+
-  geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5) -> plot2
-  #geom_text(aes(y = 55, x = 22, label="2021"),family="Times New Roman", colour="black", size=4) +
-  #geom_text(aes(y = 103, x = 64, label="2013"),family="Times New Roman", colour="black", size=4) +
-  #geom_text(aes(y = 85, x = 123, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
+  geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5)+
+  geom_text(aes(y = 55, x = 20, label="2021"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(y = 103, x = 62, label="2013"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(y = 85, x = 125, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
+ggsave(paste0(results.directory, "model_figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
+dev.off()
 
 
