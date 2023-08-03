@@ -44,9 +44,9 @@ The current assessment follows Miller et al. 2022.
 
 **~end of October**: Final write-up due with re-run of final model with updated harvest data for the current year. 
 
-**mid- November**: Advisory Announcement due. This is the primary responsibility of the SEAK pink salmon manager and biologist. The biometrician reviews the announcement.
+**mid-November**: Advisory Announcement due. This is the primary responsibility of Teresa Fish and/or Andy Piston. The biometrician reviews the announcement.
 
-Southeast Alaska Pink Salmon Forecasting Team:  
+**Southeast Alaska Pink Salmon Forecasting Team**:  
 
 * Teresa Fish (ADF&G; Pink and chum salmon project leader)
 * Andy Piston (ADF&G; CF Salmon Research Supervisor)
@@ -55,6 +55,26 @@ Southeast Alaska Pink Salmon Forecasting Team:
 * Sara Miller (ADF&G, biometrician)
 * Emily Fergusson (NOAA; biologist) 
 * Andrew Gray (NOAA)
+
+## Assessment Process
+
+1. Copy over last year's YYYY_forecast folder structure for the current assessment.
+
+2. Rename the folder to the current year forecast year. 
+
+3. Delete the files in the data folder except the varYYYY_final.csv file. This file will serve as the template for the new year. Update the file name to the data year (not the forecast year). To prepare for the coming year, add another year of mock data by adding the same data as last year into a new row. Keep a folder labeled raw_data within the data folder for any raw data that is used in the analysis. The raw data should not be manipulated in anyway, but instead copied to the varYYYY_final.csv file for use in the model runs.
+
+4. Within the results folder, delete the MAPE folder, the model_figs folder,the retro folder, the temperature_data folder, and all the csv files within the main results folder. Within the results/summary_tables folder, rename the model_summary_table--template.xlsx to the current year.
+
+5. Delete any files within the text folder.
+
+6. Delete any word and pdf files in the code folder. 
+
+7. Rename the the YYYY_forecast.Rmd file to the forecast year. This file, the README--forecast_process.Rmd, and the satellite_SST_process_YYYY.Rmd file in the code folder are important for documenting the process for the current forecast year (e.g., changes in models considered, changes in variables).
+
+8. Follow the forecast process in the README--forecast_process.Rmd file. This file will take you through the data processing and running the models. 
+
+
 
 ## References
 Adkison, M. D. 2002. Preseason forecasts of pink salmon harvests in Southeast Alaska using Bayesian model averaging. Alaska Fishery Research Bulletin 9(1):1–8.
