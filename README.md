@@ -18,6 +18,9 @@ In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink sa
 # Assessment
 The current assessment follows Miller et al. 2022.
 
+## Advisory Announcements
+[2019 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1002259599.pdf).
+
 ## Timeline
 
 **~end of August**: Andy Piston or Teresa Fish will send a data sheet with the Icy Strait CPUE data, the ISTI temperature (May, June, July average), and harvest. It is optimal to rerun the last ten years of harvest data to update prior harvests in the dataset. Andy (or Teresa) will coordinate with NOAA for the CPUE and ISTI data.
@@ -30,12 +33,12 @@ The current assessment follows Miller et al. 2022.
 
 Southeast Alaska Pink Salmon Forecasting Team:  
 
-* Teresa Fish (ADF&G; Pink and chum salmon project leader);
-* Andy Piston (ADF&G; CF Salmon Research Supervisor);
-* Jim Murphy (NOAA; statistician);
-* Wess Strasburger (NOAA; biologist);
-* Sara Miller (ADF&G, biometrician);
-* Emily Fergusson (NOAA; biologist); 
+* Teresa Fish (ADF&G; Pink and chum salmon project leader)
+* Andy Piston (ADF&G; CF Salmon Research Supervisor)
+* Jim Murphy (NOAA; statistician)
+* Wess Strasburger (NOAA; biologist)
+* Sara Miller (ADF&G, biometrician)
+* Emily Fergusson (NOAA; biologist) 
 * Andrew Gray (NOAA)
 
 ## References
