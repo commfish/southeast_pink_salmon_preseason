@@ -19,7 +19,20 @@ In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink sa
 The current assessment follows Miller et al. 2022.
 
 ## Advisory Announcements
-[2019 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1002259599.pdf).
+**[2023 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1444357143.pdf)  
+
+**[2022 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1346706110.pdf)  
+
+**[2021 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1232831147.pdf)  
+
+**[2020 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1126221367.pdf)  
+
+**[2019 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1002259599.pdf)
+
+## Assessment reports  
+
+**[2023 forecast report](2023_forecast/code/2023_forecast_process_8_Nov_2022--final.pdf)  
+
 
 ## Timeline
 
