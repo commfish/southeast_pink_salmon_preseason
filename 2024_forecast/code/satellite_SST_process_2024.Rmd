@@ -1,7 +1,7 @@
 ---
-title: "Environmental variables for the  \n2023 SEAK Pink Salmon Preseason Forecast"
+title: "Environmental variables for the  \n2024 SEAK Pink Salmon Preseason Forecast"
 author: "Sara Miller"
-date: "September 12, 2022"
+date: "August, 2023"
 output:
   pdf_document: default
 ---
@@ -15,7 +15,7 @@ library(gridExtra)
 library(tidymodels)
 library(lubridate)
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE, error=FALSE)
-year.forecast <- "2023_forecast" 
+year.forecast <- "2024_forecast" # update year to forecast year
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 ```
@@ -32,11 +32,11 @@ fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>%
 ```
 
 # Objective
-The overall objective is to test a variety of temperature variables, using satellite sea surface temperature (SST) data or Southeast Alaska Coastal Monitoring project (SECM) data, within the forecasting model framework to forecast the 2022 pink salmon harvest in southeast Alaska (SEAK). This write-up is a summary of available SST variables based on satellite data (i.e., average of May (May), the average over the months of May through July (MJJ), the average over the months of April through June (AMJ), or the average over the months of April through July (AMJJ) from 1997 through 2022) over four regions of SEAK; Icy Strait, Icy and Chatham Straits, northern southeast Alaska (NSEAK), and SEAK. This write-up also includes a summary of SECM survey data from various months (i.e., the average over the months of May, June, and July (MJJ)) at 20 m depths of the SECM transects (i.e., Icy Strait and Upper Chatham transects stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) from 1997 through 2022. 
+The overall objective is to test a variety of temperature variables, using satellite sea surface temperature (SST) data or Southeast Alaska Coastal Monitoring project (SECM) data, within the forecasting model framework to forecast the 2024 pink salmon harvest in southeast Alaska (SEAK). This write-up is a summary of available SST variables based on satellite data (i.e., average of May (May), the average over the months of May through July (MJJ), the average over the months of April through June (AMJ), or the average over the months of April through July (AMJJ) from 1997 through 2023) over four regions of SEAK; Icy Strait, Icy and Chatham Straits, northern southeast Alaska (NSEAK), and SEAK. This write-up also includes a summary of SECM survey data from various months (i.e., the average over the months of May, June, and July (MJJ)) at 20 m depths of the SECM transects (i.e., Icy Strait and Upper Chatham transects stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) from 1997 through 2023. 
 
 # Methods
 ## Satellite-derived SST data
-Satellite-derived sea surface temperature (SST) data from April 1997 through June 2021 were pulled from the 'SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, Monthly, 1985-Present' time series (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html; full citation in references). The monthly data for July 2021 and April though July 2022 from the site https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html was not available at the time of the assessment, so the daily data (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html; full citation in references) was summarized by month and region, and then combined with the monthly data from April 1997 through June 2021 to create the SST dataset (April 1997 through July 2022). This satellite-derived SST data set was then matched to pre-determined coordinates from four spatial regions that corresponded with sixteen variables of interest (four regions; four temporal variables per region). 
+Satellite-derived sea surface temperature (SST) data from April 1997 through July 2023 were pulled from the 'SST and SST Anomaly, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, Monthly, 1985-Present' time series (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html; full citation in references). This satellite-derived SST data set was then matched to pre-determined coordinates from four spatial regions that corresponded with sixteen variables of interest (four regions; four temporal variables per region). 
 
 ### Satellite-derived SST variables
 **Icy_Strait_SST_May**: The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. This variable is the average SST in May (Table 1; Figure 1; Figure 5a).
@@ -72,7 +72,7 @@ Satellite-derived sea surface temperature (SST) data from April 1997 through Jun
 **SEAK_SST_AMJJ**: The SEAK region encompasses Southeast Alaska from 59.475 to 54.725 degrees north latitude (Figure 4 and Figure 5d; Table 4). This variable is the average SST in April through July.
 
 ## SECM survey temperature data
-SECM survey temperature data were summarized by year (1997 to 2022), month (average over the months of May, June, and July) at 20m depths for the Icy Strait and Upper Chatham transects combined.
+SECM survey temperature data were summarized by year (1997 to 2023), month (average over the months of May, June, and July) at 20m depths for the Icy Strait and Upper Chatham transects combined.
 
 ### SECM survey temperature variables
 
@@ -81,44 +81,44 @@ SECM survey temperature data were summarized by year (1997 to 2022), month (aver
 # Results  
 
 ## Satellite-derived SST data
-Satellite sea surface temperature data were summarized by region and year (i.e., average of May (May), the average over the months of May, June, and July (MJJ), the average over the months of April through June (AMJ), or the average over the months of April through July (AMJJ)) from 1997 to 2022 (Tables 1 through 4).
+Satellite sea surface temperature data were summarized by region and year (i.e., average of May (May), the average over the months of May, June, and July (MJJ), the average over the months of April through June (AMJ), or the average over the months of April through July (AMJJ)) from 1997 to 2023 (Tables 1 through 4).
 
 \pagebreak
 
 ```{r summary1}
-tbls_sst_regions$sst_oisst_97_22_Icy_Strait_monthly_summary %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Icy Strait region from 1997 to 2022 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 70 satellite stations (latitude/longitude combinations) in the Icy Strait region.', row.names = F, align = "c")
+tbls_sst_regions$sst_oisst_97_23_Icy_Strait_monthly_summary %>%
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Icy Strait region from 1997 to 2023 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 70 satellite stations (latitude/longitude combinations) in the Icy Strait region.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ```{r summary2}
-tbls_sst_regions$sst_oisst_97_22_Chatham_monthly_summary %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Chatham and Icy Straits region from 1997 to 2022 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ).  There are 313 satellite stations (latitude/longitude combinations) in the Chatham and Icy Straits region.', row.names = F, align = "c")
+tbls_sst_regions$sst_oisst_97_23_Chatham_monthly_summary %>%
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Chatham and Icy Straits region from 1997 to 2023 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ).  There are 313 satellite stations (latitude/longitude combinations) in the Chatham and Icy Straits region.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ```{r summary3}
-tbls_sst_regions$sst_oisst_97_22_NSEAK_monthly_summary %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the northern Southeast Alaska (NSEAK) region from 1997 to 202 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 1,344 satellite stations (latitude/longitude combinations) in the NSEAK region.', row.names = F, align = "c")
+tbls_sst_regions$sst_oisst_97_23_NSEAK_monthly_summary %>%
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the northern Southeast Alaska (NSEAK) region from 1997 to 2023 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 1,344 satellite stations (latitude/longitude combinations) in the NSEAK region.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ```{r summary4}
-tbls_sst_regions$sst_oisst_97_22_SEAK_monthly_summary %>%
-   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the Southeast Alaska (SEAK) region from 1997 to 2022 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 2,663 satellite stations (latitude/longitude combinations) in the SEAK region.', row.names = F, align = "c")
+tbls_sst_regions$sst_oisst_97_23_SEAK_monthly_summary %>%
+   knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the Southeast Alaska (SEAK) region from 1997 to 2023 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 2,663 satellite stations (latitude/longitude combinations) in the SEAK region.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ## SECM survey temperature data
-SECM survey temperature data were summarized by year (1997 to 2022), month (average over the months of May, June, and July) at 20m depths; Table 5).
+SECM survey temperature data were summarized by year (1997 to 2023), month (average over the months of May, June, and July) at 20m depths; Table 5).
 
 ```{r summary5}
-tbls_sst_SECM$SECMvar2022_MJJ %>%
-   knitr::kable(format = 'pandoc', caption = 'The SECM survey temperature data were summarized by year (1997 to 2022), month (the months of May, June, and July; MJJ) at 20m depths for the Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD).', row.names = F, align = "c")
+tbls_sst_SECM$SECMvar2023_MJJ %>%
+   knitr::kable(format = 'pandoc', caption = 'The SECM survey temperature data were summarized by year (1997 to 2023), month (the months of May, June, and July; MJJ) at 20m depths for the Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD).', row.names = F, align = "c")
 ```
 
 ```{r fig1, fig.cap="The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. The Southeast Coastal Monitoring (SECM) project transects (Upper Chatham Strait and Icy Strait) are shown as red points for comparison to the satellite stations (i.e., data points; black circles)."}
@@ -137,11 +137,11 @@ knitr::include_graphics(here(results.directory, "NSEAK.png"))
 knitr::include_graphics(here(results.directory, "SEAK.png"))
 ```
 
-```{r fig5, fig.cap="A. The May temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2022. B. The May, June, and July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2022. C. The April through June temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2022. D. The April through July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2022."}
+```{r fig5, fig.cap="A. The May temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2023. B. The May, June, and July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2023. C. The April through June temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2023. D. The April through July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2023."}
 knitr::include_graphics(here(results.directory, "monthly_temp_regions.png"))
 ```
 
-```{r fig6, fig.cap="Average temperature (degrees Celsius) at 20m during May, June, and July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI) from 1997 through 2022."}
+```{r fig6, fig.cap="Average temperature (degrees Celsius) at 20m during May, June, and July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI) from 1997 through 2023."}
 knitr::include_graphics(here(results.directory, "monthly_SECM_temp_regions.png"))
 ```
 

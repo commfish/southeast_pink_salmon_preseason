@@ -29,7 +29,7 @@ The current assessment follows Miller et al. 2022.
 
 * [2019 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1002259599.pdf)
 
-## Assessment reports  
+## Reports  
 
 * [2023 forecast report](2023_forecast/code/2023_forecast_process_8_Nov_2022--final.pdf)  
 * [2022 forecast report](2022_forecast/text/2022_forecast_final.pdf)  
@@ -56,25 +56,21 @@ The current assessment follows Miller et al. 2022.
 * Emily Fergusson (NOAA; biologist) 
 * Andrew Gray (NOAA)
 
-## Assessment Process
+## Process
 
 1. Copy over last year's YYYY_forecast folder structure for the current assessment.
 
 2. Rename the folder to the current year forecast year. 
 
-3. Delete the files in the data folder except the varYYYY_final.csv file. This file will serve as the template for the new year. Update the file name to the data year (not the forecast year). To prepare for the coming year, add another year of mock data by adding the same data as last year into a new row. Keep a folder labeled raw_data within the data folder for any raw data that is used in the analysis. The raw data should not be manipulated in anyway, but instead copied to the varYYYY_final.csv file for use in the model runs.
+3. Delete the files in the data folder except the varYYYY_final.csv file and the sst_data_map.csv file. The varYYYY_final.csv file will serve as the template for the new year. Update this file name to the data year (not the forecast year). To prepare for the coming year, add another year of mock data by adding the same data as last year into a new row. Keep a folder labeled raw_data within the data folder for any raw data that is used in the analysis. The raw data should not be manipulated in anyway, but instead copied to the varYYYY_final.csv file for use in the model runs. The file sst_data_map.csv contains the lat and long of the different regions for the satellite SST data. The details of these regions are found in Miller et al. 2022. This file does not need to be updated unless these regions change.
 
 4. Within the results folder, delete the MAPE folder, the model_figs folder,the retro folder, the temperature_data folder, and all the csv files within the main results folder. Within the results/summary_tables folder, rename the model_summary_table--template.xlsx to the current year.
 
-5. Delete any files within the text folder.
+5. Delete any word and pdf files in the code folder. 
 
-6. Delete any word and pdf files in the code folder. 
+6. Rename the the YYYY_forecast.Rmd file to the forecast year. This file, the README--YYYY_forecast_process.Rmd, and the satellite_SST_process_YYYY.Rmd file in the code folder are important for documenting the process for the current forecast year (e.g., changes in models considered, changes in variables). This Rmd file mainly needs to years updated, unless the process changes.
 
-7. Rename the the YYYY_forecast.Rmd file to the forecast year. This file, the README--forecast_process.Rmd, and the satellite_SST_process_YYYY.Rmd file in the code folder are important for documenting the process for the current forecast year (e.g., changes in models considered, changes in variables).
-
-8. Follow the forecast process in the README--forecast_process.Rmd file. This file will take you through the data processing and running the models. 
-
-
+7. Follow the forecast process in the README--YYYY_forecast_process.Rmd file. This file will take you through the data processing and running the models. 
 
 ## References
 Adkison, M. D. 2002. Preseason forecasts of pink salmon harvests in Southeast Alaska using Bayesian model averaging. Alaska Fishery Research Bulletin 9(1):1–8.
