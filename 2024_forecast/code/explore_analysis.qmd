@@ -8,7 +8,7 @@ editor: visual
 
 # Objective
 
-The overall objective is to examine the correlations between the southeast Alaska (SEAK) pink salmon harvest and variables such as ISTI20_MJJ, CPUEcal, condition residuals from June and July, energy density (kJ/g) in June or July, average zooplankton total water column (ml/m^3^) in May, June, or July, the preferred prey (number/m^3^) in May, June, or July, and the satellite sea surface temperature (SST) variables in SEAK.
+The overall objective is to examine the correlations between the southeast Alaska (SEAK) pink salmon harvest and variables such as ISTI20_MJJ, CPUEcal, condition residuals from June and July, energy density (kJ/g) in June or July, average zooplankton total water column (ml/m^3^) in May, June, or July, zooplankton density (number/m^3^) in May, June, or July, and the satellite sea surface temperature (SST) variables in SEAK.
 
 # **Variable definitions**
 
@@ -18,11 +18,11 @@ The overall objective is to examine the correlations between the southeast Alask
 
 **Condition**: The average annual residuals derived from the regression of all paired Ln(weights) and Ln(lengths) for pink salmon collected during SECM sampling since 1997 in June and July. The last time the condition residuals were incorporated in the forecasting process was the 2019 forecast.
 
-**Energy Density**: The average energy content (calories/gram wet weight, determined by bomb calorimetry) of subsamples of juvenile pink salmon captured in June or July of each year. The last time the energy density variables were incorporated in the forecasting process was the 2017 forecast (Wertheimer et al. 2018).
+**Energy Density**: The average energy content (kJ/g dry weight, determined by bomb calorimetry) of subsamples of juvenile pink salmon captured in June or July of each year. The last time the energy density variables were incorporated in the forecasting process was the 2017 forecast (Wertheimer et al. 2018).
 
 Zooplankton metric (**Average Zooplankton Total Water Column**; ml/m$^3$): The average May, June, or July 333-$\mu$m bongo net standing crop (displacement volume divided by water volume filtered, ml/m$^3$), and index of integrated mesozooplankton to 200-m depth (i.e., May, June, or July average zooplankton total water column). The last time the zooplankton metric variables were incorporated in the forecasting process was the 2017 forecast (Wertheimer et al. 2018).
 
-Zooplankton metric (**Preferred Prey**; number/m): The average density (number/m$^3$) of preferred prey available in May, June, or July; an index computed from total density of six zooplankton taxa typically utilized by planktivorous juvenile salmon in summer (Sturdevant et al. 2004) and present in integrated 333-$\mu$m bongo net samples (June Preferred Prey). The last time the zooplankton metric variables were incorporated in the forecasting process was the 2015 forecast (Wertheimer et al. 2015).
+Zooplankton metric (**zooplankton density**; number/m): The average density (number/m$^3$) of preferred prey available in May, June, or July; an index computed from total density of six zooplankton taxa typically utilized by planktivorous juvenile salmon in summer (Sturdevant et al. 2004) and present in integrated 333-$\mu$m bongo net samples (June Preferred Prey). The last time the zooplankton metric variables were incorporated in the forecasting process was the 2015 forecast (Wertheimer et al. 2015).
 
 ## Satellite SST variables
 
@@ -70,9 +70,9 @@ Zooplankton metric (**Preferred Prey**; number/m): The average density (number/m
 |   avg. zooplankton TWC (May)                      |   0.08    |    0.70    |
 |   avg. zooplankton TWC (June)                     |   0.34    |    0.09    |
 | **avg. zooplankton TWC (July)**                   | **-0.45** |  **0.02**  |
-|               preferred prey (May)                |   -0.29   |    0.15    |
-|               preferred prey (June)               |   0.01    |    0.95    |
-|               preferred prey (July)               |   -0.26   |    0.21    |
+|               zooplankton density (May)           |   -0.29   |    0.15    |
+|               zooplankton density (June)          |   0.01    |    0.95    |
+|               zooplankton density (July)          |   -0.26   |    0.21    |
 |                  Chatham_SST_MJJ                  |   -0.24   |    0.23    |
 |                  Chatham_SST_May                  |   -0.18   |    0.37    |
 |                 Chatham_SST_AMJJ                  |   -0.23   |    0.25    |
