@@ -1,0 +1,11 @@
+Parameter,r,P-value
+CPUEcal,0.75,<0.001
+ISTI20_MJJ,-0.22,0.28
+energy density (June),-0.41,0.22
+energy density (July),-0.42,0.03
+average zooplankton total water column (May),0.08,0.70
+average zooplankton total water column (June),0.34,0.09
+average zooplankton total water column (July),-0.45,0.02
+preferred prey (May),-0.29,0.15
+preferred prey (June),0.01,0.95
+preferred prey (July),-0.26,0.21

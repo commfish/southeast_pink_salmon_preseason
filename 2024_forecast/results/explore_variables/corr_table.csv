@@ -1,0 +1,28 @@
+Parameter,r,P-value
+CPUEcal,0.75,<0.001
+condition,---,---
+ISTI20_MJJ,-0.22,0.28
+energy density (June),-0.41,0.22
+energy density (July),-0.42,0.03
+average zooplankton total water column (May),0.08,0.70
+average zooplankton total water column (June),0.34,0.09
+average zooplankton total water column (July),-0.45,0.02
+preferred prey (May),-0.29,0.15
+preferred prey (June),0.01,0.95
+preferred prey (July),-0.26,0.21
+Chatham_SST_MJJ,-0.24,0.23
+Chatham_SST_May,-0.18,0.37
+Chatham_SST_AMJJ,-0.23,0.25
+Chatham_SST_AMJ,-0.23,0.27
+Icy_Strait_SST_MJJ,-0.23,0.25
+Icy_Strait_SST_May,-0.11,0.59
+Icy_Strait_SST_AMJJ,-0.2,0.32
+Icy_Strait_SST_AMJ,-0.17,0.41
+NSEAK_SST_MJJ,-0.29,0.15
+NSEAK_SST_May,-0.24,0.24
+NSEAK_SST_AMJJ,-0.27,0.19
+NSEAK_SST_AMJ,-0.26,0.19
+SEAK_SST_MJJ,-0.3,0.13
+SEAK_SST_May,-0.23,0.25
+SEAK_SST_AMJJ,-0.28,0.17
+SEAK_SST_AMJ,-0.26,0.20
