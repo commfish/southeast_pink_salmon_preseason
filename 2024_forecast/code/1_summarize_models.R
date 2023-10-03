@@ -11,6 +11,7 @@
 library("devtools")
 devtools::install_github("commfish/fngr")
 library("fngr")
+library(stats)
 library(gam)
 library(MASS)
 library(MuMIn)
@@ -34,16 +35,16 @@ windowsFonts(Times=windowsFont("Times New Roman"))
 theme_set(theme_report(base_size = 14))
 
 # inputs
-year.forecast <- "2023_forecast" # forecast year 
-year.data <- 2022 # last year of data
+year.forecast <- "2024_forecast" # forecast year 
+year.data <- 2023 # last year of data
 year.data.one <- year.data - 1
 sample_size <-  (year.data-1998)+1 # number of data points in model (this is used for Cook's distance)
-forecast2022 <- 15.6 # input last year's forecast for the forecast plot
+# forecast2023 <- 15.6 # input last year's forecast for the forecast plot
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
 results.directory.MAPE <- file.path(year.forecast,  'results/MAPE', '/')
 results.directory.retro <- file.path(year.forecast,  'results/retro', '/')
-source('2023_forecast/code/functions.r') # source the function file for functions used below
+source('2024_forecast/code/functions.r') # source the function file for functions used below
 
 # automatically create output folder MAPE, retro, and figs (by model)
 if(!dir.exists(file.path(year.forecast,  'results/MAPE', '/'))){dir.create(file.path(year.forecast,  'results/MAPE', '/'))}
@@ -51,7 +52,7 @@ if(!dir.exists(file.path(year.forecast,  'results/retro', '/'))){dir.create(file
 
 # STEP 1: DATA
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(data.directory,'var2022_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
+read.csv(file.path(data.directory,'var2023_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
 
 # restructure the data for modeling
 variables$CPUE <- variables$CPUEcal # use CPUEcal as CPUE index
@@ -76,7 +77,28 @@ variables %>%
   write.csv(., paste0(results.directory, "/data_used_temp.csv"), row.names = F)
 
 # STEP #2: HARVEST MODELS AND SUMMARY STATS
-# define model names and formulas
+# forward
+nullmod <- lm(SEAKCatch_log ~ CPUE, data = log_data)
+fullmod <- lm(SEAKCatch_log ~ CPUE + ISTI20_MJJ	+ Chatham_SST_MJJ	+ Chatham_SST_May	+ Chatham_SST_AMJJ + Chatham_SST_AMJ + 
+                Icy_Strait_SST_MJJ + Icy_Strait_SST_May + Icy_Strait_SST_AMJJ	+ Icy_Strait_SST_AMJ + NSEAK_SST_MJJ + NSEAK_SST_May +
+                NSEAK_SST_AMJJ + NSEAK_SST_AMJ + SEAK_SST_MJJ + SEAK_SST_May + SEAK_SST_AMJJ + SEAK_SST_AMJ +
+                NPI	+ energy_density_June + energy_density_July + May_DV + June_DV + July_DV +zoo_density_May +
+                zoo_density_June + zoo_density_July, data = log_data)
+reg1A <- step(nullmod, scope = list(lower = nullmod, upper = fullmod),
+              direction="forward")
+
+summary(reg1A)
+# stepwise regression
+forward <- step(nullmod, direction='forward', scope=formula(fullmod), trace=0) # stats package
+
+#results
+forward$anova
+
+# final model
+forward$coefficients
+
+
+
 model.names <- c(m1='CPUE',
                m2='CPUE + ISTI20_MJJ',
                m3='CPUE + Chatham_SST_May',
@@ -94,9 +116,11 @@ model.names <- c(m1='CPUE',
                m15='CPUE + SEAK_SST_May',
                m16='CPUE + SEAK_SST_MJJ',
                m17='CPUE + SEAK_SST_AMJ',
-               m18='CPUE + SEAK_SST_AMJJ')
+               m18='CPUE + SEAK_SST_AMJJ',
+               m19='CPUE + NPI')
 model.formulas <- c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE + ISTI20_MJJ,
+                 
                  SEAKCatch_log ~ CPUE + Chatham_SST_May,
                  SEAKCatch_log ~ CPUE + Chatham_SST_MJJ,
                  SEAKCatch_log ~ CPUE + Chatham_SST_AMJ,

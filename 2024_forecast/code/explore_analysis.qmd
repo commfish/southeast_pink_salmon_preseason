@@ -11,6 +11,7 @@ editor: visual
 The overall objective is to examine the correlations between the southeast Alaska (SEAK) pink salmon harvest and variables such as ISTI20_MJJ, CPUEcal, condition residuals from June and July, energy density (kJ/g) in June or July, average zooplankton total water column (ml/m^3^) in May, June, or July, zooplankton density (number/m^3^) in May, June, or July, and the satellite sea surface temperature (SST) variables in SEAK.
 
 # **Variable definitions**
+
 **CPUEcal:** The average Ln(CPUE+1) for catches in either June or July, whichever month had the highest average in a given year, where effort was a standard trawl haul. The CPUE data was adjusted using calibration factors to account for differences in fishing power among vessels. The last time the CPUEcal variable was incorporated in the forecasting process was the 2023 forecast.
 
 **ISTI20_MJJ:** The average 20-m integrated water column temperature at the eight stations in Icy Strait (Icy Strait and Upper Chatham transects) sampled during the SECM surveys in May, June, and July of each year (in degrees Celsius). The last time the ISTI variable was incorporated in the forecasting process was the 2023 forecast.
@@ -21,9 +22,9 @@ The overall objective is to examine the correlations between the southeast Alask
 
 Zooplankton metric (**Average Zooplankton Total Water Column**; ml/m$^3$): The average May, June, or July 333-$\mu$m bongo net standing crop (displacement volume divided by water volume filtered, ml/m$^3$), and index of integrated mesozooplankton to 200-m depth (i.e., May, June, or July average zooplankton total water column). The last time the zooplankton metric variables were incorporated in the forecasting process was the 2017 forecast (Wertheimer et al. 2018).
 
-Zooplankton metric (**zooplankton density**; number/m): The average density (number/m$^3$) of preferred prey available in May, June, or July; an index computed from total density of six zooplankton taxa typically utilized by planktivorous juvenile salmon in summer (Sturdevant et al. 2004) and present in integrated 333-$\mu$m bongo net samples (June Preferred Prey). The last time the zooplankton metric variables were incorporated in the forecasting process was the 2015 forecast (Wertheimer et al. 2015).
+Zooplankton metric (**zooplankton density**; number/m$^3$): The average density (number/m$^3$) of prey available in May, June, or July; an index computed from total density of six zooplankton taxa typically utilized by planktivorous juvenile salmon in summer (Sturdevant et al. 2004) and present in integrated 333-$\mu$m bongo net samples (June Preferred Prey). The last time the zooplankton metric variables were incorporated in the forecasting process was the 2015 forecast (Wertheimer et al. 2015).
 
-North Pacific Index (NPI): June, July, August average of the NPI; a measure of atmospheric air pressure in the GOA thought to affect upwelling and downwelling oceanographic conditions (Trenberth and Hurrell 1994); higher values indicate a relaxation of downwelling along the Alaska coast adjacent to the eastern GOA and a widening of the Alaska Coastal Current. Source: https://climatedataguide.ucar.edu/climate-data/north-pacific-np-index-trenberth-and-hurrell-monthly-and-winter
+North Pacific Index (**NPI**): June, July, August average of the NPI; a measure of atmospheric air pressure in the GOA thought to affect upwelling and downwelling oceanographic conditions (Trenberth and Hurrell 1994); higher values indicate a relaxation of downwelling along the Alaska coast adjacent to the eastern GOA and a widening of the Alaska Coastal Current. Source: https://climatedataguide.ucar.edu/climate-data/north-pacific-np-index-trenberth-and-hurrell-monthly-and-winter
 
 ## Satellite SST variables
 
@@ -61,42 +62,42 @@ North Pacific Index (NPI): June, July, August average of the NPI; a measure of a
 
 # Results
 
-|                     Parameter                     |    *r*    |  *P*-value  |
-|:---------------------------------:|:----------------:|:----------------:|
-|                    **CPUEcal**                    | **0.75**  | **\<0.001**|
-|                    ISTI20_MJJ                     |   -0.22   |    0.28    |
-|                     condition                     |           |            |
-|               energy density (June)               |   -0.41   |    0.22    |
-|             **energy density (July)**             | **-0.42** |  **0.03**  |
-|   avg. zooplankton TWC (May)                      |   0.08    |    0.70    |
-|   avg. zooplankton TWC (June)                     |   0.34    |    0.09    |
-| **avg. zooplankton TWC (July)**                   | **-0.45** |  **0.02**  |
-|               zooplankton density (May)           |   -0.29   |    0.15    |
-|               zooplankton density (June)          |   0.01    |    0.95    |
-|               zooplankton density (July)          |   -0.26   |    0.21    |
-|                       NPI                         |           |           |  
-|                  Chatham_SST_MJJ                  |   -0.24   |    0.23    |
-|                  Chatham_SST_May                  |   -0.18   |    0.37    |
-|                 Chatham_SST_AMJJ                  |   -0.23   |    0.25    |
-|                  Chatham_SST_AMJ                  |   -0.23   |    0.27    |
-|                Icy_Strait_SST_MJJ                 |   -0.23   |    0.25    |
-|                Icy_Strait_SST_May                 |   -0.11   |    0.59    |
-|                Icy_Strait_SST_AMJJ                |   -0.20   |    0.32    |
-|                Icy_Strait_SST_AMJ                 |   -0.17   |    0.41    |
-|                   NSEAK_SST_MJJ                   |   -0.29   |    0.15    |
-|                   NSEAK_SST_May                   |   -0.24   |    0.24    |
-|                  NSEAK_SST_AMJJ                   |   -0.27   |    0.19    |
-|                   NSEAK_SST_AMJ                   |   -0.26   |    0.19    |
-|                   SEAK_SST_MJJ                    |   -0.30   |    0.13    |
-|                   SEAK_SST_May                    |   -0.23   |    0.25    |
-|                   SEAK_SST_AMJJ                   |   -0.28   |    0.17    |
-|                   SEAK_SST_AMJ                    |   -0.26   |    0.20    |
+|            Parameter            |    *r*    |  *P*-value  |
+|:-------------------------------:|:---------:|:-----------:|
+|           **CPUEcal**           | **0.75**  | **\<0.001** |
+|           ISTI20_MJJ            |   -0.22   |    0.28     |
+|            condition            |           |             |
+|      energy density (June)      |   -0.41   |    0.22     |
+|    **energy density (July)**    | **-0.42** |  **0.03**   |
+|   avg. zooplankton TWC (May)    |   0.08    |    0.70     |
+| **avg. zooplankton TWC (June)** | **0.34**  |  **0.09**   |
+| **avg. zooplankton TWC (July)** | **-0.45** |  **0.02**   |
+|    zooplankton density (May)    |   -0.29   |    0.15     |
+|   zooplankton density (June)    |   0.01    |    0.95     |
+|   zooplankton density (July)    |   -0.26   |    0.21     |
+|               NPI               |   **0.35**|    **0.08** |
+|         Chatham_SST_MJJ         |   -0.24   |    0.23     |
+|         Chatham_SST_May         |   -0.18   |    0.37     |
+|        Chatham_SST_AMJJ         |   -0.23   |    0.25     |
+|         Chatham_SST_AMJ         |   -0.23   |    0.26     |
+|       Icy_Strait_SST_MJJ        |   -0.23   |    0.25     |
+|       Icy_Strait_SST_May        |   -0.11   |    0.59     |
+|       Icy_Strait_SST_AMJJ       |   -0.20   |    0.32     |
+|       Icy_Strait_SST_AMJ        |   -0.17   |    0.41     |
+|          NSEAK_SST_MJJ          |   -0.29   |    0.15     |
+|          NSEAK_SST_May          |   -0.24   |    0.24     |
+|         NSEAK_SST_AMJJ          |   -0.27   |    0.19     |
+|          NSEAK_SST_AMJ          |   -0.26   |    0.19     |
+|          SEAK_SST_MJJ           |   -0.30   |    0.13     |
+|          SEAK_SST_May           |   -0.23   |    0.25     |
+|          SEAK_SST_AMJJ          |   -0.28   |    0.17     |
+|          SEAK_SST_AMJ           |   -0.26   |    0.20     |
 
-: Pearson correlation coefficients for juvenile pink salmon abundance, growth and condition variables, and zooplankton variables (i.e., average zooplankton total water column by month, preferred prey by month) in year y for 1997 to 2023 with adult pink salmon harvest in Southeast Alaska in year y+1. The variables with significant correlations with SEAK pink salmon harvest are in bold text. Total water column (TWC).
+: Pearson correlation coefficients for juvenile pink salmon abundance, growth and condition variables, and zooplankton variables (i.e., average zooplankton total water column by month, preferred prey by month) in year y for 1997 to 2023 with adult pink salmon harvest in Southeast Alaska in year y+1. The variables with significant correlations *P*-value \< =0.10 with SEAK pink salmon harvest are in bold text. Total water column (TWC).
 
 # Recomendations
 
-Besides the CPUEcal, ISTI20_MJJ, and the satellite SST variables, include the additional variables (Table 1) in the 2024-forecast model process. First, develop regression models of annual SEAK pink salmon harvest and juvenile salmon CPUE, and then include a temperature variable and the additional biophysical variables (zooplankton metrics, fish condition, fish energy density). To include these additional biophysical parameters, a backward/forward stepwise regression with an alpha value of *P*-value \< 0.05 should be implemented. The second step is to calculate the Akaike Information Criterion, corrected for small sample sizes (AICc values; Burnham and Anderson 1998) for each significant step of the stepwise regression, to prevent over-parameterization of the model. The difference ($\Delta_i$) between a given model and the model with the lowest AICc value is the primary statistic for choosing appropriate models. For biologically realistic models, those with $\Delta_i\leq2$ have substantial support, those in which $4\leq\Delta_i\leq7$ have considerably less support, and models with $\Delta_i>10$ have essentially no support (Burnham and Anderson 2004). Finally, based on the subset of models with the lowest AICc values, determine the best model based on the 5-year and 10-year one-step ahead mean absolute percent error (MAPE).
+Besides the CPUEcal, ISTI20_MJJ, and the satellite SST variables, include the additional variables (Table 1) in the 2024-forecast model process. First, develop regression models of annual SEAK pink salmon harvest and juvenile salmon CPUE, and then include a temperature variable and the additional biophysical variables (zooplankton metrics, fish condition, fish energy density). To include these additional biophysical parameters, a backward/forward stepwise regression with an alpha value of *P*-value \<=0.05 should be implemented. The second step is to calculate the Akaike Information Criterion, corrected for small sample sizes (AICc values; Burnham and Anderson 1998) for each significant step of the stepwise regression, to prevent over-parameterization of the model. The difference ($\Delta_i$) between a given model and the model with the lowest AICc value is the primary statistic for choosing appropriate models. For biologically realistic models, those with $\Delta_i\leq2$ have substantial support, those in which $4\leq\Delta_i\leq7$ have considerably less support, and models with $\Delta_i>10$ have essentially no support (Burnham and Anderson 2004). Finally, based on the subset of models with the lowest AICc values, determine the best model based on the 5-year and 10-year one-step ahead mean absolute percent error (MAPE).
 
 # References
 
@@ -104,11 +105,11 @@ Burnham, K. P., and D. R. Anderson (1998) Model Selection and Inference. Springe
 
 Burnham, K. P., and D. R. Anderson (2004) Multimodel inference: Understanding AIC and BIC in model selection. Sociological Methods & Research, Vol. 33(2): 261-304.
 
-Schneider, D. P., C. Deser, J. Fasullo, and K. E. Trenberth, 2013: Climate Data Guide Spurs Discovery and Understanding. Eos Trans. AGU, 94, 121–122, https://doi.org/10.1002/2013eo130001
+Schneider, D. P., C. Deser, J. Fasullo, and K. E. Trenberth, 2013: Climate Data Guide Spurs Discovery and Understanding. Eos Trans. AGU, 94, 121--122, https://doi.org/10.1002/2013eo130001
 
 Sturdevant, M.V., E.A. Fergusson, J.A. Orsi, and A.C. Wertheimer (2004) Diel feeding and gastric evacuation of juvenile pink and chum salmon in Icy Strait, Southeastern Alaska, May-September 2001. NPAFC Tech. Rep. 5. (Available at http://www.npafc.org).
 
-"The Climate Data Guide: North Pacific (NP) Index by Trenberth and Hurrell; monthly and winter.” Retrieved from https://climatedataguide.ucar.edu/climate-data/north-pacific-np-index-trenberth-and-hurrell-monthly-and-winter on 2023-10-03.
+"The Climate Data Guide: North Pacific (NP) Index by Trenberth and Hurrell; monthly and winter." Retrieved from https://climatedataguide.ucar.edu/climate-data/north-pacific-np-index-trenberth-and-hurrell-monthly-and-winter on 2023-10-03.
 
 Trenberth, K. E., and J. W. Hurrell. 1994. Decadal atmosphere-ocean variations in the Pacific Climate Dynamics, Berlin 9(6):303-319.
 
