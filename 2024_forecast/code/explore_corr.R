@@ -5,9 +5,30 @@
 
 # load libraries
 library("devtools")
+devtools::install_github("commfish/fngr")
+library("fngr")
+library(gam)
+library(MASS)
+library(MuMIn)
+library(AICcmodavg)
+library(broom)
+library(rpart)
+library(mda)
 library(tidyverse)
+library(dLagM) # MASE calc
 library(ggplot2)
+library(ggfortify)
+library(Hmisc)
+library(dplyr)
+library(extrafont)
+library(ggrepel)
+library(Metrics) # MASE calc
+library(MetricsWeighted)
 library(stats)
+library("RColorBrewer") 
+#extrafont::font_import() # only need to run this once, then comment out
+windowsFonts(Times=windowsFont("Times New Roman"))
+theme_set(theme_report(base_size = 14))
 
 # inputs
 year.forecast <- "2024_forecast" # forecast year 
@@ -15,8 +36,7 @@ data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
 
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(data.directory,'explore_variables'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
-
+variables<- read.csv(file.path(data.directory,'explore_variables'), header=TRUE, as.is=TRUE, strip.white=TRUE) 
 cor.test(variables$SEAKCatch, variables$ISTI20_MJJ, method="pearson")
 cor.test(variables$SEAKCatch, variables$Chatham_SST_MJJ, method="pearson")
 cor.test(variables$SEAKCatch, variables$Chatham_SST_May, method="pearson")
