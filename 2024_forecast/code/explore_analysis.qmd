@@ -1,7 +1,7 @@
 ---
 title: "Additional Environmental Variables for the  \n2024 SEAK Pink Salmon Preseason Forecast"
 author: "Sara Miller"
-date: "September 25, 2023"
+date: "October 12, 2023"
 format: pdf
 editor: visual
 ---
@@ -66,16 +66,17 @@ North Pacific Index (**NPI**): June, July, August average of the NPI; a measure 
 |:-------------------------------:|:---------:|:-----------:|
 |           **CPUEcal**           | **0.75**  | **\<0.001** |
 |           ISTI20_MJJ            |   -0.22   |    0.28     |
-|            condition            |           |             |
+|        condition (June)         |   0.14    |    0.54     |
+|        condition (July)         |   -0.04   |    0.85     |
 |      energy density (June)      |   -0.41   |    0.22     |
 |    **energy density (July)**    | **-0.42** |  **0.03**   |
-|   avg. zooplankton TWC (May)    |   0.08    |    0.70     |
+|   avg. zooplankton TWC (May)    |   0.08    |    0.69     |
 | **avg. zooplankton TWC (June)** | **0.34**  |  **0.09**   |
 | **avg. zooplankton TWC (July)** | **-0.45** |  **0.02**   |
 |    zooplankton density (May)    |   -0.29   |    0.15     |
 |   zooplankton density (June)    |   0.01    |    0.95     |
 |   zooplankton density (July)    |   -0.26   |    0.21     |
-|               NPI               |   **0.35**|    **0.08** |
+|             **NPI**             | **0.35**  |  **0.08**   |
 |         Chatham_SST_MJJ         |   -0.24   |    0.23     |
 |         Chatham_SST_May         |   -0.18   |    0.37     |
 |        Chatham_SST_AMJJ         |   -0.23   |    0.25     |
@@ -93,11 +94,11 @@ North Pacific Index (**NPI**): June, July, August average of the NPI; a measure 
 |          SEAK_SST_AMJJ          |   -0.28   |    0.17     |
 |          SEAK_SST_AMJ           |   -0.26   |    0.20     |
 
-: Pearson correlation coefficients for juvenile pink salmon abundance, growth and condition variables, and zooplankton variables (i.e., average zooplankton total water column by month, preferred prey by month) in year y for 1997 to 2023 with adult pink salmon harvest in Southeast Alaska in year y+1. The variables with significant correlations *P*-value \< =0.10 with SEAK pink salmon harvest are in bold text. Total water column (TWC).
+: Pearson correlation coefficients for juvenile pink salmon abundance, growth and condition variables, and zooplankton variables (i.e., average zooplankton total water column by month, preferred prey by month) in year y for 1997 to 2023 with adult pink salmon harvest in Southeast Alaska in year y+1. The variables with significant correlations *P*-value \< =0.10 with SEAK pink salmon harvest are in bold text. Total water column (TWC). The variables CPUEcal, energy density in July, average zooplankton in the water column in June and July, and the North Pacific Index (NPI) were significantly correlated to adult pink salmon harvest in Southeast Alaska (although the data for the NPI in summer 2023 is not currently available).
 
 # Recomendations
 
-Besides the CPUEcal, ISTI20_MJJ, and the satellite SST variables, include the additional variables (Table 1) in the 2024-forecast model process. First, develop regression models of annual SEAK pink salmon harvest and juvenile salmon CPUE, and then include a temperature variable and the additional biophysical variables (zooplankton metrics, fish condition, fish energy density). To include these additional biophysical parameters, a backward/forward stepwise regression with an alpha value of *P*-value \<=0.05 should be implemented. The second step is to calculate the Akaike Information Criterion, corrected for small sample sizes (AICc values; Burnham and Anderson 1998) for each significant step of the stepwise regression, to prevent over-parameterization of the model. The difference ($\Delta_i$) between a given model and the model with the lowest AICc value is the primary statistic for choosing appropriate models. For biologically realistic models, those with $\Delta_i\leq2$ have substantial support, those in which $4\leq\Delta_i\leq7$ have considerably less support, and models with $\Delta_i>10$ have essentially no support (Burnham and Anderson 2004). Finally, based on the subset of models with the lowest AICc values, determine the best model based on the 5-year and 10-year one-step ahead mean absolute percent error (MAPE).
+First, develop regression models of annual SEAK pink salmon harvest and juvenile salmon CPUE, and then include additional variables as temperature (ISTI, satellite SST variables), and the biophysical variables (e.g., zooplankton metrics, fish condition, fish energy density). Perform a backward/forward stepwise regression with an alpha value of *P*-value \<=0.05. Next, calculate the Akaike Information Criterion (AIC values; Burnham and Anderson 1998) for each significant step of the stepwise regression, to prevent over-parameterization of the model. Next, run the performance metric one step ahead MAPE on the eighteen temperature models (i.e., CPUE model, CPUE model with one of the seventeen temperature variables), and the best model from the backward/forward stepwise regression. Compare the model performance of the nineteen models.
 
 # References
 

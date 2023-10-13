@@ -30,6 +30,7 @@ library(ggrepel)
 library(Metrics) # MASE calc
 library(MetricsWeighted)
 library("RColorBrewer") 
+library(StepReg)
 #extrafont::font_import() # only need to run this once, then comment out
 windowsFonts(Times=windowsFont("Times New Roman"))
 theme_set(theme_report(base_size = 14))
@@ -55,11 +56,10 @@ if(!dir.exists(file.path(year.forecast,  'results/retro', '/'))){dir.create(file
 read.csv(file.path(data.directory,'var2023_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
 
 # restructure the data for modeling
-variables$CPUE <- variables$CPUEcal # use CPUEcal as CPUE index
 n <- dim(variables)[1] # number of years including forecast year
 variables %>%
   mutate (SEAKCatch_log = log(SEAKCatch)) %>% # log catch variable
-  dplyr::select(-c(SEAKCatch,	CPUEcal)) -> log_data
+  dplyr::select(-c(SEAKCatch)) -> log_data
 
 # restructure the data (for write-up)
 variables %>%
@@ -70,35 +70,55 @@ variables %>%
 
 variables %>%
   mutate('Juvenile year' = Year-1,
-         CPUE = round(CPUEcal, 2),
+         CPUE = round(CPUE, 2),
          NSEAK_SST_May = round(NSEAK_SST_May,2),
          ISTI20_MJJ = round(ISTI20_MJJ,2)) %>%
   dplyr::select(c('Juvenile year', CPUE, NSEAK_SST_May, ISTI20_MJJ)) %>%
   write.csv(., paste0(results.directory, "/data_used_temp.csv"), row.names = F)
 
-# STEP #2: HARVEST MODELS AND SUMMARY STATS
-# forward
-nullmod <- lm(SEAKCatch_log ~ CPUE, data = log_data)
+# STEP #2: STEPWISE REGRESSION
+# take out any variables that aren't a full time series from 1997-2023
+nullmod <- lm(SEAKCatch_log ~ 1, data = log_data)
 fullmod <- lm(SEAKCatch_log ~ CPUE + ISTI20_MJJ	+ Chatham_SST_MJJ	+ Chatham_SST_May	+ Chatham_SST_AMJJ + Chatham_SST_AMJ + 
                 Icy_Strait_SST_MJJ + Icy_Strait_SST_May + Icy_Strait_SST_AMJJ	+ Icy_Strait_SST_AMJ + NSEAK_SST_MJJ + NSEAK_SST_May +
                 NSEAK_SST_AMJJ + NSEAK_SST_AMJ + SEAK_SST_MJJ + SEAK_SST_May + SEAK_SST_AMJJ + SEAK_SST_AMJ +
-                NPI	+ energy_density_June + energy_density_July + May_DV + June_DV + July_DV +zoo_density_May +
-                zoo_density_June + zoo_density_July, data = log_data)
-reg1A <- step(nullmod, scope = list(lower = nullmod, upper = fullmod),
+                energy_density_July + May_DV + June_DV + July_DV +zoo_density_May +
+                zoo_density_June + zoo_density_July + condition_July + NPI, data = log_data)
+model <- SEAKCatch_log ~ CPUE + ISTI20_MJJ	+ Chatham_SST_MJJ	+ Chatham_SST_May	+ Chatham_SST_AMJJ + Chatham_SST_AMJ + 
+                Icy_Strait_SST_MJJ + Icy_Strait_SST_May + Icy_Strait_SST_AMJJ	+ Icy_Strait_SST_AMJ + NSEAK_SST_MJJ + NSEAK_SST_May +
+                NSEAK_SST_AMJJ + NSEAK_SST_AMJ + SEAK_SST_MJJ + SEAK_SST_May + SEAK_SST_AMJJ + SEAK_SST_AMJ +
+                energy_density_July + May_DV + June_DV + July_DV +zoo_density_May +
+                zoo_density_June + zoo_density_July +condition_July + NPI
+regF <- step(nullmod, scope = list(lower = nullmod, upper = fullmod),
               direction="forward")
+regB <- step(nullmod, scope = list(lower = nullmod, upper = fullmod),
+              direction="backward")
+regS <- step(nullmod, scope = list(lower = nullmod, upper = fullmod),
+             direction="both")
+summary(regF)
+summary(regB)
+summary(regS)
+stepwise(formula = model,
+              data=log_data,
+              include=NULL,
+              selection="bidirection",
+              select="AIC",
+              sle=0.15,
+              sls=0.15,
+              weights=NULL,
+              best=NULL)
 
-summary(reg1A)
-# stepwise regression
-forward <- step(nullmod, direction='forward', scope=formula(fullmod), trace=0) # stats package
+stepwise(formula = model,
+         data=log_data,
+         include=NULL,
+         selection="bidirection",
+         select="SL",
+         sle=0.15,
+         sls=0.15,
+         weights=NULL,
+         best=NULL)
 
-#results
-forward$anova
-
-# final model
-forward$coefficients
-
-
-
+# potential models
 model.names <- c(m1='CPUE',
                m2='CPUE + ISTI20_MJJ',
                m3='CPUE + Chatham_SST_May',
@@ -117,10 +137,9 @@ model.names <- c(m1='CPUE',
                m16='CPUE + SEAK_SST_MJJ',
                m17='CPUE + SEAK_SST_AMJ',
                m18='CPUE + SEAK_SST_AMJJ',
-               m19='CPUE + NPI')
+               m19 = 'CPUE + ISTI20_MJJ + zoo_density_June + condition_July')
 model.formulas <- c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE + ISTI20_MJJ,
-                 
                  SEAKCatch_log ~ CPUE + Chatham_SST_May,
                  SEAKCatch_log ~ CPUE + Chatham_SST_MJJ,
                  SEAKCatch_log ~ CPUE + Chatham_SST_AMJ,
@@ -136,7 +155,8 @@ model.formulas <- c(SEAKCatch_log ~ CPUE,
                  SEAKCatch_log ~ CPUE + SEAK_SST_May,
                  SEAKCatch_log ~ CPUE + SEAK_SST_MJJ,
                  SEAKCatch_log ~ CPUE + SEAK_SST_AMJ,
-                 SEAKCatch_log ~ CPUE + SEAK_SST_AMJJ) # temp. data
+                 SEAKCatch_log ~ CPUE + SEAK_SST_AMJJ,
+                 SEAKCatch_log ~ CPUE + ISTI20_MJJ + zoo_density_June + condition_July) # temp. data
 
 # summary statistics of SEAK pink salmon harvest forecast models (seak_model_summary.csv file created)
 seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values)
@@ -163,6 +183,7 @@ lm(SEAKCatch_log ~ CPUE + SEAK_SST_May, data = log_data_subset) -> m15
 lm(SEAKCatch_log ~ CPUE + SEAK_SST_MJJ, data = log_data_subset) -> m16
 lm(SEAKCatch_log ~ CPUE + SEAK_SST_AMJ, data = log_data_subset) -> m17
 lm(SEAKCatch_log ~ CPUE + SEAK_SST_AMJJ, data = log_data_subset) -> m18
+lm(SEAKCatch_log ~ CPUE + ISTI20_MJJ + zoo_density_June + condition_July, data = log_data_subset) -> m19
 
 tidy(m1) -> model1
 tidy(m2) -> model2
@@ -182,6 +203,7 @@ tidy(m15) -> model15
 tidy(m16) -> model16
 tidy(m17) -> model17
 tidy(m18) -> model18
+tidy(m19) -> model19
 
 rbind(model1, model2) %>%
 rbind(., model3) %>%
@@ -200,12 +222,14 @@ rbind(., model15) %>%
 rbind(., model16) %>%
 rbind(., model17) %>%
 rbind(., model18) %>%
+rbind(., model19) %>% 
 mutate(model = c('m1','m1','m2','m2','m2','m3','m3','m3',
                  'm4','m4','m4','m5','m5','m5','m6','m6',' m6',
                  'm7','m7','m7','m8','m8','m8','m9','m9',' m9',
                  'm10','m10','m10','m11','m11','m11','m12','m12',' m12',
                  'm13','m13','m13','m14','m14','m14','m15','m15',' m15',
-                 'm16','m16','m16','m17','m17','m17','m18','m18',' m18')) %>%
+                 'm16','m16','m16','m17','m17','m17','m18','m18',' m18', 
+                 'm19','m19','m19','m19',' m19')) %>%
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
   mutate(estimate = round(estimate,8),
          std.error = round(std.error,3),
@@ -220,8 +244,8 @@ write.csv(., paste0(results.directory, "/model_summary_table1.csv"), row.names =
 # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
 
 # STEP #3: CALCULATE ONE_STEP_AHEAD MAPE
-f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2016)  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
-f_model_one_step_ahead_multiple10(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2011)  # start = 1997, end = 2011 means Jyear 2012-2021 used for MAPE calc. (10-year)
+f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2017)  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
+f_model_one_step_ahead_multiple10(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2012)  # start = 1997, end = 2011 means Jyear 2012-2021 used for MAPE calc. (10-year)
 # if you run the function f_model_one_step_ahead, and do not comment out return(data), you can see how many years of data are used in the MAPE,
 # then you can use the f_model_one_step_ahead function check.xlsx (in the data folder) to make sure the
 # function is correct for the base CPUE model
@@ -241,11 +265,11 @@ read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead10.csv'),
 # https://stackoverflow.com/questions/40324963/when-predicting-using-model-with-logtarget-do-i-have-to-make-any-changes-to-pr # mase3<-dLagM::MASE(m5)
 read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
   dplyr::rename(terms = 'X') %>%
-  dplyr::select(terms, fit,	fit_LPI,	fit_UPI, AdjR2) %>%
+  dplyr::select(terms, fit,	fit_LPI,	fit_UPI, AdjR2, sigma) %>%
   mutate(AdjR2 = round(AdjR2,3)) %>%
   mutate(model = c('m1','m2','m3','m4','m5','m6','m7','m8',
                    'm9','m10','m11','m12','m13','m14','m15','m16','m17',
-                   'm18')) %>%
+                   'm18', 'm19')) %>%
   mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% # exponentiate the forecast
@@ -261,25 +285,26 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.
 # these return results_modelxx.csv files for the one step ahead forecast for each model;
 # comment out the "return(data)" of the function in the functions.R file if you want the one-step-ahead-MAPE;
 # these results are used in the model_summary_table_month_year.xlsx file; they need to be input by hand into the excel sheet 
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2011, model_num = "m1") # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc.(5-year MAPE)
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + ISTI20_MJJ, start = 1997, end = 2011, model_num = "m2")# start = 1997, end = 2011 means Jyear 2012-2021 used for MAPE calc. (10-year MAPE)
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_May, start = 1997, end = 2011, model_num = "m3")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_MJJ, start = 1997, end = 2011, model_num = "m4")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_AMJ, start = 1997, end = 2011, model_num = "m5")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_AMJJ, start = 1997, end = 2011, model_num = "m6")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_May, start = 1997, end = 2011, model_num = "m7")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_MJJ, start = 1997, end = 2011, model_num = "m8")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_AMJ, start = 1997, end = 2011, model_num = "m9")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_AMJJ, start = 1997, end = 2011, model_num = "m10")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_May, start = 1997, end = 2011, model_num = "m11")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_MJJ, start = 1997, end = 2011, model_num = "m12")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_AMJ, start = 1997, end = 2011, model_num = "m13")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_AMJJ, start = 1997, end = 2011, model_num = "m14")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_May, start = 1997, end = 2011, model_num = "m15")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_MJJ, start = 1997, end = 2011, model_num = "m16")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJ, start = 1997, end = 2011, model_num = "m17")
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJJ, start = 1997, end = 2011, model_num = "m18")
-# the results of the models need to be manually entered into the model_summary_table_month_year.xlsx sheet
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2012, model_num = "m1") # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc.(5-year MAPE)
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + ISTI20_MJJ, start = 1997, end = 2012, model_num = "m2")# start = 1997, end = 2011 means Jyear 2012-2021 used for MAPE calc. (10-year MAPE)
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_May, start = 1997, end = 2012, model_num = "m3")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_MJJ, start = 1997, end = 2012, model_num = "m4")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_AMJ, start = 1997, end = 2012, model_num = "m5")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Chatham_SST_AMJJ, start = 1997, end = 2012, model_num = "m6")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_May, start = 1997, end = 2012, model_num = "m7")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_MJJ, start = 1997, end = 2012, model_num = "m8")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_AMJ, start = 1997, end = 2012, model_num = "m9")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + Icy_Strait_SST_AMJJ, start = 1997, end = 2012, model_num = "m10")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_May, start = 1997, end = 2012, model_num = "m11")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_MJJ, start = 1997, end = 2012, model_num = "m12")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_AMJ, start = 1997, end = 2012, model_num = "m13")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + NSEAK_SST_AMJJ, start = 1997, end = 2012, model_num = "m14")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_May, start = 1997, end = 2012, model_num = "m15")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_MJJ, start = 1997, end = 2012, model_num = "m16")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJ, start = 1997, end = 2012, model_num = "m17")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + SEAK_SST_AMJJ, start = 1997, end = 2012, model_num = "m18")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE + ISTI20_MJJ + zoo_density_June + condition_July, start = 1997, end = 2012, model_num = "m19")
+# the results of the models need to be manually entered into the model_summary_table_month_year.xlsx sheet in the results/summary_tables folder
 
 # forecast figure
 read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
@@ -288,7 +313,7 @@ results %>%
   dplyr::select(terms, fit,	fit_LPI,	fit_UPI, sigma) %>%
   mutate(model = c('1','2','3','4','5','6','7','8',
                    '9','10','11','12','13','14','15','16','17',
-                   '18')) %>%
+                   '18', '19')) %>%
   mutate(model= as.numeric(model),
          fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma),
@@ -306,8 +331,8 @@ results %>%
                      legend.position = "none") +
   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, linewidth=1, color="blue")+
   scale_y_continuous(breaks = c(0,5,10,15,20,25,30,35,40), limits = c(0,40))+
-  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18), limits = c(0,19))+
-  labs(x = "Models", y = "2023 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19), limits = c(0,20))+
+  labs(x = "Models", y = "2024 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
 ggsave(paste0(results.directory, "model_figs/forecast_models.png"), dpi = 500, height = 4, width = 6, units = "in")
 
 

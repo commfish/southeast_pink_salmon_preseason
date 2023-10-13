@@ -332,7 +332,7 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end, model_nu
   # mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
 } 
 # function check for one model (one step ahead MAPE)
-seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE+ISTI20_MJJ, start = 1997, end = 2011, model_num = "m2")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2017, model_num = "m1")
 
 
 f_model_one_step_ahead_multiple5 <- function(harvest,variables,model.formulas,model.names, start, end){

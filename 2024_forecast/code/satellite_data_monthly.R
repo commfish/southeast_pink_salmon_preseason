@@ -328,13 +328,14 @@ ggsave(paste0(results.directory, "monthly_temp_regions.png"), dpi = 500, height 
 
 # create a figure of ISTI_MJJ for the SECM survey
 read.csv(paste0(data.directory, 'var2023_final.csv')) %>%
-  dplyr::select(Year, ISTI20_MJJ)%>%
+  dplyr::select(JYear, ISTI20_MJJ) %>%
+  rename(Year = JYear) %>%
 write.csv(., paste0(results.directory, 'SECMvar2023_MJJ.csv'), row.names = FALSE)
 
 read.csv(paste0(data.directory, 'var2023_final.csv')) %>%
-  dplyr::select(Year, ISTI20_MJJ) %>%
-  gather("var", "value", -c(Year)) %>% 
-  ggplot(., aes(y = value, x = Year, group = var)) +
+  dplyr::select(JYear, ISTI20_MJJ) %>%
+  gather("var", "value", -c(JYear)) %>% 
+  ggplot(., aes(y = value, x = JYear, group = var)) +
   geom_point(aes(shape = var, color = var, size=var)) +
   geom_line(aes(linetype = var, color = var)) +
   scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted", "dotted"))+

@@ -28,7 +28,7 @@ data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 
 # download data directly from site 
-read_delim('https://climatedataguide.ucar.edu/sites/default/files/2023-04/npindex_monthly.txt', delim = " ", col_names=F)-> raw_data 
+read_delim('https://climatedataguide.ucar.edu/sites/default/files/2023-10/npindex_monthly.txt', delim = " ", col_names=F)-> raw_data 
 raw_data %>%
   slice(-1) %>%
   select(-X2, -X4, -X5, -X6, -X7, -X8) %>%
