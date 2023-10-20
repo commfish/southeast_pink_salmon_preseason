@@ -1,0 +1,38 @@
+Model,Terms,Fit,Lower,Upper
+m1,CPUE,21,11,39
+m5,CPUE + Chatham_SST_AMJ,22,14,35
+m5a,CPUE + Chatham_SST_AMJ + esc_index_log,21,13,35
+m6,CPUE + Chatham_SST_AMJJ,21,12,35
+m6a,CPUE + Chatham_SST_AMJJ + esc_index_log,20,12,34
+m3,CPUE + Chatham_SST_May,19,12,31
+m3a,CPUE + Chatham_SST_May + esc_index_log,18,11,30
+m4,CPUE + Chatham_SST_MJJ,20,12,35
+m4a,CPUE + Chatham_SST_MJJ + esc_index_log ,19,11,33
+m1a,CPUE + esc_index_log,20,11,36
+m9,CPUE + Icy_Strait_SST_AMJ,23,14,38
+m9a,CPUE + Icy_Strait_SST_AMJ + esc_index_log,22,13,37
+m10,CPUE + Icy_Strait_SST_AMJJ,22,13,38
+m10a,CPUE + Icy_Strait_SST_AMJJ + esc_index_log,22,13,37
+m7,CPUE + Icy_Strait_SST_May,19,12,31
+m7a,CPUE + Icy_Strait_SST_May + esc_index_log,19,11,31
+m8,CPUE + Icy_Strait_SST_MJJ,22,13,39
+m8a,CPUE + Icy_Strait_SST_MJJ + esc_index_log,21,12,37
+m2,CPUE + ISTI20_MJJ,20,13,32
+m2a,CPUE + ISTI20_MJJ + esc_index_log,20,12,32
+m19,CPUE + ISTI20_MJJ + zoo_density_June + condition_July,9,5,16
+m13,CPUE + NSEAK_SST_AMJ,21,13,35
+m13a,CPUE + NSEAK_SST_AMJ + esc_index_log,21,12,35
+m14,CPUE + NSEAK_SST_AMJJ,20,12,34
+m14a,CPUE + NSEAK_SST_AMJJ + esc_index_log,20,11,34
+m11,CPUE + NSEAK_SST_May,19,12,32
+m11a,CPUE + NSEAK_SST_May + esc_index_log,19,11,31
+m12,CPUE + NSEAK_SST_MJJ,20,12,35
+m12a,CPUE + NSEAK_SST_MJJ + esc_index_log,19,11,34
+m17,CPUE + SEAK_SST_AMJ,21,12,35
+m17a,CPUE + SEAK_SST_AMJ + esc_index_log,20,12,34
+m18,CPUE + SEAK_SST_AMJJ,20,11,34
+m18a,CPUE + SEAK_SST_AMJJ + esc_index_log,19,11,33
+m15,CPUE + SEAK_SST_May,19,11,31
+m15a,CPUE + SEAK_SST_May + esc_index_log,18,11,31
+m16,CPUE + SEAK_SST_MJJ,19,11,33
+m16a,CPUE + SEAK_SST_MJJ + esc_index_log,18,10,32

@@ -1,0 +1,38 @@
+Model,Terms,5-year MAPE,10-year MAPE
+m1,CPUE,51%,64%
+m1a,CPUE + esc_index_log,46%,63%
+m2,CPUE + ISTI20_MJJ,32%,39%
+m2a,CPUE + ISTI20_MJJ + esc_index_log,32%,41%
+m3,CPUE + Chatham_SST_May,38%,28%
+m3a,CPUE + Chatham_SST_May + esc_index_log,36%,28%
+m4,CPUE + Chatham_SST_MJJ,44%,42%
+m4a,CPUE + Chatham_SST_MJJ + esc_index_log ,42%,42%
+m5,CPUE + Chatham_SST_AMJ,38%,31%
+m5a,CPUE + Chatham_SST_AMJ + esc_index_log,37%,34%
+m6,CPUE + Chatham_SST_AMJJ,41%,36%
+m6a,CPUE + Chatham_SST_AMJJ + esc_index_log,39%,37%
+m7,CPUE + Icy_Strait_SST_May,40%,27%
+m7a,CPUE + Icy_Strait_SST_May + esc_index_log,37%,27%
+m8,CPUE + Icy_Strait_SST_MJJ,44%,42%
+m8a,CPUE + Icy_Strait_SST_MJJ + esc_index_log,41%,42%
+m9,CPUE + Icy_Strait_SST_AMJ,41%,32%
+m9a,CPUE + Icy_Strait_SST_AMJ + esc_index_log,39%,35%
+m10,CPUE + Icy_Strait_SST_AMJJ,41%,37%
+m10a,CPUE + Icy_Strait_SST_AMJJ + esc_index_log,39%,40%
+m11,CPUE + NSEAK_SST_May,39%,27%
+m11a,CPUE + NSEAK_SST_May + esc_index_log,36%,27%
+m12,CPUE + NSEAK_SST_MJJ,43%,37%
+m12a,CPUE + NSEAK_SST_MJJ + esc_index_log,41%,38%
+m13,CPUE + NSEAK_SST_AMJ,39%,31%
+m13a,CPUE + NSEAK_SST_AMJ + esc_index_log,38%,34%
+m14,CPUE + NSEAK_SST_AMJJ,41%,32%
+m14a,CPUE + NSEAK_SST_AMJJ + esc_index_log,39%,36%
+m15,CPUE + SEAK_SST_May,41%,31%
+m15a,CPUE + SEAK_SST_May + esc_index_log,39%,32%
+m16,CPUE + SEAK_SST_MJJ,45%,40%
+m16a,CPUE + SEAK_SST_MJJ + esc_index_log,42%,40%
+m17,CPUE + SEAK_SST_AMJ,41%,34%
+m17a,CPUE + SEAK_SST_AMJ + esc_index_log,40%,36%
+m18,CPUE + SEAK_SST_AMJJ,43%,35%
+m18a,CPUE + SEAK_SST_AMJJ + esc_index_log,41%,37%
+m19,CPUE + ISTI20_MJJ + zoo_density_June + condition_July,28%,43%
