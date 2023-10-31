@@ -1,16 +1,16 @@
 # run diagnostics on the best model
 # inputs
-fit_value_model<-18.841 #best model outputs (bias-corrected); value of forecast (from model_summary_table3)
-lwr_pi_80<-12.273 # 80% PI from model_summary_table2 in the results folder
-upr_pi_80<-28.922 # 80% PI from model_summary_table2 in the results folder
+fit_value_model<-19.233 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
+lwr_pi_80<-11.707 # 80% PI from model_summary_table2 in the results folder
+upr_pi_80<-31.596 # 80% PI from model_summary_table2 in the results folder
 best_model<-m11
 model<-'m11'
-year.forecast <- "2023_forecast" # forecast year
-year.data <- 2022 # last year of data
+year.forecast <- "2024_forecast" # forecast year
+year.data <- 2023 # last year of data
 year.data.one <- year.data - 1
 
 # source code and functions)
-source('2023_forecast/code/functions.r')
+source('2024_forecast/code/functions.r')
 
 # best model based on performance metrics
 lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset) -> m11
@@ -70,13 +70,18 @@ augment(best_model) %>%
                      panel.grid.minor = element_blank(), 
                      panel.grid.major = element_blank(), 
                      axis.line = element_line(colour = "black"),
-                     axis.text.x = element_text(size =11, family="Times New Roman"),
+                     axis.text.x = element_text(size =10, family="Times New Roman"),
                      axis.title.y = element_text(size=11, colour="black",family="Times New Roman"),
                      axis.title.x = element_text(size=11, colour="black",family="Times New Roman"),
                      panel.border = element_rect(colour = "black", size=1),
                      legend.position=c(0.51,0.87)) +
   geom_point(x=year.data +1, y=fit_value_model, pch=21, size=2.5, colour = "black", fill="grey") +
-  scale_x_continuous(breaks = seq(1998, year.data +1, 4)) +theme(legend.title=element_blank())+
+  scale_x_continuous(
+    minor_breaks = seq(1998, year.data +1, by = 1),
+    breaks = seq(1998, year.data +1, by = 4), limits = c(1998, year.data+1),
+    guide = "axis_minor") + # this is added to the original code)
+  
+  #scale_x_continuous(breaks = seq(1998, year.data +1, 4)) +theme(legend.title=element_blank())+
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_text(aes(x = 1998, y = 140, label="A."),family="Times New Roman", colour="black", size=5) +
@@ -106,7 +111,8 @@ augment(best_model) %>%
   #                nudge_x = 1, size = 3, show.legend = FALSE) +
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL)+
   geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5)+
-geom_text(aes(y = 55, x = 20, label="2021"),family="Times New Roman", colour="black", size=4) +
+geom_text(aes(y = 55, x = 22, label="2021"),family="Times New Roman", colour="black", size=4) +
+geom_text(aes(y = 43, x = 18, label="2023"),family="Times New Roman", colour="black", size=4) +  
 geom_text(aes(y = 103, x = 62, label="2013"),family="Times New Roman", colour="black", size=4) +
 geom_text(aes(y = 85, x = 125, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)

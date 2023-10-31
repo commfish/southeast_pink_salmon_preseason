@@ -31,6 +31,7 @@ library(Metrics) # MASE calc
 library(MetricsWeighted)
 library("RColorBrewer") 
 library(StepReg)
+library(ggh4x)
 #extrafont::font_import() # only need to run this once, then comment out
 windowsFonts(Times=windowsFont("Times New Roman"))
 theme_set(theme_report(base_size = 14))
@@ -202,6 +203,7 @@ model.formulas <- c(SEAKCatch_log ~ CPUE,
 
 # summary statistics of SEAK pink salmon harvest forecast models (seak_model_summary.csv file created)
 seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values)
+# if there is an error about MASE, run the MASE part of the function file and then rerun line 204
 
 # summary of model fits (i.e., coefficients, p-value); creates the file model_summary_table1.csv.
 log_data %>%
@@ -370,8 +372,8 @@ read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead10.csv'),
 # https://stats.stackexchange.com/questions/359088/correcting-log-transformation-bias-in-a-linear-model; Correcting log-transformation bias in a linear model
 # https://stackoverflow.com/questions/40324963/when-predicting-using-model-with-logtarget-do-i-have-to-make-any-changes-to-pr # mase3<-dLagM::MASE(m5)
 read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
-  dplyr::rename(Terms = 'X') %>%
-  dplyr::select(Terms, fit,	fit_LPI,	fit_UPI, AdjR2, sigma) %>%
+  dplyr::rename(terms = 'X') %>%
+  dplyr::select(terms, fit,	fit_LPI,	fit_UPI, AdjR2, sigma) %>%
   mutate(AdjR2 = round(AdjR2,3)) %>%
   mutate(Model = c('m1','m2','m3','m4','m5','m6','m7','m8',
                    'm9','m10','m11','m12','m13','m14','m15','m16','m17',
@@ -384,7 +386,7 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.
   mutate(Fit = round(fit_log,3),
          Fit_LPI = round(fit_log_LPI,3),
          Fit_UPI = round(fit_log_UPI,3)) %>%
-  dplyr::select(Model, Terms, Fit, Fit_LPI, Fit_UPI, AdjR2) %>%
+  dplyr::select(Model, terms, Fit, Fit_LPI, Fit_UPI, AdjR2) %>%
   merge(., MAPE5, by="terms") %>%
   merge(., MAPE10, by="terms") %>%
   write.csv(., paste0(results.directory, "/model_summary_table2.csv"), row.names = F)
@@ -443,21 +445,32 @@ results %>%
                    '18', '19','1a','2a','3a','4a','5a','6a','7a','8a',
                    '9a','10a','11a','12a','13a','14a','15a','16a','17a',
                    '18a')) %>%
+  mutate(order = c('1','2','3','4','5','6','7','8',
+                   '9','10','11','12','13','14','15','16','17',
+                   '18', '19','20','21','22','23','24','25','26','27',
+                   '28','29','30','31','32','33','34','35','36',
+                   '37')) %>%
+  mutate(order = as.numeric(order)) %>%
   mutate(model= as.factor(model),
          fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma),
          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>%
-  dplyr::select(model, terms, fit_log,fit_log_LPI, 	fit_log_UPI) %>%
+  dplyr::select(model, order, terms, fit_log,fit_log_LPI, 	fit_log_UPI) %>%
   as.data.frame() %>%
-  ggplot(., aes(x=model)) +
-  geom_bar(aes(y = fit_log, fill = "SEAK pink catch"),
-           stat = "identity", colour ="grey70",
+  dplyr::arrange(order) %>%
+  ggplot(., aes(x=factor(model, level=c('1','2','3','4','5','6','7','8',
+                                        '9','10','11','12','13','14','15','16','17',
+                                        '18', '19','1a','2a','3a','4a','5a','6a','7a','8a',
+                                        '9a','10a','11a','12a','13a','14a','15a','16a','17a',
+                                        '18a')), y=fit_log)) +
+  geom_col(aes(y = fit_log, fill = "SEAK pink catch"), colour ="grey70",
            width = 1, position = position_dodge(width = 0.1)) +
   scale_colour_manual("", values=c("SEAK pink catch" = "grey90", "fit" = "black")) +
   scale_fill_manual("",values="lightgrey")+ geom_hline(yintercept=20, linetype='dashed', color=c('grey30'))+
   theme_bw() + theme(legend.key=element_blank(),
                      panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(),
+                     axis.text.x = element_text(size = 7, family="Times New Roman"),
                      legend.title=element_blank(),
                      legend.position = "none") +
   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, linewidth=1, color="grey30")+

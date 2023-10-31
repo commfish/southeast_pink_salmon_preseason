@@ -1,4 +1,4 @@
-"terms","model","fit","fit_LPI","fit_UPI","AdjR2","MAPE5","MAPE10"
+"terms","Model","Fit","Fit_LPI","Fit_UPI","AdjR2","MAPE5","MAPE10"
 "CPUE","m1",20.981,11.376,38.695,0.542,0.52,0.603
 "CPUE + Chatham_SST_AMJ","m5",21.935,13.58,35.431,0.721,0.394,0.309
 "CPUE + Chatham_SST_AMJ + esc_index_log","m5a",21.411,13.089,35.024,0.712,0.382,0.34

@@ -1,0 +1,56 @@
+Year,fitted_values,year_minus,type,model_name,forecast_model,forecast_model_name
+2014,30.27781442,10,forecast,m2,2013,CPUE + ISTI20_MJJ
+2015,58.81684842,9,forecast,m2,2014,CPUE + ISTI20_MJJ
+2016,24.24608389,8,forecast,m2,2015,CPUE + ISTI20_MJJ
+2017,41.07497415,7,forecast,m2,2016,CPUE + ISTI20_MJJ
+2018,15.62411734,6,forecast,m2,2017,CPUE + ISTI20_MJJ
+2019,16.70559072,5,forecast,m2,2018,CPUE + ISTI20_MJJ
+2020,10.15654044,4,forecast,m2,2019,CPUE + ISTI20_MJJ
+2021,28.1221572,3,forecast,m2,2020,CPUE + ISTI20_MJJ
+2022,15.57686528,2,forecast,m2,2021,CPUE + ISTI20_MJJ
+2023,19.89147388,1,forecast,m2,2022,CPUE + ISTI20_MJJ
+2024,19.983,0,forecast,m2,2023,CPUE + ISTI20_MJJ
+2014,30.85970661,10,forecast,m19,2013,CPUE + ISTI20_MJJ + zoo_density_June + condition_July
+2015,61.96572669,9,forecast,m19,2014,CPUE + ISTI20_MJJ + zoo_density_June + condition_July
+2016,28.60400844,8,forecast,m19,2015,CPUE + ISTI20_MJJ + zoo_density_June + condition_July
+2017,45.23283544,7,forecast,m19,2016,CPUE + ISTI20_MJJ + zoo_density_June + condition_July
+2018,16.80368294,6,forecast,m19,2017,CPUE + ISTI20_MJJ + zoo_density_June + condition_July
+2019,16.15715623,5,forecast,m19,2018,CPUE + ISTI20_MJJ + zoo_density_June + condition_July
+2020,10.09804814,4,forecast,m19,2019,CPUE + ISTI20_MJJ + zoo_density_June + condition_July
+2021,28.54840494,3,forecast,m19,2020,CPUE + ISTI20_MJJ + zoo_density_June + condition_July
+2022,16.41911672,2,forecast,m19,2021,CPUE + ISTI20_MJJ + zoo_density_June + condition_July
+2023,28.04415916,1,forecast,m19,2022,CPUE + ISTI20_MJJ + zoo_density_June + condition_July
+2024,8.912,0,forecast,m19,2023,CPUE + ISTI20_MJJ + zoo_density_June + condition_July
+2014,36.99927642,10,forecast,m3,2013,CPUE + Chatham_SST_May
+2015,43.7602974,9,forecast,m3,2014,CPUE + Chatham_SST_May
+2016,14.92102214,8,forecast,m3,2015,CPUE + Chatham_SST_May
+2017,40.91760218,7,forecast,m3,2016,CPUE + Chatham_SST_May
+2018,10.08178293,6,forecast,m3,2017,CPUE + Chatham_SST_May
+2019,16.26946224,5,forecast,m3,2018,CPUE + Chatham_SST_May
+2020,11.14282774,4,forecast,m3,2019,CPUE + Chatham_SST_May
+2021,19.00066824,3,forecast,m3,2020,CPUE + Chatham_SST_May
+2022,16.42232406,2,forecast,m3,2021,CPUE + Chatham_SST_May
+2023,19.51859669,1,forecast,m3,2022,CPUE + Chatham_SST_May
+2024,18.915,0,forecast,m3,2023,CPUE + Chatham_SST_May
+2014,36.50229478,10,forecast,m7,2013,CPUE + Icy_Strait_SST_May
+2015,44.4346598,9,forecast,m7,2014,CPUE + Icy_Strait_SST_May
+2016,17.67449989,8,forecast,m7,2015,CPUE + Icy_Strait_SST_May
+2017,38.16708468,7,forecast,m7,2016,CPUE + Icy_Strait_SST_May
+2018,10.29990513,6,forecast,m7,2017,CPUE + Icy_Strait_SST_May
+2019,16.98859628,5,forecast,m7,2018,CPUE + Icy_Strait_SST_May
+2020,11.59713766,4,forecast,m7,2019,CPUE + Icy_Strait_SST_May
+2021,18.15067716,3,forecast,m7,2020,CPUE + Icy_Strait_SST_May
+2022,15.84900615,2,forecast,m7,2021,CPUE + Icy_Strait_SST_May
+2023,19.57650851,1,forecast,m7,2022,CPUE + Icy_Strait_SST_May
+2024,19.091,0,forecast,m7,2023,CPUE + Icy_Strait_SST_May
+2014,38.17208413,10,forecast,m11,2013,CPUE + NSEAK_SST_May
+2015,41.14801482,9,forecast,m11,2014,CPUE + NSEAK_SST_May
+2016,13.76221546,8,forecast,m11,2015,CPUE + NSEAK_SST_May
+2017,39.59547829,7,forecast,m11,2016,CPUE + NSEAK_SST_May
+2018,9.435039342,6,forecast,m11,2017,CPUE + NSEAK_SST_May
+2019,15.00735122,5,forecast,m11,2018,CPUE + NSEAK_SST_May
+2020,10.46361937,4,forecast,m11,2019,CPUE + NSEAK_SST_May
+2021,17.50556444,3,forecast,m11,2020,CPUE + NSEAK_SST_May
+2022,16.21461809,2,forecast,m11,2021,CPUE + NSEAK_SST_May
+2023,18.82449143,1,forecast,m11,2022,CPUE + NSEAK_SST_May
+2024,19.233,0,forecast,m11,2023,CPUE + NSEAK_SST_May

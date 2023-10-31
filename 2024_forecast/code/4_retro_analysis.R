@@ -1,7 +1,6 @@
 # the forecasts.csv file is created from the spreadsheet model_summary_table_month_year.xlsx in the folder results/summary_tables and the model_summary_table2 for the forecast value
 # the forecasts.csv file needs to be manually created from the excel spreadsheet
-read.csv(file.path(data.directory,'forecasts_5yearMAPE.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> forecasts_5yearMAPE
-read.csv(file.path(data.directory,'forecasts_10yearMAPE.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> forecasts_10yearMAPE
+read.csv(file.path(data.directory,'forecasts_MAPE.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> forecasts_MAPE
 
 # 5 year MAPE figure
 augment(m19) %>%
@@ -13,13 +12,13 @@ augment(m19) %>%
   geom_bar(aes(y = harvest, fill = "SEAK pink harvest"),
            stat = "identity", colour ="black",
            width = 1, position = position_dodge(width = 0.1)) +
-  geom_point(data = forecasts_5yearMAPE,
-             aes(x = Year, y = fitted_values, colour = forecast_model_name, shape =forecast_model_name), size=3) +
-  geom_line(data = forecasts_5yearMAPE,
-            aes(x = Year, y = fitted_values, colour = forecast_model_name, linetype = forecast_model_name), size=0.75) +
-  scale_shape_manual(values = c(16, 16, 16)) +
-  scale_colour_manual(values =c('#855C75', '#D9AF6B', '#AF6458')) +
-  scale_linetype_manual(values= c("dotted", "dotted", "dotted")) +
+  geom_point(data = forecasts_MAPE,
+             aes(x = Year, y = fitted_values, colour = forecast_model_name, shape =forecast_model_name), size=2.5) +
+  geom_line(data = forecasts_MAPE,
+            aes(x = Year, y = fitted_values, colour = forecast_model_name, linetype = forecast_model_name), linewidth=0.7) +
+  scale_shape_manual(values = c(16, 16, 16, 16, 16)) +
+  scale_colour_manual(values =c('#855C70', '#D9AF6B','turquoise4', '#AF6458', '#526A83')) +
+  scale_linetype_manual(values= c("dotted", "dotted","dotted", "dotted","dotted")) +
   scale_fill_manual("",values="lightgrey")+
   theme_bw() + theme(legend.key=element_blank(),
                      legend.text=element_text(size=7),
@@ -30,42 +29,11 @@ augment(m19) %>%
                      axis.title.y = element_text(size=11, colour="black",family="Times"),
                      axis.title.x = element_text(size=11, colour="black",family="Times"),
                      legend.position=c(0.4,0.78)) +
-  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100), limits = c(0,100))+ theme(legend.title=element_blank()) +
+  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100, 120), limits = c(0,120))+ theme(legend.title=element_blank()) +
   scale_x_continuous(breaks = c(2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024), limits = c(2013, 2024))+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)")
-ggsave(paste0(results.directory.retro, "figs/MAPE_forecasts_5yearMAPE.png"), dpi = 500, height = 4, width = 7, units = "in")
+ggsave(paste0(results.directory.retro, "figs/MAPE_forecasts.png"), dpi = 500, height = 4, width = 7, units = "in")
 
-# 10 year MAPE figure
-augment(m3) %>%
-  mutate(year = 1998:year.data,
-         harvest = exp(SEAKCatch_log)) %>%
-  filter(year>2013)%>%
-  #mutate(year = as.factor(year))%>%
-  ggplot(aes(x=year)) +
-  geom_bar(aes(y = harvest, fill = "SEAK pink harvest"),
-           stat = "identity", colour ="black",
-           width = 1, position = position_dodge(width = 0.1)) +
-  geom_point(data = forecasts_10yearMAPE,
-             aes(x = Year, y = fitted_values, colour = forecast_model_name, shape =forecast_model_name), size=3) +
-  geom_line(data = forecasts_10yearMAPE,
-            aes(x = Year, y = fitted_values, colour = forecast_model_name, linetype = forecast_model_name), size=0.75) +
-  scale_shape_manual(values = c(16, 16, 16, 16, 16, 16)) +
-  scale_colour_manual(values =c('#855C75', '#D9AF6B', '#AF6458', '#736F4C', '#526A83',  '#5ecbc8')) +
-  scale_linetype_manual(values= c("dotted", "dotted", "dotted", "dotted", "dotted", "dotted")) +
-  scale_fill_manual("",values="lightgrey")+
-  theme_bw() + theme(legend.key=element_blank(),
-                     legend.text=element_text(size=7),
-                     legend.title=element_blank(),
-                     legend.box="horizontal", panel.grid.major = element_blank(),
-                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                     text = element_text(size=10),
-                     axis.title.y = element_text(size=11, colour="black",family="Times"),
-                     axis.title.x = element_text(size=11, colour="black",family="Times"),
-                     legend.position=c(0.38,0.76)) +
-  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100), limits = c(0,100))+ theme(legend.title=element_blank()) +
-  scale_x_continuous(breaks = c(2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024), limits = c(2013, 2024))+
-  labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)")
-ggsave(paste0(results.directory.retro, "figs/MAPE_forecasts_10yearMAPE.png"), dpi = 500, height = 4, width = 7, units = "in")
 # 
 # # model m1 retro
 # read.csv(file.path(data.directory,'var2023_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
