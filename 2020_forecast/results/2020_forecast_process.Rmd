@@ -27,7 +27,7 @@ fs::dir_ls(here::here('2020_forecast/results'), regexp = "\\.csv$") %>%
 
 ```
 
-#Objective
+# Objective
 To forecast the Southeast Alaska (SEAK) pink salmon harvest in 2020.
 
 # Executive Summary
