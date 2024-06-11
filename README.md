@@ -54,17 +54,17 @@ The current assessment follows Miller et al. 2022.
 
 ## Process
 
-1. Copy over last year's YYYY_forecast folder structure for the current assessment.
+1. Copy over last year's yyyy_forecast folder structure for the current assessment.
 
 2. Rename the folder to the current forecast year. 
 
-3. Delete the files in the data folder except the [`varYYYY_final.csv`] file and the [`sst_data_map.csv`]  file. The [`varYYYY_final.csv`] file will serve as the template for the new year. Update this file name to the data year (not the forecast year). To prepare for the coming year, add another year of mock data by adding the same data as last year into a new row. Keep a folder labeled raw_data within the data folder for any raw data that is used in the analysis. The raw data should not be manipulated in any way, but instead copied to the [`varYYYY_final.csv`] file for use in the model runs. The file [`sst_data_map.csv`] contains the latitude and longitude of the different regions for the satellite SST data. The details of these regions are found in Miller et al. 2022. This file does not need to be updated unless these regions change.
+3. Delete the files in the data folder except the [`varyyyy_final.csv`] file and the [`sst_data_map.csv`]  file. The [`varyyyy_final.csv`] file will serve as the template for the new year. Update this file name to the data year (not the forecast year). To prepare for the coming year, add another year of mock data by adding the same data as last year into a new row. Keep a folder labeled raw_data within the data folder for any raw data that is used in the analysis. The raw data should not be manipulated in any way, but instead copied to the [`varyyyy_final.csv`] file for use in the model runs. The file [`sst_data_map.csv`] contains the latitude and longitude of the different regions for the satellite SST data. The details of these regions are found in Miller et al. 2022. This file does not need to be updated unless these regions change.
 
 4. Within the results folder, delete the MAPE folder, the model_figs folder, the figs folder, the explore_variables, the retro folder, the temperature_data folder, and all the csv files within the main results folder. Within the results/summary_tables folder, rename the [`model_summary_table--template.xlsx`] to the current year.
 
 5. Delete any word and pdf files in the code folder. 
 
-6. Rename the the [`YYYY_forecast.Rmd`] file to the forecast year. This file, the [`forecasting_process.Rmd`], and the [`satellite_SST_process_YYYY.Rmd`] file in the code folder are important for documenting the process for the current forecast year (e.g., changes in models considered, changes in variables). The [`satellite_SST_process_YYYY.Rmd`] file mainly needs the years updated, unless the process changes.
+6. Rename the the [`yyyy_forecast.Rmd`] file to the forecast year. This file, the [`forecasting_process.Rmd`], and the [`satellite_SST_process_yyyy.Rmd`] file in the code folder are important for documenting the process for the current forecast year (e.g., changes in models considered, changes in variables). The [`satellite_SST_process_yyyy.Rmd`] file mainly needs the years updated, unless the process changes.
 
 7. Follow the forecast process in the [`forecasting_process.Rmd`] file. This file will take you through the data processing and running the models. 
 
