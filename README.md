@@ -6,7 +6,7 @@ output:
 # Southeast Alaska Pink Salmon Preseason Forecast
 Please direct any questions to: Sara Miller (sara.miller@alaska.gov).
 
-Last updated: August 2023
+Last updated: June 2024
 
 # Background 1[^fn1]
 Pink salmon *Oncorhynchus gorbuscha* runs in Southeast Alaska support a valuable commercial fishery (Clark et al. 2006), although annual abundance varies tremendously. An average of 33 million pink salmon per year were harvested in Southeast Alaska in the last 10 years (2012–2021), with a range of 8 million (2018 and 2020) to 95 million (2013) fish. Although the inseason management of these stocks is focused on monitoring daily harvest and fishing effort, and using aerial survey counts to assess whether adequate numbers of pink salmon are present to meet escapement goals (Piston and Heinl 2020), the fishing industry benefits from meaningful preseason forecasts in order to plan appropriately for the harvest, processing, transportation, and marketing of these fish. Pink salmon runs are notoriously difficult to forecast (Adkison 2002; Haeseker et al. 2005; Shevlyakov and Koval 2012; Radchenko 2020) due to the species’ propensity to respond dramatically to changes in the marine environment (Farley et al. 2020), the odd- and even-year cycles of abundance (Heard 1991; Ruggerone et al. 2003; Krkošek et al. 2011), and the fact that there is only one cohort (i.e., only one age class) in the fishery each year (Heard 1991). With only a 2-year life cycle, information about cohort strength is not available from jacks or siblings as with other species of salmon (Adkison and Peterman 2000; Haeseker et al. 2007); sibling recruit modeling is not possible with pink salmon. Beginning in the late 1960s, the Alaska Department of Fish and Game (ADF&G) implemented programs to improve pink salmon stock assessment but met with limited success in forecasting pink salmon runs. Forecast accuracy (i.e., absolute percent error) from 1981 through 2006 was 57%. Past forecasts relied primarily on measures of pink salmon spawning abundance or success (Jones and Hofmeister 1985; Hofmeister and Jones 1989; Hofmeister and Blick 1993), both of which are poorly known and explain little of the variation in annual recruitment, which is largely determined in the early marine environment (Parker 1968; Mortensen et al. 2000; Willette et al. 2001).
@@ -19,22 +19,19 @@ In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink sa
 The current assessment follows Miller et al. 2022.
 
 ## Advisory Announcements
-* [2023 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1444357143.pdf)  
-
-* [2022 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1346706110.pdf)  
-
-* [2021 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1232831147.pdf)  
-
-* [2020 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1126221367.pdf)  
-
+* [2024 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1549019284.pdf)
+* [2023 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1444357143.pdf) 
+* [2022 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1346706110.pdf) 
+* [2021 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1232831147.pdf) 
+* [2020 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1126221367.pdf) 
 * [2019 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1002259599.pdf)
 
 ## Reports  
-
-* [2023 forecast report](2023_forecast/code/2023_forecast_process_8_Nov_2022--final.pdf)  
-* [2022 forecast report](2022_forecast/text/2022_forecast_final.pdf)  
-* [2021 forecast report](2021_forecast/2021_forecast_process--final.pdf)  
-* [2020 forecast report](2020_forecast/results/2020_forecast_process--final.pdf)  
+* [2024 forecast report](2024_forecast/2024_forecast--final.pdf)  
+* [2023 forecast report](2023_forecast/2023_forecast--final.pdf)  
+* [2022 forecast report](2022_forecast/2022_forecast--final.pdf)  
+* [2021 forecast report](2021_forecast/2021_forecast--final.pdf)  
+* [2020 forecast report](2020_forecast/2020_forecast--final.pdf)  
 
 ## Timeline
 
