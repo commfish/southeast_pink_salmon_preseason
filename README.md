@@ -64,9 +64,9 @@ The current assessment follows Miller et al. 2022.
 
 5. Delete any word and pdf files in the code folder. 
 
-6. Rename the the [`YYYY_forecast.Rmd`] file to the forecast year. This file, the [`README.Rmd`], and the [`satellite_SST_process_YYYY.Rmd`] file in the code folder are important for documenting the process for the current forecast year (e.g., changes in models considered, changes in variables). The [`satellite_SST_process_YYYY.Rmd`] file mainly needs the years updated, unless the process changes.
+6. Rename the the [`YYYY_forecast.Rmd`] file to the forecast year. This file, the [`forecasting_process.Rmd`], and the [`satellite_SST_process_YYYY.Rmd`] file in the code folder are important for documenting the process for the current forecast year (e.g., changes in models considered, changes in variables). The [`satellite_SST_process_YYYY.Rmd`] file mainly needs the years updated, unless the process changes.
 
-7. Follow the forecast process in the [`README.Rmd`] file. This file will take you through the data processing and running the models. 
+7. Follow the forecast process in the [`forecasting_process.Rmd`] file. This file will take you through the data processing and running the models. 
 
 ## References
 Adkison, M. D. 2002. Preseason forecasts of pink salmon harvests in Southeast Alaska using Bayesian model averaging. Alaska Fishery Research Bulletin 9(1):1–8.
