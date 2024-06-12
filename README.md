@@ -36,13 +36,13 @@ In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink sa
 
 ### Assessment timeline:
 
-* ~end of August**: Andy Piston or Teresa Fish will send a data sheet with the Icy Strait CPUE data, the ISTI temperature data (May, June, July average), and harvest. It is optimal to rerun the last ten years of harvest data to update prior harvests in the data set. Andy (or Teresa) will coordinate with NOAA for the CPUE and ISTI data as this data is housed and assimiliated there.
+* ~end of August: Andy Piston or Teresa Fish will send a data sheet with the Icy Strait CPUE data, the ISTI temperature data (May, June, July average), and harvest. It is optimal to rerun the last ten years of harvest data to update prior harvests in the data set. Andy (or Teresa) will coordinate with NOAA for the CPUE and ISTI data as this data is housed and assimiliated there.
 
-* Early October**: Review preliminary model runs with NOAA and ADF&G Southeast Alaska Pink Salmon Forecasting Team. 
+* Early October: Review preliminary model runs with NOAA and ADF&G Southeast Alaska Pink Salmon Forecasting Team. 
 
-* ~end of October**: Final write-up due with re-run of final model with updated harvest data for the current year. 
+* ~end of October: Final write-up due with re-run of final model with updated harvest data for the current year. 
 
-* mid-November**: Advisory Announcement due. This is the primary responsibility of Teresa Fish and/or Andy Piston. The biometrician reviews the announcement mainly for accuracy.
+* mid-November: Advisory Announcement due. This is the primary responsibility of Teresa Fish and/or Andy Piston. The biometrician reviews the announcement mainly for accuracy.
 
 ### Assessment instructions (effective since 2022):  
 
