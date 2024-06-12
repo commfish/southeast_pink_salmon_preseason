@@ -8,10 +8,10 @@
 * Andy Piston (ADF&G; CF Salmon Research Supervisor) andrew.piston@alaska.gov
 * Wes Strasburger (NOAA; biologist) wes.strasburger@noaa.gov
 
-## Assessment
+### Assessment links:
 The current assessment follows Miller et al. 2022.
 
-### Advisory Announcements
+#### Advisory Announcements
 * [2024 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1549019284.pdf)
 * [2023 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1444357143.pdf) 
 * [2022 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1346706110.pdf) 
@@ -19,7 +19,7 @@ The current assessment follows Miller et al. 2022.
 * [2020 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1126221367.pdf) 
 * [2019 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1002259599.pdf)
 
-### Reports  
+#### Reports  
 * [2024 forecast report](2024_forecast/2024_forecast--final.pdf)  
 * [2023 forecast report](2023_forecast/2023_forecast--final.pdf)  
 * [2022 forecast report](2022_forecast/2022_forecast--final.pdf)  
