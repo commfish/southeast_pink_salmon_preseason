@@ -1,19 +1,17 @@
 # Southeast Alaska Pink Salmon Preseason Forecast
-Please direct any questions to: Sara Miller (sara.miller@alaska.gov).
+### Forecasting Team:  
 
-Last updated: June 2024
+* Teresa Fish (ADF&G; Pink and chum salmon project leader) teresa.fish@alaska.gov
+* Andy Piston (ADF&G; CF Salmon Research Supervisor) andrew.piston@alaska.gov
+* Wes Strasburger (NOAA; biologist) wes.strasburger@noaa.gov
+* Sara Miller (ADF&G, biometrician) sara.miller@alaska.gov
+* Emily Fergusson (NOAA; biologist) emily.fergusson@noaa.gov
+* Andrew Gray (NOAA) andrew.gray@noaa.gov
 
-# Background 1[^fn1]
-Pink salmon *Oncorhynchus gorbuscha* runs in Southeast Alaska support a valuable commercial fishery (Clark et al. 2006), although annual abundance varies tremendously. An average of 33 million pink salmon per year were harvested in Southeast Alaska in the last 10 years (2012–2021), with a range of 8 million (2018 and 2020) to 95 million (2013) fish. Although the inseason management of these stocks is focused on monitoring daily harvest and fishing effort, and using aerial survey counts to assess whether adequate numbers of pink salmon are present to meet escapement goals (Piston and Heinl 2020), the fishing industry benefits from meaningful preseason forecasts in order to plan appropriately for the harvest, processing, transportation, and marketing of these fish. Pink salmon runs are notoriously difficult to forecast (Adkison 2002; Haeseker et al. 2005; Shevlyakov and Koval 2012; Radchenko 2020) due to the species’ propensity to respond dramatically to changes in the marine environment (Farley et al. 2020), the odd- and even-year cycles of abundance (Heard 1991; Ruggerone et al. 2003; Krkošek et al. 2011), and the fact that there is only one cohort (i.e., only one age class) in the fishery each year (Heard 1991). With only a 2-year life cycle, information about cohort strength is not available from jacks or siblings as with other species of salmon (Adkison and Peterman 2000; Haeseker et al. 2007); sibling recruit modeling is not possible with pink salmon. Beginning in the late 1960s, the Alaska Department of Fish and Game (ADF&G) implemented programs to improve pink salmon stock assessment but met with limited success in forecasting pink salmon runs. Forecast accuracy (i.e., absolute percent error) from 1981 through 2006 was 57%. Past forecasts relied primarily on measures of pink salmon spawning abundance or success (Jones and Hofmeister 1985; Hofmeister and Jones 1989; Hofmeister and Blick 1993), both of which are poorly known and explain little of the variation in annual recruitment, which is largely determined in the early marine environment (Parker 1968; Mortensen et al. 2000; Willette et al. 2001).
-
-NOAA Alaska Fisheries Science Center, Auke Bay Laboratories (National Oceanic and Atmospheric Administration [NOAA]) initiated the Southeast Alaska Coastal Monitoring (SECM) project in 1997 (Orsi et al. 1997; Murphy et al. 1999) to identify relationships between the year-class strength of juvenile salmon and the biophysical parameters influencing their growth and survival, their prey and predator interactions, their habitat utilization, and their stock interactions in marine waters (Orsi et al. 2000, 2005, 2009). Through this project, standardized monthly sampling and trawl surveys have been conducted annually from May to August (the August survey was dropped in 2020) to collect ecosystem (oceanographic data such as temperature and salinity profiles of the water column, surface water samples, and zooplankton samples) and catch per unit effort (CPUE) data associated with juvenile salmon at 8 stations in Icy Strait, a major migration corridor in northern Southeast Alaska (Orsi et al. 2001, 2006, 2012). The environmental and oceanographic data provided through the SECM project has become one of the longest continuous time series of its kind for the North Pacific. A major finding of the SECM survey is that relative abundance of juvenile pink salmon in June and July was highly correlated to harvest of adults in the subsequent year. As a result, NOAA used peak juvenile pink salmon CPUE and environmental information collected during SECM surveys to forecast the Southeast Alaska pink salmon harvest starting in 2004 (Murphy et al. 1999; Wertheimer et al. 2009a, 2010a, 2011–2015, 2017, 2018; Murphy et al. 2019b).
-
-In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink salmon forecasts. In 2007, ADF&G began adjusting their simple trend forecasts with juvenile pink salmon abundance data from the SECM survey (Heinl et al. 2007; Piston and Heinl 2014, 2017; Appendix A). Forecast accuracy (i.e., absolute percent error) improved from 57% (1981 to 2006 preseason forecasts) to 31% (2007 through 2017 preseason forecasts; the 2018 preseason forecast was based on the average of 5 recent even-year harvests and did not use juvenile abundance indices from the SECM survey; Appendix B). The largest absolute percent error between the forecast and the actual harvest occurred in the 1987, 1988, 2006, and 2018 forecasts. In 2018, ADF&G and NOAA scientists collaborated to create a joint preseason forecast for 2019 (Piston et al. 2021a). The SECM project and Southeast Alaska pink salmon harvest forecasts are now conducted cooperatively by NOAA and ADF&G using the ADF&G research vessel (R/V) Medeia (Piston et al. 2021a, 2022). The current method (2019 to 2022 preseason forecasts) is to forecast the adult pink salmon harvest in a multiple linear regression model with peak monthly (June or July) juvenile pink salmon CPUE and a temperature index (Piston et al. 2019, 2020, 2021a, 2022). The temperature index is based on the overall average 20 m integrated water column temperature recorded during May–July or May–August at 8 stations in Icy Strait as part of the annual SECM survey (Icy Strait Temperature Index [ISTI]; Murphy et al. 2019a). Together, both agencies continue to examine alternative variables and statistical methods to improve annual forecasts.
-
-# Assessment
+## Assessment
 The current assessment follows Miller et al. 2022.
 
-## Advisory Announcements
+### Advisory Announcements
 * [2024 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1549019284.pdf)
 * [2023 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1444357143.pdf) 
 * [2022 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1346706110.pdf) 
@@ -21,33 +19,32 @@ The current assessment follows Miller et al. 2022.
 * [2020 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1126221367.pdf) 
 * [2019 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1002259599.pdf)
 
-## Reports  
+### Reports  
 * [2024 forecast report](2024_forecast/2024_forecast--final.pdf)  
 * [2023 forecast report](2023_forecast/2023_forecast--final.pdf)  
 * [2022 forecast report](2022_forecast/2022_forecast--final.pdf)  
 * [2021 forecast report](2021_forecast/2021_forecast--final.pdf)  
 * [2020 forecast report](2020_forecast/2020_forecast--final.pdf)  
 
-## Timeline
+## Background 1[^fn1]
+Pink salmon *Oncorhynchus gorbuscha* runs in Southeast Alaska support a valuable commercial fishery (Clark et al. 2006), although annual abundance varies tremendously. An average of 33 million pink salmon per year were harvested in Southeast Alaska in the last 10 years (2012–2021), with a range of 8 million (2018 and 2020) to 95 million (2013) fish. Although the inseason management of these stocks is focused on monitoring daily harvest and fishing effort, and using aerial survey counts to assess whether adequate numbers of pink salmon are present to meet escapement goals (Piston and Heinl 2020), the fishing industry benefits from meaningful preseason forecasts in order to plan appropriately for the harvest, processing, transportation, and marketing of these fish. Pink salmon runs are notoriously difficult to forecast (Adkison 2002; Haeseker et al. 2005; Shevlyakov and Koval 2012; Radchenko 2020) due to the species’ propensity to respond dramatically to changes in the marine environment (Farley et al. 2020), the odd- and even-year cycles of abundance (Heard 1991; Ruggerone et al. 2003; Krkošek et al. 2011), and the fact that there is only one cohort (i.e., only one age class) in the fishery each year (Heard 1991). With only a 2-year life cycle, information about cohort strength is not available from jacks or siblings as with other species of salmon (Adkison and Peterman 2000; Haeseker et al. 2007); sibling recruit modeling is not possible with pink salmon. Beginning in the late 1960s, the Alaska Department of Fish and Game (ADF&G) implemented programs to improve pink salmon stock assessment but met with limited success in forecasting pink salmon runs. Forecast accuracy (i.e., absolute percent error) from 1981 through 2006 was 57%. Past forecasts relied primarily on measures of pink salmon spawning abundance or success (Jones and Hofmeister 1985; Hofmeister and Jones 1989; Hofmeister and Blick 1993), both of which are poorly known and explain little of the variation in annual recruitment, which is largely determined in the early marine environment (Parker 1968; Mortensen et al. 2000; Willette et al. 2001).
 
-**~end of August**: Andy Piston or Teresa Fish will send a data sheet with the Icy Strait CPUE data, the ISTI temperature data (May, June, July average), and harvest. It is optimal to rerun the last ten years of harvest data to update prior harvests in the data set. Andy (or Teresa) will coordinate with NOAA for the CPUE and ISTI data as this data is housed and assimiliated there.
+NOAA Alaska Fisheries Science Center, Auke Bay Laboratories (National Oceanic and Atmospheric Administration [NOAA]) initiated the Southeast Alaska Coastal Monitoring (SECM) project in 1997 (Orsi et al. 1997; Murphy et al. 1999) to identify relationships between the year-class strength of juvenile salmon and the biophysical parameters influencing their growth and survival, their prey and predator interactions, their habitat utilization, and their stock interactions in marine waters (Orsi et al. 2000, 2005, 2009). Through this project, standardized monthly sampling and trawl surveys have been conducted annually from May to August (the August survey was dropped in 2020) to collect ecosystem (oceanographic data such as temperature and salinity profiles of the water column, surface water samples, and zooplankton samples) and catch per unit effort (CPUE) data associated with juvenile salmon at 8 stations in Icy Strait, a major migration corridor in northern Southeast Alaska (Orsi et al. 2001, 2006, 2012). The environmental and oceanographic data provided through the SECM project has become one of the longest continuous time series of its kind for the North Pacific. A major finding of the SECM survey is that relative abundance of juvenile pink salmon in June and July was highly correlated to harvest of adults in the subsequent year. As a result, NOAA used peak juvenile pink salmon CPUE and environmental information collected during SECM surveys to forecast the Southeast Alaska pink salmon harvest starting in 2004 (Murphy et al. 1999; Wertheimer et al. 2009a, 2010a, 2011–2015, 2017, 2018; Murphy et al. 2019b).
 
-**Early October**: Review preliminary model runs with NOAA and ADF&G Southeast Alaska Pink Salmon Forecasting Team. 
+## Assessment
+In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink salmon forecasts. In 2007, ADF&G began adjusting their simple trend forecasts with juvenile pink salmon abundance data from the SECM survey (Heinl et al. 2007; Piston and Heinl 2014, 2017; Appendix A). Forecast accuracy (i.e., absolute percent error) improved from 57% (1981 to 2006 preseason forecasts) to 31% (2007 through 2017 preseason forecasts; the 2018 preseason forecast was based on the average of 5 recent even-year harvests and did not use juvenile abundance indices from the SECM survey; Appendix B). The largest absolute percent error between the forecast and the actual harvest occurred in the 1987, 1988, 2006, and 2018 forecasts. In 2018, ADF&G and NOAA scientists collaborated to create a joint preseason forecast for 2019 (Piston et al. 2021a). The SECM project and Southeast Alaska pink salmon harvest forecasts are now conducted cooperatively by NOAA and ADF&G using the ADF&G research vessel (R/V) Medeia (Piston et al. 2021a, 2022). The current method (2019 to 2022 preseason forecasts) is to forecast the adult pink salmon harvest in a multiple linear regression model with peak monthly (June or July) juvenile pink salmon CPUE and a temperature index (Piston et al. 2019, 2020, 2021a, 2022). The temperature index is based on the overall average 20 m integrated water column temperature recorded during May–July or May–August at 8 stations in Icy Strait as part of the annual SECM survey (Icy Strait Temperature Index [ISTI]; Murphy et al. 2019a). Together, both agencies continue to examine alternative variables and statistical methods to improve annual forecasts.
 
-**~end of October**: Final write-up due with re-run of final model with updated harvest data for the current year. 
+### Assessment timeline:
 
-**mid-November**: Advisory Announcement due. This is the primary responsibility of Teresa Fish and/or Andy Piston. The biometrician reviews the announcement mainly for accuracy.
+* ~end of August**: Andy Piston or Teresa Fish will send a data sheet with the Icy Strait CPUE data, the ISTI temperature data (May, June, July average), and harvest. It is optimal to rerun the last ten years of harvest data to update prior harvests in the data set. Andy (or Teresa) will coordinate with NOAA for the CPUE and ISTI data as this data is housed and assimiliated there.
 
-**Southeast Alaska Pink Salmon Forecasting Team**:  
+* Early October**: Review preliminary model runs with NOAA and ADF&G Southeast Alaska Pink Salmon Forecasting Team. 
 
-* Teresa Fish (ADF&G; Pink and chum salmon project leader)
-* Andy Piston (ADF&G; CF Salmon Research Supervisor)
-* Wess Strasburger (NOAA; biologist)
-* Sara Miller (ADF&G, biometrician)
-* Emily Fergusson (NOAA; biologist) 
-* Andrew Gray (NOAA)
+* ~end of October**: Final write-up due with re-run of final model with updated harvest data for the current year. 
 
-## Process
+* mid-November**: Advisory Announcement due. This is the primary responsibility of Teresa Fish and/or Andy Piston. The biometrician reviews the announcement mainly for accuracy.
+
+### Assessment instructions (effective since 2022):  
 
 1. Copy over last year's yyyy_forecast folder structure for the current assessment.
 
