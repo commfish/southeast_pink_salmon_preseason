@@ -1,8 +1,3 @@
----
-output:
-  pdf_document: default
-  html_document: default
----
 # Southeast Alaska Pink Salmon Preseason Forecast
 Please direct any questions to: Sara Miller (sara.miller@alaska.gov).
 
