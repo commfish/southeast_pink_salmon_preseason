@@ -1,12 +1,12 @@
 # Southeast Alaska Pink Salmon Preseason Forecast
 ### Forecasting Team:  
 
+* Emily Fergusson (NOAA; biologist) emily.fergusson@noaa.gov
 * Teresa Fish (ADF&G; Pink and chum salmon project leader) teresa.fish@alaska.gov
+* Andrew Gray (NOAA) andrew.gray@noaa.gov
+* Sara Miller (ADF&G, biometrician) sara.miller@alaska.gov
 * Andy Piston (ADF&G; CF Salmon Research Supervisor) andrew.piston@alaska.gov
 * Wes Strasburger (NOAA; biologist) wes.strasburger@noaa.gov
-* Sara Miller (ADF&G, biometrician) sara.miller@alaska.gov
-* Emily Fergusson (NOAA; biologist) emily.fergusson@noaa.gov
-* Andrew Gray (NOAA) andrew.gray@noaa.gov
 
 ## Assessment
 The current assessment follows Miller et al. 2022.
