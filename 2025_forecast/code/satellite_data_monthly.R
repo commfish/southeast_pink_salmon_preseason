@@ -230,7 +230,7 @@ fig_data %>%
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"))+
   scale_x_continuous(breaks = 1997:2024, labels = 1997:2024) + # update final year
   scale_y_continuous(breaks = c(6,7, 8, 9,10,11,12), limits = c(6,12))+
-  geom_text(aes(x = 1997.3, y = 12, label="D) May"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(x = 1997.4, y = 12, label="D) May"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot1
 
 fig_data %>%
@@ -259,7 +259,7 @@ fig_data %>%
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
   scale_x_continuous(breaks = 1997:2024, labels = 1997:2024) + # update final year
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11, 12), limits = c(6,12))+
-  geom_text(aes(x = 1999, y = 12, label="C) May, June, July"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(x = 1999.2, y = 12, label="C) May, June, July"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot2
 
 fig_data %>%
@@ -288,7 +288,7 @@ fig_data %>%
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"))  +
   scale_x_continuous(breaks = 1997:2024, labels = 1997:2024) + # update final year
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
-  geom_text(aes(x = 2000, y = 12, label="A) April, May, June, July"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(x = 2000.4, y = 12, label="A) April, May, June, July"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot3
 
 fig_data %>%
@@ -317,7 +317,7 @@ fig_data %>%
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
   scale_x_continuous(breaks = 1997:2024, labels = 1997:2024) + # update final year
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
-  geom_text(aes(x = 1999.3, y = 12, label="B) April, May, June"),family="Times New Roman", colour="black", size=4) +
+  geom_text(aes(x = 1999.5, y = 12, label="B) April, May, June"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot4
 # https://newbedev.com/one-shared-legend-for-a-cowplot-grid-in-r
 ggpubr::ggarrange(plot3, plot4, plot2, plot1,  # list of plots
