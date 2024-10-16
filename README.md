@@ -61,7 +61,7 @@ In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink sa
 6. Rename the [`yyyy_forecast.Rmd`] file and the [`satellite_SST_process_yyyy.Rmd`] in the  folder to the forecast year. These files are important for documenting the process for the current forecast year (e.g., changes in models considered, changes in variables). The [`satellite_SST_process_yyyy.Rmd`] file mainly needs the years updated, unless the process changes.
 
 ### Running the Assessment
-[Data]
+<Data>
 The data needed to run the code are updated in the file [`varyyyy_final.csv`]. The CPUE, harvest, and ISTI variables are collated by the ADF&G Ketchikan staff (Andy Piston and/or Teresa Fish). The satellite sea surface temperature variables are created by running the code [`satellite_data_monthly.R`]. The process for the temperature variables are then written up in the file [`satellite_SST_process_yyyy.Rmd`]. Therefore, run the code [`satellite_data_monthly.R`] and then add these temperature variables to the [`varyyyy_final.csv`] file. JYear is the juvenile year. The index variable stays the same unless the pink salmon forecasting group decides to change the process of the CPUE calculation for pink salmon. See the document [`calibration_coefficient_discussion_Nov_2020.pdf`] in the folder 2021_forecast. The weight_values variable was originally used to calculate a weighted MAPE and aimed to weight the current years greater than the former. This is not used and the 5-year and 10-year MAPE are used to compare the various models.
 
 Note that the satellite SST data, ISTI20_MJJ, and CPUEcal variables should follow the JYear from 1997 on. The SEAK catch should follow the Year variable from 1998 on. 
