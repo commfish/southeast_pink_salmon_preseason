@@ -50,6 +50,8 @@ tidync(paste0(data.directory,'NOAA_DHW_monthly_97_24.nc')) %>% # update file nam
   filter(month >= 4 & month <= 7) %>% 
   filter(!is.na(SST)) %>%
   dplyr::select(latitude, longitude, SST, year, month, day) %>%
+  mutate(longitude = as.numeric(longitude), # lat/long need to be changed to numeric
+         latitude = as.numeric(latitude))  %>%
   mutate(longitude = round(longitude, 3), # merge does not work correctly unless the latitude and longitude are exactly the same so round the lat/longs to 3 digits
          latitude = round(latitude, 3))  %>%
   group_by(latitude, longitude, year, month) %>% # average across the month for each lat/long combination
