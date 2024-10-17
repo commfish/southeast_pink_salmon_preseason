@@ -58,7 +58,7 @@ In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink sa
 
 5. Delete any word and pdf files in the code folder. 
 
-6. Rename the [`yyyy_forecast.Rmd`] file and the [`satellite_SST_process_yyyy.Rmd`] in the  folder to the forecast year. These files are important for documenting the process for the current forecast year (e.g., changes in models considered, changes in variables). The [`satellite_SST_process_yyyy.Rmd`] file mainly needs the years updated, unless the process changes.
+6. Rename the [`yyyy_forecast.Rmd`] file and the [`satellite_SST_process_yyyy.Rmd`] in the  folder to the forecast year. These files are important for documenting the process for the current forecast year (e.g., changes in models considered, changes in variables). The [`satellite_SST_process_yyyy.Rmd`] file mainly needs the title, data years for figures and tables, and forecast folder year updated, unless the process changes. Run this file and then save it as a pdf and the current date for future reference.
 
 ### Running the Assessment
 1. **Data**  
@@ -114,8 +114,8 @@ To create the 18 models, the code is run in the following order;
 5. 4_retro_analysis.R
 
 #### 1_summarize_models.R  script
-This script creates the [`model_summary_table1.csv`], [`model_summary_table2.csv`], [`model_summary_table3.csv`], [`model_summary_table4.csv`], [`seak_model_summary.csv`], [`data_used_a.csv`], [`data_used_b.csv`], and a separate results_m*xx*.csv file for each model run. The columns 'model1_sim' and 'sigma' in the results_m*xx*.csv files need to be
-copied to the excel workbook [`model_summary_table_September_2022.xlsx`] (into each model) in the summary tables folder so that the one-step-ahead MAPE for 5 and 10 years is calculated correctly. The [`forecasts.csv`] file in the data folder is created from the results in the [`model_summary_table_September_2022.xlsx`] file. The [`model_summary_table5.csv`] file is also created from the excel workbook [`model_summary_table_September_2022.xlsx`]  (although the adjusted R squared values are from the [`model_summary_table2.csv`] file). The forecast_models.png figure is also produced from this script.
+This script needs to be modified based on the variables in the multiple linear regression for the particualr year. The script creates the [`model_summary_table1.csv`], [`model_summary_table2.csv`], [`model_summary_table3.csv`], [`model_summary_table4.csv`], [`seak_model_summary.csv`], [`data_used_a.csv`], [`data_used_b.csv`], and a separate results_m*xx*.csv file for each model run. The columns 'model1_sim' and 'sigma' in the results_m*xx*.csv files need to be
+copied to the excel workbook [`model_summary_table_mm_yyyy.xlsx`] (into each model) in the summary tables folder so that the one-step-ahead MAPE for 5 and 10 years is calculated correctly. The [`forecasts.csv`] file in the data folder is created from the results in the [`model_summary_table_mm_yyyy.xlsx`] file. The [`model_summary_table5.csv`] file is also created from the excel workbook [`model_summary_table_mm_yyyy.xlsx`]  (although the adjusted R squared values are from the [`model_summary_table2.csv`] file). The forecast_models.png figure is also produced from this script.
 
 The top of the script needs to be updated each year.
 
