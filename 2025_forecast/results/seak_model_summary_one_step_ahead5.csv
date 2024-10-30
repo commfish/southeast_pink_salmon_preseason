@@ -1,19 +1,37 @@
 "","MAPE5"
-"CPUE",49.8769787529702
-"CPUE + ISTI20_MJJ",29.9912728885907
-"CPUE + Chatham_SST_May",36.7503321459279
-"CPUE + Chatham_SST_MJJ",41.1253797564785
-"CPUE + Chatham_SST_AMJ",35.1642685506471
-"CPUE + Chatham_SST_AMJJ",36.8554235700204
-"CPUE + Icy_Strait_SST_May",38.5682893422981
-"CPUE + Icy_Strait_SST_MJJ",40.7609268655377
-"CPUE + Icy_Strait_SST_AMJ",37.4378571065878
-"CPUE + Icy_Strait_SST_AMJJ",37.7163002277897
-"CPUE + NSEAK_SST_May",35.9174308552289
-"CPUE + NSEAK_SST_MJJ",38.85150248573
-"CPUE + NSEAK_SST_AMJ",34.2222684540078
-"CPUE + NSEAK_SST_AMJJ",36.2447976536073
-"CPUE + SEAK_SST_May",37.8753244085701
-"CPUE + SEAK_SST_MJJ",40.3059816242996
-"CPUE + SEAK_SST_AMJ",35.9320144356664
-"CPUE + SEAK_SST_AMJJ",37.9226012109816
+"CPUE*as.factor(odd_even_factor)",39.4818493494516
+"CPUE*as.factor(odd_even_factor) + ISTI20_MJJ",30.7928165685181
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_May",35.3337740497328
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_MJJ",37.283205328887
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJ",32.6947095248357
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJJ",34.5191654878694
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_May",35.9579352025569
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_MJJ",35.5867830904835
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJ",32.3450049379028
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ",33.0201425694595
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_May",34.5091615340909
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_MJJ",35.885426865112
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJ",32.8781177288979
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJJ",34.0939827463091
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_May",35.511017959531
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_MJJ",36.0100740896518
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJ",33.8371544838939
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJJ",34.5789727372262
+"CPUE:as.factor(odd_even_factor)",49.074480378142
+"ISTI20_MJJ+ CPUE:as.factor(odd_even_factor)",29.3339897985043
+"Chatham_SST_May+ CPUE:as.factor(odd_even_factor)",36.0126018471825
+"Chatham_SST_MJJ+ CPUE:as.factor(odd_even_factor)",40.7708703267147
+"Chatham_SST_AMJ+ CPUE:as.factor(odd_even_factor)",34.6783340015999
+"Chatham_SST_AMJJ+ CPUE:as.factor(odd_even_factor)",36.4842350792104
+"Icy_Strait_SST_May+ CPUE:as.factor(odd_even_factor)",37.7348980806285
+"Icy_Strait_SST_MJJ+ CPUE:as.factor(odd_even_factor)",40.2943959030323
+"Icy_Strait_SST_AMJ+ CPUE:as.factor(odd_even_factor)",36.6315584549713
+"Icy_Strait_SST_AMJJ+ CPUE:as.factor(odd_even_factor)",37.1790514055231
+"NSEAK_SST_May+ CPUE:as.factor(odd_even_factor)",35.0011016930593
+"NSEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)",38.3373527493965
+"NSEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)",33.4525865807184
+"NSEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)",35.6653968574641
+"SEAK_SST_May+ CPUE:as.factor(odd_even_factor)",36.984717906363
+"SEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)",39.738834387295
+"SEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)",35.1722319096094
+"SEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)",37.2583356291527

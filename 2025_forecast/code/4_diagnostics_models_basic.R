@@ -1,16 +1,16 @@
 # run code 3_summarize_models_basic.R first
 # inputs
-fit_value_model<-19.516 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
-lwr_pi_80<-12.39 # 80% PI from model_summary_table2 in the results folder
-upr_pi_80<-30.741 # 80% PI from model_summary_table2 in the results folder
-best_model<-m2a
-model<-'m2a'
+fit_value_model<-19.02 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
+lwr_pi_80<-11.766 # 80% PI from model_summary_table2 in the results folder
+upr_pi_80<-30.745 # 80% PI from model_summary_table2 in the results folder
+best_model<-m20a
+model<-'m20a'
 year.forecast <- "2025_forecast" # forecast year
 year.data <- 2024 # last year of data
 year.data.one <- year.data - 1
 
 # best model based on performance metrics
-lm(SEAKCatch_log ~ CPUE + ISTI20_MJJ, data = log_data_subset) -> m2a
+lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + ISTI20_MJJ, data = log_data_subset) -> m20a
 
 # MODEL DIAGNOSTICS TABLES
 as.numeric(sigma(best_model))-> sigma
