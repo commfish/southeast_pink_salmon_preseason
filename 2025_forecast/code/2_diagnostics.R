@@ -1,19 +1,17 @@
-# run diagnostics on the best model
+# run code 1_summarize_model.R first
+
 # inputs
-fit_value_model<-19.233 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
-lwr_pi_80<-11.707 # 80% PI from model_summary_table2 in the results folder
-upr_pi_80<-31.596 # 80% PI from model_summary_table2 in the results folder
-best_model<-m11
-model<-'m11'
-year.forecast <- "2024_forecast" # forecast year
-year.data <- 2023 # last year of data
+fit_value_model<-33.511 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
+lwr_pi_80<-18.384 # 80% PI from model_summary_table2 in the results folder
+upr_pi_80<-61.084 # 80% PI from model_summary_table2 in the results folder
+best_model<-m7
+model<-'m7'
+year.forecast <- "2025_forecast" # forecast year
+year.data <- 2024 # last year of data
 year.data.one <- year.data - 1
 
-# source code and functions)
-source('2024_forecast/code/functions.r')
-
 # best model based on performance metrics
-lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset) -> m11
+lm(SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + as.factor(odd_even_factor) + Icy_Strait_SST_May, data = log_data_subset) -> m7
 
 # MODEL DIAGNOSTICS TABLES
 as.numeric(sigma(best_model))-> sigma
@@ -24,39 +22,22 @@ augment(best_model) %>%
          'Cooks distance' = round((.cooksd),2),
          'Std. residuals' = round((.std.resid),2),
          fitted = round((.fitted),5),
-         Year=1998:year.data,
          fit = exp(.fitted) * exp(0.5* sigma*sigma),
-         'Fitted values' = round(fit,2),
-         juvenile_year = 1997:year.data.one) %>%
-  dplyr::select(Year, Harvest, Residuals, 'Hat values', 'Cooks distance', 'Std. residuals', 'Fitted values') %>%
+         'Fitted values' = round(fit,2)) %>%
+  dplyr::select(Harvest, Residuals, 'Hat values', 'Cooks distance', 'Std. residuals', 'Fitted values') %>%
+  cbind(.,log_data_subset)%>%
   write.csv(file =paste0(results.directory, "model_summary_table4_", model, ".csv"), row.names = F)
 
-# DIAGNOSTIC PLOTS
-# Diagnostics: test model assumptions (normality, linearity, residuals)
-# residuals
-f_resid_year_diagnostics_plot(m11, 'm11')
-
-# leverage and Cook's distance plots
-f_resid_leverage_diagnostics_plot(m11, 'm11', k = 2, p = 3) # the k and p need to be updated in the CPUE model is chosen or a more complicated model than 
-# the basic CPUE +temp models
-
-# DIAGNOSTIC PLOTS OF BEST MODEL
-# Diagnostics: test model assumptions (normality, linearity, residuals)
-png(paste0(results.directory, "model_figs/general_diagnostics_", model, ".png"))
-autoplot(best_model)
-dev.off()
-
-car::outlierTest(best_model) #Bonferroni p-values (term # 24); lack of fit test; https://stats.stackexchange.com/questions/288910/outlier-detection-using-outliertest-function
-car::residualPlots(best_model) #lack-of fit curvature test; terms that are non-significant suggest a properly specified model
-car::residualPlots(best_model, terms = ~ 1, fitted = T, id.n = 5, smoother = T)
+log_data_subset %>%
+  dplyr::select(JYear, Year) -> log_data_subset
 
 # plot of harvest by year with prediction error 
 as.numeric(sigma(best_model))-> sigma
 augment(best_model) %>% 
-  mutate(year = 1998:year.data, 
-         harvest = exp(SEAKCatch_log),
+  cbind(.,log_data_subset)%>%
+  mutate(harvest = exp(SEAKCatch_log),
          fit = exp(.fitted) * exp(0.5* sigma*sigma)) %>%
-  ggplot(aes(x=year)) +
+  ggplot(aes(x=Year)) +
   geom_bar(aes(y = harvest, fill = "SEAK pink harvest"),
            stat = "identity", colour ="black",
            width = 1) +
@@ -92,8 +73,8 @@ augment(best_model) %>%
 # labels are there
 as.numeric(sigma(best_model))-> sigma
 augment(best_model) %>% 
-  mutate(year = 1998:year.data, 
-         harvest = exp(SEAKCatch_log), 
+  cbind(.,log_data_subset)%>%
+  mutate(harvest = exp(SEAKCatch_log), 
          fit = as.numeric(exp(.fitted) * exp(0.5*sigma*sigma))) %>%
   ggplot(aes(x=fit, y=harvest)) +
   geom_point() +
@@ -110,11 +91,7 @@ augment(best_model) %>%
   # geom_text_repel(aes(y = harvest, label = year),
   #                nudge_x = 1, size = 3, show.legend = FALSE) +
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL)+
-  geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5)+
-geom_text(aes(y = 55, x = 22, label="2021"),family="Times New Roman", colour="black", size=4) +
-geom_text(aes(y = 43, x = 18, label="2023"),family="Times New Roman", colour="black", size=4) +  
-geom_text(aes(y = 103, x = 62, label="2013"),family="Times New Roman", colour="black", size=4) +
-geom_text(aes(y = 85, x = 125, label="1999"),family="Times New Roman", colour="black", size=4) -> plot2
+  geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "model_figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
 dev.off()

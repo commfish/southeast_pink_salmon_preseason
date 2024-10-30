@@ -1,0 +1,19 @@
+"Model","terms","Fit","Fit_LPI","Fit_UPI","AdjR2","MAPE","MAPE5"
+"m5","vessel x adj_raw_pink_log + Chatham_SST_AMJ + odd_factor",30.706,16.844,55.976,0.678,0.0801536192599964,133.308
+"m6","vessel x adj_raw_pink_log + Chatham_SST_AMJJ + odd_factor",34.187,18.624,62.756,0.663,0.0806840392208471,132.843
+"m3","vessel x adj_raw_pink_log + Chatham_SST_May + odd_factor",33.268,18.297,60.488,0.674,0.0788067363956601,124.262
+"m4","vessel x adj_raw_pink_log + Chatham_SST_MJJ + odd_factor",37.885,20.317,70.641,0.645,0.0826830998537069,138.222
+"m9","vessel x adj_raw_pink_log + Icy_Strait_SST_AMJ + odd_factor",32.421,17.781,59.115,0.673,0.0799181225063312,125.796
+"m10","vessel x adj_raw_pink_log + Icy_Strait_SST_AMJJ + odd_factor",34.551,18.734,63.723,0.657,0.0834471525013319,132.354
+"m7","vessel x adj_raw_pink_log + Icy_Strait_SST_May + odd_factor",33.511,18.384,61.084,0.671,0.0778025902101883,112.692
+"m8","vessel x adj_raw_pink_log + Icy_Strait_SST_MJJ + odd_factor",37.566,20.122,70.13,0.643,0.0855503985469284,135.243
+"m2","vessel x adj_raw_pink_log + ISTI20_MJJ + odd_factor",27.766,15.174,50.808,0.685,0.0796399058102624,135.782
+"m14","vessel x adj_raw_pink_log + NSEAK_SST_AMJJ + odd_factor",34.293,18.693,62.91,0.663,0.0817057700133943,129.553
+"m11","vessel x adj_raw_pink_log + NSEAK_SST_May + odd_factor",33.787,18.624,61.294,0.676,0.078659755372947,120.864
+"m12","vessel x adj_raw_pink_log + NSEAK_SST_MJJ + odd_factor",37.692,20.314,69.937,0.65,0.0824255748459078,134.496
+"m1","vessel x adj_raw_pink_log + odd_factor",36.695,19.064,70.632,0.605,0.0933895245790526,142.59
+"m17","vessel x adj_raw_pink_log + SEAK_SST_AMJ + odd_factor",31.829,17.446,58.07,0.674,0.0806243643405201,139.184
+"m18","vessel x adj_raw_pink_log + SEAK_SST_AMJJ + odd_factor",34.769,19.012,63.587,0.666,0.0802821424865224,135.611
+"m15","vessel x adj_raw_pink_log + SEAK_SST_May + odd_factor",34.017,18.631,62.108,0.669,0.0797501937875403,137.243
+"m16","vessel x adj_raw_pink_log + SEAK_SST_MJJ + odd_factor",38.301,20.725,70.783,0.655,0.0807352865515868,138.691
+"m13","vessel x adj_raw_pink_log+  NSEAK_SST_AMJ + odd_factor",31.254,17.194,56.811,0.679,0.0806289324538045,127.508
