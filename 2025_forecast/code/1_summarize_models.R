@@ -411,3 +411,35 @@ ggplot(., aes(x=factor(model, level=c('m1','m2','m3','m4','m5','m6','m7','m8',
   labs(x = "Models", y = "2025 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
 
 ggsave(paste0(results.directory, "figs/forecast_models_multi.png"), dpi = 500, height = 4, width = 10, units = "in")
+
+# # different intercept, same slope
+# mod1a <- lm(SEAKCatch_log ~ as.factor(vessel)+adj_raw_pink_log, data = log_data)
+# 
+# # different intercept, differnt slope
+# mod1b <- lm(SEAKCatch_log ~ as.factor(vessel)*adj_raw_pink_log, data = log_data)
+# 
+# # same intercept, different slope
+# mod1c <- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + adj_raw_pink_log, data = log_data)
+# 
+# summary(mod1c)
+# best_model<-m3a
+# model<-'m3a'
+# year.forecast <- "2025_forecast" # forecast year
+# year.data <- 2024 # last year of data
+# year.data.one <- year.data - 1
+# 
+# # best model based on performance metrics
+# lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log +adj_raw_pink_log, data = log_data_subset) -> m3a
+# 
+# # MODEL DIAGNOSTICS TABLES
+# as.numeric(sigma(best_model))-> sigma
+# augment(best_model) %>% 
+#   mutate(Harvest = round((exp(SEAKCatch_log)),2),
+#          Residuals = round((.resid),2),
+#          'Hat values' = round((.hat),2),
+#          'Cooks distance' = round((.cooksd),2),
+#          'Std. residuals' = round((.std.resid),2),
+#          fitted = round((.fitted),5)) %>%
+#   dplyr::select(Harvest, Residuals, 'Hat values', 'Cooks distance', 'Std. residuals', fitted) %>%
+#   cbind(.,log_data_subset)%>%
+#   write.csv(file =paste0(results.directory, "model_summary_table4_1a", model, ".csv"), row.names = F)
