@@ -49,7 +49,7 @@ jacklm.reg<-function(data,model.formula,jacknife.index=0){
       # model.names: names of selected models
   
       # this function needs to be edited to select harvest data based on the model.formula
-f_model_summary <- function(harvest,variables,model.formulas,model.names,w){
+f_model_summary <- function(harvest,variables,model.formulas,model.names,w, models){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
@@ -83,10 +83,10 @@ f_model_summary <- function(harvest,variables,model.formulas,model.names,w){
   
   row.names(model.results)<-model.names
   dimnames(model.results)[[2]][1:3]<-c('fit','fit_LPI','fit_UPI')
-  as.data.frame(model.results)-> x
-  write.csv(x, file=paste0(results.directory, "/seak_model_summary.csv"))}
+  as.data.frame(model.results)%>%
+write.csv(., paste0(results.directory, "/seak_model_summary", models, ".csv"))}
 
-f_model_summary_multi <- function(harvest,variables,model.formulas,model.names,w){
+f_model_summary_odd <- function(harvest,variables,model.formulas,model.names,w, models){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
@@ -98,11 +98,11 @@ f_model_summary_multi <- function(harvest,variables,model.formulas,model.names,w
     fit<-lm(model.formulas[[i]],data=data)
     fit.out[[i]]<-fit
     model.sum<-summary(fit)
-    vector.jack<-numeric()
-    for(j in 1:(n-1)){
-      vector.jack[j]<-jacklm.reg(data=data,model.formula=model.formulas[[i]],jacknife.index=j)
-    }
-    mape_LOOCV<-mean(abs(obs-vector.jack)/obs)
+    # vector.jack<-numeric()
+    # for(j in 1:(n-1)){
+    #   vector.jack[j]<-jacklm.reg(data=data,model.formula=model.formulas[[i]],jacknife.index=j)
+    # }
+    # mape_LOOCV<-mean(abs(obs-vector.jack)/obs)
     mape<-mean(abs(obs-fit$fitted.values)/obs)
     wmape1<-((abs(obs-fit$fitted.values)/obs)*weights)
     wmape2<-sum(wmape1)
@@ -113,16 +113,15 @@ f_model_summary_multi <- function(harvest,variables,model.formulas,model.names,w
     sigma <- sigma(fit)
     model.results<-rbind(model.results,c(model.pred,R2=model.sum$r.squared,AdjR2=model.sum$adj.r.squared, AIC=AIC(fit),AICc=AICcmodavg::AICc(fit),BIC=BIC(fit),
                                          p = pf(model.sum$fstatistic[1], model.sum$fstatistic[2],model.sum$fstatistic[3],lower.tail = FALSE), sigma = sigma,
-                                         MAPE=mape,MAPE_LOOCV=mape_LOOCV,
+                                         MAPE=mape,
                                          #MASE = mase, MASE2=mase2, 
                                          wMAPE= wmape))
   }
   
   row.names(model.results)<-model.names
   dimnames(model.results)[[2]][1:3]<-c('fit','fit_LPI','fit_UPI')
-  as.data.frame(model.results)-> x
-  write.csv(x, file=paste0(results.directory, "/seak_model_summary_multi.csv"))}
-
+  as.data.frame(model.results)%>%
+    write.csv(., paste0(results.directory, "/seak_model_summary", models, ".csv"))}
 
 f_model_summary_model_average <- function(harvest,variables,model.formulas,model.names,w){
   n<-dim(variables)[1]
@@ -371,10 +370,33 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end, model_nu
   # mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
 } 
 # function check for one model (one step ahead MAPE)
-#seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2018, model_num = "m1")
-#
+# seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1998, end = 2012, model_num = "m1b")
 
-f_model_one_step_ahead_multiple5 <- function(harvest,variables,model.formulas,model.names, start, end){
+f_model_one_step_ahead_odd <- function(harvest,variables,model, start, end, model_num){
+  n<-dim(variables)[1]
+  model.results<-numeric()
+  obs<-harvest[-n]
+  data<-variables[-n,]
+  fit.out<-list()
+  for (i in (end+1):tail(data$year_num)[6])
+  {
+    fit<-lm(model,data = data[data$year_num >= start & data$year_num < i,])
+    fit.out<-list()
+    data$model1_sim[data$year_num== i] <- predict(fit, newdata = data[data$year_num == i,])
+    data$sigma[data$year_num == i] <- sigma(fit, newdata = data[data$year_num == i,])
+  }
+  return(data)
+  data %>% 
+    dplyr::filter(year_num > end) %>% 
+    as.data.frame() %>% 
+    write.csv(., file = paste0(results.directory.MAPE, "results_",model_num,".csv"))
+  # mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
+} 
+# function check for one model (one step ahead MAPE)
+# seak_model_summary1 <- f_model_one_step_ahead_odd(harvest=log_data_odd$SEAKCatch_log, variables=log_data_odd, model = SEAKCatch_log ~CPUE, start = 1, end = 8, model_num = "m1b")
+
+
+f_model_one_step_ahead_multiple5 <- function(harvest,variables,model.formulas,model.names, start, end, models){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
@@ -397,12 +419,10 @@ f_model_one_step_ahead_multiple5 <- function(harvest,variables,model.formulas,mo
   } 
   row.names(model.results)<-model.names
   dimnames(model.results)[[2]][1]<-c('MAPE5')
-  as.data.frame(model.results)-> x
-  write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead5.csv"))
- 
-}
+  as.data.frame(model.results) %>%
+  write.csv(., paste0(results.directory, "/seak_model_summary_one_step_ahead5", models, ".csv"))}
 
-f_model_one_step_ahead_multiple5_multi <- function(harvest,variables,model.formulas,model.names, start, end){
+f_model_one_step_ahead_multiple5_odd <- function(harvest,variables,model.formulas,model.names, start, end, models){
   n<-dim(variables)[1]
   model.results<-numeric()
   obs<-harvest[-n]
@@ -412,23 +432,22 @@ f_model_one_step_ahead_multiple5_multi <- function(harvest,variables,model.formu
   {
     for (j in (end+1):tail(data$JYear)[6])
     {
-      fit<-lm(model.formulas[[i]],data = data[data$JYear >= start & data$JYear < j,])
+      fit<-lm(model.formulas[[i]],data = data[data$year_num >= start & data$year_num  < j,])
       fit.out[[i]]<-fit
-      data$model1_sim[data$JYear == j] <- predict(fit, newdata = data[data$JYear == j,])
+      data$model1_sim[data$year_num  == j] <- predict(fit, newdata = data[data$year_num  == j,])
     }
     #return(data)
     data %>% 
-      dplyr::filter(JYear > end) -> output
+      dplyr::filter(year_num > end) -> output
     MAPE<-mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
     #MAPE<-mape(output$SEAKCatch_log,output$model1_sim)
     model.results<-rbind(model.results, MAPE= MAPE)
   } 
   row.names(model.results)<-model.names
   dimnames(model.results)[[2]][1]<-c('MAPE5')
-  as.data.frame(model.results)-> x
-  write.csv(x, file=paste0(results.directory, "/seak_model_summary_one_step_ahead5_multi.csv"))
-  
-}
+  as.data.frame(model.results) %>%
+    write.csv(., paste0(results.directory, "/seak_model_summary_one_step_ahead5", models, ".csv"))}
+
 f_model_one_step_ahead_multiple10 <- function(harvest,variables,model.formulas,model.names, start, end){
   n<-dim(variables)[1]
   model.results<-numeric()

@@ -61,7 +61,7 @@ variables_adj_raw_pink %>%
   dplyr::filter(adj_raw_pink_log > 0) %>%
   dplyr::filter(vessel!= 'Steller') %>%
   dplyr::filter(vessel!= 'Chellissa') %>%
-  mutate (odd_even_factor = ifelse(JYear %% 2 == 0, "even", "odd"),
+  mutate (odd_even_factor = ifelse(JYear %% 2 == 0, "odd", "even"),
           SEAKCatch_log = log(SEAKCatch)) %>%
   dplyr::select(-c(CPUE, SEAKCatch)) -> log_data
 
@@ -189,8 +189,7 @@ model.formulas <- c(SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + as.fa
                     SEAKCatch_log ~ as.factor(vessel) : adj_raw_pink_log + SEAK_SST_AMJJ + as.factor(odd_even_factor):adj_raw_pink_log)
 
 # summary statistics of SEAK pink salmon harvest forecast models (seak_model_summary.csv file created)
-seak_model_summary <- f_model_summary_multi(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values)
-# if there is an error about MASE, run the MASE part of the function file and then rerun line 204
+seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values, models = "_multi")
 
 # summary of model fits (i.e., coefficients, p-value); creates the file model_summary_table1.csv.
 log_data %>%
@@ -335,7 +334,7 @@ write.csv(., paste0(results.directory, "/model_summary_table1_multi.csv"), row.n
 # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
 
 # STEP #3: CALCULATE ONE_STEP_AHEAD MAPE
-f_model_one_step_ahead_multiple5_multi(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2018)  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
+f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2018, models="_multi")  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
 
 # if you run the function f_model_one_step_ahead, and do not comment out return(data), you can see how many years of data are used in the MAPE,
 # then you can use the f_model_one_step_ahead function check.xlsx (in the data folder) to make sure the
@@ -409,7 +408,6 @@ ggplot(., aes(x=factor(model, level=c('m1','m2','m3','m4','m5','m6','m7','m8',
   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, linewidth=1, color="grey30")+
   scale_y_continuous(breaks = c(0,10, 20, 30, 40, 50, 60, 70, 80,100), limits = c(0,100))+
   labs(x = "Models", y = "2025 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
-
 ggsave(paste0(results.directory, "figs/forecast_models_multi.png"), dpi = 500, height = 4, width = 10, units = "in")
 
 # # different intercept, same slope

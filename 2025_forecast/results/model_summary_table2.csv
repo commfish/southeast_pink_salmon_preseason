@@ -1,37 +1,37 @@
-"terms","Model","Fit","Fit_LPI","Fit_UPI","AdjR2","MAPE","MAPE5","MAPE10"
-"Chatham_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m23a",21.983,13.607,35.516,0.723,0.0782494308254472,34.571,30.056
-"Chatham_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m24a",24.501,14.666,40.933,0.679,0.0869709147440907,36.517,32.53
-"Chatham_SST_May+ CPUE:as.factor(odd_even_factor)","m21a",22.906,14.231,36.87,0.725,0.0748020591409563,35.919,28.836
-"Chatham_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m22a",27.177,15.803,46.735,0.64,0.0929891953310169,40.785,38.737
-"CPUE*as.factor(odd_even_factor)","m1a",40.302,23.869,68.048,0.693,0.0859506613989972,39.482,53.615
-"CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJ","m5a",30.946,20.487,46.745,0.817,0.0646669417249481,32.634,24.248
-"CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJJ","m6a",34.541,22.181,53.788,0.785,0.0715514811412442,34.525,27.867
-"CPUE*as.factor(odd_even_factor) + Chatham_SST_May","m3a",32.178,21.584,47.971,0.826,0.0643914831092984,35.241,25.623
-"CPUE*as.factor(odd_even_factor) + Chatham_SST_MJJ","m4a",38.541,24.342,61.022,0.765,0.0758466183220926,37.327,32.456
-"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJ","m9a",33.088,22.013,49.736,0.818,0.065316935406845,32.306,27.861
-"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ","m10a",35.951,23.303,55.462,0.792,0.0707177610384259,32.981,29.605
-"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_May","m7a",32.825,22.022,48.927,0.826,0.0633137968535734,36.023,26.145
-"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_MJJ","m8a",39.729,25.404,62.133,0.777,0.0738111651756618,35.58,31.777
-"CPUE*as.factor(odd_even_factor) + ISTI20_MJJ","m2a",27.28,18.029,41.277,0.823,0.0611680527233406,30.793,28.687
-"CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJ","m13a",31.541,20.716,48.024,0.809,0.0650882889856071,32.884,26.145
-"CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJJ","m14a",34.537,22.07,54.048,0.78,0.0719188811816114,34.084,25.903
-"CPUE*as.factor(odd_even_factor) + NSEAK_SST_May","m11a",32.846,22.004,49.029,0.824,0.0639135180000166,34.506,24.793
-"CPUE*as.factor(odd_even_factor) + NSEAK_SST_MJJ","m12a",37.81,23.903,59.807,0.766,0.0749131470831229,35.868,27.386
-"CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJ","m17a",32.135,20.851,49.526,0.798,0.0680129916567146,33.821,25.152
-"CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJJ","m18a",34.87,22.102,55.014,0.772,0.0735715255425934,34.67,26.4
-"CPUE*as.factor(odd_even_factor) + SEAK_SST_May","m15a",33.004,21.781,50.012,0.811,0.0669854661276462,35.478,25.393
-"CPUE*as.factor(odd_even_factor) + SEAK_SST_MJJ","m16a",38.007,23.89,60.465,0.76,0.0762669685425723,35.99,28.57
-"CPUE:as.factor(odd_even_factor)","m19a",27.527,15.017,50.455,0.549,0.104405845690538,49.074,61.489
-"Icy_Strait_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m27a",23.258,14.17,38.174,0.702,0.0799515919966636,36.669,31.756
-"Icy_Strait_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m28a",25.2,14.948,42.482,0.667,0.0892930584320787,37.122,34.784
-"Icy_Strait_SST_May+ CPUE:as.factor(odd_even_factor)","m25a",23.108,14.181,37.657,0.711,0.0740664409486647,37.802,28.193
-"Icy_Strait_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m26a",27.682,16.078,47.661,0.638,0.0934938491646199,40.324,38.754
-"ISTI20_MJJ+ CPUE:as.factor(odd_even_factor)","m20a",19.02,11.766,30.746,0.731,0.075504887506836,29.335,33.016
-"NSEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m31a",22.209,13.543,36.419,0.705,0.0797008101998667,33.474,30.269
-"NSEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m32a",24.233,14.334,40.967,0.665,0.0887291675443538,35.66,30.635
-"NSEAK_SST_May+ CPUE:as.factor(odd_even_factor)","m29a",23.185,14.251,37.721,0.712,0.0762764521885828,34.999,27.563
-"NSEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m30a",26.414,15.303,45.59,0.635,0.093497284283592,38.289,33.89
-"SEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m35a",22.528,13.56,37.427,0.689,0.0843984677171366,35.141,31.704
-"SEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m36a",24.398,14.313,41.589,0.654,0.0915891638775724,37.336,32.335
-"SEAK_SST_May+ CPUE:as.factor(odd_even_factor)","m33a",23.152,14.017,38.239,0.695,0.0824579460303325,36.953,30.85
-"SEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m34a",26.537,15.303,46.019,0.629,0.0954362090422375,39.691,36.529
+"terms","Model","Fit","Fit_LPI","Fit_UPI","AdjR2","MAPE","MAPE5"
+"Chatham_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m23a",21.983,13.607,35.516,0.723,0.0782494308254471,34.571
+"Chatham_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m24a",24.501,14.666,40.933,0.679,0.0869709147440907,36.517
+"Chatham_SST_May+ CPUE:as.factor(odd_even_factor)","m21a",22.906,14.231,36.87,0.725,0.0748020591409563,35.919
+"Chatham_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m22a",27.177,15.803,46.735,0.64,0.0929891953310169,40.785
+"CPUE*as.factor(odd_even_factor)","m1a",40.302,23.869,68.048,0.693,0.0859506613989972,39.482
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJ","m5a",30.946,20.487,46.745,0.817,0.0646669417249481,32.634
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJJ","m6a",34.541,22.181,53.788,0.785,0.0715514811412443,34.525
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_May","m3a",32.178,21.584,47.971,0.826,0.0643914831092984,35.241
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_MJJ","m4a",38.541,24.342,61.022,0.765,0.0758466183220926,37.327
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJ","m9a",33.088,22.013,49.736,0.818,0.065316935406845,32.306
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ","m10a",35.951,23.303,55.462,0.792,0.0707177610384259,32.981
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_May","m7a",32.825,22.022,48.927,0.826,0.0633137968535734,36.023
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_MJJ","m8a",39.729,25.404,62.133,0.777,0.0738111651756618,35.58
+"CPUE*as.factor(odd_even_factor) + ISTI20_MJJ","m2a",27.28,18.029,41.277,0.823,0.0611680527233406,30.793
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJ","m13a",31.541,20.716,48.024,0.809,0.0650882889856071,32.884
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJJ","m14a",34.537,22.07,54.048,0.78,0.0719188811816114,34.084
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_May","m11a",32.846,22.004,49.029,0.824,0.0639135180000166,34.506
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_MJJ","m12a",37.81,23.903,59.807,0.766,0.0749131470831229,35.868
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJ","m17a",32.135,20.851,49.526,0.798,0.0680129916567145,33.821
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJJ","m18a",34.87,22.102,55.014,0.772,0.0735715255425933,34.67
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_May","m15a",33.004,21.781,50.012,0.811,0.0669854661276462,35.478
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_MJJ","m16a",38.007,23.89,60.465,0.76,0.0762669685425723,35.99
+"CPUE:as.factor(odd_even_factor)","m19a",27.527,15.017,50.455,0.549,0.104405845690538,49.074
+"Icy_Strait_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m27a",23.258,14.17,38.174,0.702,0.0799515919966636,36.669
+"Icy_Strait_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m28a",25.2,14.948,42.482,0.667,0.0892930584320787,37.122
+"Icy_Strait_SST_May+ CPUE:as.factor(odd_even_factor)","m25a",23.108,14.181,37.657,0.711,0.0740664409486646,37.802
+"Icy_Strait_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m26a",27.682,16.078,47.661,0.638,0.0934938491646199,40.324
+"ISTI20_MJJ+ CPUE:as.factor(odd_even_factor)","m20a",19.02,11.766,30.746,0.731,0.075504887506836,29.335
+"NSEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m31a",22.209,13.543,36.419,0.705,0.0797008101998667,33.474
+"NSEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m32a",24.233,14.334,40.967,0.665,0.0887291675443538,35.66
+"NSEAK_SST_May+ CPUE:as.factor(odd_even_factor)","m29a",23.185,14.251,37.721,0.712,0.0762764521885829,34.999
+"NSEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m30a",26.414,15.303,45.59,0.635,0.093497284283592,38.289
+"SEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m35a",22.528,13.56,37.427,0.689,0.0843984677171366,35.141
+"SEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m36a",24.398,14.313,41.589,0.654,0.0915891638775724,37.336
+"SEAK_SST_May+ CPUE:as.factor(odd_even_factor)","m33a",23.152,14.017,38.239,0.695,0.0824579460303325,36.953
+"SEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m34a",26.537,15.303,46.019,0.629,0.0954362090422375,39.691

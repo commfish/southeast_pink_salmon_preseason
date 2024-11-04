@@ -28,25 +28,6 @@ augment(best_model) %>%
   dplyr::select(Year, Harvest, Residuals, 'Hat values', 'Cooks distance', 'Std. residuals', 'Fitted values') %>%
   write.csv(file =paste0(results.directory, "model_summary_table4_", model, ".csv"), row.names = F)
 
-# # DIAGNOSTIC PLOTS
-# # Diagnostics: test model assumptions (normality, linearity, residuals)
-# # residuals
-# f_resid_year_diagnostics_plot(m11, 'm11')
-# 
-# # leverage and Cook's distance plots
-# f_resid_leverage_diagnostics_plot(m11, 'm11', k = 2, p = 3) # the k and p need to be updated in the CPUE model is chosen or a more complicated model than 
-# # the basic CPUE +temp models
-# 
-# # DIAGNOSTIC PLOTS OF BEST MODEL
-# # Diagnostics: test model assumptions (normality, linearity, residuals)
-# png(paste0(results.directory, "model_figs/general_diagnostics_", model, ".png"))
-# autoplot(best_model)
-# dev.off()
-# 
-# car::outlierTest(best_model) #Bonferroni p-values (term # 24); lack of fit test; https://stats.stackexchange.com/questions/288910/outlier-detection-using-outliertest-function
-# car::residualPlots(best_model) #lack-of fit curvature test; terms that are non-significant suggest a properly specified model
-# car::residualPlots(best_model, terms = ~ 1, fitted = T, id.n = 5, smoother = T)
-
 # plot of harvest by year with prediction error 
 as.numeric(sigma(best_model))-> sigma
 augment(best_model) %>% 
@@ -71,11 +52,11 @@ augment(best_model) %>%
                      axis.title.y = element_text(size=11, colour="black",family="Times New Roman"),
                      axis.title.x = element_text(size=11, colour="black",family="Times New Roman"),
                      panel.border = element_rect(colour = "black", size=1),
-                     legend.position=c(0.51,0.87)) +
+                     legend.position=c(0.50,0.87)) +
   geom_point(x=year.data +1, y=fit_value_model, pch=21, size=2.5, colour = "black", fill="grey") +
   scale_x_continuous(
     minor_breaks = seq(1998, year.data +1, by = 1),
-    breaks = seq(1998, year.data +1, by = 4), limits = c(1998, year.data+1),
+    breaks = seq(1997, year.data +1, by = 4), limits = c(1997, year.data+1),
     guide = "axis_minor") + # this is added to the original code)
   
   #scale_x_continuous(breaks = seq(1998, year.data +1, 4)) +theme(legend.title=element_blank())+

@@ -6,8 +6,8 @@ read.csv(file.path(data.directory,'var2024_final.csv'), header=TRUE, as.is=TRUE,
 # restructure the data for modeling
 n <- dim(variables)[1] # number of years including forecast year
 variables %>%
-  mutate (SEAKCatch_log = log(SEAKCatch),
-          odd_even_factor = ifelse(JYear %% 2 == 0, "even", "odd")) %>% # log catch variable
+  mutate (odd_even_factor = ifelse(JYear %% 2 == 0, "odd", "even"),
+          SEAKCatch_log = log(SEAKCatch)) %>% # log catch variable
   dplyr::select(-c(SEAKCatch)) -> log_data
 
 # STEP #2: MODELS
@@ -86,8 +86,7 @@ model.formulas <- c(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor),
                  SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + SEAK_SST_AMJJ) # temp. data
 
 # summary statistics of SEAK pink salmon harvest forecast models (seak_model_summary.csv file created)
-seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values)
-# if there is an error about MASE, run the MASE part of the function file and then rerun line 204
+seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values, models = "")
 
 # summary of model fits (i.e., coefficients, p-value); creates the file model_summary_table1.csv.
 log_data %>%
@@ -236,8 +235,8 @@ write.csv(., paste0(results.directory, "/model_summary_table1.csv"), row.names =
 # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
 
 # STEP #3: CALCULATE ONE_STEP_AHEAD MAPE
-f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2018)  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
-f_model_one_step_ahead_multiple10(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2013)  # start = 1997, end = 2011 means Jyear 2012-2021 used for MAPE calc. (10-year)
+f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2018, models = "")  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
+#f_model_one_step_ahead_multiple10(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2013)  # start = 1997, end = 2011 means Jyear 2012-2021 used for MAPE calc. (10-year)
 # if you run the function f_model_one_step_ahead, and do not comment out return(data), you can see how many years of data are used in the MAPE,
 # then you can use the f_model_one_step_ahead function check.xlsx (in the data folder) to make sure the
 # function is correct for the base CPUE model
@@ -246,11 +245,6 @@ read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5.csv'), 
   dplyr::rename(terms = 'X') %>%
   mutate(MAPE5 = round(MAPE5,3)) %>%
   dplyr::select(terms, MAPE5) -> MAPE5
-
-read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead10.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
-  dplyr::rename(terms = 'X') %>%
-  mutate(MAPE10 = round(MAPE10,3)) %>%
-  dplyr::select(terms, MAPE10) -> MAPE10
 
 # format the file seak_model_summary.csv file
 # https://stats.stackexchange.com/questions/359088/correcting-log-transformation-bias-in-a-linear-model; Correcting log-transformation bias in a linear model
@@ -272,7 +266,6 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.
          Fit_UPI = round(fit_log_UPI,3)) %>%
   dplyr::select(Model, terms, Fit, Fit_LPI, Fit_UPI, AdjR2, MAPE) %>%
   merge(., MAPE5, by="terms") %>%
-  merge(., MAPE10, by="terms") %>%
   write.csv(., paste0(results.directory, "/model_summary_table2.csv"), row.names = F)
 
 # forecast figure
