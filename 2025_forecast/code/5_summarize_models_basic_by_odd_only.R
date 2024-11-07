@@ -1,4 +1,4 @@
-# run code 2_diagnostics.R first
+# run code 4_diagnostics_models_basic.R first
 # STEP 1: DATA
 # read in data from the csv file  (make sure this is up to date)
 read.csv(file.path(data.directory,'var2024_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
