@@ -1,19 +1,37 @@
 "","MAPE5"
-"vessel x adj_raw_pink_log + odd_factor ",131.441582482491
-"vessel x adj_raw_pink_log + ISTI20_MJJ + odd_factor ",133.676693838892
-"vessel x adj_raw_pink_log + Chatham_SST_May + odd_factor",107.221519003472
-"vessel x adj_raw_pink_log + Chatham_SST_MJJ + odd_factor",120.076580662764
-"vessel x adj_raw_pink_log + Chatham_SST_AMJ + odd_factor",109.50738317894
-"vessel x adj_raw_pink_log + Chatham_SST_AMJJ + odd_factor",113.149613657174
-"vessel x adj_raw_pink_log + Icy_Strait_SST_May + odd_factor",101.786978423327
-"vessel x adj_raw_pink_log + Icy_Strait_SST_MJJ + odd_factor",112.53173353038
-"vessel x adj_raw_pink_log + Icy_Strait_SST_AMJ + odd_factor",106.437593892447
-"vessel x adj_raw_pink_log + Icy_Strait_SST_AMJJ + odd_factor",108.610423749223
-"vessel x adj_raw_pink_log + NSEAK_SST_May + odd_factor",101.14111756401
-"vessel x adj_raw_pink_log + NSEAK_SST_MJJ + odd_factor",113.12150794092
-"vessel x adj_raw_pink_log+  NSEAK_SST_AMJ + odd_factor",102.392487906623
-"vessel x adj_raw_pink_log + NSEAK_SST_AMJJ + odd_factor",107.025943840118
-"vessel x adj_raw_pink_log + SEAK_SST_May + odd_factor",114.783422530971
-"vessel x adj_raw_pink_log + SEAK_SST_MJJ + odd_factor",120.514183553614
-"vessel x adj_raw_pink_log + SEAK_SST_AMJ + odd_factor",111.342943661086
-"vessel x adj_raw_pink_log + SEAK_SST_AMJJ + odd_factor",114.449916518286
+"vessel x adj_raw_pink_log + odd_factor x adj_raw_pink_log",116.545766840766
+"vessel x adj_raw_pink_log + ISTI20_MJJ + odd_factor x adj_raw_pink_log",129.923694141585
+"vessel x adj_raw_pink_log + Chatham_SST_May + odd_factor x adj_raw_pink_log",122.125709458437
+"vessel x adj_raw_pink_log + Chatham_SST_MJJ + odd_factor x adj_raw_pink_log",101.489600738247
+"vessel x adj_raw_pink_log + Chatham_SST_AMJ + odd_factor x adj_raw_pink_log",118.986920599952
+"vessel x adj_raw_pink_log + Chatham_SST_AMJJ + odd_factor x adj_raw_pink_log",108.309652069339
+"vessel x adj_raw_pink_log + Icy_Strait_SST_May + odd_factor x adj_raw_pink_log",107.128720707505
+"vessel x adj_raw_pink_log + Icy_Strait_SST_MJJ + odd_factor x adj_raw_pink_log",92.4126708568614
+"vessel x adj_raw_pink_log + Icy_Strait_SST_AMJ + odd_factor x adj_raw_pink_log",112.069004164407
+"vessel x adj_raw_pink_log + Icy_Strait_SST_AMJJ + odd_factor x adj_raw_pink_log",100.360028944099
+"vessel x adj_raw_pink_log + NSEAK_SST_May + odd_factor x adj_raw_pink_log",112.231168710288
+"vessel x adj_raw_pink_log + NSEAK_SST_MJJ + odd_factor x adj_raw_pink_log",93.4611305027033
+"vessel x adj_raw_pink_log+  NSEAK_SST_AMJ + odd_factor x adj_raw_pink_log",111.567825426411
+"vessel x adj_raw_pink_log + NSEAK_SST_AMJJ + odd_factor x adj_raw_pink_log",101.451521929366
+"vessel x adj_raw_pink_log + SEAK_SST_May + odd_factor x adj_raw_pink_log",115.636215575395
+"vessel x adj_raw_pink_log + SEAK_SST_MJJ + odd_factor x adj_raw_pink_log",93.182234054923
+"vessel x adj_raw_pink_log + SEAK_SST_AMJ + odd_factor x adj_raw_pink_log",113.249124557234
+"vessel x adj_raw_pink_log + SEAK_SST_AMJJ + odd_factor x adj_raw_pink_log",101.481072839679
+"vessel : adj_raw_pink_log + odd_factor : adj_raw_pink_log",133.274081027254
+"vessel : adj_raw_pink_log + ISTI20_MJJ + odd_factor : adj_raw_pink_log",120.241849410717
+"vessel : adj_raw_pink_log + Chatham_SST_May + odd_factor: adj_raw_pink_log",105.760109740075
+"vessel : adj_raw_pink_log + Chatham_SST_MJJ + odd_factor: adj_raw_pink_log",122.16409985229
+"vessel : adj_raw_pink_log + Chatham_SST_AMJ + odd_factor: adj_raw_pink_log",107.161391970613
+"vessel : adj_raw_pink_log + Chatham_SST_AMJJ + odd_factor: adj_raw_pink_log",113.452746623415
+"vessel : adj_raw_pink_log + Icy_Strait_SST_May + odd_factor: adj_raw_pink_log",101.270515837567
+"vessel : adj_raw_pink_log + Icy_Strait_SST_MJJ + odd_factor: adj_raw_pink_log",115.800235979617
+"vessel : adj_raw_pink_log + Icy_Strait_SST_AMJ + odd_factor: adj_raw_pink_log",106.615169268965
+"vessel : adj_raw_pink_log + Icy_Strait_SST_AMJJ + odd_factor: adj_raw_pink_log",110.67572095024
+"vessel : adj_raw_pink_log + NSEAK_SST_May + odd_factor: adj_raw_pink_log",102.721910008353
+"vessel : adj_raw_pink_log + NSEAK_SST_MJJ + odd_factor: adj_raw_pink_log",116.292646537287
+"vessel : adj_raw_pink_log+  NSEAK_SST_AMJ + odd_factor: adj_raw_pink_log",102.062983796472
+"vessel : adj_raw_pink_log + NSEAK_SST_AMJJ + odd_factor: adj_raw_pink_log",108.857821906259
+"vessel : adj_raw_pink_log + SEAK_SST_May + odd_factor: adj_raw_pink_log",115.656919263357
+"vessel : adj_raw_pink_log + SEAK_SST_MJJ + odd_factor: adj_raw_pink_log",124.446677803834
+"vessel : adj_raw_pink_log + SEAK_SST_AMJ + odd_factor: adj_raw_pink_log",111.801719653426
+"vessel : adj_raw_pink_log + SEAK_SST_AMJJ + odd_factor: adj_raw_pink_log",117.245110069236

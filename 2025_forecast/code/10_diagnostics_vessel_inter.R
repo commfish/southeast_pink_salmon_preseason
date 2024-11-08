@@ -1,4 +1,4 @@
-# run code 1_summarize_model.R first
+# run code 9_summarize_models_vessel_inter.R first
 
 # inputs
 fit_value_model<-28.82 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
@@ -31,23 +31,31 @@ augment(best_model) %>%
 log_data_subset %>%
   dplyr::select(JYear, Year) -> log_data_subset
 
+read.csv(file.path(data.directory,'var2024_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
+variables %>%
+  dplyr::filter(Year== 2009|Year== 2010) %>%
+  mutate(harvest = SEAKCatch)%>%
+  mutate(terms = "SEAK pink harvest (not fit)")%>%
+  dplyr::select(c(harvest, Year, JYear, terms)) -> fig_data
+
 # plot of harvest by year with prediction error 
 as.numeric(sigma(best_model))-> sigma
 augment(best_model) %>% 
   cbind(.,log_data_subset)%>%
+  mutate(terms = "SEAK pink harvest")%>%
   mutate(harvest = exp(SEAKCatch_log),
          fit = exp(.fitted) * exp(0.5* sigma*sigma)) %>%
-  ggplot(aes(x=Year)) +
-  geom_bar(aes(y = harvest, fill = "SEAK pink harvest"),
-           stat = "identity", colour ="black",
+  merge(., fig_data, by.x = c("Year","JYear", "harvest", "terms"), by.y = c("Year","JYear", "harvest", "terms"), all=T)->fig_data_all
+ggplot(aes(x=Year), data = fig_data_all) +
+  geom_bar(aes(y = harvest, fill = terms),
+           stat = "identity", colour ="black",fill = "gray75",
            width = 1) +
   geom_line(aes(y = fit, colour = "fit"), linetype = 1, linewidth = 0.75) +
-  scale_colour_manual("", values=c("fit" = "black")) +
-  scale_fill_manual("",values="lightgrey")+
+    scale_colour_manual("terms", values=c("fit" = "black")) +
+    scale_fill_manual("terms",values=c("#e7e7e7", "darkgrey"))+
   theme_bw() + theme(legend.key=element_blank(),
                      legend.title=element_blank(),
                      legend.box="horizontal",
-                     #panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), 
                      panel.grid.major = element_blank(), 
                      axis.line = element_line(colour = "black"),
@@ -55,14 +63,12 @@ augment(best_model) %>%
                      axis.title.y = element_text(size=11, colour="black",family="Times New Roman"),
                      axis.title.x = element_text(size=11, colour="black",family="Times New Roman"),
                      panel.border = element_rect(colour = "black", size=1),
-                     legend.position=c(0.50,0.87)) +
+                     legend.position=c(0.2,0.87)) +
   geom_point(x=year.data +1, y=fit_value_model, pch=21, size=2.5, colour = "black", fill="grey") +
   scale_x_continuous(
     minor_breaks = seq(1998, year.data +1, by = 1),
     breaks = seq(1997, year.data +1, by = 4), limits = c(1997, year.data+1),
-    guide = "axis_minor") + # this is added to the original code)
-  
-  #scale_x_continuous(breaks = seq(1998, year.data +1, 4)) +theme(legend.title=element_blank())+
+    guide = "axis_minor") + 
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_text(aes(x = 1998, y = 140, label="A."),family="Times New Roman", colour="black", size=5) +

@@ -1,4 +1,4 @@
-# run code 1_summarize_model.R first
+# run code 1_summarize_models.R first
 
 # inputs
 fit_value_model<-24.656 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)

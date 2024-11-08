@@ -1,3 +1,4 @@
+# run code 8_diagnostic_models_basic_by_odd_even.R first
 # STEP 1: DATA
 # read in data from the csv file  (make sure this is up to date)
 read.csv(file.path(data.directory,'var2024_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_temp # update file names
@@ -8,7 +9,6 @@ variables_adj_raw_pink %>%
           group_by(JYear, Year, vessel) %>% 
           summarise(adj_raw_pink_log = max(adj_raw_pink_log)) %>% 
   merge(., variables_temp, by.x = c("JYear", "Year"), by.y = c("JYear", "Year")) %>%
-  dplyr::filter(adj_raw_pink_log > 0) %>%
   dplyr::filter(vessel!= 'Steller') %>%
   dplyr::filter(vessel!= 'Chellissa') %>%
   mutate (odd_even_factor = ifelse(JYear %% 2 == 0, "odd", "even"),
@@ -102,7 +102,6 @@ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_facto
 lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + SEAK_SST_AMJ, data = log_data_subset) -> m17d
 lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + SEAK_SST_AMJJ, data = log_data_subset) -> m18d
 
-
 tidy(m1d) -> model1
 tidy(m2d) -> model2
 tidy(m3d) -> model3
@@ -175,9 +174,6 @@ read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5_vessel_
   mutate(MAPE5 = round(MAPE5,3)) %>%
   dplyr::select(terms, MAPE5) -> MAPE5
 
-# format the file seak_model_summary.csv file
-# https://stats.stackexchange.com/questions/359088/correcting-log-transformation-bias-in-a-linear-model; Correcting log-transformation bias in a linear model
-# https://stackoverflow.com/questions/40324963/when-predicting-using-model-with-logtarget-do-i-have-to-make-any-changes-to-pr # mase3<-dLagM::MASE(m18)
 read.csv(file.path(results.directory,'seak_model_summary_vessel_inter.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
   dplyr::rename(terms = 'X') %>%
   dplyr::select(terms, fit, fit_UPI, fit_LPI,AdjR2, sigma, MAPE) %>%
