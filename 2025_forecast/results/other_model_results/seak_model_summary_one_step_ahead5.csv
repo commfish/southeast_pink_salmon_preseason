@@ -1,0 +1,37 @@
+"","MAPE5"
+"CPUE*as.factor(odd_even_factor)",39.6591324118376
+"CPUE*as.factor(odd_even_factor) + ISTI20_MJJ",30.9787656178901
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_May",35.4158620828983
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_MJJ",37.505942786643
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJ",32.8346165957997
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJJ",34.7124830414447
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_May",36.1959993337227
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_MJJ",35.7741769845524
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJ",32.5087741845493
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ",33.1783800744162
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_May",34.6809933892081
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_MJJ",36.0435700992934
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJ",33.0765289100494
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJJ",34.2652122044842
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_May",35.6481298183706
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_MJJ",36.1567082324496
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJ",34.0094183051281
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJJ",34.8448856408489
+"CPUE:as.factor(odd_even_factor)",49.3088821237586
+"ISTI20_MJJ+ CPUE:as.factor(odd_even_factor)",29.5675385473564
+"Chatham_SST_May+ CPUE:as.factor(odd_even_factor)",36.1382883189136
+"Chatham_SST_MJJ+ CPUE:as.factor(odd_even_factor)",41.0162584093431
+"Chatham_SST_AMJ+ CPUE:as.factor(odd_even_factor)",34.3167835669573
+"Chatham_SST_AMJJ+ CPUE:as.factor(odd_even_factor)",36.7559971286704
+"Icy_Strait_SST_May+ CPUE:as.factor(odd_even_factor)",38.0219242981751
+"Icy_Strait_SST_MJJ+ CPUE:as.factor(odd_even_factor)",40.0691838330845
+"Icy_Strait_SST_AMJ+ CPUE:as.factor(odd_even_factor)",36.4068163729467
+"Icy_Strait_SST_AMJJ+ CPUE:as.factor(odd_even_factor)",36.8650468951578
+"NSEAK_SST_May+ CPUE:as.factor(odd_even_factor)",35.2214749719385
+"NSEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)",38.5163335433806
+"NSEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)",33.72005482909
+"NSEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)",35.8924460825023
+"SEAK_SST_May+ CPUE:as.factor(odd_even_factor)",37.1688404199818
+"SEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)",39.9064892572907
+"SEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)",35.3803605089313
+"SEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)",37.5594269994963

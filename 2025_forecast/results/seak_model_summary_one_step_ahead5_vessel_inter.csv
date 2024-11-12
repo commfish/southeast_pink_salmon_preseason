@@ -1,19 +1,19 @@
 "","MAPE5"
-"vessel x adj_raw_pink_log + odd_factor ",131.441582482491
-"vessel x adj_raw_pink_log + ISTI20_MJJ + odd_factor ",133.676693838892
-"vessel x adj_raw_pink_log + Chatham_SST_May + odd_factor",107.221519003472
-"vessel x adj_raw_pink_log + Chatham_SST_MJJ + odd_factor",120.076580662764
-"vessel x adj_raw_pink_log + Chatham_SST_AMJ + odd_factor",109.50738317894
-"vessel x adj_raw_pink_log + Chatham_SST_AMJJ + odd_factor",113.149613657174
-"vessel x adj_raw_pink_log + Icy_Strait_SST_May + odd_factor",101.786978423327
-"vessel x adj_raw_pink_log + Icy_Strait_SST_MJJ + odd_factor",112.53173353038
-"vessel x adj_raw_pink_log + Icy_Strait_SST_AMJ + odd_factor",106.437593892447
-"vessel x adj_raw_pink_log + Icy_Strait_SST_AMJJ + odd_factor",108.610423749223
-"vessel x adj_raw_pink_log + NSEAK_SST_May + odd_factor",101.14111756401
-"vessel x adj_raw_pink_log + NSEAK_SST_MJJ + odd_factor",113.12150794092
-"vessel x adj_raw_pink_log+  NSEAK_SST_AMJ + odd_factor",102.392487906623
-"vessel x adj_raw_pink_log + NSEAK_SST_AMJJ + odd_factor",107.025943840118
-"vessel x adj_raw_pink_log + SEAK_SST_May + odd_factor",114.783422530971
-"vessel x adj_raw_pink_log + SEAK_SST_MJJ + odd_factor",120.514183553614
-"vessel x adj_raw_pink_log + SEAK_SST_AMJ + odd_factor",111.342943661086
-"vessel x adj_raw_pink_log + SEAK_SST_AMJJ + odd_factor",114.449916518286
+"no temp",131.598841143291
+"ISTI20_MJJ",133.840092318295
+"Chatham_SST_May",107.37980671474
+"Chatham_SST_MJJ",120.24305060544
+"Chatham_SST_AMJ",109.686655059059
+"Chatham_SST_AMJJ",113.32267432312
+"Icy_Strait_SST_May",101.942427970175
+"Icy_Strait_SST_MJJ",112.711408788275
+"Icy_Strait_SST_AMJ",106.619674954483
+"Icy_Strait_SST_AMJJ",108.792438916076
+"NSEAK_SST_May",101.304722296346
+"NSEAK_SST_MJJ",113.291459242858
+"NSEAK_SST_AMJ",102.573497402674
+"NSEAK_SST_AMJJ",107.200232350294
+"SEAK_SST_May",114.943864800884
+"SEAK_SST_MJJ",120.675535561782
+"SEAK_SST_AMJ",111.520340990214
+"SEAK_SST_AMJJ",114.618355631679

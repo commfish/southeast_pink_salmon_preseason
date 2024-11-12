@@ -1,0 +1,269 @@
+"Model","Term","Estimate","Standard Error","Statistic","p value"
+"m1","(Intercept)",1.00982187,1.039,0.972,0.345
+"m1","as.factor(vessel)Medeia",3.1701075,1.71,1.853,0.081
+"m1","as.factor(vessel)NW Explorer",-0.42028624,1.075,-0.391,0.701
+"m1","adj_raw_pink_log",0.44005125,0.195,2.256,0.038
+"m1","as.factor(odd_even_factor)odd",1.46631486,0.829,1.77,0.095
+"m1","as.factor(vessel)Medeia:adj_raw_pink_log",-0.7625935,0.358,-2.129,0.048
+"m1","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.03129395,0.178,-0.176,0.862
+"m1","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.18496934,0.141,-1.308,0.208
+"m2","(Intercept)",4.45237107,1.685,2.643,0.018
+"m2","as.factor(vessel)Medeia",2.72620827,1.517,1.797,0.091
+"m2","as.factor(vessel)NW Explorer",-0.69133518,0.953,-0.725,0.479
+"m2","adj_raw_pink_log",0.49609424,0.173,2.862,0.011
+"m2","as.factor(odd_even_factor)odd",1.31017407,0.733,1.789,0.093
+"m2","ISTI20_MJJ",-0.40759063,0.168,-2.433,0.027
+"m2","as.factor(vessel)Medeia:adj_raw_pink_log",-0.63784358,0.32,-1.996,0.063
+"m2","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.00100301,0.157,-0.006,0.995
+"m2","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.18310756,0.125,-1.471,0.161
+"m3","(Intercept)",2.92391748,1.292,2.263,0.038
+"m3","as.factor(vessel)Medeia",2.9860332,1.553,1.923,0.073
+"m3","as.factor(vessel)NW Explorer",-0.21745483,0.979,-0.222,0.827
+"m3","adj_raw_pink_log",0.46716886,0.177,2.635,0.018
+"m3","as.factor(odd_even_factor)odd",1.35806844,0.753,1.804,0.09
+"m3","Chatham_SST_May",-0.28127491,0.13,-2.163,0.046
+"m3","as.factor(vessel)Medeia:adj_raw_pink_log",-0.68636888,0.327,-2.101,0.052
+"m3","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.04861752,0.161,-0.301,0.767
+"m3","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.16761989,0.128,-1.305,0.21
+"m4","(Intercept)",3.73872311,1.72,2.174,0.045
+"m4","as.factor(vessel)Medeia",3.09997712,1.59,1.949,0.069
+"m4","as.factor(vessel)NW Explorer",-0.21220061,1.005,-0.211,0.835
+"m4","adj_raw_pink_log",0.49721379,0.184,2.706,0.016
+"m4","as.factor(odd_even_factor)odd",1.54345769,0.771,2.001,0.063
+"m4","Chatham_SST_MJJ",-0.31174556,0.163,-1.917,0.073
+"m4","as.factor(vessel)Medeia:adj_raw_pink_log",-0.70818207,0.334,-2.119,0.05
+"m4","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.06021054,0.166,-0.363,0.722
+"m4","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.20460359,0.132,-1.552,0.14
+"m5","(Intercept)",3.51047729,1.424,2.465,0.025
+"m5","as.factor(vessel)Medeia",2.79922886,1.535,1.824,0.087
+"m5","as.factor(vessel)NW Explorer",-0.15853592,0.966,-0.164,0.872
+"m5","adj_raw_pink_log",0.48876881,0.175,2.788,0.013
+"m5","as.factor(odd_even_factor)odd",1.40832396,0.74,1.904,0.075
+"m5","Chatham_SST_AMJ",-0.36611629,0.158,-2.313,0.034
+"m5","as.factor(vessel)Medeia:adj_raw_pink_log",-0.64188856,0.324,-1.982,0.065
+"m5","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.05915313,0.159,-0.372,0.715
+"m5","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.18170403,0.126,-1.44,0.169
+"m6","(Intercept)",3.77140803,1.616,2.333,0.033
+"m6","as.factor(vessel)Medeia",2.96170504,1.563,1.895,0.076
+"m6","as.factor(vessel)NW Explorer",-0.13976964,0.989,-0.141,0.889
+"m6","adj_raw_pink_log",0.50103612,0.18,2.78,0.013
+"m6","as.factor(odd_even_factor)odd",1.44570678,0.756,1.913,0.074
+"m6","Chatham_SST_AMJJ",-0.35691972,0.169,-2.108,0.051
+"m6","as.factor(vessel)Medeia:adj_raw_pink_log",-0.67342828,0.329,-2.044,0.058
+"m6","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.07148673,0.163,-0.438,0.667
+"m6","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.18942518,0.129,-1.469,0.161
+"m7","(Intercept)",2.75488929,1.275,2.16,0.046
+"m7","as.factor(vessel)Medeia",2.93104552,1.572,1.864,0.081
+"m7","as.factor(vessel)NW Explorer",-0.30789341,0.987,-0.312,0.759
+"m7","adj_raw_pink_log",0.45414639,0.179,2.538,0.022
+"m7","as.factor(odd_even_factor)odd",1.34489544,0.762,1.765,0.097
+"m7","Icy_Strait_SST_May",-0.26388645,0.128,-2.057,0.056
+"m7","as.factor(vessel)Medeia:adj_raw_pink_log",-0.67819797,0.331,-2.049,0.057
+"m7","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.03410012,0.163,-0.209,0.837
+"m7","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.15985782,0.13,-1.228,0.237
+"m8","(Intercept)",3.54697338,1.599,2.218,0.041
+"m8","as.factor(vessel)Medeia",2.8425803,1.588,1.79,0.092
+"m8","as.factor(vessel)NW Explorer",-0.24593328,0.997,-0.247,0.808
+"m8","adj_raw_pink_log",0.49825166,0.183,2.73,0.015
+"m8","as.factor(odd_even_factor)odd",1.63757206,0.77,2.126,0.049
+"m8","Icy_Strait_SST_MJJ",-0.28592636,0.144,-1.983,0.065
+"m8","as.factor(vessel)Medeia:adj_raw_pink_log",-0.6586044,0.335,-1.966,0.067
+"m8","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.05563139,0.165,-0.338,0.74
+"m8","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.21632096,0.132,-1.645,0.12
+"m9","(Intercept)",3.34452396,1.417,2.361,0.031
+"m9","as.factor(vessel)Medeia",2.70142222,1.559,1.732,0.102
+"m9","as.factor(vessel)NW Explorer",-0.24173589,0.975,-0.248,0.807
+"m9","adj_raw_pink_log",0.4750109,0.177,2.685,0.016
+"m9","as.factor(odd_even_factor)odd",1.43724947,0.749,1.92,0.073
+"m9","Icy_Strait_SST_AMJ",-0.34740373,0.158,-2.2,0.043
+"m9","as.factor(vessel)Medeia:adj_raw_pink_log",-0.62138994,0.33,-1.884,0.078
+"m9","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.04568574,0.161,-0.284,0.78
+"m9","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.17760553,0.128,-1.39,0.183
+"m10","(Intercept)",3.50728871,1.521,2.306,0.035
+"m10","as.factor(vessel)Medeia",2.81097585,1.57,1.79,0.092
+"m10","as.factor(vessel)NW Explorer",-0.15565594,0.989,-0.157,0.877
+"m10","adj_raw_pink_log",0.50617798,0.181,2.8,0.013
+"m10","as.factor(odd_even_factor)odd",1.53599738,0.757,2.029,0.059
+"m10","Icy_Strait_SST_AMJJ",-0.32935751,0.157,-2.1,0.052
+"m10","as.factor(vessel)Medeia:adj_raw_pink_log",-0.6439082,0.332,-1.941,0.07
+"m10","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.07075286,0.163,-0.433,0.671
+"m10","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.1998141,0.129,-1.546,0.142
+"m11","(Intercept)",2.86936324,1.258,2.28,0.037
+"m11","as.factor(vessel)Medeia",2.91237257,1.547,1.882,0.078
+"m11","as.factor(vessel)NW Explorer",-0.14059502,0.978,-0.144,0.887
+"m11","adj_raw_pink_log",0.46189883,0.176,2.621,0.019
+"m11","as.factor(odd_even_factor)odd",1.40308315,0.748,1.876,0.079
+"m11","NSEAK_SST_May",-0.27495141,0.124,-2.213,0.042
+"m11","as.factor(vessel)Medeia:adj_raw_pink_log",-0.65879566,0.327,-2.018,0.061
+"m11","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.05607265,0.161,-0.349,0.732
+"m11","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.17214481,0.128,-1.349,0.196
+"m12","(Intercept)",3.81658904,1.657,2.303,0.035
+"m12","as.factor(vessel)Medeia",3.07040733,1.567,1.96,0.068
+"m12","as.factor(vessel)NW Explorer",-0.07631673,0.998,-0.076,0.94
+"m12","adj_raw_pink_log",0.50871026,0.182,2.8,0.013
+"m12","as.factor(odd_even_factor)odd",1.59079341,0.761,2.09,0.053
+"m12","NSEAK_SST_MJJ",-0.32674326,0.158,-2.068,0.055
+"m12","as.factor(vessel)Medeia:adj_raw_pink_log",-0.6778125,0.331,-2.05,0.057
+"m12","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.07630727,0.164,-0.464,0.649
+"m12","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.21227802,0.13,-1.631,0.122
+"m13","(Intercept)",3.44429084,1.405,2.451,0.026
+"m13","as.factor(vessel)Medeia",2.80146219,1.536,1.824,0.087
+"m13","as.factor(vessel)NW Explorer",-0.03278285,0.975,-0.034,0.974
+"m13","adj_raw_pink_log",0.48922728,0.175,2.788,0.013
+"m13","as.factor(odd_even_factor)odd",1.42328515,0.74,1.923,0.072
+"m13","NSEAK_SST_AMJ",-0.36691631,0.159,-2.306,0.035
+"m13","as.factor(vessel)Medeia:adj_raw_pink_log",-0.62379829,0.326,-1.916,0.073
+"m13","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.07405275,0.16,-0.463,0.649
+"m13","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.18142896,0.126,-1.437,0.17
+"m14","(Intercept)",3.75994313,1.586,2.37,0.031
+"m14","as.factor(vessel)Medeia",2.96634146,1.555,1.908,0.075
+"m14","as.factor(vessel)NW Explorer",-0.01421148,0.994,-0.014,0.989
+"m14","adj_raw_pink_log",0.50687537,0.18,2.821,0.012
+"m14","as.factor(odd_even_factor)odd",1.47411732,0.752,1.96,0.068
+"m14","NSEAK_SST_AMJJ",-0.36370071,0.169,-2.155,0.047
+"m14","as.factor(vessel)Medeia:adj_raw_pink_log",-0.65455383,0.329,-1.99,0.064
+"m14","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.08737393,0.163,-0.535,0.6
+"m14","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.19226992,0.128,-1.498,0.154
+"m15","(Intercept)",2.86619212,1.251,2.292,0.036
+"m15","as.factor(vessel)Medeia",3.13096222,1.539,2.034,0.059
+"m15","as.factor(vessel)NW Explorer",-0.0975195,0.978,-0.1,0.922
+"m15","adj_raw_pink_log",0.4883003,0.177,2.761,0.014
+"m15","as.factor(odd_even_factor)odd",1.48815618,0.746,1.995,0.063
+"m15","SEAK_SST_May",-0.27124489,0.121,-2.234,0.04
+"m15","as.factor(vessel)Medeia:adj_raw_pink_log",-0.70150258,0.324,-2.168,0.046
+"m15","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.06391138,0.161,-0.398,0.696
+"m15","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.19074873,0.127,-1.499,0.153
+"m16","(Intercept)",3.8570536,1.615,2.388,0.03
+"m16","as.factor(vessel)Medeia",3.28181119,1.551,2.116,0.05
+"m16","as.factor(vessel)NW Explorer",-0.05180387,0.989,-0.052,0.959
+"m16","adj_raw_pink_log",0.51661597,0.18,2.866,0.011
+"m16","as.factor(odd_even_factor)odd",1.5891545,0.753,2.111,0.051
+"m16","SEAK_SST_MJJ",-0.32024212,0.148,-2.169,0.045
+"m16","as.factor(vessel)Medeia:adj_raw_pink_log",-0.71410202,0.325,-2.195,0.043
+"m16","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.07667135,0.162,-0.472,0.643
+"m16","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.21511112,0.129,-1.669,0.114
+"m17","(Intercept)",3.44934894,1.39,2.481,0.025
+"m17","as.factor(vessel)Medeia",2.98234243,1.523,1.959,0.068
+"m17","as.factor(vessel)NW Explorer",0.01876629,0.974,0.019,0.985
+"m17","adj_raw_pink_log",0.51313645,0.176,2.912,0.01
+"m17","as.factor(odd_even_factor)odd",1.49469885,0.737,2.029,0.059
+"m17","SEAK_SST_AMJ",-0.35696454,0.152,-2.347,0.032
+"m17","as.factor(vessel)Medeia:adj_raw_pink_log",-0.65725924,0.322,-2.043,0.058
+"m17","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.08379763,0.16,-0.525,0.607
+"m17","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.19674311,0.126,-1.564,0.137
+"m18","(Intercept)",3.82078596,1.562,2.446,0.026
+"m18","as.factor(vessel)Medeia",3.14559896,1.537,2.046,0.058
+"m18","as.factor(vessel)NW Explorer",0.01904492,0.986,0.019,0.985
+"m18","adj_raw_pink_log",0.51828831,0.179,2.899,0.01
+"m18","as.factor(odd_even_factor)odd",1.50627249,0.745,2.022,0.06
+"m18","SEAK_SST_AMJJ",-0.35712407,0.159,-2.245,0.039
+"m18","as.factor(vessel)Medeia:adj_raw_pink_log",-0.68459512,0.324,-2.114,0.051
+"m18","as.factor(vessel)NW Explorer:adj_raw_pink_log",-0.08935857,0.162,-0.552,0.589
+"m18","adj_raw_pink_log:as.factor(odd_even_factor)odd",-0.20010126,0.127,-1.572,0.135
+"m19","(Intercept)",2.16065585,0.655,3.297,0.004
+"m19","as.factor(vessel)Cobb:adj_raw_pink_log",0.21180576,0.13,1.624,0.12
+"m19","as.factor(vessel)Medeia:adj_raw_pink_log",0.17028692,0.168,1.015,0.322
+"m19","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.12782022,0.109,1.169,0.256
+"m19","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.09268074,0.041,2.275,0.034
+"m20","(Intercept)",5.63019356,1.561,3.607,0.002
+"m20","ISTI20_MJJ",-0.45252111,0.189,-2.4,0.027
+"m20","as.factor(vessel)Cobb:adj_raw_pink_log",0.33865691,0.129,2.634,0.016
+"m20","as.factor(vessel)Medeia:adj_raw_pink_log",0.33564349,0.166,2.025,0.057
+"m20","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.23955249,0.109,2.203,0.04
+"m20","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.06093354,0.039,1.565,0.134
+"m21","(Intercept)",4.40068627,1.161,3.791,0.001
+"m21","Chatham_SST_May",-0.32590388,0.145,-2.251,0.036
+"m21","as.factor(vessel)Cobb:adj_raw_pink_log",0.24181528,0.12,2.022,0.058
+"m21","as.factor(vessel)Medeia:adj_raw_pink_log",0.2333403,0.155,1.501,0.15
+"m21","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.17340603,0.102,1.705,0.104
+"m21","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.08949251,0.037,2.407,0.026
+"m22","(Intercept)",5.1010137,1.802,2.832,0.011
+"m22","Chatham_SST_MJJ",-0.32103208,0.184,-1.74,0.098
+"m22","as.factor(vessel)Cobb:adj_raw_pink_log",0.24843062,0.126,1.971,0.063
+"m22","as.factor(vessel)Medeia:adj_raw_pink_log",0.242222,0.165,1.467,0.159
+"m22","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.16640743,0.106,1.563,0.135
+"m22","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.08451498,0.039,2.161,0.044
+"m23","(Intercept)",5.11648111,1.333,3.839,0.001
+"m23","Chatham_SST_AMJ",-0.42826042,0.173,-2.469,0.023
+"m23","as.factor(vessel)Cobb:adj_raw_pink_log",0.26702612,0.119,2.253,0.036
+"m23","as.factor(vessel)Medeia:adj_raw_pink_log",0.26273079,0.154,1.702,0.105
+"m23","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.19479874,0.101,1.923,0.07
+"m23","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.08012988,0.037,2.182,0.042
+"m24","(Intercept)",5.39575069,1.617,3.338,0.003
+"m24","Chatham_SST_AMJJ",-0.4047528,0.188,-2.157,0.044
+"m24","as.factor(vessel)Cobb:adj_raw_pink_log",0.26514891,0.122,2.166,0.043
+"m24","as.factor(vessel)Medeia:adj_raw_pink_log",0.26372901,0.16,1.646,0.116
+"m24","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.18294214,0.104,1.764,0.094
+"m24","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.08079772,0.038,2.133,0.046
+"m25","(Intercept)",4.16350621,1.096,3.8,0.001
+"m25","Icy_Strait_SST_May",-0.31144314,0.142,-2.187,0.041
+"m25","as.factor(vessel)Cobb:adj_raw_pink_log",0.24106713,0.12,2.004,0.06
+"m25","as.factor(vessel)Medeia:adj_raw_pink_log",0.23185321,0.156,1.483,0.155
+"m25","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.17325322,0.102,1.692,0.107
+"m25","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.095406,0.037,2.552,0.019
+"m26","(Intercept)",4.88917802,1.6,3.056,0.007
+"m26","Icy_Strait_SST_MJJ",-0.29753898,0.161,-1.849,0.08
+"m26","as.factor(vessel)Cobb:adj_raw_pink_log",0.25836636,0.126,2.055,0.054
+"m26","as.factor(vessel)Medeia:adj_raw_pink_log",0.24916849,0.164,1.519,0.145
+"m26","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.17270991,0.106,1.628,0.12
+"m26","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.08536926,0.039,2.207,0.04
+"m27","(Intercept)",4.89081568,1.286,3.802,0.001
+"m27","Icy_Strait_SST_AMJ",-0.41154567,0.172,-2.388,0.027
+"m27","as.factor(vessel)Cobb:adj_raw_pink_log",0.26332688,0.119,2.207,0.04
+"m27","as.factor(vessel)Medeia:adj_raw_pink_log",0.26241983,0.156,1.685,0.108
+"m27","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.19078328,0.102,1.874,0.076
+"m27","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.08925487,0.037,2.433,0.025
+"m28","(Intercept)",5.04847884,1.48,3.412,0.003
+"m28","Icy_Strait_SST_AMJJ",-0.36851351,0.172,-2.138,0.046
+"m28","as.factor(vessel)Cobb:adj_raw_pink_log",0.27206815,0.123,2.205,0.04
+"m28","as.factor(vessel)Medeia:adj_raw_pink_log",0.26908946,0.161,1.669,0.112
+"m28","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.18567205,0.104,1.781,0.091
+"m28","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.0840778,0.038,2.227,0.038
+"m29","(Intercept)",4.38557929,1.126,3.895,0.001
+"m29","NSEAK_SST_May",-0.3185055,0.137,-2.325,0.031
+"m29","as.factor(vessel)Cobb:adj_raw_pink_log",0.22763611,0.118,1.925,0.069
+"m29","as.factor(vessel)Medeia:adj_raw_pink_log",0.23089527,0.154,1.499,0.15
+"m29","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.1631637,0.1,1.63,0.12
+"m29","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.09178567,0.037,2.488,0.022
+"m30","(Intercept)",5.2293844,1.749,2.99,0.008
+"m30","NSEAK_SST_MJJ",-0.33219287,0.177,-1.876,0.076
+"m30","as.factor(vessel)Cobb:adj_raw_pink_log",0.24476063,0.124,1.972,0.063
+"m30","as.factor(vessel)Medeia:adj_raw_pink_log",0.25912007,0.165,1.57,0.133
+"m30","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.16696939,0.105,1.588,0.129
+"m30","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.08426489,0.039,2.18,0.042
+"m31","(Intercept)",5.10796224,1.322,3.864,0.001
+"m31","NSEAK_SST_AMJ",-0.42662341,0.172,-2.486,0.022
+"m31","as.factor(vessel)Cobb:adj_raw_pink_log",0.2524194,0.117,2.151,0.045
+"m31","as.factor(vessel)Medeia:adj_raw_pink_log",0.26533777,0.154,1.72,0.102
+"m31","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.18519788,0.1,1.85,0.08
+"m31","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.08327488,0.037,2.281,0.034
+"m32","(Intercept)",5.41790487,1.6,3.385,0.003
+"m32","NSEAK_SST_AMJJ",-0.40550436,0.185,-2.196,0.041
+"m32","as.factor(vessel)Cobb:adj_raw_pink_log",0.25528649,0.121,2.108,0.049
+"m32","as.factor(vessel)Medeia:adj_raw_pink_log",0.2716288,0.16,1.693,0.107
+"m32","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.17666989,0.103,1.722,0.101
+"m32","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.08296222,0.038,2.207,0.04
+"m33","(Intercept)",4.30463104,1.196,3.6,0.002
+"m33","SEAK_SST_May",-0.28664107,0.138,-2.081,0.051
+"m33","as.factor(vessel)Cobb:adj_raw_pink_log",0.23189092,0.121,1.915,0.071
+"m33","as.factor(vessel)Medeia:adj_raw_pink_log",0.23602005,0.158,1.49,0.153
+"m33","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.16547101,0.103,1.609,0.124
+"m33","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.0895713,0.038,2.372,0.028
+"m34","(Intercept)",5.13740136,1.762,2.916,0.009
+"m34","SEAK_SST_MJJ",-0.30528662,0.169,-1.805,0.087
+"m34","as.factor(vessel)Cobb:adj_raw_pink_log",0.23853743,0.124,1.916,0.07
+"m34","as.factor(vessel)Medeia:adj_raw_pink_log",0.25749968,0.166,1.55,0.138
+"m34","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.16523213,0.106,1.564,0.134
+"m34","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.08408533,0.039,2.161,0.044
+"m35","(Intercept)",5.031645,1.379,3.65,0.002
+"m35","SEAK_SST_AMJ",-0.38806057,0.168,-2.308,0.032
+"m35","as.factor(vessel)Cobb:adj_raw_pink_log",0.25516214,0.12,2.132,0.046
+"m35","as.factor(vessel)Medeia:adj_raw_pink_log",0.27015979,0.158,1.709,0.104
+"m35","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.18576281,0.102,1.817,0.085
+"m35","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.08218711,0.037,2.208,0.04
+"m36","(Intercept)",5.35876086,1.641,3.266,0.004
+"m36","SEAK_SST_AMJJ",-0.37362016,0.178,-2.097,0.05
+"m36","as.factor(vessel)Cobb:adj_raw_pink_log",0.24973407,0.122,2.049,0.055
+"m36","as.factor(vessel)Medeia:adj_raw_pink_log",0.27100404,0.162,1.67,0.111
+"m36","as.factor(vessel)NW Explorer:adj_raw_pink_log",0.17526332,0.104,1.692,0.107
+"m36","adj_raw_pink_log:as.factor(odd_even_factor)odd",0.0829917,0.038,2.187,0.041

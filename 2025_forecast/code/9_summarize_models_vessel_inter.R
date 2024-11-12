@@ -39,24 +39,24 @@ mod16 <- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_e
 mod17 <- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + SEAK_SST_AMJJ, data = log_data)
 mod18 <- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + SEAK_SST_AMJ, data = log_data)
 # potential models
-model.names <- c(m1='vessel x adj_raw_pink_log + odd_factor ',
-                 m2='vessel x adj_raw_pink_log + ISTI20_MJJ + odd_factor ',
-                 m3='vessel x adj_raw_pink_log + Chatham_SST_May + odd_factor',
-                 m4='vessel x adj_raw_pink_log + Chatham_SST_MJJ + odd_factor',
-                 m5='vessel x adj_raw_pink_log + Chatham_SST_AMJ + odd_factor',
-                 m6='vessel x adj_raw_pink_log + Chatham_SST_AMJJ + odd_factor',
-                 m7='vessel x adj_raw_pink_log + Icy_Strait_SST_May + odd_factor',
-                 m8='vessel x adj_raw_pink_log + Icy_Strait_SST_MJJ + odd_factor',
-                 m9='vessel x adj_raw_pink_log + Icy_Strait_SST_AMJ + odd_factor',
-                 m10='vessel x adj_raw_pink_log + Icy_Strait_SST_AMJJ + odd_factor',
-                 m11='vessel x adj_raw_pink_log + NSEAK_SST_May + odd_factor',
-                 m12='vessel x adj_raw_pink_log + NSEAK_SST_MJJ + odd_factor',
-                 m13='vessel x adj_raw_pink_log+  NSEAK_SST_AMJ + odd_factor',
-                 m14='vessel x adj_raw_pink_log + NSEAK_SST_AMJJ + odd_factor',
-                 m15='vessel x adj_raw_pink_log + SEAK_SST_May + odd_factor',
-                 m16='vessel x adj_raw_pink_log + SEAK_SST_MJJ + odd_factor',
-                 m17='vessel x adj_raw_pink_log + SEAK_SST_AMJ + odd_factor',
-                 m18='vessel x adj_raw_pink_log + SEAK_SST_AMJJ + odd_factor')
+model.names <- c(m1='no temp',
+                 m2='ISTI20_MJJ',
+                 m3='Chatham_SST_May',
+                 m4='Chatham_SST_MJJ',
+                 m5='Chatham_SST_AMJ',
+                 m6='Chatham_SST_AMJJ',
+                 m7='Icy_Strait_SST_May',
+                 m8='Icy_Strait_SST_MJJ',
+                 m9='Icy_Strait_SST_AMJ',
+                 m10='Icy_Strait_SST_AMJJ',
+                 m11='NSEAK_SST_May',
+                 m12='NSEAK_SST_MJJ',
+                 m13='NSEAK_SST_AMJ',
+                 m14='NSEAK_SST_AMJJ',
+                 m15='SEAK_SST_May',
+                 m16='SEAK_SST_MJJ',
+                 m17='SEAK_SST_AMJ',
+                 m18='SEAK_SST_AMJJ')
 
 model.formulas <- c(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor),
                     SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + ISTI20_MJJ + as.factor(odd_even_factor),
@@ -176,7 +176,7 @@ read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5_vessel_
 
 read.csv(file.path(results.directory,'seak_model_summary_vessel_inter.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
   dplyr::rename(terms = 'X') %>%
-  dplyr::select(terms, fit, fit_UPI, fit_LPI,AdjR2, sigma, MAPE) %>%
+  dplyr::select(terms, fit, fit_UPI, fit_LPI,AdjR2, sigma, AICc) %>%
   mutate(AdjR2 = round(AdjR2,3)) %>%
   mutate(Model = c('m1d','m2d','m3d','m4d','m5d','m6d','m7d','m8d',
                    'm9d','m10d','m11d','m12d','m13d','m14d','m15d','m16d','m17d',
@@ -187,8 +187,9 @@ read.csv(file.path(results.directory,'seak_model_summary_vessel_inter.csv'), hea
   mutate(Fit = round(fit_log,3),
          Fit_LPI = round(fit_log_LPI,3),
          Fit_UPI = round(fit_log_UPI,3)) %>%
-  dplyr::select(Model, terms, Fit, Fit_LPI, Fit_UPI, AdjR2, MAPE) %>%
+  dplyr::select(Model, terms, Fit, Fit_LPI, Fit_UPI, AdjR2, AICc) %>%
   merge(., MAPE5, by="terms") %>%
+  arrange(MAPE5) %>%
   write.csv(., paste0(results.directory, "/model_summary_table2_vessel_inter.csv"), row.names = F)
 
 # forecast figure
@@ -226,5 +227,5 @@ ggplot(., aes(x=factor(model, level=c('m1d','m2d','m3d','m4d','m5d','m6d','m7d',
   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, linewidth=1, color="grey30")+
   scale_y_continuous(breaks = c(0,10, 20, 30, 40, 50, 60, 70, 90, 80,100), limits = c(0,100))+
   labs(x = "Models", y = "2025 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
-ggsave(paste0(results.directory, "figs/forecast_models_vessel_inter.png"), dpi = 500, height = 4, width = 10, units = "in")
+ggsave(paste0(results.directory, "figs/forecast_models_vessel_inter.png"), dpi = 500, height = 4, width = 7, units = "in")
 

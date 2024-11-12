@@ -1,0 +1,37 @@
+"terms","Model","Fit","Fit_LPI","Fit_UPI","AdjR2","MAPE","MAPE5"
+"Chatham_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m23a",21.998,13.617,35.538,0.723,0.0781085993002686,34.317
+"Chatham_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m24a",24.52,14.676,40.968,0.678,0.0871427349762921,36.756
+"Chatham_SST_May+ CPUE:as.factor(odd_even_factor)","m21a",22.927,14.24,36.913,0.725,0.0749684339668355,36.138
+"Chatham_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m22a",27.199,15.814,46.779,0.639,0.0931552577223641,41.016
+"CPUE*as.factor(odd_even_factor)","m1a",40.308,23.857,68.103,0.692,0.0860803156878599,39.659
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJ","m5a",30.942,20.473,46.764,0.816,0.0648556126591881,32.835
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJJ","m6a",34.543,22.167,53.827,0.784,0.071745912052911,34.712
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_May","m3a",32.184,21.568,48.025,0.825,0.0645762225521692,35.416
+"CPUE*as.factor(odd_even_factor) + Chatham_SST_MJJ","m4a",38.547,24.328,61.077,0.764,0.0760406179700019,37.506
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJ","m9a",33.085,21.999,49.757,0.818,0.0655158966430512,32.509
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ","m10a",35.951,23.291,55.493,0.791,0.0709095072864899,33.178
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_May","m7a",32.832,22.006,48.983,0.825,0.0635079396502195,36.196
+"CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_MJJ","m8a",39.734,25.392,62.176,0.776,0.0740057793603564,35.774
+"CPUE*as.factor(odd_even_factor) + ISTI20_MJJ","m2a",27.28,18.015,41.31,0.822,0.0613186735087998,30.979
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJ","m13a",31.54,20.702,48.052,0.808,0.065278523474722,33.077
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJJ","m14a",34.542,22.056,54.095,0.779,0.072112781265562,34.265
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_May","m11a",32.852,21.988,49.084,0.823,0.0640982955510326,34.681
+"CPUE*as.factor(odd_even_factor) + NSEAK_SST_MJJ","m12a",37.817,23.889,59.865,0.765,0.0751059419240168,36.044
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJ","m17a",32.136,20.837,49.561,0.797,0.0682049038781522,34.009
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJJ","m18a",34.876,22.088,55.069,0.771,0.0737643308399407,34.845
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_May","m15a",33.013,21.765,50.073,0.81,0.0671675731327495,35.648
+"CPUE*as.factor(odd_even_factor) + SEAK_SST_MJJ","m16a",38.016,23.874,60.534,0.759,0.0764560181888551,36.157
+"CPUE:as.factor(odd_even_factor)","m19a",27.549,15.028,50.5,0.548,0.104540226996744,49.309
+"Icy_Strait_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m27a",23.273,14.181,38.195,0.702,0.0798473381085234,36.407
+"Icy_Strait_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m28a",25.218,14.96,42.509,0.666,0.0891692427412732,36.865
+"Icy_Strait_SST_May+ CPUE:as.factor(odd_even_factor)","m25a",23.129,14.19,37.699,0.71,0.0742537966059808,38.022
+"Icy_Strait_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m26a",27.704,16.091,47.696,0.638,0.0933728994753878,40.069
+"ISTI20_MJJ+ CPUE:as.factor(odd_even_factor)","m20a",19.036,11.774,30.776,0.73,0.075680571779246,29.568
+"NSEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m31a",22.225,13.552,36.446,0.705,0.0798409251360971,33.72
+"NSEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m32a",24.253,14.344,41.006,0.664,0.0889011312434742,35.892
+"NSEAK_SST_May+ CPUE:as.factor(odd_even_factor)","m29a",23.206,14.26,37.762,0.712,0.0764367168668771,35.221
+"NSEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m30a",26.435,15.314,45.634,0.635,0.0936636800431778,38.516
+"SEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)","m35a",22.546,13.57,37.459,0.689,0.084559788235991,35.38
+"SEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)","m36a",24.419,14.322,41.633,0.653,0.0917599673205172,37.559
+"SEAK_SST_May+ CPUE:as.factor(odd_even_factor)","m33a",23.173,14.026,38.285,0.694,0.0826151617224913,37.169
+"SEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)","m34a",26.561,15.313,46.07,0.628,0.0956023974707337,39.906
