@@ -24,7 +24,6 @@ library(tidyverse)
 library(ggplot2)
 library(ggfortify)
 library(Hmisc)
-library(dplyr)
 library(extrafont)
 library(ggrepel)
 library(Metrics) # MASE calc
