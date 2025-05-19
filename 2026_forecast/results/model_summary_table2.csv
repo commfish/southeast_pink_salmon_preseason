@@ -1,19 +1,19 @@
 "terms","Model","Fit","Fit_LPI","Fit_UPI","AdjR2","MAPE","MAPE5"
-"CPUE + as.factor(odd_even_factor)","m1a",23.905,13.861,41.226,0.616,0.0970341975474682,31.856
-"CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJ","m5a",12.288,7.715,19.571,0.771,0.0740122036225581,29.276
-"CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJJ","m6a",21.098,13.316,33.429,0.729,0.0812156222322633,34.813
-"CPUE + as.factor(odd_even_factor) + Chatham_SST_May","m3a",12.605,8.013,19.826,0.778,0.0723132270448901,32.777
-"CPUE + as.factor(odd_even_factor) + Chatham_SST_MJJ","m4a",31.667,19.029,52.699,0.693,0.0877574960431145,38.772
-"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJ","m9a",11.106,6.804,18.13,0.763,0.0736485117620665,31.231
-"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ","m10a",21.216,13.344,33.733,0.725,0.082514449427562,34.52
-"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_May","m7a",11.076,6.857,17.89,0.771,0.0712881453212442,33.81
-"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_MJJ","m8a",32.923,19.724,54.954,0.695,0.0877472023481427,37.531
-"CPUE + as.factor(odd_even_factor) + ISTI20_MJJ","m2a",25.445,16.354,39.589,0.749,0.0717547428236556,27.176
-"CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJ","m13a",12.234,7.607,19.675,0.764,0.0752869560210327,32.098
-"CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJJ","m14a",20.949,13.169,33.324,0.724,0.0815582323811375,36.782
-"CPUE + as.factor(odd_even_factor) + NSEAK_SST_May","m11a",13.115,8.33,20.649,0.773,0.0734253005536616,34.06
-"CPUE + as.factor(odd_even_factor) + NSEAK_SST_MJJ","m12a",31.526,19.031,52.225,0.697,0.0865577659194257,39.958
-"CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJ","m17a",16.445,10.422,25.947,0.75,0.07829078800579,33.35
-"CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJJ","m18a",25.639,16.026,41.018,0.717,0.0831708171172281,37.344
-"CPUE + as.factor(odd_even_factor) + SEAK_SST_May","m15a",16.908,10.828,26.402,0.758,0.0768026204090319,34.792
-"CPUE + as.factor(odd_even_factor) + SEAK_SST_MJJ","m16a",35.532,20.945,60.276,0.692,0.0869527812895529,40.272
+"CPUE + as.factor(odd_even_factor)","m1a",23.905,13.861,41.226,0.616,0.0970341975474682,45.478
+"CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJ","m5a",12.288,7.715,19.571,0.771,0.0740122036225581,30.342
+"CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJJ","m6a",21.098,13.316,33.429,0.729,0.0812156222322633,34.899
+"CPUE + as.factor(odd_even_factor) + Chatham_SST_May","m3a",12.605,8.013,19.826,0.778,0.0723132270448901,33.197
+"CPUE + as.factor(odd_even_factor) + Chatham_SST_MJJ","m4a",31.667,19.029,52.699,0.693,0.0877574960431145,40.488
+"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJ","m9a",11.106,6.804,18.13,0.763,0.0736485117620665,31.964
+"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ","m10a",21.216,13.344,33.733,0.725,0.082514449427562,34.729
+"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_May","m7a",11.076,6.857,17.89,0.771,0.0712881453212442,34.805
+"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_MJJ","m8a",32.923,19.724,54.954,0.695,0.0877472023481427,39.652
+"CPUE + as.factor(odd_even_factor) + ISTI20_MJJ","m2a",25.445,16.354,39.589,0.749,0.0717547428236556,25.796
+"CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJ","m13a",12.234,7.607,19.675,0.764,0.0752869560210327,30.724
+"CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJJ","m14a",20.949,13.169,33.324,0.724,0.0815582323811375,34.144
+"CPUE + as.factor(odd_even_factor) + NSEAK_SST_May","m11a",13.115,8.33,20.649,0.773,0.0734253005536616,32.835
+"CPUE + as.factor(odd_even_factor) + NSEAK_SST_MJJ","m12a",31.526,19.031,52.225,0.697,0.0865577659194257,38.164
+"CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJ","m17a",16.445,10.422,25.947,0.75,0.07829078800579,32.214
+"CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJJ","m18a",25.639,16.026,41.018,0.717,0.0831708171172281,35.324
+"CPUE + as.factor(odd_even_factor) + SEAK_SST_May","m15a",16.908,10.828,26.402,0.758,0.0768026204090319,34.195
+"CPUE + as.factor(odd_even_factor) + SEAK_SST_MJJ","m16a",35.532,20.945,60.276,0.692,0.0869527812895529,38.986

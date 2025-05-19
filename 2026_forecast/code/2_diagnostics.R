@@ -6,8 +6,8 @@ lwr_pi_80<-13.115 # 80% PI from model_summary_table2 in the results folder
 upr_pi_80<-46.352 # 80% PI from model_summary_table2 in the results folder
 best_model<-m25
 model<-'m25'
-year.forecast <- "2025_forecast" # forecast year
-year.data <- 2024 # last year of data
+year.forecast <- "2026_forecast" # forecast year
+year.data <- 2025 # last year of data
 year.data.one <- year.data - 1
 
 # best model based on performance metrics

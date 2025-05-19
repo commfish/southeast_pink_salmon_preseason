@@ -1,7 +1,7 @@
 # run code 2_diagnostics.R first
 # STEP 1: DATA
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(data.directory,'var2024_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
+read.csv(file.path(data.directory,'var2025_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
 
 # restructure the data for modeling
 n <- dim(variables)[1] # number of years including forecast year
@@ -11,79 +11,44 @@ variables %>%
   dplyr::select(-c(SEAKCatch)) -> log_data
 
 # STEP #2: MODELS
-model.names <- c(m1a='CPUE*as.factor(odd_even_factor)',
-               m2a='CPUE*as.factor(odd_even_factor) + ISTI20_MJJ',
-               m3a='CPUE*as.factor(odd_even_factor) + Chatham_SST_May',
-               m4a='CPUE*as.factor(odd_even_factor) + Chatham_SST_MJJ',
-               m5a='CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJ',
-               m6a='CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJJ',
-               m7a='CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_May',
-               m8a='CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_MJJ',
-               m9a='CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJ',
-               m10a='CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ',
-               m11a='CPUE*as.factor(odd_even_factor) + NSEAK_SST_May',
-               m12a='CPUE*as.factor(odd_even_factor) + NSEAK_SST_MJJ',
-               m13a='CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJ',
-               m14a='CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJJ',
-               m15a='CPUE*as.factor(odd_even_factor) + SEAK_SST_May',
-               m16a='CPUE*as.factor(odd_even_factor) + SEAK_SST_MJJ',
-               m17a='CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJ',
-               m18a='CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJJ',
-               m19a='CPUE:as.factor(odd_even_factor)',
-               m20a='ISTI20_MJJ+ CPUE:as.factor(odd_even_factor)',
-               m21a='Chatham_SST_May+ CPUE:as.factor(odd_even_factor)',
-               m22a='Chatham_SST_MJJ+ CPUE:as.factor(odd_even_factor)',
-               m23a='Chatham_SST_AMJ+ CPUE:as.factor(odd_even_factor)',
-               m24a='Chatham_SST_AMJJ+ CPUE:as.factor(odd_even_factor)',
-               m25a='Icy_Strait_SST_May+ CPUE:as.factor(odd_even_factor)',
-               m26a='Icy_Strait_SST_MJJ+ CPUE:as.factor(odd_even_factor)',
-               m27a='Icy_Strait_SST_AMJ+ CPUE:as.factor(odd_even_factor)',
-               m28a='Icy_Strait_SST_AMJJ+ CPUE:as.factor(odd_even_factor)',
-               m29a='NSEAK_SST_May+ CPUE:as.factor(odd_even_factor)',
-               m30a='NSEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)',
-               m31a='NSEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)',
-               m32a='NSEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)',
-               m33a='SEAK_SST_May+ CPUE:as.factor(odd_even_factor)',
-               m34a='SEAK_SST_MJJ+ CPUE:as.factor(odd_even_factor)',
-               m35a='SEAK_SST_AMJ+ CPUE:as.factor(odd_even_factor)',
-               m36a='SEAK_SST_AMJJ+ CPUE:as.factor(odd_even_factor)')
+model.names <- c(m1a='CPUE + as.factor(odd_even_factor)',
+               m2a='CPUE + as.factor(odd_even_factor) + ISTI20_MJJ',
+               m3a='CPUE + as.factor(odd_even_factor) + Chatham_SST_May',
+               m4a='CPUE + as.factor(odd_even_factor) + Chatham_SST_MJJ',
+               m5a='CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJ',
+               m6a='CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJJ',
+               m7a='CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_May',
+               m8a='CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_MJJ',
+               m9a='CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJ',
+               m10a='CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ',
+               m11a='CPUE + as.factor(odd_even_factor) + NSEAK_SST_May',
+               m12a='CPUE + as.factor(odd_even_factor) + NSEAK_SST_MJJ',
+               m13a='CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJ',
+               m14a='CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJJ',
+               m15a='CPUE + as.factor(odd_even_factor) + SEAK_SST_May',
+               m16a='CPUE + as.factor(odd_even_factor) + SEAK_SST_MJJ',
+               m17a='CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJ',
+               m18a='CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJJ')
+               
 # model formulas (maintain the same order as above)
-model.formulas <- c(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor),
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + ISTI20_MJJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Chatham_SST_May,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Chatham_SST_MJJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_May,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_MJJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + NSEAK_SST_May,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + NSEAK_SST_MJJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + SEAK_SST_May,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + SEAK_SST_MJJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJ,
-                 SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor),
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + ISTI20_MJJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Chatham_SST_May,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Chatham_SST_MJJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Chatham_SST_AMJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Chatham_SST_AMJJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Icy_Strait_SST_May,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Icy_Strait_SST_MJJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Icy_Strait_SST_AMJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + NSEAK_SST_May,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + NSEAK_SST_MJJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + NSEAK_SST_AMJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + NSEAK_SST_AMJJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + SEAK_SST_May,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + SEAK_SST_MJJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + SEAK_SST_AMJ,
-                 SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + SEAK_SST_AMJJ) # temp. data
+model.formulas <- c(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor),
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + ISTI20_MJJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Chatham_SST_May,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Chatham_SST_MJJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_May,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_MJJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_May,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_MJJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + SEAK_SST_May,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + SEAK_SST_MJJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJ,
+                 SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJJ)
 
 # summary statistics of SEAK pink salmon harvest forecast models (seak_model_summary.csv file created)
 seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values, models = "")
@@ -92,43 +57,24 @@ seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=
 log_data %>%
   dplyr::filter(JYear < year.data) -> log_data_subset
 
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor), data = log_data_subset) -> m1a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + ISTI20_MJJ, data = log_data_subset) -> m2a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Chatham_SST_May, data = log_data_subset) -> m3a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Chatham_SST_MJJ, data = log_data_subset) -> m4a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJ, data = log_data_subset) -> m5a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Chatham_SST_AMJJ, data = log_data_subset) -> m6a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_May, data = log_data_subset) -> m7a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_MJJ, data = log_data_subset) -> m8a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJ, data = log_data_subset) -> m9a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ, data = log_data_subset) -> m10a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + NSEAK_SST_May, data = log_data_subset) -> m11a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + NSEAK_SST_MJJ, data = log_data_subset) -> m12a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJ, data = log_data_subset) -> m13a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + NSEAK_SST_AMJJ, data = log_data_subset) -> m14a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + SEAK_SST_May, data = log_data_subset) -> m15a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + SEAK_SST_MJJ, data = log_data_subset) -> m16a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJ, data = log_data_subset) -> m17a
-lm(SEAKCatch_log ~ CPUE*as.factor(odd_even_factor) + SEAK_SST_AMJJ, data = log_data_subset) -> m18a
-
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor), data = log_data_subset) -> m19a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + ISTI20_MJJ, data = log_data_subset) -> m20a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Chatham_SST_May, data = log_data_subset) -> m21a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Chatham_SST_MJJ, data = log_data_subset) -> m22a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Chatham_SST_AMJ, data = log_data_subset) -> m23a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Chatham_SST_AMJJ, data = log_data_subset) -> m24a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Icy_Strait_SST_May, data = log_data_subset) -> m25a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Icy_Strait_SST_MJJ, data = log_data_subset) -> m26a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Icy_Strait_SST_AMJ, data = log_data_subset) -> m27a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ, data = log_data_subset) -> m28a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + NSEAK_SST_May, data = log_data_subset) -> m29a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + NSEAK_SST_MJJ, data = log_data_subset) -> m30a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + NSEAK_SST_AMJ, data = log_data_subset) -> m31a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + NSEAK_SST_AMJJ, data = log_data_subset) -> m32a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + SEAK_SST_May, data = log_data_subset) -> m33a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + SEAK_SST_MJJ, data = log_data_subset) -> m34a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + SEAK_SST_AMJ, data = log_data_subset) -> m35a
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + SEAK_SST_AMJJ, data = log_data_subset) -> m36a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor), data = log_data_subset) -> m1a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + ISTI20_MJJ, data = log_data_subset) -> m2a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Chatham_SST_May, data = log_data_subset) -> m3a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Chatham_SST_MJJ, data = log_data_subset) -> m4a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJ, data = log_data_subset) -> m5a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJJ, data = log_data_subset) -> m6a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_May, data = log_data_subset) -> m7a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_MJJ, data = log_data_subset) -> m8a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJ, data = log_data_subset) -> m9a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ, data = log_data_subset) -> m10a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_May, data = log_data_subset) -> m11a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_MJJ, data = log_data_subset) -> m12a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJ, data = log_data_subset) -> m13a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJJ, data = log_data_subset) -> m14a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + SEAK_SST_May, data = log_data_subset) -> m15a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + SEAK_SST_MJJ, data = log_data_subset) -> m16a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJ, data = log_data_subset) -> m17a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJJ, data = log_data_subset) -> m18a
 
 tidy(m1a) -> model1a
 tidy(m2a) -> model2a
@@ -149,25 +95,6 @@ tidy(m16a) -> model16a
 tidy(m17a) -> model17a
 tidy(m18a) -> model18a
 
-tidy(m19a) -> model19a
-tidy(m20a) -> model20a
-tidy(m21a) -> model21a
-tidy(m22a) -> model22a
-tidy(m23a) -> model23a
-tidy(m24a) -> model24a
-tidy(m25a) -> model25a
-tidy(m26a) -> model26a
-tidy(m27a) -> model27a
-tidy(m28a) -> model28a
-tidy(m29a) -> model29a
-tidy(m30a) -> model30a
-tidy(m31a) -> model31a
-tidy(m32a) -> model32a
-tidy(m33a) -> model33a
-tidy(m34a) -> model34a
-tidy(m35a) -> model35a
-tidy(m36a) -> model36a
-
 rbind(model1a, model2a) %>%
 rbind(., model3a) %>%
 rbind(., model4a) %>%
@@ -184,38 +111,14 @@ rbind(., model14a) %>%
 rbind(., model15a) %>%
 rbind(., model16a) %>%
 rbind(., model17a) %>%
-rbind(., model18a) %>%
-  
+rbind(., model18a) -> models 
 
-rbind(., model19a) %>%
-rbind(., model20a) %>%
-rbind(., model21a) %>%
-rbind(., model22a) %>%
-rbind(., model23a) %>%
-rbind(., model24a) %>%
-rbind(., model25a) %>%
-rbind(., model26a) %>%
-rbind(., model27a) %>%
-rbind(., model28a) %>%
-rbind(., model29a) %>%
-rbind(., model30a) %>%
-rbind(., model31a) %>%
-rbind(., model32a) %>%
-rbind(., model33a) %>%
-rbind(., model34a) %>%
-rbind(., model35a) %>%
-rbind(., model36a) -> models 
-
-nyear <- 4
+nyear <- 3
 model <- c(rep('m1a',nyear),rep('m2a',nyear+1),rep('m3a',nyear+1),rep('m4a',nyear+1),
            rep('m5a',nyear+1),rep('m6a',nyear+1),rep('m7a',nyear+1),rep('m8a',nyear+1),
            rep('m9a',nyear+1),rep('m10a',nyear+1),rep('m11a',nyear+1),rep('m12a',nyear+1),
            rep('m13a',nyear+1),rep('m14a',nyear+1),rep('m15a',nyear+1),rep('m16a',nyear+1),
-           rep('m17a',nyear+1),rep('m18a',nyear+1),rep('m19a',nyear-1),rep('m20a',nyear),
-           rep('m21a',nyear),rep('m22a',nyear),rep('m23a',nyear),rep('m24a',nyear),
-           rep('m25a',nyear),rep('m26a',nyear),rep('m27a',nyear),rep('m28a',nyear),
-           rep('m29a',nyear),rep('m30a',nyear),rep('m31a',nyear),rep('m32a',nyear),
-           rep('m33a',nyear),rep('m34a',nyear),rep('m35a',nyear),rep('m36a',nyear))
+           rep('m17a',nyear+1),rep('m18a',nyear+1))
 model<-as.data.frame(model)
 cbind(models, model)%>%
   dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
@@ -255,9 +158,7 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.
   mutate(AdjR2 = round(AdjR2,3)) %>%
   mutate(Model = c('m1a','m2a','m3a','m4a','m5a','m6a','m7a','m8a',
                    'm9a','m10a','m11a','m12a','m13a','m14a','m15a','m16a','m17a',
-                   'm18a','m19a','m20a'	,'m21a'	,'m22a'	,'m23a'	,'m24a'	,'m25a'	,
-                   'm26a'	,'m27a'	,'m28a'	,'m29a'	,'m30a'	,'m31a'	,'m32a'	,'m33a'	,
-                   'm34a'	,'m35a'	, 'm36a')) %>%
+                   'm18a')) %>%
   mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% # exponentiate the forecast
@@ -275,14 +176,10 @@ results %>%
   dplyr::select(terms, fit,	fit_LPI,	fit_UPI, sigma) %>%
   mutate(model = c('m1a','m2a','m3a','m4a','m5a','m6a','m7a','m8a',
                    'm9a','m10a','m11a','m12a','m13a','m14a','m15a','m16a','m17a',
-                   'm18a','m19a','m20a'	,'m21a'	,'m22a'	,'m23a'	,'m24a'	,'m25a'	,
-                   'm26a'	,'m27a'	,'m28a'	,'m29a'	,'m30a'	,'m31a'	,'m32a'	,'m33a'	,
-                   'm34a'	,'m35a'	, 'm36a')) %>%
+                   'm18a')) %>%
   mutate(order = c('1a','2a','3a','4a','5a','6a','7a','8a',
                    '9a','10a','11a','12a','13a','14a','15a','16a','17a',
-                   '18a','19a','20a'	,'21a'	,'22a'	,'23a'	,'24a'	,'25a'	,
-                   '26a'	,'27a'	,'28a'	,'29a'	,'30a'	,'31a'	,'32a'	,'33a'	,
-                   '34a'	,'35a'	, '36a')) %>%
+                   '18a')) %>%
   mutate(model= as.factor(model),
          fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma),
@@ -292,9 +189,7 @@ results %>%
   dplyr::arrange(order) %>%
   ggplot(., aes(x=factor(model, level=c('m1a','m2a','m3a','m4a','m5a','m6a','m7a','m8a',
                                         'm9a','m10a','m11a','m12a','m13a','m14a','m15a','m16a','m17a',
-                                        'm18a','m19a','m20a'	,'m21a'	,'m22a'	,'m23a'	,'m24a'	,'m25a'	,
-                                        'm26a'	,'m27a'	,'m28a'	,'m29a'	,'m30a'	,'m31a'	,'m32a'	,'m33a'	,
-                                        'm34a'	,'m35a'	, 'm36a')), y=fit_log)) +
+                                        'm18a')), y=fit_log)) +
   geom_col(aes(y = fit_log, fill = "SEAK pink catch"), colour ="grey70",
            width = 1, position = position_dodge(width = 0.1)) +
   scale_colour_manual("", values=c("SEAK pink catch" = "grey90", "fit" = "black")) +
@@ -306,7 +201,7 @@ results %>%
                      legend.title=element_blank(),
                      legend.position = "none") +
   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, linewidth=1, color="grey30")+
-  scale_y_continuous(breaks = c(0,10, 20, 30, 40, 50, 60, 70, 80, 100), limits = c(0,100))+
-  labs(x = "Models", y = "2025 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
+  scale_y_continuous(breaks = c(0,10, 20, 30, 40, 50, 60, 70, 80, 90, 100), limits = c(0,100))+
+  labs(x = "Models", y = "2026 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
 ggsave(paste0(results.directory, "figs/forecast_models.png"), dpi = 500, height = 4, width = 10, units = "in")
 
