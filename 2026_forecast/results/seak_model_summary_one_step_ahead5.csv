@@ -1,0 +1,19 @@
+"","MAPE5"
+"CPUE + as.factor(odd_even_factor)",31.8558426106515
+"CPUE + as.factor(odd_even_factor) + ISTI20_MJJ",27.1763585012496
+"CPUE + as.factor(odd_even_factor) + Chatham_SST_May",32.7766868606849
+"CPUE + as.factor(odd_even_factor) + Chatham_SST_MJJ",38.7724156511252
+"CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJ",29.2759015061787
+"CPUE + as.factor(odd_even_factor) + Chatham_SST_AMJJ",34.8130454303714
+"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_May",33.8096562413303
+"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_MJJ",37.5310620579357
+"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJ",31.2307977876554
+"CPUE + as.factor(odd_even_factor) + Icy_Strait_SST_AMJJ",34.5202817344516
+"CPUE + as.factor(odd_even_factor) + NSEAK_SST_May",34.0599543328289
+"CPUE + as.factor(odd_even_factor) + NSEAK_SST_MJJ",39.9575932713306
+"CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJ",32.0980791722474
+"CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJJ",36.7820166636294
+"CPUE + as.factor(odd_even_factor) + SEAK_SST_May",34.7921287975156
+"CPUE + as.factor(odd_even_factor) + SEAK_SST_MJJ",40.2715830684654
+"CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJ",33.3502545983208
+"CPUE + as.factor(odd_even_factor) + SEAK_SST_AMJJ",37.3444095989119
