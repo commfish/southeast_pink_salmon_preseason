@@ -40,15 +40,15 @@ There were 36 individual models considered:
 
 -   adj_raw_pink model with a vessel interaction, an odd/even year factor, and a vessel factor (m1);
 
--   adj_raw_pink model with a vessel interaction, an odd/even year factor, a vessel factor, and with temperature data from the the SECM survey (m2);
+-   adj_raw_pink model with a vessel interaction, an odd/even year factor, a vessel factor, and temperature data from the the SECM survey (m2);
 
--   16 adj_raw_pink models with a vessel interaction, an odd/even year factor, a vessel factor, and with satellite SST data (m3-m18);
+-   16 adj_raw_pink models with a vessel interaction, an odd/even year factor, a vessel factor, and satellite SST data (m3-m18);
 
 -   adjusted CPUE, and an odd/even year factor (m1a);
 
--   adjusted CPUE, an odd/even year factor, and with temperature data from the the SECM survey (m2a);
+-   adjusted CPUE, an odd/even year factor, and temperature data from the the SECM survey (m2a);
 
--   16 adjusted CPUE models with an odd/even year factor, and with satellite SST data (m3a-m18a);
+-   16 adjusted CPUE models with an odd/even year factor, and satellite SST data (m3a-m18a);
 
 The model performance metrics one-step ahead mean absolute percent error (MAPE) for the last five years (MAPE5; forecast years 2021 through 2025) was used to evaluate the forecast accuracy of the 36 individual models, the AICc values were calculated for each model to prevent over-parameterization of the model, and the adjusted R-squared values, significant terms, and overall p-value of the model were used to the determine fit. Based upon the performance metric the 5-year MAPE, the AICc values, significant parameters in the models, and the adjusted R-squared values, model xx (a model that included xx; Appendix B) was the best performing model and the 2026-forecast using this model has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
 
@@ -56,17 +56,17 @@ The model performance metrics one-step ahead mean absolute percent error (MAPE) 
 
 ## Individual, multiple linear regression models
 
-Biophysical variables based on data from Southeast Alaska were used to forecast the harvest of adult pink salmon in Southeast Alaska, one year in advance, using individual, multiple linear regression models (models m1-m18 and models m1a–m18a). The two simplest regression models (model m1 and model m1a) are as follows. The first model, model m1, consisted of the predictor variable juvenile adj_raw_pink $({X_1})$ with a vessel factor interaction $({X_2})$, an odd/even year factor $({X_3})$, and a vessel factor $({X_2})$ (model m1),
+Biophysical variables based on data from Southeast Alaska were used to forecast the harvest of adult pink salmon in Southeast Alaska, one year in advance, using individual, multiple linear regression models (models m1-m18 and models m1a–m18a). The two simplest regression models (model m1 and model m1a) are as follows. The first model, model m1, consisted of the predictor variable juvenile adj_raw_pink $({X_P})$ with a vessel factor interaction $({X_V})$, an odd/even year factor $({X_O})$, and a vessel factor $({X_V})$ (model m1),
 
-$$E(Y) = \hat{\beta_0} + \hat {\beta}_{1}{X_1}{X_2} +\hat {\beta}_{2}{X_3}+\hat {\beta}_{3}{X_2}.$$
+$$E(Y) = \hat{\beta_0} + \hat {\beta}_{VP}{X_V}{X_P} +\hat {\beta}_{O}{X_O}+\hat {\beta}_{V}{X_V}.$$
 
-The odd/even year factor adjusts the model intercept by $\hat{\beta_0}$ + ${\beta}_{2}$ as ${X_3}$ = 0 for even years (no adjustment to intercept, defaults to model intercept) and ${X_3}$ = 1 for odd years (adjustment for odd years based on $\hat {\beta}_{2}$). The vessel interaction adjusts the model slope. For example, during years when the survey vessel was the Cobb, the slope is adjusted by the $\hat {\beta}_{1COBB}$ which is then multiplied by the adj_raw_pink term in that year $({X_1})$. The vessel factor also adjusts the model intercept by $\hat{\beta_0}$ + $\hat {\beta}_{3}$ as ${X_2}$ = 0 for years when the vessel was the Cobb (no adjustment to intercept, defaults to model intercept). Although the simplest model did not contain a temperature variable, including temperature data with CPUE has been shown to result in a substantial improvement in the accuracy of model predictions (Murphy et al. 2019). The temperature index for models m2-m18 was either the SECM survey Icy Strait temperature Index (ISTI20_MJJ; Murphy et al. 2019) or one of the 16 satellite-derived SST data (Huang et al. 2017).
+The odd/even year factor adjusts the model intercept by $\hat{\beta_0}$ + ${\hat \beta}_{O}$ as ${X_O}$ = 0 for even years (no adjustment to intercept, defaults to model intercept) and ${X_O}$ = 1 for odd years (adjustment for odd years based on $\hat {\beta}_{O}$). The vessel interaction adjusts the model slope. For example, during years when the survey vessel was the Cobb, the slope is adjusted by the $\hat {\beta}_{COBB}$ which is then multiplied by the adj_raw_pink term in that year $({X_P})$. The vessel factor also adjusts the model intercept by $\hat{\beta_0}$ + $\hat {\beta}_{V}$ as ${X_V}$ = 0 for years when the vessel was the Cobb (no adjustment to intercept, defaults to model intercept). Although the simplest model does not contain a temperature variable, including temperature data with CPUE has been shown to result in a substantial improvement in the accuracy of model predictions (Murphy et al. 2019). The temperature index for models m2-m18 was either the SECM survey Icy Strait temperature Index (ISTI20_MJJ; Murphy et al. 2019) or one of the 16 satellite-derived SST data (Huang et al. 2017).
 
-The second model, model m1a, consisted of the predictor variable adjusted CPUE $({X_1})$, and an odd/even year factor $({X_2})$,
+The second model, model m1a, consisted of the predictor variable adjusted CPUE $({X_C})$, and an odd/even year factor $({X_O})$,
 
-$$E(Y) = \hat{\beta_0} + \hat {\beta}_{1}{X_1} +\hat {\beta}_{2}{X_2}.$$
+$$E(Y) = \hat{\beta_0} + \hat {\beta}_{C}{X_C} +\hat {\beta}_{O}{X_O}.$$
 
-The odd/even year factor adjusts the model intercept by $\hat{\beta_0}$ + ${\beta}_{2}$ as ${X_2}$ = 0 for even years (no adjustment to intercept, defaults to model intercept) and ${X_2}$ = 1 for odd years (adjustment for odd years based on $\hat {\beta}_{2}$). Although the simplest model did not contain a temperature variable, including temperature data with CPUE has been shown to result in a substantial improvement in the accuracy of model predictions (Murphy et al. 2019). The temperature index for models m2a-m18a was either the SECM survey Icy Strait temperature Index (ISTI20_MJJ; Murphy et al. 2019) or one of the 16 satellite-derived SST data (Huang et al. 2017).
+The odd/even year factor adjusts the model intercept by $\hat{\beta_0}$ + ${\hat \beta}_{O}$ as ${X_O}$ = 0 for even years (no adjustment to intercept, defaults to model intercept) and ${X_O}$ = 1 for odd years (adjustment for odd years based on $\hat {\beta}_{O}$). Although the simplest model does not contain a temperature variable, including temperature data with CPUE has been shown to result in a substantial improvement in the accuracy of model predictions (Murphy et al. 2019). The temperature index for models m2a-m18a was either the SECM survey Icy Strait temperature Index (ISTI20_MJJ; Murphy et al. 2019) or one of the 16 satellite-derived SST data (Huang et al. 2017).
 
 The response variable ($Y$; Southeast Alaska adult pink salmon harvest in millions), the adj_raw_pink, and the adjusted CPUE were natural log transformed in the model, but temperature data were not. The forecast $(\hat{\textit {Y}_{i}})$, and 80% prediction intervals (based on output from program R; R Core Team 2023) from the 36 regression models were exponentiated and bias-corrected (Miller 1984),
 
