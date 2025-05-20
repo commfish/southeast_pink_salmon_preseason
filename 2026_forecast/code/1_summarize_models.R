@@ -1,7 +1,7 @@
 # SECM Pink salmon forecast models
 # Script written by Jim Murphy updated: 10/18/19
 # adapted by Sara Miller 10/10/2022
-# last update: October 2024
+# last update: May 2025
 # pink_cal_pooled_species
 # http://www.sthda.com/english/articles/40-regression-analysis/166-predict-in-r-model-predictions-and-confidence-intervals/
 # update all data files varyyyy_final.csv
