@@ -67,43 +67,43 @@ variables_adj_raw_pink %>%
  log_data %>%
     write.csv(., paste0(data.directory, "/var2025_merge.csv"), row.names = F)
 # STEP 2: MODELS
- model.names <- c(m1='vessel x adj_raw_pink_log + odd_factor +vessel',
-                  m2='vessel x adj_raw_pink_log + ISTI20_MJJ + odd_factor x adj_raw_pink_log + vessel',
-                  m3='vessel x adj_raw_pink_log + Chatham_SST_May + odd_factor x adj_raw_pink_log + vessel',
-                  m4='vessel x adj_raw_pink_log + Chatham_SST_MJJ + odd_factor x adj_raw_pink_log + vessel',
-                  m5='vessel x adj_raw_pink_log + Chatham_SST_AMJ + odd_factor x adj_raw_pink_log + vessel',
-                  m6='vessel x adj_raw_pink_log + Chatham_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel',
-                  m7='vessel x adj_raw_pink_log + Icy_Strait_SST_May + odd_factor x adj_raw_pink_log + vessel',
-                  m8='vessel x adj_raw_pink_log + Icy_Strait_SST_MJJ + odd_factor x adj_raw_pink_log + vessel',
-                  m9='vessel x adj_raw_pink_log + Icy_Strait_SST_AMJ + odd_factor x adj_raw_pink_log + vessel',
-                  m10='vessel x adj_raw_pink_log + Icy_Strait_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel',
-                  m11='vessel x adj_raw_pink_log + NSEAK_SST_May + odd_factor x adj_raw_pink_log + vessel',
-                  m12='vessel x adj_raw_pink_log + NSEAK_SST_MJJ + odd_factor x adj_raw_pink_log + vessel',
-                  m13='vessel x adj_raw_pink_log+  NSEAK_SST_AMJ + odd_factor x adj_raw_pink_log + vessel',
-                  m14='vessel x adj_raw_pink_log + NSEAK_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel',
-                  m15='vessel x adj_raw_pink_log + SEAK_SST_May + odd_factor x adj_raw_pink_log + vessel',
-                  m16='vessel x adj_raw_pink_log + SEAK_SST_MJJ + odd_factor x adj_raw_pink_log + vessel',
-                  m17='vessel x adj_raw_pink_log + SEAK_SST_AMJ + odd_factor x adj_raw_pink_log + vessel',
-                  m18='vessel x adj_raw_pink_log + SEAK_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel')
+ model.names <- c(m1='vessel x adj_raw_pink_log + odd_factor + vessel + adj_raw_pink_log',
+                  m2='vessel x adj_raw_pink_log + ISTI20_MJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m3='vessel x adj_raw_pink_log + Chatham_SST_May + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m4='vessel x adj_raw_pink_log + Chatham_SST_MJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m5='vessel x adj_raw_pink_log + Chatham_SST_AMJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m6='vessel x adj_raw_pink_log + Chatham_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m7='vessel x adj_raw_pink_log + Icy_Strait_SST_May + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m8='vessel x adj_raw_pink_log + Icy_Strait_SST_MJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m9='vessel x adj_raw_pink_log + Icy_Strait_SST_AMJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m10='vessel x adj_raw_pink_log + Icy_Strait_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m11='vessel x adj_raw_pink_log + NSEAK_SST_May + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m12='vessel x adj_raw_pink_log + NSEAK_SST_MJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m13='vessel x adj_raw_pink_log+  NSEAK_SST_AMJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m14='vessel x adj_raw_pink_log + NSEAK_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m15='vessel x adj_raw_pink_log + SEAK_SST_May + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m16='vessel x adj_raw_pink_log + SEAK_SST_MJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m17='vessel x adj_raw_pink_log + SEAK_SST_AMJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
+                  m18='vessel x adj_raw_pink_log + SEAK_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log')
  
- model.formulas <- c(SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + ISTI20_MJJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Chatham_SST_May + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Chatham_SST_MJJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Chatham_SST_AMJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Chatham_SST_AMJJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Icy_Strait_SST_May + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Icy_Strait_SST_MJJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Icy_Strait_SST_AMJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Icy_Strait_SST_AMJJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + NSEAK_SST_May + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + NSEAK_SST_MJJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log+  NSEAK_SST_AMJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + NSEAK_SST_AMJJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + SEAK_SST_May + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + SEAK_SST_MJJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + SEAK_SST_AMJ + as.factor(odd_even_factor)+ as.factor(vessel),
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + SEAK_SST_AMJJ + as.factor(odd_even_factor)+ as.factor(vessel))
+ model.formulas <- c(SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + ISTI20_MJJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Chatham_SST_May + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Chatham_SST_MJJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Chatham_SST_AMJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Chatham_SST_AMJJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Icy_Strait_SST_May + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Icy_Strait_SST_MJJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Icy_Strait_SST_AMJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Icy_Strait_SST_AMJJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + NSEAK_SST_May + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + NSEAK_SST_MJJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log+  NSEAK_SST_AMJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + NSEAK_SST_AMJJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + SEAK_SST_May + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + SEAK_SST_MJJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + SEAK_SST_AMJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + SEAK_SST_AMJJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log)
  
  # summary statistics of SEAK pink salmon harvest forecast models (seak_model_summary.csv file created)
  seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values, models = "_multi")
@@ -113,24 +113,24 @@ variables_adj_raw_pink %>%
  log_data %>%
    dplyr::filter(JYear < year.data) -> log_data_subset
  
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel), data = log_data_subset) -> m1
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + ISTI20_MJJ, data = log_data_subset) -> m2
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_May, data = log_data_subset) -> m3
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_MJJ, data = log_data_subset) -> m4
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_AMJ, data = log_data_subset) -> m5
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_AMJJ, data = log_data_subset) -> m6
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Icy_Strait_SST_May, data = log_data_subset) -> m7
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Icy_Strait_SST_MJJ, data = log_data_subset) -> m8
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Icy_Strait_SST_AMJ, data = log_data_subset) -> m9
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Icy_Strait_SST_AMJJ, data = log_data_subset) -> m10
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + NSEAK_SST_May, data = log_data_subset) -> m11
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + NSEAK_SST_MJJ, data = log_data_subset) -> m12
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + NSEAK_SST_AMJ, data = log_data_subset) -> m13
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + NSEAK_SST_AMJJ, data = log_data_subset) -> m14
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + SEAK_SST_May, data = log_data_subset) -> m15
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + SEAK_SST_MJJ, data = log_data_subset) -> m16
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + SEAK_SST_AMJ, data = log_data_subset) -> m17
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + SEAK_SST_AMJJ, data = log_data_subset) -> m18
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + adj_raw_pink_log, data = log_data_subset) -> m1
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + ISTI20_MJJ + adj_raw_pink_log, data = log_data_subset) -> m2
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_May + adj_raw_pink_log, data = log_data_subset) -> m3
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_MJJ + adj_raw_pink_log, data = log_data_subset) -> m4
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_AMJ + adj_raw_pink_log, data = log_data_subset) -> m5
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_AMJJ + adj_raw_pink_log, data = log_data_subset) -> m6
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Icy_Strait_SST_May + adj_raw_pink_log, data = log_data_subset) -> m7
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Icy_Strait_SST_MJJ + adj_raw_pink_log, data = log_data_subset) -> m8
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Icy_Strait_SST_AMJ + adj_raw_pink_log, data = log_data_subset) -> m9
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Icy_Strait_SST_AMJJ + adj_raw_pink_log, data = log_data_subset) -> m10
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + NSEAK_SST_May + adj_raw_pink_log, data = log_data_subset) -> m11
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + NSEAK_SST_MJJ + adj_raw_pink_log, data = log_data_subset) -> m12
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + NSEAK_SST_AMJ + adj_raw_pink_log, data = log_data_subset) -> m13
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + NSEAK_SST_AMJJ + adj_raw_pink_log, data = log_data_subset) -> m14
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + SEAK_SST_May + adj_raw_pink_log, data = log_data_subset) -> m15
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + SEAK_SST_MJJ + adj_raw_pink_log, data = log_data_subset) -> m16
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + SEAK_SST_AMJ + adj_raw_pink_log, data = log_data_subset) -> m17
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + SEAK_SST_AMJJ + adj_raw_pink_log, data = log_data_subset) -> m18
  
  tidy(m1) -> model1
  tidy(m2) -> model2
