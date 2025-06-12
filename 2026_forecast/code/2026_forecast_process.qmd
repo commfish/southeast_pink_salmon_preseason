@@ -1,5 +1,5 @@
 ---
-title: "SEAK Pink Salmon Forecast"
+title: "2026 SEAK Pink Salmon Forecast"
 author: "Sara Miller"
 format: pdf
 editor: visual
@@ -34,7 +34,7 @@ To forecast the Southeast Alaska (SEAK) pink salmon commercial harvest in 2026. 
 
 # Executive Summary
 
-Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019), but assuming a log-normal error structure (Miller et al. 2022). This approach is based on a multiple regression model with the raw juvenile pink salmon catch-per-unit-effort (adj_raw_pink; a proxy for abundance), a vessel factor to account for the survey vessels through time, an odd and even year factor to account for potential odd and even year cycles of abundance, and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021; ISTI20_MJJ) or from satellite sea surface temperature (SST) data (Huang et al. 2017). The adj_raw_pink variable is not the same as the CPUE variable used in prior years that was adjusted by the pooled-species vessel calibration coefficient for the Cobb and was the maximum average from either June or July (whichever was higher). Instead, the CPUE term used in the 2025 forecast, the adj_raw_pink variable, is the natural logarithm of the maximum untransformed catch, adjusted to a 20 minute haul, from either June or July. The Stellar and Chellissa vessels were only used for one year each, 2008 and 2009, respectively, and so these two years are not used in the assessment (Table 1).
+Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019), but assuming a log-normal error structure (Miller et al. 2022). This approach is based on a multiple regression model with the raw juvenile pink salmon catch-per-unit-effort (adj_raw_pink; a proxy for abundance), a vessel factor to account for the survey vessels through time, an odd and even year factor to account for potential odd and even year cycles of abundance, and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021; ISTI20_MJJ) or from satellite sea surface temperature (SST) data (Huang et al. 2017). The adj_raw_pink variable is not the same as the CPUE variable used in prior years that was adjusted by the pooled-species vessel calibration coefficient for the Cobb and was the maximum average from either June or July (whichever was higher). Instead, the CPUE term used in the 2026 forecast, the adj_raw_pink variable, is the natural logarithm of the maximum untransformed catch, adjusted to a 20 minute haul, from either June or July. The Stellar and Chellissa vessels were only used for one year each, 2008 and 2009, respectively, and so these two years are not used in the assessment (Table 1).
 
 There were 36 individual models considered:
 
