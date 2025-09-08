@@ -33,8 +33,10 @@ results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 # April 1997 to July yyyy data----
 # download the data for a fixed spatial and temporal period	(SST data, NOAA Global Coral Bleaching Monitoring, 5km, V.3.1, daily, 1985-present)
 # to do this, go to the site: https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html;
-# set the latitude (54, 60) and longitude (-137.2, -130) and time period (April 1997 - July yyyy; yyyy is the current year), and fill type as .nc,
+# set the latitude (54, 60) and longitude (-137.2, -130) and time period (April 1997 - July yyyy; yyyy is the current year), and file type as .nc,
 # save the file as NOAA_DHW_monthly_97_yy.nc in the data folder
+
+# make sure tge sst_data_map is copied from a prior forecast into the current forecast data folder
 
 # https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.graph; this site is helpful to map the area of interest
 
@@ -327,14 +329,15 @@ ggpubr::ggarrange(plot3, plot4, plot2, plot1,  # list of plots
                   align = "v", nrow = 4) # Align them both, horizontal and vertical
 ggsave(paste0(results.directory, "monthly_temp_regions.png"), dpi = 500, height = 8, width = 6, units = "in")
 
-# create a figure of ISTI_MJJ for the SECM survey
+# create a figure of ISTI_JJ for the SECM survey
+# the varyyyy_final.csv file needs to be updated with the current year's data prior to running the code below 
 read.csv(paste0(data.directory, 'var2025_final.csv')) %>% # update file name
-  dplyr::select(JYear, ISTI20_MJJ) %>%
+  dplyr::select(JYear, ISTI20_JJ) %>%
   rename(Year = JYear) %>%
-write.csv(., paste0(results.directory, 'SECMvar2025_MJJ.csv'), row.names = FALSE) # update file name
+write.csv(., paste0(results.directory, 'SECMvar2025_JJ.csv'), row.names = FALSE) # update file name
 
 read.csv(paste0(data.directory, 'var2025_final.csv')) %>% # update file name 
-  dplyr::select(JYear, ISTI20_MJJ) %>%
+  dplyr::select(JYear, ISTI20_JJ) %>%
   gather("var", "value", -c(JYear)) %>% 
   ggplot(., aes(y = value, x = JYear, group = var)) +
   geom_point(aes(shape = var, color = var, size=var)) +
