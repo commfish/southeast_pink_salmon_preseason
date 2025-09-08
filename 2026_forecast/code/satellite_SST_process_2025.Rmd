@@ -1,7 +1,7 @@
 ---
 title: "Environmental variables for the  \n2025 SEAK Pink Salmon Preseason Forecast"
 author: "Sara Miller"
-date: "October 2024"
+date: "September 2025"
 output:
   pdf_document: default
   word_document: default
@@ -16,7 +16,7 @@ library(gridExtra)
 library(tidymodels)
 library(lubridate)
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE, error=FALSE)
-year.forecast <- "2025_forecast" # update year to forecast year
+year.forecast <- "2026_forecast" # update year to forecast year
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 ```
@@ -33,7 +33,7 @@ fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>%
 ```
 
 # Objective
-The overall objective is to test a variety of temperature variables, using satellite sea surface temperature (SST) data or Southeast Alaska Coastal Monitoring project (SECM) data, within the forecasting model framework to forecast the 2025 pink salmon harvest in southeast Alaska (SEAK). This write-up is a summary of available SST variables based on satellite data (i.e., average of May (May), the average over the months of May through July (MJJ), the average over the months of April through June (AMJ), or the average over the months of April through July (AMJJ) from 1997 through 2024) over four regions of SEAK; Icy Strait, Icy and Chatham Straits, northern southeast Alaska (NSEAK), and SEAK. This write-up also includes a summary of SECM survey data from various months (i.e., the average over the months of May, June, and July (MJJ)) at 20 m depths of the SECM transects (i.e., Icy Strait and Upper Chatham transects stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) from 1997 through 2024. 
+The overall objective is to test a variety of temperature variables, using satellite sea surface temperature (SST) data or Southeast Alaska Coastal Monitoring project (SECM) data, within the forecasting model framework to forecast the 2026 pink salmon harvest in southeast Alaska (SEAK). This write-up is a summary of available SST variables based on satellite data (i.e., average of May (May), the average over the months of May through July (MJJ), the average over the months of April through June (AMJ), or the average over the months of April through July (AMJJ) from 1997 through 2024) over four regions of SEAK; Icy Strait, Icy and Chatham Straits, northern southeast Alaska (NSEAK), and SEAK. This write-up also includes a summary of SECM survey data from various months (i.e., the average over the months of May, June, and July (MJJ)) at 20 m depths of the SECM transects (i.e., Icy Strait and Upper Chatham transects stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD) from 1997 through 2024. 
 
 # Methods
 ## Satellite-derived SST data
