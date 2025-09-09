@@ -12,6 +12,7 @@
 The current assessment follows Miller et al. 2022.
 
 ## Advisory Announcements
+* [2025 forecast](https://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1644546982.pdf)
 * [2024 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1549019284.pdf)
 * [2023 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1444357143.pdf) 
 * [2022 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1346706110.pdf) 
@@ -20,6 +21,7 @@ The current assessment follows Miller et al. 2022.
 * [2019 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1002259599.pdf)
 
 ## Reports  
+* [2025 forecast report](2025_forecast/2025_forecast--final.pdf)  
 * [2024 forecast report](2024_forecast/2024_forecast--final.pdf)  
 * [2023 forecast report](2023_forecast/2023_forecast--final.pdf)  
 * [2022 forecast report](2022_forecast/2022_forecast--final.pdf)  
@@ -99,7 +101,7 @@ In the script, the places to update are noted with
 # update final year
 ```
 The satellite SST variables will be output into the file [`results/temperature_data/sst_regions_oisst_97_*yy*_monthly_data_summary.csv`]. Then, these variables need to be copied and pasted into the [`varyyyy_final.csv`] sheet (the variables are: Chatham_SST_MJJ, Chatham_SST_May, Chatham_SST_AMJJ,	Chatham_SST_AMJ,	Icy_Strait_SST_MJJ,	Icy_Strait_SST_May,	Icy_Strait_SST_AMJJ,	Icy_Strait_SST_AMJ,	NSEAK_SST_MJJ, NSEAK_SST_May,	NSEAK_SST_AMJJ,	NSEAK_SST_AMJ,	SEAK_SST_MJJ,	SEAK_SST_May,	SEAK_SST_AMJJ, SEAK_SST_AMJ). This seems a little backwards since this file is used in the satellite_data_monthly code, but it is only because an ISTI figure is created. The ISTI variable is not a satellite SST variable and is a SECM temperature variable. The file [`satellite_SST_process.Rmd`] does not need much updating if the same process as the prior year was used (e.g., the same latitude and longitude coordinates are used for the region of the satellite SST variables). It is helpful to run this file [`satellite_SST_process.Rmd`] every year so there is a record of the process. Save the output pdf file with a date so it does not get rewritten. 
-Note that the final figures in the script use the var2025_final.csv file as the ISTI variable is needed for the figure. 
+Note that the final figures in the script use the var2025_final.csv file as the ISTI variable and the SST variables are needed for the figures. 
 After the satellite_data_monthly.R code is run, update the var2025_final.csv file and then rerun the bottom code of
 satellite_data_monthly.R script that runs the ISTI figure (line 334+).  
 
