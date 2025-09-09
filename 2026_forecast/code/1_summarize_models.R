@@ -67,27 +67,27 @@ variables_adj_raw_pink %>%
  log_data %>%
     write.csv(., paste0(data.directory, "/var2025_merge.csv"), row.names = F)
 # STEP 2: MODELS
- model.names <- c(m1='vessel x adj_raw_pink_log + odd_factor + vessel + adj_raw_pink_log',
-                  m2='vessel x adj_raw_pink_log + ISTI20_MJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m3='vessel x adj_raw_pink_log + Chatham_SST_May + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m4='vessel x adj_raw_pink_log + Chatham_SST_MJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m5='vessel x adj_raw_pink_log + Chatham_SST_AMJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m6='vessel x adj_raw_pink_log + Chatham_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m7='vessel x adj_raw_pink_log + Icy_Strait_SST_May + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m8='vessel x adj_raw_pink_log + Icy_Strait_SST_MJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m9='vessel x adj_raw_pink_log + Icy_Strait_SST_AMJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m10='vessel x adj_raw_pink_log + Icy_Strait_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m11='vessel x adj_raw_pink_log + NSEAK_SST_May + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m12='vessel x adj_raw_pink_log + NSEAK_SST_MJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m13='vessel x adj_raw_pink_log+  NSEAK_SST_AMJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m14='vessel x adj_raw_pink_log + NSEAK_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m15='vessel x adj_raw_pink_log + SEAK_SST_May + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m16='vessel x adj_raw_pink_log + SEAK_SST_MJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m17='vessel x adj_raw_pink_log + SEAK_SST_AMJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log',
-                  m18='vessel x adj_raw_pink_log + SEAK_SST_AMJJ + odd_factor x adj_raw_pink_log + vessel + adj_raw_pink_log')
+ model.names <- c(m1='no temperature index included',
+                  m2='ISTI20_JJ',
+                  m3='Chatham_SST_May',
+                  m4='Chatham_SST_MJJ',
+                  m5='Chatham_SST_AMJ',
+                  m6='Chatham_SST_AMJJ',
+                  m7='Icy_Strait_SST_May',
+                  m8='Icy_Strait_SST_MJJ',
+                  m9='Icy_Strait_SST_AMJ',
+                  m10='Icy_Strait_SST_AMJJ',
+                  m11='NSEAK_SST_May',
+                  m12='NSEAK_SST_MJJ',
+                  m13='NSEAK_SST_AMJ',
+                  m14='NSEAK_SST_AMJJ',
+                  m15='SEAK_SST_May',
+                  m16='SEAK_SST_MJJ',
+                  m17='SEAK_SST_AMJ',
+                  m18='SEAK_SST_AMJJ')
  
  model.formulas <- c(SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
-                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + ISTI20_MJJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
+                     SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + ISTI20_JJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
                      SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Chatham_SST_May + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
                      SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Chatham_SST_MJJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
                      SEAKCatch_log ~ as.factor(vessel) * adj_raw_pink_log + Chatham_SST_AMJ + as.factor(odd_even_factor)+ as.factor(vessel) + adj_raw_pink_log,
@@ -108,13 +108,13 @@ variables_adj_raw_pink %>%
  # summary statistics of SEAK pink salmon harvest forecast models (seak_model_summary.csv file created)
  seak_model_summary <- f_model_summary(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, w = log_data$weight_values, models = "_multi")
 
- # STEP #3: SUMMARY OF MODEL FITS
+# STEP #3: SUMMARY OF MODEL FITS
 # summary of model fits (i.e., coefficients, p-value); creates the file model_summary_table1.csv.
  log_data %>%
    dplyr::filter(JYear < year.data) -> log_data_subset
  
  lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + adj_raw_pink_log, data = log_data_subset) -> m1
- lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + ISTI20_MJJ + adj_raw_pink_log, data = log_data_subset) -> m2
+ lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + ISTI20_JJ + adj_raw_pink_log, data = log_data_subset) -> m2
  lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_May + adj_raw_pink_log, data = log_data_subset) -> m3
  lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_MJJ + adj_raw_pink_log, data = log_data_subset) -> m4
  lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_AMJ + adj_raw_pink_log, data = log_data_subset) -> m5
@@ -179,7 +179,7 @@ variables_adj_raw_pink %>%
    dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
    mutate(Model = model,
           Term =term,
-          Estimate = round(estimate,8),
+          Estimate = round(estimate,3),
           'Standard Error' = round(std.error,3),
           Statistic = round(statistic,3),
           'p value' = round(p.value,3)) %>%
@@ -200,33 +200,34 @@ variables_adj_raw_pink %>%
  # function is correct for the base CPUE model
  
  read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5_multi.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
-   dplyr::rename(terms = 'X') %>%
+   dplyr::rename(Terms = 'X') %>%
    mutate(MAPE5 = round(MAPE5,3)) %>%
-   dplyr::select(terms, MAPE5) -> MAPE5
+   dplyr::select(Terms, MAPE5) -> MAPE5
  
  read.csv(file.path(results.directory,'seak_model_summary_multi.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
-   dplyr::rename(terms = 'X') %>%
-   dplyr::select(terms, fit, fit_UPI, fit_LPI,AdjR2, sigma, AICc) %>%
-   mutate(AdjR2 = round(AdjR2,3)) %>%
+   dplyr::rename(Terms = 'X') %>%
+   dplyr::select(Terms, fit, fit_UPI, fit_LPI,AdjR2, sigma, AICc) %>%
+   mutate(AdjR2 = round(AdjR2,2)) %>%
    mutate(Model = c('m1','m2','m3','m4','m5','m6','m7','m8',
                     'm9','m10','m11','m12','m13','m14','m15','m16','m17',
                     'm18')) %>%
    mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
           fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
-          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>%
-   mutate(Fit = round(fit_log,3),
-          Fit_LPI = round(fit_log_LPI,3),
-          Fit_UPI = round(fit_log_UPI,3)) %>%
-   dplyr::select(Model, terms, Fit, Fit_LPI, Fit_UPI, AdjR2, AICc) %>%
-   merge(., MAPE5, by="terms") %>%
-   arrange(MAPE5) %>%
+          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% # exponentiate the forecast
+   mutate(Fit = round(fit_log,1),
+          Fit_LPI = round(fit_log_LPI,1),
+          Fit_UPI = round(fit_log_UPI,1),
+          AICc = round(AICc, 1)) %>%
+   dplyr::select(Model, Terms, Fit, Fit_LPI, Fit_UPI, AdjR2, AICc) %>%
+   merge(., MAPE5, by="Terms") %>%
+   mutate(MAPE5 = round(MAPE5,1)) %>%
    write.csv(., paste0(results.directory, "/model_summary_table2_multi.csv"), row.names = F)
  
-  # STEP #5: FORECAST FIGURE
+# STEP #5: CREATE FORECAST FIGURE
  read.csv(file.path(results.directory,'seak_model_summary_multi.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
  results %>%
-   dplyr::rename(terms = 'X') %>%
-   dplyr::select(terms, fit, fit_LPI, fit_UPI, sigma) %>%
+   dplyr::rename(Terms = 'X') %>%
+   dplyr::select(Terms, fit, fit_LPI, fit_UPI, sigma) %>%
    mutate(model = c('m1','m2','m3','m4','m5','m6','m7','m8',
                     'm9','m10','m11','m12','m13','m14','m15','m16','m17',
                     'm18')) %>%
@@ -238,7 +239,7 @@ variables_adj_raw_pink %>%
           fit_log = exp(fit)*exp(0.5*sigma*sigma),
           fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
           fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>%
-   dplyr::select(model, order, terms, fit_log, fit_log_LPI, fit_log_UPI) %>%
+   dplyr::select(model, order, Terms, fit_log, fit_log_LPI, fit_log_UPI) %>%
    as.data.frame() %>%
    dplyr::arrange(order) %>%
    ggplot(., aes(x=factor(model, level=c('m1','m2','m3','m4','m5','m6','m7','m8',
@@ -251,12 +252,12 @@ variables_adj_raw_pink %>%
    theme_bw() + theme(legend.key=element_blank(),
                       panel.grid.major = element_blank(),
                       panel.grid.minor = element_blank(),
-                      axis.text.x = element_text(size = 7, family="Times New Roman"),
+                      axis.text.x = element_text(size = 9, family="Times New Roman"),
                       legend.title=element_blank(),
                       legend.position = "none") +
    geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, linewidth=1, color="grey30")+
-   scale_y_continuous(breaks = c(0,50, 100, 150, 200), limits = c(0,200))+
-   labs(x = "Models", y = "2026 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
- ggsave(paste0(results.directory, "figs/forecast_models_multi.png"), dpi = 500, height = 4, width = 7, units = "in")
+   scale_y_continuous(breaks = c(0,5, 10, 15, 20, 25, 30, 35, 40, 45), limits = c(0,45))+
+   labs(x="", y = "2026 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
+ ggsave(paste0(results.directory, "figs/forecast_models_multi.png"), dpi = 500, height = 4, width = 10, units = "in")
  
  

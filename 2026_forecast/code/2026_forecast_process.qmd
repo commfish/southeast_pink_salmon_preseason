@@ -21,11 +21,15 @@ knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE,
 
 ```{r data}
 
-fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>% 
+fs::dir_ls(here::here(data.directory), regexp = "\\.csv$") %>% 
   set_names(nm = (basename(.) %>% 
                     tools::file_path_sans_ext())) %>%
   map(read_csv) -> tbls_seak
 
+fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>% 
+  set_names(nm = (basename(.) %>% 
+                    tools::file_path_sans_ext())) %>%
+  map(read_csv) -> tbls_seak_results
 ```
 
 # Objective
@@ -34,7 +38,7 @@ To forecast the Southeast Alaska (SEAK) pink salmon commercial harvest in 2026. 
 
 # Executive Summary
 
-Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019), but assuming a log-normal error structure (Miller et al. 2022). This approach is based on a multiple regression model with the raw juvenile pink salmon catch-per-unit-effort (adj_raw_pink; a proxy for abundance), a vessel factor to account for the survey vessels through time, an odd and even year factor to account for potential odd and even year cycles of abundance, and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021; ISTI20_MJJ) or from satellite sea surface temperature (SST) data (Huang et al. 2017). The adj_raw_pink variable is not the same as the CPUE variable used in prior years that was adjusted by the pooled-species vessel calibration coefficient for the Cobb and was the maximum average from either June or July (whichever was higher). Instead, the CPUE term used in the 2026 forecast, the adj_raw_pink variable, is the natural logarithm of the maximum untransformed catch, adjusted to a 20 minute haul, from either June or July. The Stellar and Chellissa vessels were only used for one year each, 2008 and 2009, respectively, and so these two years are not used in the assessment (Table 1).
+Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019), but assuming a log-normal error structure (Miller et al. 2022). This approach is based on a multiple linear regression model with either; 1) the raw juvenile pink salmon catch-per-unit-effort (adj_raw_pink; a proxy for abundance) or 2) the vessel-adjusted CPUE (a proxy for abundance) adjusted by the pooled-species vessel calibration coefficient for the Cobb. Additional variables included a vessel factor to account for the survey vessels through time, an odd and even year factor to account for potential odd and even year cycles of abundance, and temperature data from the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021; ISTI20_JJ) or from satellite sea surface temperature (SST) data (Huang et al. 2017). The adj_raw_pink variable is defined as the natural logarithm of the maximum untransformed catch, adjusted to a 20 minute haul, from either June or July. The Stellar and Chellissa vessels were only used for one year each, 2008 and 2009, respectively, and so these two years are not used in the assessment (Table 1). The vessel-adjusted CPUE variable is defined as the CPUE, adjusted by the pooled-species vessel calibration coefficient for the Cobb and was then the maximum average from either June or July (whichever was higher). As there was not a SECM survey in May, temperature data from May was unavailable. Therefore, the temperature variable from the SECM survey and used in the model (ISTI20_JJ) was the average from June and July. In prior forecasting years, the ISTI variable was the average from May through July. 
 
 There were 36 individual models considered:
 
@@ -44,31 +48,31 @@ There were 36 individual models considered:
 
 -   16 adj_raw_pink models with a vessel interaction, an odd/even year factor, a vessel factor, and satellite SST data (m3-m18);
 
--   adjusted CPUE, and an odd/even year factor (m1a);
+-   vessel-adjusted CPUE, and an odd/even year factor (m1a);
 
--   adjusted CPUE, an odd/even year factor, and temperature data from the the SECM survey (m2a);
+-   vessel-adjusted CPUE, an odd/even year factor, and temperature data from the the SECM survey (m2a);
 
--   16 adjusted CPUE models with an odd/even year factor, and satellite SST data (m3a-m18a);
+-   16 vessel-adjusted CPUE models with an odd/even year factor, and satellite SST data (m3a-m18a);
 
-The model performance metrics one-step ahead mean absolute percent error (MAPE) for the last five years (MAPE5; forecast years 2021 through 2025) was used to evaluate the forecast accuracy of the 36 individual models, the AICc values were calculated for each model to prevent over-parameterization of the model, and the adjusted R-squared values, significant terms, and overall p-value of the model were used to the determine fit. Based upon the performance metric the 5-year MAPE, the AICc values, significant parameters in the models, and the adjusted R-squared values, model xx (a model that included xx; Appendix B) was the best performing model and the 2026-forecast using this model has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
+The model performance metric one-step ahead mean absolute percent error (MAPE) for the last five years (MAPE5; forecast years 2021 through 2025) was used to evaluate the forecast accuracy of the 36 individual models, the AICc values were calculated for each model to prevent over-parameterization of the model, and the adjusted R-squared values, significant terms, and overall p-value of the model were used to the determine fit. Based upon the performance metric the 5-year MAPE, the AICc values, significant parameters in the models, and the adjusted R-squared values, model xx (a model that included xx; Appendix B) was the best performing model and the 2026-forecast using this model has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
 
 # Analysis
 
 ## Individual, multiple linear regression models
 
-Biophysical variables based on data from Southeast Alaska were used to forecast the harvest of adult pink salmon in Southeast Alaska, one year in advance, using individual, multiple linear regression models (models m1-m18 and models m1a–m18a). The two simplest regression models (model m1 and model m1a) are as follows. The first model, model m1, consisted of the predictor variable juvenile adj_raw_pink (CPUE) with a vessel factor interaction, an odd/even year factor, and a vessel factor (model m1),
+Biophysical variables based on data from Southeast Alaska were used to forecast the harvest of adult pink salmon in Southeast Alaska, one year in advance, using individual, multiple linear regression models with two main structures (models m1-m18 and models m1a–m18a). The first model structure, model m1, consisted of the predictor variable juvenile adj_raw_pink (CPUE) with a vessel factor interaction, an odd/even year factor, and a vessel factor (model m1),
 
 $$E(Y) = \beta_0 + \beta_1 X_{V1} + \beta_2 X_{V2} + \beta_3 X_{O} + \beta_4 CPUE + \beta_5 (X_{V1} \times CPUE) + \beta_6 (X_{V2} \times CPUE)) + \epsilon.$$
 
-The reference category is an even year with the survey vessel Cobb. The vessel factor and even/odd year factor adjust the intercept, and the vessel interaction terms adjust the model slope. For example, during even years when the survey vessel is the Cobb, the model simplifies to $E(Y) = \beta_0 + \beta_4 CPUE + \epsilon.$ Although the simplest model does not contain a temperature variable, including temperature data with CPUE has been shown to result in a substantial improvement in the accuracy of model predictions (Murphy et al. 2019). The temperature index for models m2-m18 was either the SECM survey Icy Strait temperature Index (ISTI20_MJJ; Murphy et al. 2019) or one of the 16 satellite-derived SST data (Huang et al. 2017).
+The reference category is an even year with the survey vessel Cobb. The vessel factor and even/odd year factor adjust the intercept, and the vessel interaction terms adjust the model slope. For example, during even years when the survey vessel is the Cobb, the model simplifies to $E(Y) = \beta_0 + \beta_4 CPUE + \epsilon.$ Although the simplest model does not contain a temperature variable, including temperature data with CPUE has been shown to result in a substantial improvement in the accuracy of model predictions (Murphy et al. 2019). The temperature index for models m2-m18 was either the SECM survey Icy Strait temperature Index (ISTI20_JJ; Murphy et al. 2019) or one of the 16 satellite-derived SST data (Huang et al. 2017).
 
-The second model, model m1a, consisted of the predictor variable adjusted CPUE, and an odd/even year factor,
+The second model structure, model m1a, consisted of the predictor variable vessel-adjusted CPUE $(CPUE_{adj})$, and an odd/even year factor,
 
 $$E(Y) = \beta_0 + \beta_2 X_{O} + \beta_3 (CPUE_{adj}) + \epsilon.$$
 
-The reference category (i.e., reference intercept) is an even year. Although the simplest model does not contain a temperature variable, including temperature data with CPUE has been shown to result in a substantial improvement in the accuracy of model predictions (Murphy et al. 2019). The temperature index for models m2a-m18a was either the SECM survey Icy Strait temperature Index (ISTI20_MJJ; Murphy et al. 2019) or one of the 16 satellite-derived SST data (Huang et al. 2017).
+The reference category (i.e., reference intercept) is an even year. The temperature index for models m2a-m18a was either the SECM survey Icy Strait temperature Index (ISTI20_JJ; Murphy et al. 2019) or one of the 16 satellite-derived SST data (Huang et al. 2017).
 
-The response variable ($Y$; Southeast Alaska adult pink salmon harvest in millions), the adj_raw_pink, and the adjusted CPUE were log transformed in the model, but temperature data were not. The forecast $(\hat{\textit {Y}_{i}})$, and 80% prediction intervals (based on output from program R; R Core Team 2023) from the 36 regression models were exponentiated and bias-corrected (Miller 1984),
+The response variable ($Y$; Southeast Alaska adult pink salmon harvest in millions), the adj_raw_pink, and the vessel-adjusted CPUE were log transformed in the model, but temperature data were not. The forecast $(\hat{\textit {Y}_{i}})$, and 80% prediction intervals (based on output from program R; R Core Team 2023) from the 36 regression models were exponentiated and bias-corrected (Miller 1984),
 
 $$\hat{F_i} = \mathrm exp (\hat{\textit {Y}_{\textit i}} + \frac{{\sigma_i}^2}{2}),\tag{2}$$
 
@@ -93,3 +97,141 @@ $$\text{MAPE} = |\frac{\mathrm exp{(\textit Y_{\textit t})} -\mathrm exp (\hat{\
 Hierarchical models were compared with the AICc criterion. The best fit models, according to the AICc criterion, is one that explains the greatest amount of variation with the fewest independent variables (i.e., the most parsimonious; Table 2). The lower AICc values are better, and the AICc criterion penalizes models that use more parameters. Comparing the AICc values of two hierarchical models, a $\Delta_i \leq 2$ suggests that the two models are essentially the same, and the most parsimonious model should be chosen (Burnham and Anderson 2004). If the $\Delta_i > 2$, the model with the lower AICc value should be chosen.
 
 # Results
+Based upon the 5-year MAPE performance metric, the AICc values, significant parameters in the models,
+and the adjusted R-squared values, model xx (a model that included CPUE (i.e., adj_raw_pink) and
+the satellite SST variable from northern SEAK in May; Table 1 and Table 2; Appendix C) was the best
+performing model and the 2025-forecast using this model has a point estimate of xx million fish (80%
+prediction interval: xx to xx million fish).
+
+\pagebreak
+
+```{r model data}
+tbls_seak$data %>% 
+   knitr::kable(format = 'pandoc', caption = 'Summary of the data used for the 2026-forecast.', row.names = F, align="cccc")
+```
+
+\pagebreak
+
+```{r performance summary}
+tbls_seak_results$model_summary_final %>% 
+   knitr::kable(format = 'pandoc', caption = 'Summary of the performance metrics for the 36 regression models.', row.names = F, align="cccc")
+```
+
+
+# References
+Burnham, K. P., and D. R. Anderson (1998) Model Selection and Inference. Springer, New York. 353 pp. 
+
+Burnham, K. P., and D. R. Anderson (2004) Multimodel inference: Understanding AIC and BIC in 
+model selection. Sociological Methods & Research, Vol. 33(2): 261-304.
+
+Cook, R. D. (1977) Detection of influential observations in linear regression. Technometrics 19: 15-18.
+
+Fox, J. and S. Weisburg (2019) An R Companion to Applied Regression, Third Edition. Thousand Oaks CA: Sage Publications, Inc.
+
+Heinl, S. C., and A. W. Piston (2009) Standardizing and automating the Southeast Alaska pink salmon escapement index. Alaska Department of Fish and Game, Division of Commercial Fisheries, Regional Information Report No. 1J09-06, Douglas.
+
+Huang, B., P. W. Thorne, V. F. Banzon, T. Boyer, G. Chepurin, J. H. Lawrimore, M. J. Menne, T. M. Smith, R. S. Vose, and H. M. Zhang (2017) Extended reconstructed sea surface temperature, version 5 (ERSSTv5): upgrades, validations, and intercomparisons. Journal of Climate 30:8179–8205.
+
+Miller, D. M. (1984) Reducing transformation bias in curve fitting. The American Statistician 38: 124-126.
+
+Miller, S. E., J. M. Murphy, S. C. Heinl, A. W. Piston, E. A. Fergusson, R. E. Brenner, W. W. Strasburger, and J. H. Moss (2022) Southeast Alaska pink salmon forecasting models. Alaska Department of Fish and Game, Fishery Manuscript No. 22-03, Anchorage.
+
+Murphy, J. M., E. A. Fergusson, A. Piston, A. Gray, and E. Farley (2019) Southeast Alaska pink salmon growth and harvest forecast models.  North Pacific Anadromous Fish Commission Technical Report No. 15: 75-81.
+
+Orsi, J. A., E. A. Fergusson, A. C. Wertheimer, E. V. Farley, and P. R. Mundy (2016) Forecasting pink salmon production in Southeast Alaska using ecosystem indicators in times of climate change. N. Pac. Anadr. Fish Comm. Bull. 6: 483–499. (Available at https://npafc.org)
+
+Piston, A. W., and S. C. Heinl (2020) Pink salmon stock status and escapement goals in Southeast Alaska through 2019. Alaska Department of Fish and Game, Special Publication No. 20-09, Anchorage
+
+Piston, A. W., J. Murphy, J. Moss, W. Strasburger, S. C. Heinl, E. Fergusson, S. Miller, A. Gray, and C. Waters (2021) Operational Plan: Southeast coastal monitoring, 2021. ADF&G, Regional Operational Plan No. ROP.CF.1J.2021.02, Douglas.
+
+R Core Team (2023) R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL: http://www.r-project.org/index.html 
+
+Ren, Y. Y., L. C. Zhou, L. Yang, P. Y. Liu, B. W. Zhao and H. X. Liu (2016) Predicting the aquatic toxicity mode of action using logistic regression and linear discriminant analysis, SAR and QSAR in Environmental Research, DOI: 10.1080/1062936X.2016.1229691
+
+Sturdevant, M.V., E.A. Fergusson, J.A. Orsi, and A.C. Wertheimer (2004) Diel feeding and gastric evacuation of juvenile pink and chum salmon in Icy Strait, Southeastern Alaska, May-September 2001. NPAFC Tech. Rep. 5. (Available at http://www.npafc.org).
+
+Trenberth, K. E., and J. W. Hurrell (1994) Decadal atmosphere-ocean variations in the Pacific Climate Dynamics, Berlin 9(6):303-319.
+
+Wertheimer A. C., J. A. Orsi, M. V. Sturdevant, and E. A. Fergusson (2006) Forecasting pink salmon harvest in Southeast Alaska from juvenile salmon abundance and associated environmental parameters. In Proceedings of the 22nd Northeast Pacific Pink and Chum Workshop. Edited by H. Geiger (Rapporteur). Pac. Salmon Comm. Vancouver, British Columbia. pp. 65–72.
+
+Wertheimer, A. C., J. A. Orsi, and E. A. Fergusson (2015) Forecasting pink salmon harvest in southeast Alaska from juvenile salmon abundance and associated biophysical parameters: 2014 returns and 2015 forecast. NPAFC Doc. 1618. 26 pp. National Oceanic and Atmospheric Administration (NOAA), National Marine Fisheries Service (NMFS), Alaska Fisheries Science Center, Auke Bay Laboratories, Ted Stevens Marine Research Institute (Available at http://www.npafc.org).
+
+Wertheimer, A. C., J. A. Orsi, E. A. Fergusson, and J.M. Murphy (2018) Forecasting pink salmon harvest in Southeast Alaska from juvenile salmon abundance and associated biophysical parameters: 2016 returns and 2017 forecast. NPAFC Doc. 1772. 25 pp. National Oceanic and Atmospheric Administration (NOAA), National Marine Fisheries Service (NMFS), Alaska Fisheries Science Center, Auke Bay Laboratories, Ted Stevens Marine Research Institute (Available at http://www.npafc.org).
+
+Zhang, Z. (2016) Residuals and regression diagnostics: focusing on logistic regression. Annals of Translational Medicine 4: 195. 
+
+
+\pagebreak
+
+# Appendix A
+# **Variable definitions**
+**adj_raw_pink:** First, the raw untransformed catch by year, month, haul, and area was adjusted to a 20 minute haul (raw_pink_catch). Then, these values were log-transformed (i.e., ln(raw_pink_catch + 1). Next, the maximum value in either June or July, whichever month had the highest in a given year, was used as the adj_raw_pink value for the year. Note: the adj_raw_pink value data was not adjusted using vessel calibration factors. This value was used as the 'CPUE' value in the 2025 forecast (i.e., adj_raw_pink = maximum(ln(raw_pink_catch + 1)) in either June or July).
+
+**CPUE:** The average Ln(CPUE+1) for catches in either June or July, whichever month had the highest average in a given year, where effort was a standard trawl haul. The CPUE data was adjusted using vessel calibration factors to account for differences in fishing power among vessels. The last time the CPUE variable was incorporated in the forecasting process was the 2024 forecast.
+
+**ISTI20_JJ:** The average 20-m integrated water column temperature at the eight stations in Icy Strait (Icy Strait and Upper Chatham transects) sampled during the SECM surveys in June, and July of each year (in degrees Celsius). The last time the ISTI variable was incorporated in the forecasting process was the 2023 forecast. This year there was no survey in May. Therefore, this temperature index no longer includes May in the average. 
+
+## Satellite SST variables
+
+**Icy_Strait_SST_May**: The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. This variable is the average SST in May. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**Icy_Strait_SST_MJJ:** The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. This variable is the average SST in May through July. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**Icy_Strait_SST_AMJ**: The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. This variable is the average SST in April through June. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**Icy_Strait_SST_AMJJ**: The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. This variable is the average SST in April through July. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**Chatham_SST_May**: The Chatham and Icy Straits region encompasses waters of Chatham and Icy Straits east of Lemesurier Island to Point Couverden, and south to the approximate latitude of 56.025 degrees north (roughly Cape Decision off Kuiu Island). This variable is the average SST in May. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**Chatham_SST_MJJ**: The Chatham and Icy Straits region encompasses waters of Chatham and Icy Straits east of Lemesurier Island to Point Couverden, south to the approximate latitude of 56.025 degrees north (roughly Cape Decision off Kuiu Island). This variable is the average SST in May through July. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**Chatham_SST_AMJ**: The Chatham and Icy Straits region encompasses waters of Chatham and Icy Straits east of Lemesurier Island to Point Couverden, south to the approximate latitude of 56.025 degrees north (roughly Cape Decision off Kuiu Island). This variable is the average SST in April through June. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**Chatham_SST_AMJJ**: The Chatham and Icy Straits region encompasses waters of Chatham and Icy Straits east of Lemesurier Island to Point Couverden, south to the approximate latitude of 56.025 degrees north (roughly Cape Decision off Kuiu Island). This variable is the average SST in April through July. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**NSEAK_SST_May**: The NSEAK region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude (approximately Districts 9 through 15, and District 13 inside area only; northern Southeast Inside subregion for Southeast Alaska (NSEI)). This variable is the average SST in May. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**NSEAK_SST_MJJ**: The NSEAK region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude (approximately Districts 9 through 15, and District 13 inside area only; northern Southeast Inside subregion for Southeast Alaska (NSEI)). This variable is the average SST in May through July. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**NSEAK_SST_AMJ**: The NSEAK region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude (approximately Districts 9 through 15, and District 13 inside area only; northern Southeast Inside subregion for Southeast Alaska (NSEI)). This variable is the average SST in April through June. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**NSEAK_SST_AMJJ**: The NSEAK region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude (approximately Districts 9 through 15, and District 13 inside area only; northern Southeast Inside subregion for Southeast Alaska (NSEI)). This variable is the average SST in April through July. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**SEAK_SST_May**: The SEAK region encompasses Southeast Alaska from 59.475 to 54.725 degrees north latitude. This variable is the average SST in May. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**SEAK_SST_MJJ**: The SEAK region encompasses northern Southeast Alaska from 59.475 to 54.725 degrees north latitude. This variable is the average SST in May through July. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**SEAK_SST_AMJ**: The SEAK region encompasses Southeast Alaska from 59.475 to 54.725 degrees north latitude. This variable is the average SST in April through June. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**SEAK_SST_AMJJ**: The SEAK region encompasses Southeast Alaska from 59.475 to 54.725 degrees north latitude. This variable is the average SST in April through July. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+\pagebreak
+
+# Appendix B
+```{r parameters adj_raw_pink}
+tbls_seak_results$model_summary_table1_multi %>% 
+   knitr::kable(format = 'pandoc', caption = 'Parameter estimates for the 18 individual models for Models m1-m18.', row.names = F, align="cccccc")
+```
+
+\pagebreak
+
+```{r parameters vessel_adjusted_CPUE}
+tbls_seak_results$model_summary_table1 %>% 
+   knitr::kable(format = 'pandoc', caption = 'Parameter estimates for the 18 individual models for Models m1a-m18a.', row.names = F, align="cccccc")
+```
+
+\pagebreak
+
+
+```{r forecast_models_multi, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/forecast_models_multi.png"))
+```
+
+Figure B1: Bias-corrected forecasts (grey bars) for the 18 regression models (Models m1-m18) with 80% prediction intervals (vertical grey lines). A horizontal dotted line at 20 million fish is placed on the figure for reference only. The 2026-forecast using the model mxx has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
+
+
+```{r forecast_models, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/figs/forecast_models.png"))
+```
+
+Figure B2: Bias-corrected forecasts (grey bars) for the 18 regression models (Models m1a-m18a) with 80% prediction intervals (vertical grey lines). A horizontal dotted line at 20 million fish is placed on the figure for reference only. The 2026-forecast using the model mxx has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).

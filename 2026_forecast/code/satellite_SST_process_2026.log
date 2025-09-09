@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.5.20)  8 SEP 2025 10:11
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.5.20)  9 SEP 2025 12:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**satellite_SST_process_2025.tex
-(./satellite_SST_process_2025.tex
+**satellite_SST_process_2026.tex
+(./satellite_SST_process_2026.tex
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-04-29>
 (c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/article.cls
@@ -402,8 +402,8 @@ File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-04-14 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count322
-) (./satellite_SST_process_2025.aux)
-\openout1 = `satellite_SST_process_2025.aux'.
+) (./satellite_SST_process_2026.aux)
+\openout1 = `satellite_SST_process_2026.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 83.
 LaTeX Font Info:    ... okay on input line 83.
@@ -547,7 +547,7 @@ Overfull \hbox (2.38591pt too wide) in alignment at lines 251--253
  []
 
 
-Overfull \hbox (2.38591pt too wide) in alignment at lines 253--282
+Overfull \hbox (2.38591pt too wide) in alignment at lines 253--283
  [] [] [] [] [] 
  []
 
@@ -560,116 +560,116 @@ Overfull \hbox (2.38591pt too wide) in alignment at lines 253--282
 [6]
 
 [7]
-<../../2025_forecast/results/temperature_data/Icy_Strait.png, id=52, 433.62pt x 578.16pt>
-File: ../../2025_forecast/results/temperature_data/Icy_Strait.png Graphic file (type png)
-<use ../../2025_forecast/results/temperature_data/Icy_Strait.png>
-Package pdftex.def Info: ../../2025_forecast/results/temperature_data/Icy_Strait.png  used on input line 489.
+<../results/temperature_data/Icy_Strait.png, id=52, 433.62pt x 578.16pt>
+File: ../results/temperature_data/Icy_Strait.png Graphic file (type png)
+<use ../results/temperature_data/Icy_Strait.png>
+Package pdftex.def Info: ../results/temperature_data/Icy_Strait.png  used on input line 494.
 (pdftex.def)             Requested size: 3613.5pt x 4819.31738pt.
 
-Overfull \hbox (3143.74498pt too wide) in paragraph at lines 489--489
+Overfull \hbox (3143.74498pt too wide) in paragraph at lines 494--494
 [][] 
  []
 
 
-LaTeX Warning: Float too large for page by 4229.38737pt on input line 490.
+LaTeX Warning: Float too large for page by 4229.38737pt on input line 495.
 
-<../../2025_forecast/results/temperature_data/Chatham.png, id=53, 433.62pt x 578.16pt>
-File: ../../2025_forecast/results/temperature_data/Chatham.png Graphic file (type png)
-<use ../../2025_forecast/results/temperature_data/Chatham.png>
-Package pdftex.def Info: ../../2025_forecast/results/temperature_data/Chatham.png  used on input line 493.
+<../results/temperature_data/Chatham.png, id=53, 433.62pt x 578.16pt>
+File: ../results/temperature_data/Chatham.png Graphic file (type png)
+<use ../results/temperature_data/Chatham.png>
+Package pdftex.def Info: ../results/temperature_data/Chatham.png  used on input line 498.
 (pdftex.def)             Requested size: 3613.5pt x 4819.31738pt.
 
-Overfull \hbox (3143.74498pt too wide) in paragraph at lines 493--493
+Overfull \hbox (3143.74498pt too wide) in paragraph at lines 498--498
 [][] 
  []
 
 
-LaTeX Warning: Float too large for page by 4217.38737pt on input line 494.
+LaTeX Warning: Float too large for page by 4217.38737pt on input line 499.
 
-<../../2025_forecast/results/temperature_data/NSEAK.png, id=54, 433.62pt x 578.16pt>
-File: ../../2025_forecast/results/temperature_data/NSEAK.png Graphic file (type png)
-<use ../../2025_forecast/results/temperature_data/NSEAK.png>
-Package pdftex.def Info: ../../2025_forecast/results/temperature_data/NSEAK.png  used on input line 497.
+<../results/temperature_data/NSEAK.png, id=54, 433.62pt x 578.16pt>
+File: ../results/temperature_data/NSEAK.png Graphic file (type png)
+<use ../results/temperature_data/NSEAK.png>
+Package pdftex.def Info: ../results/temperature_data/NSEAK.png  used on input line 502.
 (pdftex.def)             Requested size: 3613.5pt x 4819.31738pt.
 
-Overfull \hbox (3143.74498pt too wide) in paragraph at lines 497--497
+Overfull \hbox (3143.74498pt too wide) in paragraph at lines 502--502
 [][] 
  []
 
 
-LaTeX Warning: Float too large for page by 4217.38737pt on input line 498.
+LaTeX Warning: Float too large for page by 4217.38737pt on input line 503.
 
-<../../2025_forecast/results/temperature_data/SEAK.png, id=55, 433.62pt x 578.16pt>
-File: ../../2025_forecast/results/temperature_data/SEAK.png Graphic file (type png)
-<use ../../2025_forecast/results/temperature_data/SEAK.png>
-Package pdftex.def Info: ../../2025_forecast/results/temperature_data/SEAK.png  used on input line 501.
+<../results/temperature_data/SEAK.png, id=55, 433.62pt x 578.16pt>
+File: ../results/temperature_data/SEAK.png Graphic file (type png)
+<use ../results/temperature_data/SEAK.png>
+Package pdftex.def Info: ../results/temperature_data/SEAK.png  used on input line 506.
 (pdftex.def)             Requested size: 3613.5pt x 4819.31738pt.
 
-Overfull \hbox (3143.74498pt too wide) in paragraph at lines 501--501
+Overfull \hbox (3143.74498pt too wide) in paragraph at lines 506--506
 [][] 
  []
 
 
-LaTeX Warning: Float too large for page by 4217.38737pt on input line 502.
+LaTeX Warning: Float too large for page by 4217.38737pt on input line 507.
 
-<../../2025_forecast/results/temperature_data/monthly_temp_regions.png, id=56, 433.62pt x 578.16pt>
-File: ../../2025_forecast/results/temperature_data/monthly_temp_regions.png Graphic file (type png)
-<use ../../2025_forecast/results/temperature_data/monthly_temp_regions.png>
-Package pdftex.def Info: ../../2025_forecast/results/temperature_data/monthly_temp_regions.png  used on input line 505.
+<../results/temperature_data/monthly_temp_regions.png, id=56, 433.62pt x 578.16pt>
+File: ../results/temperature_data/monthly_temp_regions.png Graphic file (type png)
+<use ../results/temperature_data/monthly_temp_regions.png>
+Package pdftex.def Info: ../results/temperature_data/monthly_temp_regions.png  used on input line 510.
 (pdftex.def)             Requested size: 3011.49075pt x 4016.41835pt.
 
-Overfull \hbox (2541.73573pt too wide) in paragraph at lines 505--505
+Overfull \hbox (2541.73573pt too wide) in paragraph at lines 510--510
 [][] 
  []
 
 
-LaTeX Warning: Float too large for page by 3450.48834pt on input line 506.
+LaTeX Warning: Float too large for page by 3450.48834pt on input line 511.
 
-<../../2025_forecast/results/temperature_data/monthly_SECM_temp_regions.png, id=58, 505.89pt x 361.35pt>
-File: ../../2025_forecast/results/temperature_data/monthly_SECM_temp_regions.png Graphic file (type png)
-<use ../../2025_forecast/results/temperature_data/monthly_SECM_temp_regions.png>
-Package pdftex.def Info: ../../2025_forecast/results/temperature_data/monthly_SECM_temp_regions.png  used on input line 509.
+<../results/temperature_data/monthly_SECM_temp_regions.png, id=58, 505.89pt x 361.35pt>
+File: ../results/temperature_data/monthly_SECM_temp_regions.png Graphic file (type png)
+<use ../results/temperature_data/monthly_SECM_temp_regions.png>
+Package pdftex.def Info: ../results/temperature_data/monthly_SECM_temp_regions.png  used on input line 514.
 (pdftex.def)             Requested size: 3513.04474pt x 2510.00235pt.
 
-Overfull \hbox (3043.28972pt too wide) in paragraph at lines 509--509
+Overfull \hbox (3043.28972pt too wide) in paragraph at lines 514--514
 [][] 
  []
 
 
-LaTeX Warning: Float too large for page by 1896.07234pt on input line 510.
+LaTeX Warning: Float too large for page by 1896.07234pt on input line 515.
 
 
 
 [8]
 
-[9 <../../2025_forecast/results/temperature_data/Icy_Strait.png>]
+[9 <../results/temperature_data/Icy_Strait.png>]
 
-[10 <../../2025_forecast/results/temperature_data/Chatham.png>]
+[10 <../results/temperature_data/Chatham.png>]
 
-[11 <../../2025_forecast/results/temperature_data/NSEAK.png>]
+[11 <../results/temperature_data/NSEAK.png>]
 
-[12 <../../2025_forecast/results/temperature_data/SEAK.png>]
+[12 <../results/temperature_data/SEAK.png>]
 
-[13 <../../2025_forecast/results/temperature_data/monthly_temp_regions.png>]
+[13 <../results/temperature_data/monthly_temp_regions.png>]
 
-[14 <../../2025_forecast/results/temperature_data/monthly_SECM_temp_regions.png>]
+[14 <../results/temperature_data/monthly_SECM_temp_regions.png>]
 
-[15] (./satellite_SST_process_2025.aux)
+[15] (./satellite_SST_process_2026.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-04-29>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 13592 strings out of 471510
- 219424 string characters out of 5516480
- 644478 words of memory out of 5000000
+ 13588 strings out of 471510
+ 218260 string characters out of 5516480
+ 645474 words of memory out of 5000000
  39847 multiletter control sequences out of 15000+600000
- 678114 words of font info for 140 fonts, out of 8000000 for 9000
+ 677937 words of font info for 138 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  83i,6n,93p,1023b,455s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/semiller1/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb>
-Output written on satellite_SST_process_2025.pdf (15 pages, 1740902 bytes).
+Output written on satellite_SST_process_2026.pdf (15 pages, 1762379 bytes).
 PDF statistics:
  184 PDF objects out of 1000 (max. 8388607)
  143 compressed objects within 2 object streams
