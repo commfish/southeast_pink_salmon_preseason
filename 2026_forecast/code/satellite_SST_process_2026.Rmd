@@ -123,34 +123,44 @@ tbls_sst_SECM$SECMvar2025_JJ %>%
    knitr::kable(format = 'pandoc', caption = 'The SECM survey temperature data were summarized by year (1997 to 2025), month (the months of June and July; JJ) at 20m depths for the Icy Strait and Upper Chatham transects (stations ISA, ISB, ISC, ISD, UCA, UCB, UCC, UCD).', row.names = F, align = "c")
 ```
 
-```{r fig1, fig.cap="The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. The Southeast Coastal Monitoring (SECM) project transects (Upper Chatham Strait and Icy Strait) are shown as red points for comparison to the satellite stations (i.e., data points; black circles)."}
+```{r fig1, fig.cap="The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. The Southeast Coastal Monitoring (SECM) project transects (Upper Chatham Strait and Icy Strait) are shown as red points for comparison to the satellite stations (i.e., data points; black circles).", out.width="80%"}
 knitr::include_graphics(here(results.directory, "Icy_Strait.png"))
 ```
 
-```{r fig2, fig.cap="The Chatham and Icy Straits region encompasses waters of Chatham and Icy Straits east of Lemesurier Island to Point Couverden, south to the approximate latitude of 56.025 degrees north (roughly Cape Decision off Kuiu Island). The black circles are the satellite stations (i.e., data points)."}
+\pagebreak
+
+```{r fig2, fig.cap="The Chatham and Icy Straits region encompasses waters of Chatham and Icy Straits east of Lemesurier Island to Point Couverden, south to the approximate latitude of 56.025 degrees north (roughly Cape Decision off Kuiu Island). The black circles are the satellite stations (i.e., data points).", out.width="80%"}
 knitr::include_graphics(here(results.directory, "Chatham.png"))
 ```
 
-```{r fig3, fig.cap="The northern Southeast Alaska (NSEAK) region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude and from -137.175 to -132.825 degrees west longitude. The black circles are the satellite stations (i.e., data points)."}
+\pagebreak
+
+```{r fig3, fig.cap="The northern Southeast Alaska (NSEAK) region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude and from -137.175 to -132.825 degrees west longitude. The black circles are the satellite stations (i.e., data points).", out.width="80%"}
 knitr::include_graphics(here(results.directory, "NSEAK.png"))
 ```
 
-```{r fig4, fig.cap="The Southeast Alaska (SEAK) region encompasses Southeast Alaska from 59.475 to 54.725 degrees north latitude and from -137.175 to -130.675 degrees west longitude. The black circles are the satellite stations (i.e., data points)."}
+\pagebreak
+
+```{r fig4, fig.cap="The Southeast Alaska (SEAK) region encompasses Southeast Alaska from 59.475 to 54.725 degrees north latitude and from -137.175 to -130.675 degrees west longitude. The black circles are the satellite stations (i.e., data points).", out.width="80%"}
 knitr::include_graphics(here(results.directory, "SEAK.png"))
 ```
 
-```{r fig5, fig.cap="A. The May temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2025. B. The May, June, and July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2025. C. The April through June temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2025. D. The April through July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2025."}
+\pagebreak
+
+```{r fig5, fig.cap="A. The May temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2025. B. The May, June, and July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2025. C. The April through June temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2025. D. The April through July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2025.", out.width="80%"}
 knitr::include_graphics(here(results.directory, "monthly_temp_regions.png"))
 ```
 
-```{r fig6, fig.cap="Average temperature (degrees Celsius) at 20m during June and July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI) from 1997 through 2025."}
+\pagebreak
+
+```{r fig6, fig.cap="Average temperature (degrees Celsius) at 20m depth during June and July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI) from 1997 through 2025.", out.width="80%"}
 knitr::include_graphics(here(results.directory, "monthly_SECM_temp_regions.png"))
 ```
 
-# Acknowledgements
-Jordan Watson (NOAA) helped with the code to process the satellite data into a usable format. The data was accessed through NOAA's Coral Reef Watch (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html and https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html). Emily Fergusson summarized the SECM survey data by year, month, and depth. All code and associated data are located here: https://github.com/commfish/southeast_pink_salmon_preseason in the 2025_forecast folder.
 
 \pagebreak
+# Acknowledgements
+Jordan Watson (NOAA) helped with the code to process the satellite data into a usable format. The data was accessed through NOAA's Coral Reef Watch (https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html and https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW.html). Emily Fergusson summarized the SECM survey data by year, month, and depth. All code and associated data are located here: https://github.com/commfish/southeast_pink_salmon_preseason in the 2026_forecast folder.
 
 # References
 Huang, B., P. W. Thorne, V. F. Banzon,, T. Boyer, G. Chepurin, J. H. Lawrimore, M. J. Menne, T. M. Smith, R. S. Vose, and H. M. Zhang. 2017. Extended reconstructed sea surface temperature, version 5 (ERSSTv5): upgrades, validations, and intercomparisons. Journal of Climate 30:8179–8205.
