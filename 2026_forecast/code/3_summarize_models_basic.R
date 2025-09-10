@@ -241,4 +241,5 @@ read.csv(file.path(results.directory,'model_summary_table2_multi.csv'), header=T
 
 rbind(model_summary_table2, model_summary_table2_multi) %>%
   arrange(MAPE5) %>%
+  mutate(MAPE5 = round(MAPE5,1)) %>%
   write.csv(., paste0(results.directory, "/model_summary_final.csv"), row.names = F)   

@@ -1,16 +1,36 @@
 # run code 3_summarize_models_basic.R first
 # inputs
-fit_value_model<-19.02 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
-lwr_pi_80<-11.766 # 80% PI from model_summary_table2 in the results folder
-upr_pi_80<-30.745 # 80% PI from model_summary_table2 in the results folder
-best_model<-m20a
-model<-'m20a'
+fit_value_model<-22.5 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
+lwr_pi_80<-13.6 # 80% PI from model_summary_table2 in the results folder
+upr_pi_80<-37.3 # 80% PI from model_summary_table2 in the results folder
+best_model<-m2a
+model<-'m2a'
 year.forecast <- "2026_forecast" # forecast year
 year.data <- 2025 # last year of data
 year.data.one <- year.data - 1
 
 # best model based on performance metrics
-lm(SEAKCatch_log ~ CPUE:as.factor(odd_even_factor) + ISTI20_MJJ, data = log_data_subset) -> m20a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + ISTI20_JJ, data = log_data_subset) -> m2a
+
+# Depends on dplyr
+tickr <- function(
+    data, # dataframe
+    var, # column of interest
+    to # break point definition 
+){
+  
+  VAR <- enquo(var) # makes VAR a dynamic variable
+  
+  data %>% 
+    distinct(!!VAR) %>%
+    #    ungroup(!!VAR) %>% 
+    mutate(labels = ifelse(!!VAR %in% seq(to * round(min(!!VAR) / to), max(!!VAR), to),
+                           !!VAR, "")) %>%
+    dplyr::select(breaks = UQ(VAR), labels)
+}
+
+tickryr <- data.frame(Year = 1995:2026)
+axisf <- tickr(tickryr, Year, 5)
 
 # MODEL DIAGNOSTICS TABLES
 as.numeric(sigma(best_model))-> sigma
@@ -48,18 +68,14 @@ augment(best_model) %>%
                      panel.grid.minor = element_blank(), 
                      panel.grid.major = element_blank(), 
                      axis.line = element_line(colour = "black"),
-                     axis.text.x = element_text(size =10, family="Times New Roman"),
+                     axis.text.x = element_text(size =9, family="Times New Roman"),
                      axis.title.y = element_text(size=11, colour="black",family="Times New Roman"),
                      axis.title.x = element_text(size=11, colour="black",family="Times New Roman"),
                      panel.border = element_rect(colour = "black", size=1),
                      legend.position=c(0.50,0.87)) +
   geom_point(x=year.data +1, y=fit_value_model, pch=21, size=2.5, colour = "black", fill="grey") +
-  scale_x_continuous(
-    minor_breaks = seq(1998, year.data +1, by = 1),
-    breaks = seq(1997, year.data +1, by = 4), limits = c(1997, year.data+1),
-    guide = "axis_minor") + # this is added to the original code)
-  
-  #scale_x_continuous(breaks = seq(1998, year.data +1, 4)) +theme(legend.title=element_blank())+
+  scale_x_continuous(limits = c(min(tickryr$Year), max(tickryr$Year)),
+                     breaks = axisf$breaks, labels = axisf$labels) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_text(aes(x = 1998, y = 140, label="A."),family="Times New Roman", colour="black", size=5) +

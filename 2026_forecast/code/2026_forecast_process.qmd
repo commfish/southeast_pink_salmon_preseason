@@ -117,6 +117,17 @@ tbls_seak_results$model_summary_final %>%
    knitr::kable(format = 'pandoc', caption = 'Summary of the performance metrics for the 36 regression models.', row.names = F, align="cccc")
 ```
 
+```{r best model m2a, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/model_figs/catch_plot_pred_m2a.png"))
+```
+
+Figure 1: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m2a). The predicted 2026 forecast (22.5 million fish) is symbolized as a grey circle with an 80% prediction interval (13.6 to 37.3 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m2a by year. The dotted line is a one to one reference line.
+
+```{r best model m7, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/model_figs/catch_plot_pred_m7.png"))
+```
+
+Figure 2: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m2a). The predicted 2026 forecast (18.0 million fish) is symbolized as a grey circle with an 80% prediction interval (9.6 to 33.7 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m7 by year. The dotted line is a one to one reference line.
 
 # References
 Burnham, K. P., and D. R. Anderson (1998) Model Selection and Inference. Springer, New York. 353 pp. 
@@ -235,3 +246,6 @@ knitr::include_graphics(here(results.directory, "/figs/forecast_models.png"))
 ```
 
 Figure B2: Bias-corrected forecasts (grey bars) for the 18 regression models (Models m1a-m18a) with 80% prediction intervals (vertical grey lines). A horizontal dotted line at 20 million fish is placed on the figure for reference only. The 2026-forecast using the model mxx has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
+
+
+
