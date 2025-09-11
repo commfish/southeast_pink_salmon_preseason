@@ -1,17 +1,17 @@
 # run code 1_summarize_models.R first
 
 # inputs
-fit_value_model<-24.656 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
-lwr_pi_80<-13.115 # 80% PI from model_summary_table2 in the results folder
-upr_pi_80<-46.352 # 80% PI from model_summary_table2 in the results folder
-best_model<-m25
-model<-'m25'
+fit_value_model<-17.9 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
+lwr_pi_80<-9.6 # 80% PI from model_summary_table2 in the results folder
+upr_pi_80<-33.3 # 80% PI from model_summary_table2 in the results folder
+best_model<-m7
+model<-'m7'
 year.forecast <- "2026_forecast" # forecast year
 year.data <- 2025 # last year of data
 year.data.one <- year.data - 1
 
 # best model based on performance metrics
-lm(SEAKCatch_log ~ as.factor(vessel) : adj_raw_pink_log + as.factor(odd_even_factor):adj_raw_pink_log + Icy_Strait_SST_May, data = log_data_subset) -> m25
+lm(SEAKCatch_log ~ as.factor(vessel) : adj_raw_pink_log + as.factor(odd_even_factor):adj_raw_pink_log + Icy_Strait_SST_May, data = log_data_subset) -> m7
 
 # MODEL DIAGNOSTICS TABLES
 as.numeric(sigma(best_model))-> sigma
