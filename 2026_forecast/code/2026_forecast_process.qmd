@@ -115,16 +115,11 @@ tbls_seak_results$model_summary_final %>%
 ```
 
 ```{r best model m2a, echo=FALSE}
-knitr::include_graphics(here(results.directory, "/model_figs/catch_plot_pred_m2a.png"))
+knitr::include_graphics(here(results.directory, "/model_figs/catch_plot_pred_m13a.png"))
 ```
 
-Figure 1: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m2a). The predicted 2026 forecast (22.5 million fish) is symbolized as a grey circle with an 80% prediction interval (13.6 to 37.2 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m2a by year. The dotted line is a one to one reference line.
+Figure 1: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m13a). The predicted 2026 forecast (19.3 million fish) is symbolized as a grey circle with an 80% prediction interval (12.6 to 29.7 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m13a by year. The dotted line is a one to one reference line.
 
-```{r best model m7, echo=FALSE}
-knitr::include_graphics(here(results.directory, "/model_figs/catch_plot_pred_m7.png"))
-```
-
-Figure 2: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m7). The predicted 2026 forecast (17.9 million fish) is symbolized as a grey circle with an 80% prediction interval (9.6 to 33.3 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m7 by year. The dotted line is a one to one reference line.
 
 # References
 
@@ -178,7 +173,7 @@ Zhang, Z. (2016) Residuals and regression diagnostics: focusing on logistic regr
 
 **CPUE:** The average Ln(CPUE+1) for catches in either June or July, whichever month had the highest average in a given year, where effort was a standard trawl haul. The CPUE data was adjusted using vessel calibration factors to account for differences in fishing power among vessels. 
 
-**ISTI20_JJ:** The average 20-m integrated water column temperature at the eight stations in Icy Strait (Icy Strait and Upper Chatham transects) sampled during the SECM surveys in June, and July of each year (in degrees Celsius). This year there was no survey in May. Therefore, this temperature index no longer includes May in the average.
+**ISTI20_JJ:** The average 20-m integrated water column temperature at the eight stations in Icy Strait (Icy Strait and Upper Chatham transects) sampled during the SECM surveys in June and July of each year (in degrees Celsius). This year there was no survey in May. Therefore, this temperature index no longer includes May in the average.
 
 ## Satellite SST variables
 
