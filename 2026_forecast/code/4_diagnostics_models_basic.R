@@ -1,16 +1,16 @@
 # run code 3_summarize_models_basic.R first
 # inputs
-fit_value_model<-22.5 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
-lwr_pi_80<-13.6 # 80% PI from model_summary_table2 in the results folder
-upr_pi_80<-37.2 # 80% PI from model_summary_table2 in the results folder
-best_model<-m2a
-model<-'m2a'
+fit_value_model<-19.3 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
+lwr_pi_80<-12.6 # 80% PI from model_summary_table2 in the results folder
+upr_pi_80<-29.7 # 80% PI from model_summary_table2 in the results folder
+best_model<-m13a
+model<-'m13a'
 year.forecast <- "2026_forecast" # forecast year
 year.data <- 2025 # last year of data
 year.data.one <- year.data - 1
 
 # best model based on performance metrics
-lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + ISTI20_JJ, data = log_data_subset) -> m2a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJ, data = log_data_subset) -> m13a
 
 # Depends on dplyr
 tickr <- function(
