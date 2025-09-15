@@ -116,7 +116,7 @@ tbls_sst_regions$sst_oisst_97_25_SEAK_monthly_summary %>%
 \pagebreak
 
 ## SECM survey temperature data
-SECM survey temperature data were summarized by year (1997 to 2025), month (average over the months of May, June, and July) at 20m depths; Table 5).
+SECM survey temperature data were summarized by year (1997 to 2025), month (average over the months of June and July) at 20m depths; Table 5).
 
 ```{r summary5}
 tbls_sst_SECM$SECMvar2025_JJ %>%

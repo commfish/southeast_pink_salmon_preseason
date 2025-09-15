@@ -98,9 +98,8 @@ Hierarchical models were compared with the AICc criterion. The best fit models, 
 
 # Results
 
-Based upon the 5-year MAPE performance metric, the AICc values, significant parameters in the models, and the adjusted R-squared values, model xx (a model that included CPUE (i.e., adj_raw_pink) and the satellite SST variable from northern SEAK in May; Table 1 and Table 2; Appendix C) was the best performing model and the 2025-forecast using this model has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
+Based upon the 5-year MAPE performance metric, the AICc values, significant parameters in the models, and the adjusted R-squared values, model xx (a model that included vessel-adjusted CPUE and the satellite SST variable from northern SEAK in April, May, and June; Table 1 and Table 2; Appendix C) was the best performing model and the 2026-forecast using this model has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
 
-\pagebreak
 
 ```{r model data}
 tbls_seak$data %>% 
@@ -114,11 +113,11 @@ tbls_seak_results$model_summary_final %>%
    knitr::kable(format = 'pandoc', caption = 'Summary of the performance metrics for the 36 regression models.', row.names = F, align="cccc")
 ```
 
-```{r best model m2a, echo=FALSE}
+```{r best model m13a, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/model_figs/catch_plot_pred_m13a.png"))
 ```
 
-Figure 1: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m13a). The predicted 2026 forecast (19.3 million fish) is symbolized as a grey circle with an 80% prediction interval (12.6 to 29.7 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m13a by year. The dotted line is a one to one reference line.
+Figure 1: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m13a). The predicted 2026 forecast (xx million fish) is symbolized as a grey circle with an 80% prediction interval (xx to xx million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m13a by year. The dotted line is a one to one reference line.
 
 
 # References
@@ -238,3 +237,39 @@ knitr::include_graphics(here(results.directory, "/figs/forecast_models.png"))
 ```
 
 Figure B2: Bias-corrected forecasts (grey bars) for the 18 regression models (Models m1a-m18a) with 80% prediction intervals (vertical grey lines). A horizontal dotted line at 20 million fish is placed on the figure for reference only. The 2026-forecast using the model mxx has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
+
+# Appendix C
+
+## Model Diagnostics
+Model diagnostics for model m13a included residual plots, the lack of fit test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage plots (Table 4; Figure C1; Figure C2). Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016). 
+
+```{r details}
+tbls_seak_results$model_summary_table4_m13a %>% 
+   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m13a. Fitted values (in millions of fish) are bias-corrected.')
+```
+
+### Cook's distance
+Cook's distance is a measure of influence, or the product of both leverage and outlier. Cook's distance,
+$$D_i=\ \frac{e_{PSi}^2}{k+1}\ast\frac{h_i}{1-h_i},\tag{5}$$				
+where $e_{PSi}^2$ is the standardized Pearson residuals, $h_i$ are the hat values (measure of leverage), and $k$ is the number of predictor variables in the model, is a measure of overall influence of the $i_{th}$ data point on all $n$ fitted values (Fox and Weisburg 2019). A large value of Cook's distance indicates that the data point is an influential observation. Cook's distance values greater than $4/(n-k-1)$, where $n$ is the number of observations (i.e., 28), was used as a benchmark for identifying the subset of influential observations (Ren et al. 2016). Therefore, a Cook's distance cut-off of 0.17 was used; observations with a Cook's distance greater than 0.17 may be influential observations (Figure C1a). 
+
+### Leverage
+An observation that is distant from the average covariate pattern is considered to have high leverage or hat-value. If an individual observation has a leverage value $h_i$ greater than 2 or 3 times $p/n$ (Ren et al. 2016), it may be a concern (where $p$ is the number of parameters in the model including the intercept (i.e., 4), and $n$ is the number of observations in the model (i.e., 28); $p/n$ = 4/28 = 0.14 for this study). Therefore, a leverage cut-off of 0.29 was used; observations with a leverage value greater than 0.29 may affect the model properties (e.g., summary statistics, standard errors, predicted values) (Figure C1b).
+
+```{r influential, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/model_figs/influential_m13a.png"))
+```
+
+Figure C1: Diagnostics plots of influential observations including A. Cook's distance (with a cut-off value of 0.17), and B. leverage values (with a cut-off value of 0.29) from model m13a.
+
+### Influential datapoints
+A lack-of fit test was performed between model m13a (full model) and a reduced model with just the CPUE and odd/even factor. Based on an anova between the full and reduced models, the p-value was less than .05, the null hypothesis of the test is rejected, and it can be concluded that the full model offers a statistically significantly better fit than the reduced model. Diagnostics indicated that one of the data points was above the cut-off value for the Cook's distance (Figure C1a; juvenile year 2022). One observation had high leverage values (Figure C1b; 2016). Based on the Bonferroni outlier test, none of the data points had studentized residuals with a significant Bonferroni $P$-value suggesting that none of the data points impacted the model fitting; although observation 26 was the most extreme (juvenile year 2022) based on standardized residuals (Figure C2c; Table 5). Based on the lightly curved fitted lines in the residual versus fitted plot (Figure C2d), the fitted plot shows some lack of fit of the model.
+
+```{r predicted3, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/model_figs/fitted_m13a.png"))
+```
+
+Figure C2: Standardized residuals versus predicted plots for A. CPUE and B. temperature (average April, May, June SST in northern Southeast Alaska) for model m13a. C. Standardized residuals versus juvenile year and D. residuals versus fitted values for model m13a. Positive residuals indicate that the observed harvest was larger than predicted by the model.
+
+
+
