@@ -1,0 +1,4 @@
+After reviewing the methods, I realized we can’t use AICc between the model sets with the vessel-calibrated CPUE and the raw CPUE as the response variable is not the same. The Steller and Chellissa vessels were only used one year each. Therefore, years 2009 and 2010 are not a part of the data set for models m1-m18 (raw CPUE), but those years (2009, 2010) are a part of the data set for models m1a-m18a (vessel-calibrated data). So, we are really just relying on the 5-year MAPE to decide between the two model structures. If one is comparing within the model structure (e.g., m1-m18), one can use both AICc and adjusted R-squared along with the 5-year MAPE for model performance. I think for next year, we may want to consider a few performance metrics when comparing the models. Some examples are below:
+•	ME, MPE: measure bias
+•	MAE, RMSE, MAPE: measure error magnitude (MAPE is relative, others are absolute)
+•	MSE: measures both bias and magnitude (total squared error)

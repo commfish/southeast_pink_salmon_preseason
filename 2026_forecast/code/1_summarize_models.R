@@ -260,4 +260,11 @@ variables_adj_raw_pink %>%
    labs(x="", y = "2026 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
  ggsave(paste0(results.directory, "figs/forecast_models_multi.png"), dpi = 500, height = 4, width = 10, units = "in")
  
- 
+ # create final table for report
+ read.csv(file.path(results.directory,'model_summary_table2_multi.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE)  %>%
+   arrange(MAPE5) %>%
+   mutate(MAPE5 = round(MAPE5,1)) %>%
+   mutate(change = AICc- min(AICc)) %>%
+   dplyr::select(Terms, Model, Fit, Fit_LPI, Fit_UPI,AdjR2, MAPE5, change) %>%
+   rename(AICc = change) %>%
+   write.csv(., paste0(results.directory, "/model_summary_final_multi.csv"), row.names = F) 

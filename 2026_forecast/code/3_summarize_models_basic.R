@@ -218,8 +218,8 @@ variables_adj_raw_pink %>%
   summarise(adj_raw_pink_log = max(adj_raw_pink_log)) %>% 
   merge(., variables_temp, by.x = c("JYear", "Year"), by.y = c("JYear", "Year")) %>%
   dplyr::filter(adj_raw_pink_log > 0) %>%
-  dplyr::filter(vessel!= 'Steller') %>%
-  dplyr::filter(vessel!= 'Chellissa') %>%
+  #dplyr::filter(vessel!= 'Steller') %>%
+  #dplyr::filter(vessel!= 'Chellissa') %>%
   dplyr::select(JYear, Year, SEAKCatch, vessel, adj_raw_pink_log) -> multi
 
 variables_temp %>%
@@ -236,10 +236,11 @@ variables_temp %>%
 
 # STEP 7: CREATE PERFORMANCE SUMMARY
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> model_summary_table2 # update file names
-read.csv(file.path(results.directory,'model_summary_table2_multi.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> model_summary_table2_multi # update file names
-
-rbind(model_summary_table2, model_summary_table2_multi) %>%
+read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE)  %>%
   arrange(MAPE5) %>%
   mutate(MAPE5 = round(MAPE5,1)) %>%
-  write.csv(., paste0(results.directory, "/model_summary_final.csv"), row.names = F)   
+  mutate(change = AICc- min(AICc)) %>%
+  dplyr::select(Terms, Model, Fit, Fit_LPI, Fit_UPI,AdjR2, MAPE5, change) %>%
+  rename(AICc = change) %>%
+  write.csv(., paste0(results.directory, "/model_summary_final.csv"), row.names = F) 
+

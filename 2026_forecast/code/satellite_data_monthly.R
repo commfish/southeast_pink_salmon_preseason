@@ -321,6 +321,20 @@ fig_data %>%
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
   geom_text(aes(x = 1999.5, y = 12, label="B) April, May, June"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot4
+
+fig_data %>%
+  dplyr::select(year, NSEAK_SST_AMJ) %>%
+  ggplot(., aes(y = NSEAK_SST_AMJ, x = year)) +
+  geom_line() +
+  theme(legend.title=element_blank(),legend.position = "none",
+        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
+        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
+        axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
+  scale_x_continuous(breaks = 1997:2025, labels = 1997:2025) + # update final year
+  scale_y_continuous(breaks = c(6,7, 8, 9,10), limits = c(6,10))+
+  #geom_text(aes(x = 1999.5, y = 12, label="B) April, May, June"),family="Times New Roman", colour="black", size=4) +
+  labs(y = "Temperature (Celsius)", x = "Year") -> plot5
+ggsave(paste0(results.directory, "monthly_NSEAK_AMJ_temp.png"), dpi = 500, height = 5, width = 7, units = "in")
 # https://newbedev.com/one-shared-legend-for-a-cowplot-grid-in-r
 ggpubr::ggarrange(plot3, plot4, plot2, plot1,  # list of plots
                   #labels = "AUTO", # labels

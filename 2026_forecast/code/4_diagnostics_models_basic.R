@@ -2,7 +2,7 @@
 # inputs
 fit_value_model <- 19.3 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
 lwr_pi_80 <- 12.6 # 80% PI from model_summary_table2 in the results folder
-upr_pi_80 <- 29.7 # 80% PI from model_summary_table2 in the results folder
+upr_pi_80 <- 29.8 # 80% PI from model_summary_table2 in the results folder
 best_model <- m13a
 model <- 'm13a'
 year.forecast <- "2026_forecast" # forecast year
@@ -31,8 +31,8 @@ tickr <- function(
     dplyr::select(breaks = UQ(VAR), labels)
 }
 
-tickryr <- data.frame(Year = 1995:2026)
-axisf <- tickr(tickryr, Year, 5)
+tickryr <- data.frame(Year = 1997:2026)
+axisf <- tickr(tickryr, Year, 2)
 
 # MODEL DIAGNOSTICS TABLES
 as.numeric(sigma(best_model))-> sigma
@@ -137,24 +137,26 @@ augment(best_model) %>%
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_text(aes(x = 0.2, y = 4, label="A."),family="Times", colour="black", size=5) -> plot1
 
-
+tickryr <- data.frame(Year = 1997:2026)
+axisf <- tickr(tickryr, Year, 2)
 log_data_subset %>%
   dplyr::select(JYear, Year) -> log_data_subset  
 
 augment(best_model) %>% 
   cbind(.,log_data_subset) %>%
   mutate(resid = .std.resid)%>% 
-  ggplot(aes(x = JYear, y = resid)) + ggtitle("m13a") +
+  ggplot(aes(x = Year, y = resid)) + ggtitle("m13a") +
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
-  scale_x_continuous(breaks = 1997:2025, labels = 1997:2025) +
+  scale_x_continuous(limits = c(min(tickryr$Year), max(tickryr$Year)),
+                     breaks = axisf$breaks, labels = axisf$labels) +
   scale_y_continuous(breaks = c(-4,-3,-2,-1,0, 1,2,3,4), limits = c(-4,4))+
-  labs(y = "Standardized residuals", x =  "Juvenile year") + theme_bw () +theme(text = element_text(size=10),
-                                                                                axis.text.x = element_text(angle=90, hjust=1, size=6),
+  labs(y = "Standardized residuals", x =  "Year") + theme_bw () +theme(text = element_text(size=10),
+                                                                                axis.text.x = element_text(angle=90, hjust=1, size=6,vjust=0.5 ),
                                                                                 panel.border = element_blank(), panel.grid.major = element_blank(),
                                                                                 panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 1997, y = 4, label="C."),family="Times", colour="black", size=5) -> plot2
+  geom_text(aes(x = 1998, y = 4, label="C."),family="Times", colour="black", size=5) -> plot2
 
 # residuals against fitted
 augment(best_model) %>% 
@@ -206,19 +208,20 @@ level <- 4/(sample_size-k-1) # source: Ren et al. 2016# k = # of predictors in m
 augment(best_model) %>% 
   cbind(.,log_data_subset) %>% 
   mutate(cooksd = (.cooksd),
-         name= ifelse(cooksd >level, JYear, "")) %>% 
-  ggplot(aes(x = JYear, y = cooksd, label=name)) +ggtitle("m13a") +
+         name= ifelse(cooksd >level, Year, "")) %>% 
+  ggplot(aes(x = Year, y = cooksd, label=name)) +ggtitle("m13a") +
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
-  geom_text(size = 2, position = position_stack(vjust = 1.1)) + 
+  geom_text(size = 2, position = position_stack(vjust = 1), vjust=-2) + 
   geom_hline(yintercept = level, lty=2) +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                                                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  scale_x_continuous(breaks = 1997:2025, labels = 1997:2025) +
+  scale_x_continuous(limits = c(min(tickryr$Year), max(tickryr$Year)),
+                     breaks = axisf$breaks, labels = axisf$labels) +
   scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0), limits = c(0,1.0))+
-  labs(y = "Cook's distance", x =  "Juvenile year") + theme(text = element_text(size=10),
-                                                            axis.text.x = element_text(angle=90, hjust=1))+
-  geom_text(aes(x = 1997, y = 1, label="A."),family="Times", colour="black", size=5) -> plot1
+  labs(y = "Cook's distance", x =  "Year") + theme(text = element_text(size=10),
+                                                            axis.text.x = element_text(angle=90, vjust=0.5))+
+  geom_text(aes(x = 1998, y = 1, label="A."),family="Times", colour="black", size=5) -> plot1
 
 # leverage plot
 #  p = number of parameters in the model including intercept
@@ -227,20 +230,21 @@ level # leverage value
 augment(best_model) %>% 
   cbind(.,log_data_subset) %>% 
   mutate(hat= (.hat),
-         name= ifelse(hat > level, JYear, "")) %>% # may need to adjust valeu; see hat value equation above
-  ggplot(aes(x = JYear, y = hat, label=name)) +ggtitle("m13a") +
+         name= ifelse(hat > level, Year, "")) %>% # may need to adjust value; see hat value equation above
+  ggplot(aes(x = Year, y = hat, label=name)) +ggtitle("m13a") +
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
-  geom_text(size = 2, position = position_stack(vjust =1.1)) + 
+  geom_text(size = 2, position = position_stack(vjust =1.1), vjust=-2) + 
   theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_hline(yintercept = level, lty=2) +
-  scale_x_continuous(breaks = 1997:2025, labels = 1997:2025) +
+  scale_x_continuous(limits = c(min(tickryr$Year), max(tickryr$Year)),
+                     breaks = axisf$breaks, labels = axisf$labels) +
   scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0), limits = c(0,1.0)) +
-  labs(y = "Hat-values", x =  "Juvenile year") + theme(text = element_text(size=10),
-                                                       axis.text.x = element_text(angle=90, hjust=1))+
-  geom_text(aes(x = 1997, y = 1, label="B."),family="Times", colour="black", size=5)-> plot2
+  labs(y = "Hat-values", x =  "Year") + theme(text = element_text(size=10),
+                                                       axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))+
+  geom_text(aes(x = 1998, y = 1, label="B."),family="Times", colour="black", size=5)-> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "model_figs/influential_m13a.png"), dpi = 500, height = 3, width = 6, units = "in")
 
@@ -252,18 +256,20 @@ ggsave(paste0(results.directory, "model_figs/influential_m13a.png"), dpi = 500, 
 #   mutate(terms = "SEAK pink harvest (not fit)")%>%
 #   dplyr::select(c(harvest, Year, JYear, terms)) -> fig_data
 
-# plot of harvest by year with prediction error 
-as.numeric(sigma(best_model))-> sigma
-augment(best_model) %>% 
-  cbind(.,log_data_subset)%>%
-  mutate(terms = "SEAK pink harvest")%>%
-  mutate(harvest = exp(SEAKCatch_log),
-         fit = exp(.fitted) * exp(0.5* sigma*sigma)) %>%
-  merge(., fig_data, by.x = c("Year","JYear", "harvest", "terms"), by.y = c("Year","JYear", "harvest", "terms"), all=T)->fig_data_all
-ggplot(aes(x=Year), data = fig_data_all) +
-  geom_bar(aes(y = harvest, fill = terms),
-           stat = "identity", colour ="black",fill = "gray75",
-           width = 1) +
+# Extract sigma from the model
+tickryr <- data.frame(Year = 1997:2026)
+axisf <- tickr(tickryr, Year, 2)
+
+sigma <- as.numeric(sigma(best_model))
+
+ augment(best_model) %>% 
+   cbind(.,log_data_subset)%>%
+   mutate(harvest = exp(SEAKCatch_log),
+          fit = exp(.fitted) * exp(0.5* sigma*sigma)) %>%
+   ggplot(aes(x=Year)) +
+   geom_bar(aes(y = harvest, fill = "SEAK pink harvest"),
+            stat = "identity", colour ="black",
+            width = 1) +
   geom_line(aes(y = fit, colour = "fit"), linetype = 1, linewidth = 0.75) +
   scale_colour_manual("terms", values=c("fit" = "black")) +
   scale_fill_manual("terms",values=c("#e7e7e7", "darkgrey"))+
@@ -273,16 +279,14 @@ ggplot(aes(x=Year), data = fig_data_all) +
                      panel.grid.minor = element_blank(), 
                      panel.grid.major = element_blank(), 
                      axis.line = element_line(colour = "black"),
-                     axis.text.x = element_text(size =10, family="Times New Roman"),
+                     axis.text.x = element_text(angle=90, hjust=1, size=7,vjust=0.5),
                      axis.title.y = element_text(size=11, colour="black",family="Times New Roman"),
                      axis.title.x = element_text(size=11, colour="black",family="Times New Roman"),
                      panel.border = element_rect(colour = "black", size=1),
-                     legend.position=c(0.2,0.87)) +
+                     legend.position=c(0.4,0.87)) +
   geom_point(x=year.data +1, y=fit_value_model, pch=21, size=2.5, colour = "black", fill="grey") +
-  scale_x_continuous(
-    minor_breaks = seq(1998, year.data +1, by = 1),
-    breaks = seq(1997, year.data +1, by = 4), limits = c(1997, year.data+1),
-    guide = "axis_minor") + 
+   scale_x_continuous(limits = c(min(tickryr$Year), max(tickryr$Year)),
+                      breaks = axisf$breaks, labels = axisf$labels) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
   geom_text(aes(x = 1998, y = 140, label="A."),family="Times New Roman", colour="black", size=5) +
@@ -308,8 +312,6 @@ augment(best_model) %>%
   scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
   geom_abline(intercept = 0, lty=3) +
-  # geom_text_repel(aes(y = harvest, label = year),
-  #                nudge_x = 1, size = 3, show.legend = FALSE) +
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL)+
   geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
