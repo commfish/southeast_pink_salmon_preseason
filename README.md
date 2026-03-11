@@ -277,4 +277,9 @@ Wertheimer, A. C., J. A. Orsi, E. A. Fergusson, and J. M. Murphy. 2018. Forecast
 
 Willette, T. M., R. T. Cooney, V. Patrick, D. M. Mason, G. I. Thomas, and D. Scheel. 2001. Ecological processes influencing mortality of juvenile pink salmon (Oncorhynchus gorbuscha) in Prince William Sound, Alaska. Fisheries Oceanography 10(1):14–41.
 
+## Disclaimer
+
+### Alaska Department of Fish & Game
+*ADF&G retains intellectual property rights to data collected by or for ADF&G. Any dissemination of the data must credit ADF&G as the source, with a disclaimer that exonerates the department for errors or deficiencies in reproduction, subsequent analysis, or interpretation. The State of Alaska, Department of Fish and Game, makes no express or implied warranties (including warranties of merchantability and fitness) with respect to the accuracy, character, function, or capabilities of the data, services, or products or their appropriateness for any particular purpose. The Department of Fish and Game is not liable for any direct, incidental, indirect, special, compensatory, consequential or other damages suffered by the user or any other person or entity from the use of or failure of the data, services, or products even if the Department of Fish and Game has been advised of the possibility of such potential loss or damage. The entire risk as to the results of the use of the data, services, or products is assumed by the user. Data may be subject to periodic change without prior notification.*
+
 [^fn1]: The background section was taken directly from Miller, S. E., J. M. Murphy, S. C. Heinl, A. W. Piston, E. A. Fergusson, R. E. Brenner, W. W. Strasburger, and J. H. Moss. 2022. Southeast Alaska pink salmon forecasting models. Alaska Department of Fish and Game, Fishery Manuscript No. 22-03, Anchorage.
