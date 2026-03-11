@@ -22,7 +22,7 @@ The current assessment follows Miller et al. 2022.
 * [2019 forecast](http://www.adfg.alaska.gov/static/applications/dcfnewsrelease/1002259599.pdf)
 
 ## Reports
-* [2026 forecast report](2026_forecast/2025_forecast--final.pdf) 
+* [2026 forecast report](2026_forecast/2026_forecast--final.pdf) 
 * [2025 forecast report](2025_forecast/2025_forecast--final.pdf)  
 * [2024 forecast report](2024_forecast/2024_forecast--final.pdf)  
 * [2023 forecast report](2023_forecast/2023_forecast--final.pdf)  
