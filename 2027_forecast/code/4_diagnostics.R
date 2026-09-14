@@ -6,8 +6,8 @@
 # upr_pi_80<-33.3 # 80% PI from model_summary_table2 in the results folder
 # best_model<-m7
 # model<-'m7'
-# year.forecast <- "2026_forecast" # forecast year
-# year.data <- 2025 # last year of data
+# year.forecast <- "2027_forecast" # forecast year
+# year.data <- 2026 # last year of data
 # year.data.one <- year.data - 1
 # 
 # # best model based on performance metrics

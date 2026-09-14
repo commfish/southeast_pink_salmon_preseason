@@ -1,7 +1,7 @@
 # run code 4_diagnostics.R first
 # STEP 1: DATA
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(data.directory,'var2025_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
+read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
 
 # restructure the data for modeling
 n <- dim(variables)[1] # number of years including forecast year
@@ -139,7 +139,7 @@ write.csv(., paste0(results.directory, "/model_summary_table1.csv"), row.names =
 # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
 
 # STEP #4: CALCULATE ONE_STEP_AHEAD MAPE
-f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2018, models = "")  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
+f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2020, models = "")  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
 #f_model_one_step_ahead_multiple10(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2013)  # start = 1997, end = 2011 means Jyear 2012-2021 used for MAPE calc. (10-year)
 # if you run the function f_model_one_step_ahead, and do not comment out return(data), you can see how many years of data are used in the MAPE,
 # then you can use the f_model_one_step_ahead function check.xlsx (in the data folder) to make sure the
@@ -204,12 +204,12 @@ results %>%
                      legend.position = "none") +
   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, linewidth=1, color="grey30")+
   scale_y_continuous(breaks = c(0,5, 10, 15, 20, 25, 30, 35, 40, 45), limits = c(0,45))+
-  labs(x="", y = "2026 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
-ggsave(paste0(results.directory, "figs/forecast_models.png"), dpi = 500, height = 4, width = 10, units = "in")
+  labs(x="", y = "2027 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1 # update forecast year
+ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, width = 10, units = "in")
 
 # STEP 6: CREATE DATASET FOR WRITE-UP
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(data.directory,'var2025_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_temp # update file names
+read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_temp # update file names
 read.csv(file.path(data.directory,'adj_raw_pink.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_adj_raw_pink # update file names
 
 variables_adj_raw_pink %>%

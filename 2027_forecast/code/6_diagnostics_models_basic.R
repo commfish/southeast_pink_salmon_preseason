@@ -5,8 +5,8 @@ lwr_pi_80 <- 12.6 # 80% PI from model_summary_table2 in the results folder
 upr_pi_80 <- 29.8 # 80% PI from model_summary_table2 in the results folder
 best_model <- m13a
 model <- 'm13a'
-year.forecast <- "2026_forecast" # forecast year
-year.data <- 2025 # last year of data
+year.forecast <- "2027_forecast" # forecast year
+year.data <- 2026 # last year of data
 year.data.one <- year.data - 1
 sample_size <- 28 # number of data points in model (this is used for Cook's distance)
 
@@ -108,12 +108,12 @@ augment(best_model) %>%
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL)+
   geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5)-> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "model_figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
+ggsave(paste0(results.directory, "catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
 dev.off()
 
 # DIAGNOSTIC PLOTS
 # Diagnostics: test model assumptions (normality, linearity, residuals)
-png(paste0(results.directory, "model_figs/general_diagnostics_m13a.png"))
+png(paste0(results.directory, "general_diagnostics_m13a.png"))
 autoplot(best_model)
 dev.off()
 
@@ -199,7 +199,7 @@ augment(best_model) %>%
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_text(aes(x = 0, y = 6, label="F."),family="Times", colour="black", size=5) -> plot6  
 cowplot::plot_grid(plot1, plot4, plot2, plot3, align = "vh", nrow = 2, ncol=2)
-ggsave(paste0(results.directory, "model_figs/fitted_m13a.png"), dpi = 500, height = 5, width = 5, units = "in") 
+ggsave(paste0(results.directory, "fitted_m13a.png"), dpi = 500, height = 5, width = 5, units = "in") 
 
 # Cook's distance and leverage plot
 k = 3
@@ -246,7 +246,7 @@ augment(best_model) %>%
                                                        axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))+
   geom_text(aes(x = 1998, y = 1, label="B."),family="Times", colour="black", size=5)-> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "model_figs/influential_m13a.png"), dpi = 500, height = 3, width = 6, units = "in")
+ggsave(paste0(results.directory, "influential_m13a.png"), dpi = 500, height = 3, width = 6, units = "in")
 
 
 # read.csv(file.path(data.directory,'var2025_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
@@ -315,6 +315,6 @@ augment(best_model) %>%
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL)+
   geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "model_figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
+ggsave(paste0(results.directory, "catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
 dev.off()
 
