@@ -57,4 +57,4 @@ read.csv(paste0(data.directory, 'var2026_final.csv')) %>% # update file name
   #geom_text(aes(x = 2000.5, y = 13, label="May, June, July temperature"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot1
 cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
-ggsave(paste0(results.directory, "monthly_SECM_temp_regions.png"), dpi = 500, height = 5, width = 7, units = "in")
+ggsave(paste0(results.directory, "annual_ISTI20_JJ.png"), dpi = 500, height = 5, width = 7, units = "in")
