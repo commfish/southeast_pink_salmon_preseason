@@ -67,8 +67,7 @@ In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink sa
 ### Running the Assessment
 1. **Data**  
 
-The data needed to run the code are updated in the file [`varyyyy_final.csv`]. The CPUE and ISTI variables are collated by NOAA staff in a google document. The harvest data is collated by Ketchikan staff (Andy Piston).
-The satellite sea surface temperature variables are created by running the code [`satellite_data_monthly.R`]. The process for the temperature variables are then written up in the file [`satellite_SST_process_yyyy.Rmd`]. Therefore, run the code [`satellite_data_monthly.R`] and then add these temperature variables to the [`varyyyy_final.csv`] file. The satellite sea surface temperature data will be output here: [`results/temperature_data/sst_regions_oisst_97_*yy*_monthly_data_summary.csv`].  JYear is the juvenile year. The index variable stays the same unless the pink salmon forecasting group decides to change the process of the CPUE calculation for pink salmon. See the document [`calibration_coefficient_discussion_Nov_2020.pdf`] in the folder 2021_forecast. The weight_values variable was originally used to calculate a weighted MAPE and aimed to weight the current years greater than the former. This is not used and the 5-year and 10-year MAPE are used to compare the various models.
+The data needed to run the code are updated in the file [`varyyyy_final.csv`]. The CPUE and ISTI variables are collated by NOAA staff in a google document. The harvest data is collated by Ketchikan staff (Andy Piston). The satellite sea surface temperature variables are created by running the code [`satellite_data_monthly.R`]. The process for the temperature variables are then written up in the file [`satellite_SST_process_yyyy.Rmd`]. Therefore, run the code [`satellite_data_monthly.R`] and then add these temperature variables to the [`varyyyy_final.csv`] file. The satellite sea surface temperature data will be output here: [`results/temperature_data/sst_regions_oisst_97_*yy*_monthly_data_summary.csv`].  JYear is the juvenile year. The index variable stays the same unless the pink salmon forecasting group decides to change the process of the CPUE calculation for pink salmon. See the document [`calibration_coefficient_discussion_Nov_2020.pdf`] in the folder 2021_forecast. The weight_values variable was originally used to calculate a weighted MAPE and aimed to weight the current years greater than the former. This is not used and the 5-year and 10-year MAPE are used to compare the various models.
 
 Note that the satellite SST data, ISTI20_MJJ, and CPUEcal variables should follow the JYear from 1997 on. The SEAK catch should follow the Year variable from 1998 on. 
 
@@ -90,11 +89,8 @@ year.forecast <- "2024_forecast" # update year
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 ```
-Third, update all occurrences of the variable year (e.g., .csv files, x axes in the figures, output file names) in the code script. Example: NOAA_DHW_monthly_97_yy.nc where yy needs to be the current year; [`sst_oisst_97_yy_monthly_data.csv`] where yy needs to be the final data year. This includes updating the figures to be 1997:yyyy where yyyy is the data year, and the file [`varyyyy_final.csv`] needs to contain the yyyy variables for the forecast year. There should be 29 occurrences. 
+Third, update all occurrences of the variable year (e.g., .csv files, x axes in the figures, output file names) in the code script. Example: NOAA_DHW_monthly_97_yy.nc where yy needs to be the current year; [`sst_oisst_97_yy_monthly_data.csv`] where yy needs to be the final data year. This includes updating the figures to be 1997:yyyy where yyyy is the data year, and the file [`varyyyy_final.csv`] needs to contain the yyyy variables for the forecast year. There should be 27 occurrences. 
 
-```
-read.csv(paste0(data.directory, 'var2023_final.csv')) %>% # update the year to the data year
-```
 In the script, the places to update are noted with  
 
 ```
@@ -102,12 +98,12 @@ In the script, the places to update are noted with
 
 # update final year
 ```
-Fourth, fill in the var20yy_final.csv file with the SEAKCatch from the current year (column C) and the ISTI20_JJ from the current year (column D). The ISTI20_JJ data is needed for one of the figures in the code script. Columns F through W can just be copied and pasted from the prior year as placeholders until the satellite_data_monthly.R scrip is run. Next, run the code. 
+Next, run the code. The satellite SST variables will be output into the file [`results/temperature_data/sst_regions_oisst_97_*yy*_monthly_data_summary.csv`]. Then, these variables need to be copied and pasted into the [`varyyyy_final.csv`] sheet (the variables are: Chatham_SST_MJJ, Chatham_SST_May, Chatham_SST_AMJJ,	Chatham_SST_AMJ,	Icy_Strait_SST_MJJ,	Icy_Strait_SST_May,	Icy_Strait_SST_AMJJ,	Icy_Strait_SST_AMJ,	NSEAK_SST_MJJ, NSEAK_SST_May,	NSEAK_SST_AMJJ,	NSEAK_SST_AMJ,	SEAK_SST_MJJ,	SEAK_SST_May,	SEAK_SST_AMJJ, SEAK_SST_AMJ). 
 
-The satellite SST variables will be output into the file [`results/temperature_data/sst_regions_oisst_97_*yy*_monthly_data_summary.csv`]. Then, these variables need to be copied and pasted into the [`varyyyy_final.csv`] sheet (the variables are: Chatham_SST_MJJ, Chatham_SST_May, Chatham_SST_AMJJ,	Chatham_SST_AMJ,	Icy_Strait_SST_MJJ,	Icy_Strait_SST_May,	Icy_Strait_SST_AMJJ,	Icy_Strait_SST_AMJ,	NSEAK_SST_MJJ, NSEAK_SST_May,	NSEAK_SST_AMJJ,	NSEAK_SST_AMJ,	SEAK_SST_MJJ,	SEAK_SST_May,	SEAK_SST_AMJJ, SEAK_SST_AMJ). This seems a little backwards since this file is used in the satellite_data_monthly code, but it is only because an ISTI figure is created. The ISTI variable is not a satellite SST variable and is a SECM temperature variable. The file [`satellite_SST_process.Rmd`] does not need much updating if the same process as the prior year was used (e.g., the same latitude and longitude coordinates are used for the region of the satellite SST variables). It is helpful to run this file [`satellite_SST_process.Rmd`] every year so there is a record of the process. Save the output pdf file with a date so it does not get rewritten. 
-Note that the final figures in the script use the var20yy_final.csv file as the ISTI variable and the SST variables are needed for the figures. 
-After the satellite_data_monthly.R code is run, update the var20yy_final.csv file and then rerun the bottom code of
-satellite_data_monthly.R script that runs the ISTI figure (line 334+).  
+The file [`satellite_SST_process.Rmd`] does not need much updating if the same process as the prior year was used (e.g., the same latitude and longitude coordinates are used for the region of the satellite SST variables). It is helpful to run this file [`satellite_SST_process.Rmd`] every year so there is a record of the process. Save the output pdf file with a date so it does not get rewritten. 
+
+b. *ISTI Temperature Figure Code [ISTI_SECM_figure.R]*  
+ Run the ISTI temperature code to create the ISTI figure.
 
 b. *Model Code*  
 
