@@ -3,10 +3,10 @@
 
 * Emily Fergusson (NOAA; biologist) emily.fergusson@noaa.gov
 * Teresa Fish (ADF&G; Pink and chum salmon project leader) teresa.fish@alaska.gov
-* Andrew Gray (NOAA) andrew.gray@noaa.gov
 * Sara Miller (ADF&G, biometrician) sara.miller@alaska.gov
 * Andy Piston (ADF&G; CF Salmon Research Supervisor) andrew.piston@alaska.gov
 * Wes Strasburger (NOAA; biologist) wes.strasburger@noaa.gov
+* Randy Peterson (ADF&G, biologist) randy.peterson@adfg.gov
 
 ## Assessment links:
 The current assessment follows Miller et al. 2022.
@@ -56,7 +56,7 @@ In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink sa
 
 2. Rename the folder to the current forecast year. 
 
-3. Delete the files in the data folder except the [`varyyyy_final.csv`] file and the [`sst_data_map.csv`]  file. The [`varyyyy_final.csv`] file will serve as the template for the new year. Update this file name to the data year (not the forecast year). To prepare for the coming year, add another year of mock data by adding the same data as last year into a new row. Keep a folder labeled raw_data within the data folder for any of the original data files that are used in the analysis. The raw data should not be manipulated in any way, but instead copied to the [`varyyyy_final.csv`] file for use in the model runs. The file [`sst_data_map.csv`] contains the latitude and longitude of the different regions for the satellite SST data. The details of these regions are found in Miller et al. 2022. This file does not need to be updated unless these regions change.
+3. Delete the files in the data folder except the [`varyyyy_final.csv`] file, the [`sst_data_map.csv`] file, and the [`adj_raw_pink.csv`]. The [`varyyyy_final.csv`] file will serve as the template for the new year. Update this file name to the data year (not the forecast year). This file can not be updated with the SST until the satellilte_data_monthly code is run. Keep a folder labeled raw_data within the data folder for any of the original data files that are used in the analysis. The raw data should not be manipulated in any way but instead copied to the [`varyyyy_final.csv`] file for use in the model runs. The file [`sst_data_map.csv`] contains the latitude and longitude of the different regions for the satellite SST data. The details of these regions are found in Miller et al. 2022. This file does not need to be updated unless these regions change. The [`adj_raw_pink.csv`] file needs to be updated with the current year's data. This data will be found in the google drive created by NOAA biologists (Emily Ferguson). 
 
 4. Delete all files within the results folder. 
 
@@ -67,7 +67,7 @@ In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink sa
 ### Running the Assessment
 1. **Data**  
 
-The data needed to run the code are updated in the file [`varyyyy_final.csv`]. The CPUE, harvest, and ISTI variables are collated by the ADF&G Ketchikan staff (Andy Piston and/or Teresa Fish). 
+The data needed to run the code are updated in the file [`varyyyy_final.csv`]. The CPUE and ISTI variables are collated by NOAA staff in a google document. The harvest data is collated by Ketchikan staff (Andy Piston).
 The satellite sea surface temperature variables are created by running the code [`satellite_data_monthly.R`]. The process for the temperature variables are then written up in the file [`satellite_SST_process_yyyy.Rmd`]. Therefore, run the code [`satellite_data_monthly.R`] and then add these temperature variables to the [`varyyyy_final.csv`] file. The satellite sea surface temperature data will be output here: [`results/temperature_data/sst_regions_oisst_97_*yy*_monthly_data_summary.csv`].  JYear is the juvenile year. The index variable stays the same unless the pink salmon forecasting group decides to change the process of the CPUE calculation for pink salmon. See the document [`calibration_coefficient_discussion_Nov_2020.pdf`] in the folder 2021_forecast. The weight_values variable was originally used to calculate a weighted MAPE and aimed to weight the current years greater than the former. This is not used and the 5-year and 10-year MAPE are used to compare the various models.
 
 Note that the satellite SST data, ISTI20_MJJ, and CPUEcal variables should follow the JYear from 1997 on. The SEAK catch should follow the Year variable from 1998 on. 
