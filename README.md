@@ -55,7 +55,7 @@ In the past, ADF&G and NOAA produced separate Southeast Alaska preseason pink sa
 
 2. Rename the folder to the current forecast year. 
 
-3. Delete the files in the data folder except the [`varyyyy_final.csv`] file, the [`sst_data_map.csv`] file, and the [`adj_raw_pink.csv`] file. The [`varyyyy_final.csv`] file will serve as the template for the new year. Update this file name to the data year (not the forecast year). This file can not be updated with the SST (columns F through U) until the 1_satellite_data_monthly code is run. The CPUE (column E) and ISTI20_JJ (column D) data can be found in the google drive created by NOAA biologists (Emily Ferguson). The SEAKCatch data(column C) will come from the ADFG project biologist (Andy Piston). Keep a folder labeled raw_data within the data folder for any of the original data files that are used in the analysis. The raw data should not be manipulated in any way but instead copied to the [`varyyyy_final.csv`] file for use in the model runs. The file [`sst_data_map.csv`] contains the latitude and longitude of the different regions for the satellite SST data. The details of these regions are found in Miller et al. 2022. This file does not need to be updated unless these regions change. The [`adj_raw_pink.csv`] file needs to be updated with the current year's data. This data will be found in the google drive created by NOAA biologists (Emily Ferguson).  
+3. Delete the files in the data folder except the [`varyyyy_final.csv`] file, the [`sst_data_map.csv`] file, and the [`adj_raw_pink.csv`] file. The [`varyyyy_final.csv`] file will serve as the template for the new year. Update this file name to the data year (not the forecast year). This file can not be updated with the SST (columns F through U) until the 1_satellite_data_monthly code is run. The CPUE (column E) and ISTI20_JJ (column D) data can be found in the google drive created by NOAA biologists (Emily Ferguson). The SEAKCatch data (column C) will come from the ADFG project biologist (Andy Piston). Keep a folder labeled raw_data within the data folder for any of the original data files that are used in the analysis. The raw data should not be manipulated in any way but instead copied to the [`varyyyy_final.csv`] file for use in the model runs. The file [`sst_data_map.csv`] contains the latitude and longitude of the different regions for the satellite SST data. The details of these regions are found in Miller et al. 2022. This file does not need to be updated unless these regions change. The [`adj_raw_pink.csv`] file needs to be updated with the current year's data. This data will be found in the google drive created by NOAA biologists (Emily Ferguson). In the workbook, the sheet CPUE-pink contains the data needed to update the csv file. Note that Year in the Excel workbook is JYear in the csv file. 
 
 4. Delete all files within the results folder. 
 
@@ -117,8 +117,7 @@ To create the 18 models, the code is run in the following order;
 4. 6_diagnostics_models_basic.R. 
 
 #### 3_summarize_models.R  script
-This script needs to be modified based on the variables in the multiple linear regression for the particualr year. The script creates the [`model_summary_table1.csv`], [`model_summary_table2.csv`], [`model_summary_table3.csv`], [`model_summary_table4.csv`], [`seak_model_summary.csv`], [`data_used_a.csv`], [`data_used_b.csv`], and a separate results_m*xx*.csv file for each model run. The columns 'model1_sim' and 'sigma' in the results_m*xx*.csv files need to be
-copied to the excel workbook [`model_summary_table_mm_yyyy.xlsx`] (into each model) in the summary tables folder so that the one-step-ahead MAPE for 5 and 10 years is calculated correctly. The [`forecasts.csv`] file in the data folder is created from the results in the [`model_summary_table_mm_yyyy.xlsx`] file. The [`model_summary_table5.csv`] file is also created from the excel workbook [`model_summary_table_mm_yyyy.xlsx`]  (although the adjusted R squared values are from the [`model_summary_table2.csv`] file). The forecast_models.png figure is also produced from this script.
+This script needs to be modified based on the variables in the multiple linear regression for the particular year. The script creates the [`model_summary_table1_multi.csv`], [`model_summary_table2_multi.csv`], [`model_summary_final_multi.csv`], [`seak_model_summary_multi.csv`],  and `seak_model_summary_one_step_ahead5_multi.csv`] in the results folder and [`var_2026_merge.csv`] in the data folder. The forecast_models_multi.png figure is also produced from this script in the results folder.
 
 The top of the script needs to be updated each year.
 
@@ -132,7 +131,11 @@ data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
 results.directory.MAPE <- file.path(year.forecast,  'results/MAPE', '/')
 results.directory.retro <- file.path(year.forecast,  'results/retro', '/')
-source('2023_forecast/code/functions.r')
+source('2023_forecast/code/functions.r') # update to forecast year
+
+# STEP 1: DATA
+# read in data from the csv file  (make sure this is up to date)
+read.csv(file.path(data.directory,'var2022_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_temp # update file names
 ```
 In order to correctly calculate the one-step-ahead MAPE for each of the 18 models, the bias-corrected forecast needs to be calculated for each forecast of the MAPE. This is one step I have thought about deleting and just going with the non-bias corrected MAPE for the 18 models (for simplicity). So there are two choices. The first choice is not entirely correct, but it is simpler.
 
