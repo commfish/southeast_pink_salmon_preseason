@@ -104,7 +104,7 @@ The file [`satellite_SST_process.Rmd`] does not need much updating if the same p
 b. *ISTI Temperature Figure Code [2_ISTI_SECM_figure.R]*  
 First, update the ISTI20_JJ variable in the [`varyyyy_final.csv`] file. Next, run the [2_ISTI_SECM_figure.R] code to create the ISTI figure. The ISTI figure will be output into the file [`results/temperature_data/annual_ISTI20_JJ.png`]
 
-b. *Model Code*  
+c. *Model Code*  
 
 To create the 18 models, the code is run in the following order;  
 
@@ -112,11 +112,11 @@ To create the 18 models, the code is run in the following order;
 
 2. 4_diagnostics.R;  
 
-3. 5_summarize_models_basic.R;  
+3. 5_summarize_models_basic.R; and 
 
-4. 6_diagnostics_models_basic.R; and  
+4. 6_diagnostics_models_basic.R. 
 
-#### 1_summarize_models.R  script
+#### 3_summarize_models.R  script
 This script needs to be modified based on the variables in the multiple linear regression for the particualr year. The script creates the [`model_summary_table1.csv`], [`model_summary_table2.csv`], [`model_summary_table3.csv`], [`model_summary_table4.csv`], [`seak_model_summary.csv`], [`data_used_a.csv`], [`data_used_b.csv`], and a separate results_m*xx*.csv file for each model run. The columns 'model1_sim' and 'sigma' in the results_m*xx*.csv files need to be
 copied to the excel workbook [`model_summary_table_mm_yyyy.xlsx`] (into each model) in the summary tables folder so that the one-step-ahead MAPE for 5 and 10 years is calculated correctly. The [`forecasts.csv`] file in the data folder is created from the results in the [`model_summary_table_mm_yyyy.xlsx`] file. The [`model_summary_table5.csv`] file is also created from the excel workbook [`model_summary_table_mm_yyyy.xlsx`]  (although the adjusted R squared values are from the [`model_summary_table2.csv`] file). The forecast_models.png figure is also produced from this script.
 
@@ -144,7 +144,7 @@ The two options:
 
 Option #1 is saved in the file model_summary_table2 and option #2 is saved in the file model_summary_table3 (in the [`results/summary`] folder).
 
-#### 2_diagnostics.R
+#### 4_diagnostics.R
 This script is used to explore the best model (based on the lowest one-step-ahead MAPE and group discussions). The outputs include model_summary_table4_*best_model*.csv. This csv files includes the residuals, hat values, cook's distance values, standardized residuals, and fitted values that are used to create the diagnostic figures catch_plot_pred_m*xx*.png, fitted_m*xx*.png, general_diagnostics_m*xx*.png, and influential_m*xx*.png. In addition, the top of the script outputs the lack of fit test (Bonferroni p-values), and the lack of fit curvature test. 
 
 The top of the script needs to be updated each year.
@@ -167,14 +167,11 @@ source('2023_forecast/code/functions.r') # current forecast year folder
 lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset) -> m11
 
 ```
-#### 2a_diagnostics.R
-This script is used to explore an alternative best model. The script is very similar to the [`2_diagnostics.R `] script.
+#### 5_summarize_models_basic.R; 
 
-#### 3_sensitivity.R
+
+#### 6_diagnostics_models_basic.R
 This code is used to filter out certain influential years (to see the effect on the model results) but was not used in the 2023 forecast process.
-
-#### 4_retro_analysis.R
-This script creates model hindcasts for the best models and combines them with the [`forecasts.csv`] file. The result is a data frame with hindcasts (for each model) using data up to a certain year, and then the forecast for that reduced data set. The data frame is then used to create multiple figures (e.g., year_minus_5.png) that help show how the MAPE is calculated. For example, the figure year_minus_5.png shows the hindcasts for models m1, m2, and m11 using data from 1998 to 2017 only, and the 2018 forecast based on these three models (and only using data from 1998-2017). The figures are output into the folder results/retro/figs. This script also produces the MAPE_forecasts.png figure for the best (or chosen) models which are the one-step-ahead MAPE forecasts for the chosen models.
 
 The [`forecasts.csv`] files in the data folder needs to be created manually from the spreadsheet model_summary_Table_*month*_*year*.xlsx in the [`results/summary_tables`] folder.
 
