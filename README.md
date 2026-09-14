@@ -73,9 +73,9 @@ Note that the satellite SST data, ISTI20_MJJ, and CPUEcal variables should follo
 
 2. **Code**  
 
-a. *Satellite Temperature Code [satellite_data_monthly.R]*  
+a. *Satellite Temperature Code [1_satellite_data_monthly.R]*  
 
-Running the [`satellite_data_monthly.R`] script in the code folder will create the environmental variables needed to fill in the [`varyyyy_final.csv`] sheet columns F through U. First, the monthly data (referenced in the code) needs to be manually downloaded from the site https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html. Directly pulling this data has not worked in the past but is an option for future implementation. Once at the coastwatch site, the time is should be set to 1997-04-16T00:00:00Z and yyyy-07-16T00:00:00Z (where yyyy is the data year), the latitude should be set to 54 and 60, and the longitude to -137.2 and -130. Under the file type, choose '.nc-Download a NetCDF-3 binary file with COARDS/CF/ACDD metadata'and then 'submit'. Place the file in the data folder for the current forecast year [`/YYYY_forecast/data/`], and change the file name to 'NOAA_DHW_monthly_97_yy.nc' where yy is the final data year. The final extension should remain .nc.
+Running the [`1_satellite_data_monthly.R`] script in the code folder will create the environmental variables needed to fill in the [`varyyyy_final.csv`] sheet columns F through U. First, the monthly data (referenced in the code) needs to be manually downloaded from the site https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html. Directly pulling this data has not worked in the past but is an option for future implementation. Once at the coastwatch site, the time is should be set to 1997-04-16T00:00:00Z and yyyy-07-16T00:00:00Z (where yyyy is the data year), the latitude should be set to 54 and 60, and the longitude to -137.2 and -130. Under the file type, choose '.nc-Download a NetCDF-3 binary file with COARDS/CF/ACDD metadata'and then 'submit'. Place the file in the data folder for the current forecast year [`/YYYY_forecast/data/`], and change the file name to 'NOAA_DHW_monthly_97_yy.nc' where yy is the final data year. The final extension should remain .nc.
 
 Next, the top of the code script needs to be updated each year.
 
@@ -102,22 +102,20 @@ Next, run the code. The satellite SST variables will be output into the file [`r
 
 The file [`satellite_SST_process.Rmd`] does not need much updating if the same process as the prior year was used (e.g., the same latitude and longitude coordinates are used for the region of the satellite SST variables). It is helpful to run this file [`satellite_SST_process.Rmd`] every year so there is a record of the process. Save the output pdf file with a date so it does not get rewritten. 
 
-b. *ISTI Temperature Figure Code [ISTI_SECM_figure.R]*  
+b. *ISTI Temperature Figure Code [2_ISTI_SECM_figure.R]*  
  Run the ISTI temperature code to create the ISTI figure.
 
 b. *Model Code*  
 
 To create the 18 models, the code is run in the following order;  
 
-1. 1_summarize_models.R;
+1. 3_summarize_models.R;
 
-2. 2_diagnostics.R;  
+2. 4_diagnostics.R;  
 
-3. 2a_diagnostics.R;  
+3. 5_summarize_models_basic.R;  
 
-4. 3_sensitivity.R; and  
-
-5. 4_retro_analysis.R
+4. 6_diagnostics_models_basic.R; and  
 
 #### 1_summarize_models.R  script
 This script needs to be modified based on the variables in the multiple linear regression for the particualr year. The script creates the [`model_summary_table1.csv`], [`model_summary_table2.csv`], [`model_summary_table3.csv`], [`model_summary_table4.csv`], [`seak_model_summary.csv`], [`data_used_a.csv`], [`data_used_b.csv`], and a separate results_m*xx*.csv file for each model run. The columns 'model1_sim' and 'sigma' in the results_m*xx*.csv files need to be
