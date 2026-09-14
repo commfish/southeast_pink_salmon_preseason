@@ -74,7 +74,7 @@ Note that the satellite SST data, ISTI20_MJJ, and CPUEcal variables should follo
 
 2. **Code**  
 
-a. *Satellite Temperature Code*  
+a. *Satellite Temperature Code [satellite_data_monthly.R]*  
 
 First, run the [`satellite_data_monthly.R`] script in the code folder. This code script will create the environmental variables needed to fill in the [`varyyyy_final.csv`] sheet. The monthly data (referenced in the code) needs to be manually downloaded from the site https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.html. Once at the site, the time is set to 1997-04-16T00:00:00Z and yyyy-07-16T00:00:00Z (where yyyy is the data year), the latitude is set to 54 and 60, and the longitude is set to -137.2 and -130. Under the file type, choose '.nc-Download a NetCDF-3 binary file with COARDS/CF/ACDD metadata'and then 'submit'. Place the file in the data folder for the current forecast year [`/YYYY_forecast/data/`], and change the file name to 'NOAA_DHW_monthly_97_yy.nc' where yy is the final data year. The final extension should remain .nc.
 
@@ -90,7 +90,7 @@ year.forecast <- "2024_forecast" # update year
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 ```
-Update all occurrences of the variable year (.csv files, x axes in the figures) in the [`satellite_data_monthly.R`] code script. Example: NOAA_DHW_monthly_97_yy.nc where yy needs to be the current year; [`sst_oisst_97_yy_monthly_data.csv`] where yy needs to be the final data year. This includes updating the figures to be 1997:yyyy where yyyy is the data year, and the file [`varyyyy_final.csv`] needs to contain the yyyy variables for the forecast year. There should be 27 occurrences. 
+Update all occurrences of the variable year (e.g., .csv files, x axes in the figures, output file names) in the [`satellite_data_monthly.R`] code script. Example: NOAA_DHW_monthly_97_yy.nc where yy needs to be the current year; [`sst_oisst_97_yy_monthly_data.csv`] where yy needs to be the final data year. This includes updating the figures to be 1997:yyyy where yyyy is the data year, and the file [`varyyyy_final.csv`] needs to contain the yyyy variables for the forecast year. There should be 29 occurrences. 
 
 ```
 read.csv(paste0(data.directory, 'var2023_final.csv')) %>% # update the year to the data year
