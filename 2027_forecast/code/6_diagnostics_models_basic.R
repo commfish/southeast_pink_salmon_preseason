@@ -1,4 +1,4 @@
-# run code 3_summarize_models_basic.R first
+# run code 5_summarize_models_basic.R first
 # inputs
 fit_value_model <- 19.3 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
 lwr_pi_80 <- 12.6 # 80% PI from model_summary_table2 in the results folder

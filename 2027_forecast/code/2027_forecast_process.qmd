@@ -1,5 +1,5 @@
 ---
-title: "2026 SEAK Pink Salmon Forecast"
+title: "2027 SEAK Pink Salmon Forecast"
 author: "Sara Miller"
 format: pdf
 editor: visual
@@ -12,7 +12,7 @@ library(tidyverse)
 library(knitr)
 library(ggplot2)
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE, error=FALSE)
-year.forecast <- "2026_forecast" 
+year.forecast <- "2027_forecast" 
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast, 'results', '/')
 results.directory.temp <- file.path(year.forecast,  'results/temperature_data', '/')
@@ -39,23 +39,23 @@ To forecast the Southeast Alaska (SEAK) pink salmon commercial harvest in 2026. 
 
 # Executive Summary
 
-Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019), but assuming a log-normal error structure (Miller et al. 2022). This approach is based on a multiple linear regression model with either; 1) the raw juvenile pink salmon CPUE (adj_raw_pink_log; a proxy for abundance) or 2) the vessel-adjusted juvenile pink salmon CPUE (adjusted by the pooled-species vessel calibration coefficient for the Cobb; vessel-adjusted CPUE; a proxy for abundance). Additional variables included a vessel factor to account for the survey vessels through time, an odd and even year factor to account for potential odd and even year cycles of abundance, and temperature data from either the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021; ISTI20_JJ) or from satellite-derived sea surface temperature (SST) data (Huang et al. 2017). 
+Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019), but assuming a log-normal error structure (Miller et al. 2022). This approach is based on a multiple linear regression model with either; 1) the raw juvenile pink salmon CPUE (adj_raw_pink_log; a proxy for abundance) or 2) the vessel-adjusted juvenile pink salmon CPUE (adjusted by the pooled-species vessel calibration coefficient for the Cobb; vessel-adjusted CPUE; a proxy for abundance). Additional variables included a vessel factor to account for the survey vessels through time, an odd and even year factor to account for potential odd and even year cycles of abundance, and temperature data from either the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021; ISTI20_JJ) or from satellite-derived sea surface temperature (SST) data (Huang et al. 2017).
 
 There were 36 individual models considered:
 
--   adj_raw_pink_log model with a vessel interaction, an odd/even year factor, and a vessel factor (m1);
+- adj_raw_pink_log model with a vessel interaction, an odd/even year factor, and a vessel factor (m1);
 
--   adj_raw_pink_log model with a vessel interaction, an odd/even year factor, a vessel factor, and temperature data from the the SECM survey (m2);
+- adj_raw_pink_log model with a vessel interaction, an odd/even year factor, a vessel factor, and temperature data from the the SECM survey (m2);
 
--   adj_raw_pink_log models with a vessel interaction, an odd/even year factor, a vessel factor, and satellite SST data (m3-m18);
+- adj_raw_pink_log models with a vessel interaction, an odd/even year factor, a vessel factor, and satellite SST data (m3-m18);
 
--   vessel-adjusted CPUE, and an odd/even year factor (m1a);
+- vessel-adjusted CPUE, and an odd/even year factor (m1a);
 
--   vessel-adjusted CPUE, an odd/even year factor, and temperature data from the SECM survey (m2a); and
+- vessel-adjusted CPUE, an odd/even year factor, and temperature data from the SECM survey (m2a); and
 
--   vessel-adjusted CPUE models with an odd/even year factor, and satellite-derived SST data (m3a-m18a).
+- vessel-adjusted CPUE models with an odd/even year factor, and satellite-derived SST data (m3a-m18a).
 
-The adj_raw_pink_log variable is defined as the natural logarithm of the maximum juvenile pink salmon catch, adjusted to a 20 minute haul, from either June or July. This CPUE variable is not vessel-calibrated. The Stellar and Chellissa vessels were only used for one year each, 2008 and 2009, respectively, and so those two years are not used in the assessment models that incorporated an adj_raw_pink_log variable (Table 1). 
+The adj_raw_pink_log variable is defined as the natural logarithm of the maximum juvenile pink salmon catch, adjusted to a 20 minute haul, from either June or July. This CPUE variable is not vessel-calibrated. The Stellar and Chellissa vessels were only used for one year each, 2008 and 2009, respectively, and so those two years are not used in the assessment models that incorporated an adj_raw_pink_log variable (Table 1).
 
 The vessel-adjusted CPUE variable is defined as the average natural log transformed CPUE (adjusted to a 20 minute haul) for juvenile pink salmon catches in either June or July, whichever month had the highest catch in a given year, adjusted by the pooled-species vessel calibration coefficient from the R/V Cobb. As there was not a SECM survey in May, temperature data from May was unavailable. Therefore, the temperature variable from the SECM survey (ISTI20_JJ) was the average from June and July. In prior forecasting years, the ISTI variable was the average from May through July.
 
@@ -102,9 +102,11 @@ $$\text{MAPE} = |\frac{\mathrm exp{(\textit Y_{\textit t})} -\mathrm exp (\hat{\
 Hierarchical models were compared with the AICc criterion. The best fit models, according to the AICc criterion, is one that explains the greatest amount of variation with the fewest independent variables (i.e., the most parsimonious; Table 2 and Table 3). Lower AICc values are preferred, and the AICc criterion penalizes models that use more parameters. Comparing the AICc values of two hierarchical models, a $\Delta_i \leq 2$ suggests that the two models are essentially the same, and the most parsimonious model should be chosen (Burnham and Anderson 2004). If the $\Delta_i > 2$, the model with the lower AICc value should be chosen. As the data set of the response variable is reduced for the model set m1-m18 compared to the model set m1a-m18a, AICc can only be used to compare within the nested models (e.g., among m1-m18).
 
 ## Adjusted R-squared
-The adjusted R-squared is a modified version of the R-squared value that adjusts for the number of predictors in the model and prevents overfitting by balancing model performance and complexity. A higher adjusted R-squared value is preferred. As the adjusted R-squared metric depends on both sample size and the variance of the dependent variable in the data set, the adjusted R-squared can only be compared for the models with the same response variable data set. As the data set for the model set m1-m18 is reduced, the adjusted R-squared can only be compared within the model group (i.e., among m1-m18). 
+
+The adjusted R-squared is a modified version of the R-squared value that adjusts for the number of predictors in the model and prevents overfitting by balancing model performance and complexity. A higher adjusted R-squared value is preferred. As the adjusted R-squared metric depends on both sample size and the variance of the dependent variable in the data set, the adjusted R-squared can only be compared for the models with the same response variable data set. As the data set for the model set m1-m18 is reduced, the adjusted R-squared can only be compared within the model group (i.e., among m1-m18).
 
 # Results
+
 Based upon the 5-year MAPE performance metric, the AICc values, significant parameters in the models, and the adjusted R-squared values, model m13a (a model that included vessel-adjusted CPUE and the satellite SST variable from northern SEAK in April, May, and June; model m13a in Table 5; Appendix C) was the best performing model. The 2026-forecast using this model has a point estimate of 19.3 million fish (80% prediction interval: 12.6 to 29.8 million fish).
 
 ```{r model data}
@@ -125,6 +127,7 @@ tbls_seak_results$model_summary_final %>%
 tbls_seak_results$model_summary_final_multi %>% 
    knitr::kable(format = 'pandoc', caption = 'Summary of the performance metrics for the 18 regression models with vessel-adjusted CPUE. The AICc value is the change in AICc value.', row.names = F, align="cccc")
 ```
+
 \pagebreak
 
 ```{r best model m13a, echo=FALSE}
@@ -261,7 +264,6 @@ An observation that is distant from the average covariate pattern is considered 
 
 A lack-of fit test was performed between model m13a (full model) and a reduced model with just the CPUE and odd/even factor. Based on an anova between the full and reduced models, the p-value was less than .05, the null hypothesis of the test is rejected, and it can be concluded that the full model offers a statistically significantly better fit than the reduced model. Diagnostics indicated that one of the data points was above the cut-off value for the Cook's distance (Figure C1a; year 2023). One observation had high leverage values (Figure C1b; year 2017). Based on the Bonferroni outlier test, none of the data points had studentized residuals with a significant Bonferroni $P$-value suggesting that none of the data points impacted the model fitting; although observation 26 was the most extreme (year 2023) based on standardized residuals (Figure C2c; Table 6). Based on the lightly curved fitted lines in the residual versus fitted plot (Figure C2d), the fitted plot shows some lack of fit of the model.
 
-
 ```{r influential, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/model_figs/influential_m13a.png"))
 ```
@@ -279,5 +281,3 @@ knitr::include_graphics(here(results.directory.temp, "/monthly_NSEAK_AMJ_temp.pn
 ```
 
 Figure C3: The April through June temperature averaged over the NSEAK region from 1997 through 2025.
-
-
