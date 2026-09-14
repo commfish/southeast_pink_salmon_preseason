@@ -90,7 +90,7 @@ year.forecast <- "2024_forecast" # update year
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 ```
-Update all occurrences of the variable year (.csv files, x axes in the figures) in the [`satellite_data_monthly.R`] code script. Example: NOAA_DHW_monthly_97_yy.nc where yy needs to be the current year; [`sst_oisst_97_yy_monthly_data.csv`] where yy needs to be the final data year. This includes updating the figures to be 1997:yyyy where yyyy is the data year, and the file [`varyyyy_final.csv`] needs to contain the yyyy variables for the forecast year. There should be 27 occurrences. 
+Update all occurrences of the variable year (e.g., .csv files, x axes in the figures, output file names) in the [`satellite_data_monthly.R`] code script. Example: NOAA_DHW_monthly_97_yy.nc where yy needs to be the current year; [`sst_oisst_97_yy_monthly_data.csv`] where yy needs to be the final data year. This includes updating the figures to be 1997:yyyy where yyyy is the data year, and the file [`varyyyy_final.csv`] needs to contain the yyyy variables for the forecast year. There should be 29 occurrences. 
 
 ```
 read.csv(paste0(data.directory, 'var2023_final.csv')) %>% # update the year to the data year
