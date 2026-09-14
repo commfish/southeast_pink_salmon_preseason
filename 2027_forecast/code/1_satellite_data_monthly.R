@@ -36,7 +36,7 @@ results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 # set the latitude (54, 60) and longitude (-137.2, -130) and time period (April 1997 - July yyyy; yyyy is the current year), and file type as .nc,
 # save the file as NOAA_DHW_monthly_97_yy.nc in the data folder
 
-# make sure tge sst_data_map is copied from a prior forecast into the current forecast data folder
+# make sure the sst_data_map is copied from a prior forecast into the current forecast data folder
 
 # https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.graph; this site is helpful to map the area of interest
 
@@ -151,6 +151,7 @@ merge(SST_MJJ, SST_May, by = c("region", "year")) %>%
   merge(., SST_AMJJ, by = c("region", "year")) %>%
   merge(., SST_AMJ, by = c("region", "year")) %>%
   write.csv(., paste0(results.directory, 'sst_regions_oisst_97_26_monthly_data_summary.csv')) # update file name
+# make sure the prior years that are output match up with the data in the varyyyy_final.csv sheet
 
 # create tables by region for the report
 read.csv(paste0(results.directory, 'sst_regions_oisst_97_26_monthly_data_summary.csv')) %>% # update file name
