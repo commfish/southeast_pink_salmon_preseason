@@ -88,7 +88,7 @@ year.forecast <- "2024_forecast" # update year
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 ```
-Third, update all occurrences of the variable year (e.g., .csv files, x axes in the figures, output file names) in the code script. Example: NOAA_DHW_monthly_97_yy.nc where yy needs to be the current year; [`sst_oisst_97_yy_monthly_data.csv`] where yy needs to be the final data year. This includes updating the figures to be 1997:yyyy where yyyy is the data year, and the file [`varyyyy_final.csv`] needs to contain the yyyy variables for the forecast year. There should be 27 occurrences. 
+Third, update all occurrences of the variable year (e.g., .csv files, x axes in the figures, output file names) in the code script. Example: NOAA_DHW_monthly_97_yy.nc where yy needs to be the current year; [`sst_oisst_97_yy_monthly_data.csv`] where yy needs to be the final data year. There should be 27 occurrences. 
 
 In the script, the places to update are noted with  
 
@@ -97,12 +97,12 @@ In the script, the places to update are noted with
 
 # update final year
 ```
-Next, run the code. The satellite SST variables will be output into the file [`results/temperature_data/sst_regions_oisst_97_*yy*_monthly_data_summary.csv`]. Then, these variables need to be copied and pasted into the [`varyyyy_final.csv`] sheet (the variables are: Chatham_SST_MJJ, Chatham_SST_May, Chatham_SST_AMJJ,	Chatham_SST_AMJ,	Icy_Strait_SST_MJJ,	Icy_Strait_SST_May,	Icy_Strait_SST_AMJJ,	Icy_Strait_SST_AMJ,	NSEAK_SST_MJJ, NSEAK_SST_May,	NSEAK_SST_AMJJ,	NSEAK_SST_AMJ,	SEAK_SST_MJJ,	SEAK_SST_May,	SEAK_SST_AMJJ, SEAK_SST_AMJ). 
+Next, run the code. The satellite SST variables will be output into the file [`results/temperature_data/sst_regions_oisst_97_*yy*_monthly_data_summary.csv`]. Finally, these variables need to be copied and pasted into the [`varyyyy_final.csv`] file  (the variables are: Chatham_SST_MJJ, Chatham_SST_May, Chatham_SST_AMJJ,	Chatham_SST_AMJ,	Icy_Strait_SST_MJJ,	Icy_Strait_SST_May,	Icy_Strait_SST_AMJJ,	Icy_Strait_SST_AMJ,	NSEAK_SST_MJJ, NSEAK_SST_May,	NSEAK_SST_AMJJ,	NSEAK_SST_AMJ,	SEAK_SST_MJJ,	SEAK_SST_May,	SEAK_SST_AMJJ, SEAK_SST_AMJ). Check to make sure prior years match up as a data check. 
 
 The file [`satellite_SST_process.Rmd`] does not need much updating if the same process as the prior year was used (e.g., the same latitude and longitude coordinates are used for the region of the satellite SST variables). It is helpful to run this file [`satellite_SST_process.Rmd`] every year so there is a record of the process. Save the output pdf file with a date so it does not get rewritten. 
 
 b. *ISTI Temperature Figure Code [2_ISTI_SECM_figure.R]*  
- Run the ISTI temperature code to create the ISTI figure.
+First, update the ISTI20_JJ variable in the [`varyyyy_final.csv`] file. Next, run the [2_ISTI_SECM_figure.R] code to create the ISTI figure. The ISTI figure will be output into the file [`results/temperature_data/annual_ISTI20_JJ.png`]
 
 b. *Model Code*  
 
