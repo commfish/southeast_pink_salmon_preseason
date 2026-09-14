@@ -410,7 +410,7 @@ f_model_one_step_ahead_multiple5 <- function(harvest,variables,model.formulas,mo
       fit.out[[i]]<-fit
       data$model1_sim[data$JYear == j] <- predict(fit, newdata = data[data$JYear == j,])
     }
-    #return(data)
+    return(data)
     data %>% 
       dplyr::filter(JYear > end) -> output
     MAPE<-mape(exp(output$SEAKCatch_log),exp(output$model1_sim))

@@ -35,8 +35,8 @@ windowsFonts(Times=windowsFont("Times New Roman"))
 theme_set(theme_report(base_size = 14))
 
 # inputs
-year.forecast <- "2026_forecast" # forecast year 
-year.data <- 2025 # last year of data
+year.forecast <- "2027_forecast" # forecast year 
+year.data <- 2026 # last year of data
 year.data.one <- year.data - 1
 sample_size <-  (year.data-1998)+1 # number of data points in model (this is used for Cook's distance)
 # forecast2023 <- 15.6 # input last year's forecast for the forecast plot
@@ -44,11 +44,11 @@ data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
 results.directory.MAPE <- file.path(year.forecast,  'results/MAPE', '/')
 results.directory.retro <- file.path(year.forecast,  'results/retro', '/')
-source('2026_forecast/code/functions.r') # source the function file for functions used below
+source('2027_forecast/code/functions.r') # source the function file for functions used below
 
 # STEP 1: DATA
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(data.directory,'var2025_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_temp # update file names
+read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_temp # update file names
 read.csv(file.path(data.directory,'adj_raw_pink.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_adj_raw_pink # update file names
 
 variables_adj_raw_pink %>%
@@ -65,7 +65,8 @@ variables_adj_raw_pink %>%
 
 # data check only  
  log_data %>%
-    write.csv(., paste0(data.directory, "/var2025_merge.csv"), row.names = F)
+    write.csv(., paste0(data.directory, "/var2026_merge.csv"), row.names = F)
+ 
 # STEP 2: MODELS
  model.names <- c(m1='no temperature index included',
                   m2='ISTI20_JJ',
@@ -193,7 +194,7 @@ variables_adj_raw_pink %>%
  # https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
  
  # STEP #4: CALCULATE ONE_STEP_AHEAD MAPE
- f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2019, models="_multi")  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
+f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2020, models="_multi")  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
  
  # if you run the function f_model_one_step_ahead, and do not comment out return(data), you can see how many years of data are used in the MAPE,
  # then you can use the f_model_one_step_ahead function check.xlsx (in the data folder) to make sure the
@@ -258,7 +259,7 @@ variables_adj_raw_pink %>%
    geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, linewidth=1, color="grey30")+
    scale_y_continuous(breaks = c(0,5, 10, 15, 20, 25, 30, 35, 40, 45), limits = c(0,45))+
    labs(x="", y = "2026 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
- ggsave(paste0(results.directory, "figs/forecast_models_multi.png"), dpi = 500, height = 4, width = 10, units = "in")
+ ggsave(paste0(results.directory, "forecast_models_multi.png"), dpi = 500, height = 4, width = 10, units = "in")
  
  # create final table for report
  read.csv(file.path(results.directory,'model_summary_table2_multi.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE)  %>%
