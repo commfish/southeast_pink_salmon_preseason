@@ -1,6 +1,6 @@
 # Environmental Variables for SEAK Pink Salmon Forecast Models
 # Script written by Sara Miller (sara.miller@alaska.gov) with assistance from Jordan Watson (jordan.watson@noaa.gov)
-# June 2025
+# September 2026
 
 # load libraries----
 library("devtools")
@@ -20,11 +20,11 @@ windowsFonts(Times=windowsFont("TT Times New Roman"))
 theme_set(theme_report(base_size = 14))
 
 # create a folder for temperature_data
-out.path <- paste0("2026_forecast/results/temperature_data/") # update year
+out.path <- paste0("2027_forecast/results/temperature_data/") # update year
 if(!exists(out.path)){dir.create(out.path)}
 
 # set up directories----
-year.forecast <- "2026_forecast" # update year
+year.forecast <- "2027_forecast" # update year
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 #------------------------------------------------------------------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ results.directory <- file.path(year.forecast,  'results/temperature_data', '/')
 
 # https://coastwatch.pfeg.noaa.gov/erddap/griddap/NOAA_DHW_monthly.graph; this site is helpful to map the area of interest
 
-tidync(paste0(data.directory,'NOAA_DHW_monthly_97_25.nc')) %>% # update file name
+tidync(paste0(data.directory,'NOAA_DHW_monthly_97_26.nc')) %>% # update file name
   hyper_tibble() %>% 
   mutate(date=lubridate::as_datetime(time)) %>%
   group_by(date, latitude, longitude) %>% 
@@ -61,7 +61,7 @@ tidync(paste0(data.directory,'NOAA_DHW_monthly_97_25.nc')) %>% # update file nam
   as.data.frame() -> SST_satellite
 
 SST_satellite %>%
-  write.csv(., paste0(data.directory, 'sst_oisst_97_25_monthly_data.csv')) # update file name
+  write.csv(., paste0(data.directory, 'sst_oisst_97_26_monthly_data.csv')) # update file name
 
 # create plot of entire data set  
 # SST_satellite %>% 
@@ -111,12 +111,12 @@ merge(map_data_Chatham, SST_satellite, by = c("latitude", "longitude"), all.x = 
 rbind(Icy_Strait_SST, NSEAK_SST) %>%
 rbind(., SEAK_SST) %>%   
 rbind(., Chatham_SST) %>% 
-  write.csv(., paste0(data.directory, 'sst_regions_oisst_97_25_monthly_data.csv')) # update file name
+  write.csv(., paste0(data.directory, 'sst_regions_oisst_97_26_monthly_data.csv')) # update file name
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # SUMMARIZE SST DATA BY REGION, YEAR, MONTH
 #--------------------------------------------------------------------------------------------------------------------------------------------
 # summarize SST data
-read.csv(paste0(data.directory, 'sst_regions_oisst_97_25_monthly_data.csv')) %>% # update file name
+read.csv(paste0(data.directory, 'sst_regions_oisst_97_26_monthly_data.csv')) %>% # update file name
   filter(region %in% c('Icy_Strait', 'Chatham', 'NSEAK', 'SEAK')) %>% 
   group_by(region, year, month) %>%
   summarise(msst = mean(SST), .groups = 'drop') %>%
@@ -150,10 +150,10 @@ SST_satellite_grouped %>%
 merge(SST_MJJ, SST_May, by = c("region", "year")) %>%
   merge(., SST_AMJJ, by = c("region", "year")) %>%
   merge(., SST_AMJ, by = c("region", "year")) %>%
-  write.csv(., paste0(results.directory, 'sst_regions_oisst_97_25_monthly_data_summary.csv')) # update file name
+  write.csv(., paste0(results.directory, 'sst_regions_oisst_97_26_monthly_data_summary.csv')) # update file name
 
 # create tables by region for the report
-read.csv(paste0(results.directory, 'sst_regions_oisst_97_25_monthly_data_summary.csv')) %>% # update file name
+read.csv(paste0(results.directory, 'sst_regions_oisst_97_26_monthly_data_summary.csv')) %>% # update file name
   dplyr::select(region, year, SST_MJJ, SST_May, SST_AMJJ, SST_AMJ) -> tempdata
 
 tempdata %>%
@@ -163,7 +163,7 @@ tempdata %>%
          Icy_Strait_SST_AMJJ = round(SST_AMJJ, 2),
          Icy_Strait_SST_AMJ = round(SST_AMJ, 2)) %>%
   dplyr::select(year, Icy_Strait_SST_MJJ, Icy_Strait_SST_May, Icy_Strait_SST_AMJJ, Icy_Strait_SST_AMJ) %>%
-  write.csv(., paste0(results.directory, 'sst_oisst_97_25_Icy_Strait_monthly_summary.csv'), row.names = FALSE) # update file name
+  write.csv(., paste0(results.directory, 'sst_oisst_97_26_Icy_Strait_monthly_summary.csv'), row.names = FALSE) # update file name
 
 tempdata %>%
   filter(region == "Chatham") %>%
@@ -172,7 +172,7 @@ tempdata %>%
          Chatham_SST_AMJJ = round(SST_AMJJ, 2),
          Chatham_SST_AMJ = round(SST_AMJ, 2)) %>%
   dplyr::select(year, Chatham_SST_MJJ, Chatham_SST_May, Chatham_SST_AMJJ, Chatham_SST_AMJ) %>%
-  write.csv(., paste0(results.directory, 'sst_oisst_97_25_Chatham_monthly_summary.csv'), row.names = FALSE) # update file name
+  write.csv(., paste0(results.directory, 'sst_oisst_97_26_Chatham_monthly_summary.csv'), row.names = FALSE) # update file name
 
 tempdata %>%
   filter(region == "NSEAK") %>%
@@ -181,7 +181,7 @@ tempdata %>%
          NSEAK_SST_AMJJ = round(SST_AMJJ, 2),
          NSEAK_SST_AMJ = round(SST_AMJ, 2)) %>%
   dplyr::select(year, NSEAK_SST_MJJ, NSEAK_SST_May, NSEAK_SST_AMJJ, NSEAK_SST_AMJ) %>%
-  write.csv(., paste0(results.directory, 'sst_oisst_97_25_NSEAK_monthly_summary.csv'), row.names = FALSE) # row.name = F gets rid of the first column X1 that is not needed; update file name
+  write.csv(., paste0(results.directory, 'sst_oisst_97_26_NSEAK_monthly_summary.csv'), row.names = FALSE) # row.name = F gets rid of the first column X1 that is not needed; update file name
 
 tempdata %>%
   filter(region == "SEAK") %>%
@@ -190,14 +190,14 @@ tempdata %>%
          SEAK_SST_AMJJ = round(SST_AMJJ, 2),
          SEAK_SST_AMJ = round(SST_AMJ, 2)) %>%
   dplyr::select(year, SEAK_SST_MJJ, SEAK_SST_May, SEAK_SST_AMJJ, SEAK_SST_AMJ) %>%
-  write.csv(., paste0(results.directory, 'sst_oisst_97_25_SEAK_monthly_summary.csv'), row.names = FALSE) # final satellite data by month (copy and paste to var*yyyy*_final.csv file); # update file name
+  write.csv(., paste0(results.directory, 'sst_oisst_97_26_SEAK_monthly_summary.csv'), row.names = FALSE) # final satellite data by month (copy and paste to var*yyyy*_final.csv file); # update file name
 #---------------------------------------------------------------------------------------------------------------------------------------------
 # COMBINE DATA SETS FOR FIG
 #---------------------------------------------------------------------------------------------------------------------------------------------
-read.csv(paste0(results.directory, 'sst_oisst_97_25_Icy_Strait_monthly_summary.csv')) -> Icy_Strait # update file name
-read.csv(paste0(results.directory, 'sst_oisst_97_25_Chatham_monthly_summary.csv')) -> Chatham # update file name 
-read.csv(paste0(results.directory, 'sst_oisst_97_25_NSEAK_monthly_summary.csv')) -> NSEAK # update file name
-read.csv(paste0(results.directory, 'sst_oisst_97_25_SEAK_monthly_summary.csv')) %>% # SEAK region # update file name
+read.csv(paste0(results.directory, 'sst_oisst_97_26_Icy_Strait_monthly_summary.csv')) -> Icy_Strait # update file name
+read.csv(paste0(results.directory, 'sst_oisst_97_26_Chatham_monthly_summary.csv')) -> Chatham # update file name 
+read.csv(paste0(results.directory, 'sst_oisst_97_26_NSEAK_monthly_summary.csv')) -> NSEAK # update file name
+read.csv(paste0(results.directory, 'sst_oisst_97_26_SEAK_monthly_summary.csv')) %>% # SEAK region # update file name
   merge (., Icy_Strait) %>%
   merge (., Chatham) %>% 
   merge (., NSEAK) -> fig_data
@@ -230,7 +230,7 @@ fig_data %>%
         legend.text=element_text(size=10), 
         axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"))+
-  scale_x_continuous(breaks = 1997:2025, labels = 1997:2025) + # update final year
+  scale_x_continuous(breaks = 1997:2026, labels = 1997:2026) + # update final year
   scale_y_continuous(breaks = c(6,7, 8, 9,10,11,12), limits = c(6,12))+
   geom_text(aes(x = 1997.4, y = 12, label="D) May"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot1
@@ -259,7 +259,7 @@ fig_data %>%
         text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
         axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
-  scale_x_continuous(breaks = 1997:2025, labels = 1997:2025) + # update final year
+  scale_x_continuous(breaks = 1997:2026, labels = 1997:2026) + # update final year
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11, 12), limits = c(6,12))+
   geom_text(aes(x = 1999.2, y = 12, label="C) May, June, July"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot2
@@ -288,7 +288,7 @@ fig_data %>%
         text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
         axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman"))  +
-  scale_x_continuous(breaks = 1997:2025, labels = 1997:2025) + # update final year
+  scale_x_continuous(breaks = 1997:2026, labels = 1997:2026) + # update final year
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
   geom_text(aes(x = 2000.4, y = 12, label="A) April, May, June, July"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot3
@@ -317,24 +317,24 @@ fig_data %>%
         text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
         axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
         axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
-  scale_x_continuous(breaks = 1997:2025, labels = 1997:2025) + # update final year
+  scale_x_continuous(breaks = 1997:2026, labels = 1997:2026) + # update final year
   scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
   geom_text(aes(x = 1999.5, y = 12, label="B) April, May, June"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot4
 
-fig_data %>%
-  dplyr::select(year, NSEAK_SST_AMJ) %>%
-  ggplot(., aes(y = NSEAK_SST_AMJ, x = year)) +
-  geom_line() +
-  theme(legend.title=element_blank(),legend.position = "none",
-        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
-        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
-        axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
-  scale_x_continuous(breaks = 1997:2025, labels = 1997:2025) + # update final year
-  scale_y_continuous(breaks = c(6,7, 8, 9,10), limits = c(6,10))+
-  #geom_text(aes(x = 1999.5, y = 12, label="B) April, May, June"),family="Times New Roman", colour="black", size=4) +
-  labs(y = "Temperature (Celsius)", x = "Year") -> plot5
-ggsave(paste0(results.directory, "monthly_NSEAK_AMJ_temp.png"), dpi = 500, height = 5, width = 7, units = "in")
+# fig_data %>%
+#   dplyr::select(year, NSEAK_SST_AMJ) %>%
+#   ggplot(., aes(y = NSEAK_SST_AMJ, x = year)) +
+#   geom_line() +
+#   theme(legend.title=element_blank(),legend.position = "none",
+#         text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
+#         axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
+#         axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
+#   scale_x_continuous(breaks = 1997:2026, labels = 1997:2026) + # update final year
+#   scale_y_continuous(breaks = c(6,7, 8, 9,10), limits = c(6,10))+
+#   #geom_text(aes(x = 1999.5, y = 12, label="B) April, May, June"),family="Times New Roman", colour="black", size=4) +
+#   labs(y = "Temperature (Celsius)", x = "Year") -> plot5
+# ggsave(paste0(results.directory, "monthly_NSEAK_AMJ_temp.png"), dpi = 500, height = 5, width = 7, units = "in")
 # https://newbedev.com/one-shared-legend-for-a-cowplot-grid-in-r
 ggpubr::ggarrange(plot3, plot4, plot2, plot1,  # list of plots
                   #labels = "AUTO", # labels
@@ -343,36 +343,6 @@ ggpubr::ggarrange(plot3, plot4, plot2, plot1,  # list of plots
                   align = "v", nrow = 4) # Align them both, horizontal and vertical
 ggsave(paste0(results.directory, "monthly_temp_regions.png"), dpi = 500, height = 8, width = 6, units = "in")
 
-# create a figure of ISTI_JJ for the SECM survey
-# the varyyyy_final.csv file needs to be updated with the current year's data prior to running the code below 
-read.csv(paste0(data.directory, 'var2025_final.csv')) %>% # update file name
-  dplyr::select(JYear, ISTI20_JJ) %>%
-  rename(Year = JYear) %>%
-write.csv(., paste0(results.directory, 'SECMvar2025_JJ.csv'), row.names = FALSE) # update file name
-
-read.csv(paste0(data.directory, 'var2025_final.csv')) %>% # update file name 
-  dplyr::select(JYear, ISTI20_JJ) %>%
-  gather("var", "value", -c(JYear)) %>% 
-  ggplot(., aes(y = value, x = JYear, group = var)) +
-  geom_point(aes(shape = var, color = var, size=var)) +
-  geom_line(aes(linetype = var, color = var)) +
-  scale_linetype_manual(values=c("solid", "dotted", "solid", "dotted", "dotted"))+
-  scale_shape_manual(values=c(1, 16, 15, 2,8)) +
-  scale_color_manual(values=c('black','black', 'grey70', 'grey70','black'))+
-  scale_size_manual(values=c(2,2,2,2,2)) +
-  theme(legend.title=element_blank(),
-        #panel.border = element_blank(), panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
-        axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
-        axis.title.x = element_text(size=12, colour="black",family="Times New Roman"),
-        legend.position="none") +
-  scale_x_continuous(breaks = 1997:2025, labels = 1997:2025) + # update final year
-  scale_y_continuous(breaks = c(6,7, 8, 9,10,11,12,13), limits = c(6,12))+
-  #geom_text(aes(x = 2000.5, y = 13, label="May, June, July temperature"),family="Times New Roman", colour="black", size=4) +
-  labs(y = "Temperature (Celsius)", x ="") -> plot1
-cowplot::plot_grid(plot1, align = "vh", nrow = 1, ncol=1)
-ggsave(paste0(results.directory, "monthly_SECM_temp_regions.png"), dpi = 500, height = 5, width = 7, units = "in")
 #-------------------------------------------------------------------------------------------------------------------------------------------
 ## CREATE A MAP OF THE SATELLITE DATA STATIONS
 #-------------------------------------------------------------------------------------------------------------------------------------------
