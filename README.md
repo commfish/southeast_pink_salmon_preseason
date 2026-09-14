@@ -117,7 +117,7 @@ To create the 18 models, the code is run in the following order;
 4. 6_diagnostics_models_basic.R. 
 
 #### 3_summarize_models.R  script
-This script needs to be modified based on the variables in the multiple linear regression for the particular year. The script creates the [`model_summary_table1_multi.csv`], [`model_summary_table2_multi.csv`], [`model_summary_final_multi.csv`], [`seak_model_summary_multi.csv`],  and `seak_model_summary_one_step_ahead5_multi.csv`] in the results folder and [`var_2026_merge.csv`] in the data folder. The forecast_models_multi.png figure is also produced from this script in the results folder.
+This script needs to be modified based on the variables in the multiple linear regression for the particular year and uses the raw CPUE. The script creates the [`model_summary_table1_multi.csv`], [`model_summary_table2_multi.csv`], [`model_summary_final_multi.csv`], [`seak_model_summary_multi.csv`],  and [`seak_model_summary_one_step_ahead5_multi.csv`] in the results folder and [`var_2026_merge.csv`] in the data folder. The forecast_models_multi.png figure is also produced from this script in the results folder.
 
 The top of the script needs to be updated each year.
 
@@ -148,7 +148,7 @@ The two options:
 Option #1 is saved in the file model_summary_table2 and option #2 is saved in the file model_summary_table3 (in the [`results/summary`] folder).
 
 #### 4_diagnostics.R
-This script is used to explore the best model (based on the lowest one-step-ahead MAPE and group discussions). The outputs include model_summary_table4_*best_model*.csv. This csv files includes the residuals, hat values, cook's distance values, standardized residuals, and fitted values that are used to create the diagnostic figures catch_plot_pred_m*xx*.png, fitted_m*xx*.png, general_diagnostics_m*xx*.png, and influential_m*xx*.png. In addition, the top of the script outputs the lack of fit test (Bonferroni p-values), and the lack of fit curvature test. 
+This script is used to explore the best model (based on the lowest one-step-ahead MAPE and group discussions using the raw CPUE). The outputs include model_summary_table4_*best_model*.csv. This csv files includes the residuals, hat values, cook's distance values, standardized residuals, and fitted values that are used to create the diagnostic figures catch_plot_pred_m*xx*.png, fitted_m*xx*.png, general_diagnostics_m*xx*.png, and influential_m*xx*.png. In addition, the top of the script outputs the lack of fit test (Bonferroni p-values), and the lack of fit curvature test. 
 
 The top of the script needs to be updated each year.
 
@@ -167,28 +167,39 @@ lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset) -> m11
 
 ```
 #### 5_summarize_models_basic.R; 
-The top of the script and three other spots need to be updated each year.
+This script needs to be modified based on the variables in the multiple linear regression for the particular year and uses the adjusted CPUE instead of the raw CPUE. The script creates the [`model_summary_table1.csv`], [`model_summary_table2.csv`], [`model_summary_final.csv`], [`seak_model_summary.csv`],  and [`seak_model_summary_one_step_ahead5.csv`] in the results folder. The forecast_models.png figure is also produced from this script in the results folder. The top of the script and three other spots need to be updated each year.
 
 ```
 read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
 ```
 ```
+f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2020, models = "")  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
+```
+```
   labs(x="", y = "2027 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1  # update forecast year
 ```
-
 ```
 read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_temp # update file names
 ```
-```
-f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2020, models = "")  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
-```
+
 #### 6_diagnostics_models_basic.R
-This code is used to filter out certain influential years (to see the effect on the model results) but was not used in the 2023 forecast process.
+This script is used to explore the best model (based on the lowest one-step-ahead MAPE and group discussions) using the adjusted CPUE. 
+The top of the script needs to be updated each year.
 
-The [`forecasts.csv`] files in the data folder needs to be created manually from the spreadsheet model_summary_Table_*month*_*year*.xlsx in the [`results/summary_tables`] folder.
+```
+fit_value_model<-18.841 #best model outputs (bias-corrected); value of forecast (from model_summary_table3)
+lwr_pi_80<-12.273 # 80% PI from model_summary_table2
+upr_pi_80<-28.922 # 80% PI from model_summary_table2
+best_model<-m11
+model<-'m11'
+year.forecast <- "2023_forecast" # forecast year
+year.data <- 2022 #last year of data
+year.data.one <- year.data - 1
 
-This script is very long, but is basically just repeating the process for the three models (CPUE-only model and two best models). 
-
+# best model based on performance metrics
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJ, data = log_data_subset) -> m13a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor), data = log_data_subset) -> m13a_reduced
+```
 
 ## References
 Adkison, M. D. 2002. Preseason forecasts of pink salmon harvests in Southeast Alaska using Bayesian model averaging. Alaska Fishery Research Bulletin 9(1):1–8.
