@@ -362,7 +362,7 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end, model_nu
     data$model1_sim[data$JYear == i] <- predict(fit, newdata = data[data$JYear == i,])
     data$sigma[data$JYear == i] <- sigma(fit, newdata = data[data$JYear == i,])
   }
-  return(data)
+  #return(data)
   data %>% 
     dplyr::filter(JYear > end) %>% 
     as.data.frame() %>% 
@@ -370,7 +370,7 @@ f_model_one_step_ahead <- function(harvest,variables,model, start, end, model_nu
   # mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
 } 
 # function check for one model (one step ahead MAPE)
-# seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1998, end = 2012, model_num = "m1b")
+seak_model_summary1 <- f_model_one_step_ahead(harvest=log_data$SEAKCatch_log, variables=log_data, model = SEAKCatch_log ~CPUE, start = 1997, end = 2020, model_num = "m1")
 
 f_model_one_step_ahead_odd <- function(harvest,variables,model, start, end, model_num){
   n<-dim(variables)[1]
@@ -410,7 +410,7 @@ f_model_one_step_ahead_multiple5 <- function(harvest,variables,model.formulas,mo
       fit.out[[i]]<-fit
       data$model1_sim[data$JYear == j] <- predict(fit, newdata = data[data$JYear == j,])
     }
-    return(data)
+    #return(data)
     data %>% 
       dplyr::filter(JYear > end) -> output
     MAPE<-mape(exp(output$SEAKCatch_log),exp(output$model1_sim))
