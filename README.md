@@ -162,17 +162,26 @@ year.forecast <- "2023_forecast" # forecast year
 year.data <- 2022 #last year of data
 year.data.one <- year.data - 1
 
-# source code and functions
-source('2023_forecast/code/1_summarize_models.r') # current forecast year folder
-source('2023_forecast/code/functions.r') # current forecast year folder
-
 # best model based on performance metrics
 lm(SEAKCatch_log ~ CPUE + NSEAK_SST_May, data = log_data_subset) -> m11
 
 ```
 #### 5_summarize_models_basic.R; 
+The top of the script and three other spots need to be updated each year.
 
+```
+read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
+```
+```
+  labs(x="", y = "2027 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1  # update forecast year
+```
 
+```
+read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_temp # update file names
+```
+```
+f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_data, model.formulas=model.formulas,model.names=model.names, start = 1997, end = 2020, models = "")  # start = 1997, end = 2016 means Jyear 2017-2021 used for MAPE calc. (5-year)
+```
 #### 6_diagnostics_models_basic.R
 This code is used to filter out certain influential years (to see the effect on the model results) but was not used in the 2023 forecast process.
 
