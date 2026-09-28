@@ -49,42 +49,81 @@ jacklm.reg<-function(data,model.formula,jacknife.index=0){
 #       # model.names: names of selected models
 #   
 #       # this function needs to be edited to select harvest data based on the model.formula
-f_model_summary <- function(harvest,variables,model.formulas,model.names,w, models){
-  n<-dim(variables)[1]
-  model.results<-numeric()
-  obs<-harvest[-n]
-  weights<-w[-n]
-  data<-variables[-n,]
-  fit.out<-list()
-  sum_w<-sum(weights)
+f_model_summary <- function(harvest, variables, model.formulas, model.names, w, models) {
+  library(dplyr)
+  library(AICcmodavg)
+  
+  n <- dim(variables)[1]
+  model.results <- NULL
+  obs <- harvest[-n]
+  weights <- w[-n]
+  data <- variables[-n, ]
+  fit.out <- list()
+  sum_w <- sum(weights)
+  
   for(i in 1:length(model.formulas)) {
-    fit<-lm(model.formulas[[i]],data=data)
-    fit.out[[i]]<-fit
-    model.sum<-summary(fit)
-    vector.jack<-numeric()
+    fit <- lm(model.formulas[[i]], data = data)
+    fit.out[[i]] <- fit
+    model.sum <- summary(fit)
+    
+    # Jackknife / LOOCV
+    vector.jack <- numeric(n - 1)
     for(j in 1:(n-1)){
-      vector.jack[j]<-jacklm.reg(data=data,model.formula=model.formulas[[i]],jacknife.index=j)
+      vector.jack[j] <- jacklm.reg(data = data, model.formula = model.formulas[[i]], jacknife.index = j)
     }
-    mape_LOOCV<-mean(abs(obs-vector.jack)/obs)
-    mape<-mean(abs(obs-fit$fitted.values)/obs)
-    wmape1<-((abs(obs-fit$fitted.values)/obs)*weights)
-    wmape2<-sum(wmape1)
-    wmape<-wmape2/sum_w
-    #mase<-MASE(f = (fit$fitted.values), y = obs) # function
-    #mase2<-Metrics::mase(obs,fit$fitted.values,1 )
-    model.pred<-unlist(predict(fit,newdata=variables[n,],se=T,interval='prediction',level=.80))
-    sigma <- sigma(fit)
-    model.results<-rbind(model.results,c(model.pred,R2=model.sum$r.squared,AdjR2=model.sum$adj.r.squared, AIC=AIC(fit),AICc=AICcmodavg::AICc(fit),BIC=BIC(fit),
-                                         p = pf(model.sum$fstatistic[1], model.sum$fstatistic[2],model.sum$fstatistic[3],lower.tail = FALSE), sigma = sigma,
-                                         MAPE=mape,MAPE_LOOCV=mape_LOOCV,
-                                         #MASE = mase, MASE2=mase2,
-                                         wMAPE= wmape))
+    
+    # Error Metrics
+    mape_LOOCV <- mean(abs(obs - vector.jack) / obs)
+    mape       <- mean(abs(obs - fit$fitted.values) / obs)
+    wmape      <- sum((abs(obs - fit$fitted.values) / obs) * weights) / sum_w
+    
+    # --- SAFE PREDICTION EXTRACTION ---
+    pred_obj <- predict(fit, newdata = variables[n, ], se.fit = TRUE, interval = 'prediction', level = 0.80)
+    
+    fit_val <- pred_obj$fit[1, "fit"]
+    fit_LPI <- pred_obj$fit[1, "lwr"]
+    fit_UPI <- pred_obj$fit[1, "upr"]
+    se_fit  <- pred_obj$se.fit[1]
+    # ----------------------------------
+    
+    sigma_val <- sigma(fit)
+    
+    # Extract F-statistic p-value safely handling edge/null cases
+    f_stat <- model.sum$fstatistic
+    p_val  <- if(!is.null(f_stat)) {
+      pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
+    } else { NA }
+    
+    # Combine explicitly to avoid row binding order shifting
+    current_row <- c(
+      fit            = fit_val, 
+      fit_LPI        = fit_LPI, 
+      fit_UPI        = fit_UPI, 
+      se_fit         = se_fit,
+      R2             = model.sum$r.squared, 
+      AdjR2          = model.sum$adj.r.squared, 
+      AIC            = AIC(fit), 
+      AICc           = AICcmodavg::AICc(fit), 
+      BIC            = BIC(fit),
+      p              = p_val, 
+      sigma          = sigma_val,
+      MAPE           = mape, 
+      MAPE_LOOCV     = mape_LOOCV,
+      wMAPE          = wmape
+    )
+    
+    model.results <- rbind(model.results, current_row)
   }
+  
+  # Explicit formatting and file export
+  rownames(model.results) <- model.names
+  model.results <- as.data.frame(model.results)
+  
+  write.csv(model.results, paste0(results.directory, "/seak_model_summary", models, ".csv"), row.names = TRUE)
+  
+  return(fit.out) # Returns your fitted objects layer out for debugging if needed
+}
 
-  row.names(model.results)<-model.names
-  dimnames(model.results)[[2]][1:3]<-c('fit','fit_LPI','fit_UPI')
-  as.data.frame(model.results)%>%
-write.csv(., paste0(results.directory, "/seak_model_summary", models, ".csv"))}
 # 
 # f_model_summary_odd <- function(harvest,variables,model.formulas,model.names,w, models){
 #   n<-dim(variables)[1]

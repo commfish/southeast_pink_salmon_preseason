@@ -173,20 +173,18 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.
 
 # STEP #5: CREATE FORECAST FIGURE
 read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
+
+model_levels <- c('m1a','m2a','m3a','m4a','m5a','m6a','m7a','m8a','m9a',
+                  'm10a','m11a','m12a','m13a','m14a','m15a','m16a','m17a','m18a')
 results %>%
   dplyr::rename(Terms = 'X') %>%
   dplyr::select(Terms, fit,	fit_LPI,	fit_UPI, sigma) %>%
-  mutate(model = c('m1a','m2a','m3a','m4a','m5a','m6a','m7a','m8a',
-                   'm9a','m10a','m11a','m12a','m13a','m14a','m15a','m16a','m17a',
-                   'm18a')) %>%
-  mutate(order = c('1a','2a','3a','4a','5a','6a','7a','8a',
-                   '9a','10a','11a','12a','13a','14a','15a','16a','17a',
-                   '18a')) %>%
-  mutate(model= as.factor(model),
+  mutate(model = model_levels, 
+           order = factor(model, levels = model_levels),
          fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma),
          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>%
-  dplyr::select(model, order, Terms, fit_log,fit_log_LPI, 	fit_log_UPI) %>%
+  dplyr::select(model, order, Terms, fit_log,fit_log_LPI, fit_log_UPI) %>%
   as.data.frame() %>%
   dplyr::arrange(order) %>%
   ggplot(., aes(x=factor(model, level=c('m1a','m2a','m3a','m4a','m5a','m6a','m7a','m8a',
@@ -195,7 +193,7 @@ results %>%
   geom_col(aes(y = fit_log, fill = "SEAK pink catch"), colour ="grey70",
            width = 1, position = position_dodge(width = 0.1)) +
   scale_colour_manual("", values=c("SEAK pink catch" = "grey90", "fit" = "black")) +
-  scale_fill_manual("",values="lightgrey")+ geom_hline(yintercept=20, linetype='dashed', color=c('grey30'))+
+  scale_fill_manual("",values="lightgrey")+ geom_hline(aes(yintercept=mean(fit_log)), linetype='dashed', color=c('grey30'))+
   theme_bw() + theme(legend.key=element_blank(),
                      panel.grid.major = element_blank(),
                      panel.grid.minor = element_blank(),

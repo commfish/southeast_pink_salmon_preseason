@@ -227,8 +227,8 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
    dplyr::rename(Terms = 'X') %>%
    dplyr::select(Terms, fit, fit_LPI, fit_UPI, sigma) %>%
    mutate(model = paste0("m", seq_len(nrow(results))),
-          order = factor(seq_len(nrow(results)), levels = seq_len(nrow(results)), ordered = TRUE)) %>%
-   mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
+          order = factor(seq_len(nrow(results)), levels = seq_len(nrow(results)), ordered = TRUE),
+   fit_log = exp(fit)*exp(0.5*sigma*sigma),
           fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
           fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>%
    dplyr::select(model, order, Terms, fit_log, fit_log_LPI, fit_log_UPI) %>%
@@ -243,7 +243,7 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
      colour = "grey70",width = 1,
      position = position_dodge(width = 0.1)) +
    scale_fill_manual("", values = c("SEAK pink catch" = "lightgrey")) +
-   geom_hline(yintercept = 20, linetype = "dashed", colour = "grey30") +
+   geom_hline(aes(yintercept=mean(fit_log)), linetype='dashed', color=c('grey30'))+
    theme_bw() +
    theme(
      legend.key = element_blank(),
