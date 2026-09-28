@@ -203,8 +203,10 @@ results %>%
                      legend.title=element_blank(),
                      legend.position = "none") +
   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, linewidth=1, color="grey30")+
-  scale_y_continuous(breaks = c(0,5, 10, 15, 20, 25, 30, 35, 40, 45), limits = c(0,45))+
-  labs(x="", y = "2027 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1 # update forecast year
+  scale_y_continuous(
+    breaks = seq(0, 140, 10),
+    limits = c(0, 140)) +
+  labs(x="", y = "2027 SEAK Pink Salmon Harvest Forecast (millions)") -> plot1 # update forecast year
 ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, width = 10, units = "in")
 
 # STEP 6: CREATE DATASET FOR WRITE-UP

@@ -88,28 +88,28 @@ Satellite sea surface temperature data were summarized by region and year (i.e.,
 \pagebreak
 
 ```{r summary1}
-tbls_sst_regions$sst_oisst_97_25_Icy_Strait_monthly_summary %>%
+tbls_sst_regions$sst_oisst_97_26_Icy_Strait_monthly_summary %>%
    knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Icy Strait region from 1997 to 2026 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 70 satellite stations (latitude/longitude combinations) in the Icy Strait region.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ```{r summary2}
-tbls_sst_regions$sst_oisst_97_25_Chatham_monthly_summary %>%
+tbls_sst_regions$sst_oisst_97_26_Chatham_monthly_summary %>%
    knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature data from the Chatham and Icy Straits region from 1997 to 2026 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ).  There are 313 satellite stations (latitude/longitude combinations) in the Chatham and Icy Straits region.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ```{r summary3}
-tbls_sst_regions$sst_oisst_97_25_NSEAK_monthly_summary %>%
+tbls_sst_regions$sst_oisst_97_26_NSEAK_monthly_summary %>%
    knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the northern Southeast Alaska (NSEAK) region from 1997 to 2026 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 1,344 satellite stations (latitude/longitude combinations) in the NSEAK region.', row.names = F, align = "c")
 ```
 
 \pagebreak
 
 ```{r summary4}
-tbls_sst_regions$sst_oisst_97_25_SEAK_monthly_summary %>%
+tbls_sst_regions$sst_oisst_97_26_SEAK_monthly_summary %>%
    knitr::kable(format = 'pandoc', caption = 'Satellite sea temperature from the Southeast Alaska (SEAK) region from 1997 to 2026 for the month of May (May), May through July (MJJ), April through June (AMJ), and April through July (AMJJ). There are 2,663 satellite stations (latitude/longitude combinations) in the SEAK region.', row.names = F, align = "c")
 ```
 
@@ -148,13 +148,13 @@ knitr::include_graphics(here(results.directory, "SEAK.png"))
 \pagebreak
 
 ```{r fig5, fig.cap="A. The May temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2026. B. The May, June, and July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2026. C. The April through June temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2026. D. The April through July temperature averaged over each region (Chatham and Icy Straits, Icy Strait, NSEAK, SEAK) from 1997 through 2026.", out.width="80%"}
-knitr::include_graphics(here(results.directory, "monthly_temp_regions.png"))
+knitr::include_graphics(here(results.directory, "monthly_temp_regions_colored.png"))
 ```
 
 \pagebreak
 
 ```{r fig6, fig.cap="Average temperature (degrees Celsius) at 20m depth during June and July at 8 stations in Icy Strait (Icy Strait and Upper Chatham transects; ISTI) from 1997 through 2026.", out.width="80%"}
-knitr::include_graphics(here(results.directory, "monthly_SECM_temp_regions.png"))
+knitr::include_graphics(here(results.directory, "annual_ISTI20_JJ.png"))
 ```
 
 

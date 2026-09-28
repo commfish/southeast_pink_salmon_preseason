@@ -323,26 +323,121 @@ fig_data %>%
   geom_text(aes(x = 1999.5, y = 12, label="B) April, May, June"),family="Times New Roman", colour="black", size=4) +
   labs(y = "Temperature (Celsius)", x ="") -> plot4
 
-# fig_data %>%
-#   dplyr::select(year, NSEAK_SST_AMJ) %>%
-#   ggplot(., aes(y = NSEAK_SST_AMJ, x = year)) +
-#   geom_line() +
-#   theme(legend.title=element_blank(),legend.position = "none",
-#         text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
-#         axis.title.y = element_text(size=12, colour="black",family="Times New Roman"),
-#         axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
-#   scale_x_continuous(breaks = 1997:2026, labels = 1997:2026) + # update final year
-#   scale_y_continuous(breaks = c(6,7, 8, 9,10), limits = c(6,10))+
-#   #geom_text(aes(x = 1999.5, y = 12, label="B) April, May, June"),family="Times New Roman", colour="black", size=4) +
-#   labs(y = "Temperature (Celsius)", x = "Year") -> plot5
-# ggsave(paste0(results.directory, "monthly_NSEAK_AMJ_temp.png"), dpi = 500, height = 5, width = 7, units = "in")
-# https://newbedev.com/one-shared-legend-for-a-cowplot-grid-in-r
 ggpubr::ggarrange(plot3, plot4, plot2, plot1,  # list of plots
                   #labels = "AUTO", # labels
                   common.legend = T, # COMMON LEGEND
                   legend = "bottom", # legend position
                   align = "v", nrow = 4) # Align them both, horizontal and vertical
 ggsave(paste0(results.directory, "monthly_temp_regions.png"), dpi = 500, height = 8, width = 6, units = "in")
+
+# create a figure of SST_MJJ, SST_May, SST_AMJJ, SST_AMJ by region --colored
+fig_data %>%
+  dplyr::select(year, Icy_Strait_SST_May, Chatham_SST_May, NSEAK_SST_May, SEAK_SST_May) %>%
+  rename(Icy_Strait = Icy_Strait_SST_May,
+         Chatham = Chatham_SST_May,
+         NSEAK =  NSEAK_SST_May,
+         SEAK= SEAK_SST_May) %>% 
+  gather("var", "value", -c(year)) %>%
+  mutate(var = factor(var,
+                      ordered = TRUE,
+                      levels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK"),
+                      labels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK"))) %>%
+  ggplot(., aes(y = value, x = year, group = var)) +
+  geom_line(aes(color = var), lty = 1, lwd = 1) +
+  scale_color_manual(values=c("#669966",  "#99007F", "#0099CC","#EECF00")) +
+  theme(legend.title=element_blank(),legend.position = "bottom",
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
+        legend.text=element_text(size=10), 
+        axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
+        axis.title.x = element_text(size=12, colour="black",family="Times New Roman"))+
+  scale_x_continuous(breaks = 1997:2026, labels = 1997:2026) + # update final year
+  scale_y_continuous(breaks = c(6,7, 8, 9,10,11,12), limits = c(6,12))+
+  geom_text(aes(x = 1997.4, y = 12, label="D) May"),family="Times New Roman", colour="black", size=4) +
+  labs(y = "Temperature (Celsius)", x ="") -> plot1
+
+fig_data %>%
+  dplyr::select(year, Icy_Strait_SST_MJJ, Chatham_SST_MJJ, NSEAK_SST_MJJ, SEAK_SST_MJJ) %>%
+  rename(Icy_Strait = Icy_Strait_SST_MJJ,
+         Chatham = Chatham_SST_MJJ,
+         NSEAK =  NSEAK_SST_MJJ,
+         SEAK= SEAK_SST_MJJ) %>% 
+  gather("var", "value", -c(year)) %>%
+  mutate(var = factor(var,
+                      ordered = TRUE,
+                      levels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK"),
+                      labels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK")))%>%
+  ggplot(., aes(y = value, x = year, group = var)) +
+  geom_line(aes(color = var), lty = 1, lwd = 1) +
+  scale_color_manual(values=c("#669966",  "#99007F", "#0099CC","#EECF00")) +
+  theme(legend.title=element_blank(),legend.position = "none",
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
+        axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
+        axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
+  scale_x_continuous(breaks = 1997:2026, labels = 1997:2026) + # update final year
+  scale_y_continuous(breaks = c(6,7, 8, 9,10, 11, 12), limits = c(6,12))+
+  geom_text(aes(x = 1999.2, y = 12, label="C) May, June, July"),family="Times New Roman", colour="black", size=4) +
+  labs(y = "Temperature (Celsius)", x ="") -> plot2
+
+fig_data %>%
+  dplyr::select(year, Icy_Strait_SST_AMJJ, Chatham_SST_AMJJ, NSEAK_SST_AMJJ, SEAK_SST_AMJJ) %>%
+  rename(Icy_Strait = Icy_Strait_SST_AMJJ,
+         Chatham = Chatham_SST_AMJJ,
+         NSEAK =  NSEAK_SST_AMJJ,
+         SEAK= SEAK_SST_AMJJ) %>% 
+  gather("var", "value", -c(year)) %>%
+  mutate(var = factor(var,
+                      ordered = TRUE,
+                      levels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK"),
+                      labels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK")))%>% 
+  ggplot(., aes(y = value, x = year, group = var)) +
+  geom_line(aes(color = var), lty = 1, lwd = 1) +
+  scale_color_manual(values=c("#669966",  "#99007F", "#0099CC","#EECF00")) +
+  theme(legend.title=element_blank(),legend.position = "none",
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
+        axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
+        axis.title.x = element_text(size=12, colour="black",family="Times New Roman"))  +
+  scale_x_continuous(breaks = 1997:2026, labels = 1997:2026) + # update final year
+  scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
+  geom_text(aes(x = 2000.4, y = 12, label="A) April, May, June, July"),family="Times New Roman", colour="black", size=4) +
+  labs(y = "Temperature (Celsius)", x ="") -> plot3
+
+fig_data %>%
+  dplyr::select(year, Icy_Strait_SST_AMJ, Chatham_SST_AMJ, NSEAK_SST_AMJ, SEAK_SST_AMJ) %>%
+  rename(Icy_Strait = Icy_Strait_SST_AMJ,
+         Chatham = Chatham_SST_AMJ,
+         NSEAK =  NSEAK_SST_AMJ,
+         SEAK= SEAK_SST_AMJ) %>% 
+  gather("var", "value", -c(year)) %>%
+  mutate(var = factor(var,
+                      ordered = TRUE,
+                      levels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK"),
+                      labels = c("Icy_Strait", "Chatham", "NSEAK", "SEAK"))) %>%
+  ggplot(., aes(y = value, x = year, group = var)) +
+  geom_line(aes(color = var), lty = 1, lwd = 1) +
+  scale_color_manual(values=c("#669966",  "#99007F", "#0099CC","#EECF00")) +
+  theme(legend.title=element_blank(),legend.position = "none",
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+        text = element_text(size=12),axis.text.x = element_text(angle=90, hjust=1),
+        axis.title.y = element_text(size=10, colour="black",family="Times New Roman"),
+        axis.title.x = element_text(size=12, colour="black",family="Times New Roman")) +
+  scale_x_continuous(breaks = 1997:2026, labels = 1997:2026) + # update final year
+  scale_y_continuous(breaks = c(6,7, 8, 9,10, 11,12), limits = c(6,12))+
+  geom_text(aes(x = 1999.5, y = 12, label="B) April, May, June"),family="Times New Roman", colour="black", size=4) +
+  labs(y = "Temperature (Celsius)", x ="") -> plot4
+
+ggpubr::ggarrange(plot3, plot4, plot2, plot1,  # list of plots
+                  #labels = "AUTO", # labels
+                  common.legend = T, # COMMON LEGEND
+                  legend = "bottom", # legend position
+                  align = "v", nrow = 4) # Align them both, horizontal and vertical
+ggsave(paste0(results.directory, "monthly_temp_regions_colored.png"), dpi = 500, height = 8, width = 6, units = "in")
 
 #-------------------------------------------------------------------------------------------------------------------------------------------
 ## CREATE A MAP OF THE SATELLITE DATA STATIONS

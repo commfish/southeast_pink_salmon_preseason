@@ -41,8 +41,6 @@ sample_size <-  (year.data-1998)+1 # number of data points in model (this is use
 # forecast2023 <- 15.6 # input last year's forecast for the forecast plot
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
-results.directory.MAPE <- file.path(year.forecast,  'results/MAPE', '/')
-#results.directory.retro <- file.path(year.forecast,  'results/retro', '/')
 source('2027_forecast/code/functions.r') # source the function file for functions used below
 
 # STEP 1: DATA
@@ -228,36 +226,43 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
  results %>%
    dplyr::rename(Terms = 'X') %>%
    dplyr::select(Terms, fit, fit_LPI, fit_UPI, sigma) %>%
-   mutate(model = c('m1','m2','m3','m4','m5','m6','m7','m8',
-                    'm9','m10','m11','m12','m13','m14','m15','m16','m17',
-                    'm18')) %>%
-   mutate(order = c('1','2','3','4','5','6','7','8',
-                    '9','10','11','12','13','14','15','16','17',
-                    '18')) %>%
-   mutate(order = as.numeric(order)) %>%
-   mutate(model= as.factor(model),
-          fit_log = exp(fit)*exp(0.5*sigma*sigma),
+   mutate(model = paste0("m", seq_len(nrow(results))),
+          order = factor(seq_len(nrow(results)), levels = seq_len(nrow(results)), ordered = TRUE)) %>%
+   mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
           fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
           fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>%
    dplyr::select(model, order, Terms, fit_log, fit_log_LPI, fit_log_UPI) %>%
-   as.data.frame() %>%
-   dplyr::arrange(order) %>%
-   ggplot(., aes(x=factor(model, level=c('m1','m2','m3','m4','m5','m6','m7','m8',
-                                         'm9','m10','m11','m12','m13','m14','m15','m16','m17',
-                                         'm18')), y=fit_log)) +
-   geom_col(aes(y = fit_log, fill = "SEAK pink catch"), colour ="grey70",
-            width = 1, position = position_dodge(width = 0.1)) +
-   scale_colour_manual("", values=c("SEAK pink catch" = "grey90", "fit" = "black")) +
-   scale_fill_manual("",values="lightgrey")+ geom_hline(yintercept=20, linetype='dashed', color=c('grey30'))+
-   theme_bw() + theme(legend.key=element_blank(),
-                      panel.grid.major = element_blank(),
-                      panel.grid.minor = element_blank(),
-                      axis.text.x = element_text(size = 9, family="Times New Roman"),
-                      legend.title=element_blank(),
-                      legend.position = "none") +
-   geom_errorbar(mapping=aes(x=model, ymin=fit_log_UPI, ymax=fit_log_LPI), width=0.2, linewidth=1, color="grey30")+
-   scale_y_continuous(breaks = c(0,5, 10, 15, 20, 25, 30, 35, 40, 45), limits = c(0,45))+
-   labs(x="", y = "2026 SEAK Pink Salmon Harvest Forecast (millions)")  -> plot1
+   as.data.frame() -> results
+ 
+ results %>%
+   ggplot(aes(
+     x = factor(model, levels = c(
+       'm1','m2','m3','m4','m5','m6','m7','m8',
+       'm9','m10','m11','m12','m13','m14','m15','m16','m17','m18')), y = fit_log)) +
+   geom_col(aes(fill = "SEAK pink catch"),
+     colour = "grey70",width = 1,
+     position = position_dodge(width = 0.1)) +
+   scale_fill_manual("", values = c("SEAK pink catch" = "lightgrey")) +
+   geom_hline(yintercept = 20, linetype = "dashed", colour = "grey30") +
+   theme_bw() +
+   theme(
+     legend.key = element_blank(),
+     panel.grid.major = element_blank(),
+     panel.grid.minor = element_blank(),
+     axis.text.x = element_text(size = 9, family = "Times New Roman"),
+     legend.title = element_blank(),
+     legend.position = "none") +
+   geom_errorbar(
+     aes(x = model,
+       ymin = fit_log_LPI,  # lower bound
+       ymax = fit_log_UPI), # upper bound
+     width = 0.2,
+     linewidth = 1,
+     colour = "grey30") +
+   scale_y_continuous(
+     breaks = seq(0, 80, 10),
+     limits = c(0, 80)) +
+   labs(x = "",y = "2027 SEAK Pink Salmon Harvest Forecast (millions)") -> plot1
  ggsave(paste0(results.directory, "forecast_models_multi.png"), dpi = 500, height = 4, width = 10, units = "in")
  
  # create final table for report
