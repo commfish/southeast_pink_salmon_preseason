@@ -1,7 +1,6 @@
 # SECM Pink salmon forecast models
-# Script written by Jim Murphy updated: 10/18/19
 # adapted by Sara Miller 10/10/2022
-# last update: May 2025
+# last update: September 2026
 # pink_cal_pooled_species
 # http://www.sthda.com/english/articles/40-regression-analysis/166-predict-in-r-model-predictions-and-confidence-intervals/
 # update all data files varyyyy_final.csv
@@ -43,7 +42,7 @@ sample_size <-  (year.data-1998)+1 # number of data points in model (this is use
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
 results.directory.MAPE <- file.path(year.forecast,  'results/MAPE', '/')
-results.directory.retro <- file.path(year.forecast,  'results/retro', '/')
+#results.directory.retro <- file.path(year.forecast,  'results/retro', '/')
 source('2027_forecast/code/functions.r') # source the function file for functions used below
 
 # STEP 1: DATA
@@ -269,3 +268,5 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
    dplyr::select(Terms, Model, Fit, Fit_LPI, Fit_UPI,AdjR2, MAPE5, change) %>%
    rename(AICc = change) %>%
    write.csv(., paste0(results.directory, "/model_summary_final_multi.csv"), row.names = F) 
+ 
+ 

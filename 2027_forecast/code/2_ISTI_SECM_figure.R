@@ -6,13 +6,8 @@
 library("devtools")
 devtools::install_github("commfish/fngr")
 library("fngr")
-library(ncdf4)
-library(tidync)
-library(httr)
 library(tidyverse)
-library(PBSmapping)
 library(extrafont)
-library(ggrepel)
 library(lubridate)
 library(ggpubr)
 # extrafont::font_import() # only needs to be run once for extra fonts for figures
