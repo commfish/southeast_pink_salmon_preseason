@@ -1,4 +1,4 @@
-"Terms","Model","Fit","Fit_LPI","Fit_UPI","AdjR2","MAPE5","AICc"
+"Terms","Model","Fit","Fit_LPI","Fit_UPI","AdjR2","MAPE5","AICc_change"
 "ISTI20_JJ","m2a",67.6,41.2,110.9,0.69,20.5,9.7
 "Chatham_SST_AMJ","m5a",69.5,45.5,106.2,0.77,22.9,0.800000000000001
 "Icy_Strait_SST_AMJ","m9a",80.5,51.8,124.9,0.76,23.3,1.6
@@ -10,8 +10,8 @@
 "SEAK_SST_May","m15a",60.6,39.4,93.1,0.76,26.8,2.4
 "SEAK_SST_AMJ","m17a",57.2,37,88.6,0.75,27.1,3.4
 "Chatham_SST_AMJJ","m6a",70.1,44.2,111.2,0.73,28.2,5.6
-"Icy_Strait_SST_MJJ","m8a",75.5,45.8,124.5,0.7,28.7,8.9
 "no temperature index included","m1a",56.8,33.1,97.4,0.62,28.7,13.9
+"Icy_Strait_SST_MJJ","m8a",75.5,45.8,124.5,0.7,28.7,8.9
 "NSEAK_SST_AMJJ","m14a",67.7,42.6,107.6,0.73,29.4,6
 "Chatham_SST_MJJ","m4a",69.3,42.3,113.5,0.69,31.2,9.2
 "SEAK_SST_AMJJ","m18a",59,37,93.8,0.72,31.4,6.9

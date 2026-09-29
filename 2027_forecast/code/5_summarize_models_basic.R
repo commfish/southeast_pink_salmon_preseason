@@ -1,7 +1,7 @@
 # run code 4_diagnostics.R first
 # STEP 1: DATA
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
+read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> variables # update file names
 
 # restructure the data for modeling
 n <- dim(variables)[1] # number of years including forecast year
@@ -145,7 +145,7 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
 # then you can use the f_model_one_step_ahead function check.xlsx (in the data folder) to make sure the
 # function is correct for the base CPUE model
 
-read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
+read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
   dplyr::rename(Terms = 'X') %>%
   mutate(MAPE5 = round(MAPE5,3)) %>%
   dplyr::select(Terms, MAPE5) -> MAPE5
@@ -153,26 +153,27 @@ read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5.csv'), 
 # format the file seak_model_summary.csv file
 # https://stats.stackexchange.com/questions/359088/correcting-log-transformation-bias-in-a-linear-model; Correcting log-transformation bias in a linear model
 # https://stackoverflow.com/questions/40324963/when-predicting-using-model-with-logtarget-do-i-have-to-make-any-changes-to-pr # mase3<-dLagM::MASE(m5)
-read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
+read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
   dplyr::rename(Terms = 'X') %>%
   dplyr::select(Terms, fit,	fit_LPI,	fit_UPI, AdjR2, sigma, AICc) %>%
-  mutate(AdjR2 = round(AdjR2,2)) %>%
-  mutate(Model = c('m1a','m2a','m3a','m4a','m5a','m6a','m7a','m8a',
+  mutate(AdjR2 = round(AdjR2,2),
+         Model = c('m1a','m2a','m3a','m4a','m5a','m6a','m7a','m8a',
                    'm9a','m10a','m11a','m12a','m13a','m14a','m15a','m16a','m17a',
-                   'm18a')) %>%
-  mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
+                   'm18a'),
+         fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
-         fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% # exponentiate the forecast
-  mutate(Fit = round(fit_log,1),
+         fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma),
+         Fit = round(fit_log,1),
          Fit_LPI = round(fit_log_LPI,1),
          Fit_UPI = round(fit_log_UPI,1),
          AICc = round(AICc, 1)) %>%
   dplyr::select(Model, Terms, Fit, Fit_LPI, Fit_UPI, AdjR2, AICc) %>%
-  merge(., MAPE5, by="Terms") %>%
+  inner_join(MAPE5, by = "Terms") %>%  # tidyverse join
+  mutate(MAPE5 = round(MAPE5,1)) %>%
   write.csv(., paste0(results.directory, "/model_summary_table2.csv"), row.names = F)
 
 # STEP #5: CREATE FORECAST FIGURE
-read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
+read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> results
 
 model_levels <- c('m1a','m2a','m3a','m4a','m5a','m6a','m7a','m8a','m9a',
                   'm10a','m11a','m12a','m13a','m14a','m15a','m16a','m17a','m18a')
@@ -180,7 +181,7 @@ results %>%
   dplyr::rename(Terms = 'X') %>%
   dplyr::select(Terms, fit,	fit_LPI,	fit_UPI, sigma) %>%
   mutate(model = model_levels, 
-           order = factor(model, levels = model_levels),
+        order = factor(model, levels = model_levels),
          fit_log = exp(fit)*exp(0.5*sigma*sigma),
          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma),
          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>%
@@ -209,22 +210,20 @@ ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, 
 
 # STEP 6: CREATE DATASET FOR WRITE-UP
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_temp # update file names
-read.csv(file.path(data.directory,'adj_raw_pink.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_adj_raw_pink # update file names
+read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> variables_temp # update file names
+read.csv(file.path(data.directory,'adj_raw_pink.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> variables_adj_raw_pink # update file names
 
 variables_adj_raw_pink %>%
   mutate (adj_raw_pink_log = log(adj_raw_pink +1)) %>% # log CPUE variable
   group_by(JYear, Year, vessel) %>% 
-  summarise(adj_raw_pink_log = max(adj_raw_pink_log)) %>% 
-  merge(., variables_temp, by.x = c("JYear", "Year"), by.y = c("JYear", "Year")) %>%
+  summarise(adj_raw_pink_log = max(adj_raw_pink_log), .groups = "drop") %>%
+  inner_join(variables_temp, by = c("JYear", "Year")) %>%
   dplyr::filter(adj_raw_pink_log > 0) %>%
-  #dplyr::filter(vessel!= 'Steller') %>%
-  #dplyr::filter(vessel!= 'Chellissa') %>%
   dplyr::select(JYear, Year, SEAKCatch, vessel, adj_raw_pink_log) -> multi
 
 variables_temp %>%
   mutate(odd_even_factor = ifelse(JYear %% 2 == 0, "odd", "even")) %>% # log catch variable
-  merge(., multi, all.x =T)%>%
+  left_join(multi, by = c("JYear", "Year", "SEAKCatch")) %>%
   dplyr::select(JYear, Year, SEAKCatch, odd_even_factor, vessel, adj_raw_pink_log, CPUE) %>%
   mutate(Harvest = round(SEAKCatch,1),
          Factor = odd_even_factor,
@@ -236,11 +235,11 @@ variables_temp %>%
 
 # STEP 7: CREATE PERFORMANCE SUMMARY
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE)  %>%
+read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE)  %>%
   arrange(MAPE5) %>%
   mutate(MAPE5 = round(MAPE5,1)) %>%
   mutate(change = AICc- min(AICc)) %>%
   dplyr::select(Terms, Model, Fit, Fit_LPI, Fit_UPI,AdjR2, MAPE5, change) %>%
-  rename(AICc = change) %>%
+  rename(AICc_change = change) %>%
   write.csv(., paste0(results.directory, "/model_summary_final.csv"), row.names = F) 
 

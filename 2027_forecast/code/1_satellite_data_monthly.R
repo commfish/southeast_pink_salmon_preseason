@@ -15,6 +15,7 @@ library(extrafont)
 library(ggrepel)
 library(lubridate)
 library(ggpubr)
+
 # extrafont::font_import() # only needs to be run once for extra fonts for figures
 windowsFonts(Times=windowsFont("TT Times New Roman"))
 theme_set(theme_report(base_size = 14))
@@ -496,7 +497,7 @@ Icy_Strait <- as.PolyData(Icy_Strait, projection="LL") # general SECM survey are
 Chatham <- as.PolyData(Chatham, projection="LL") # Chatham Strait data
 NSEAK <- as.PolyData(NSEAK, projection="LL") # NSEAK data
 SSEAK <- as.PolyData(SSEAK, projection="LL") # SSEAK data
-SEAK <- as.PolyData(SEAK, projection="LL") # SSEAK data
+SEAK <- as.PolyData(SEAK, projection="LL") # SEAK data
 Upper_Chatham_Strait_SECM <- as.PolyData(Upper_Chatham_Strait_SECM, projection="LL") #  Icy Strait SECM stations
 Icy_Strait_SECM <- as.PolyData(Icy_Strait_SECM, projection="LL") # Icy Strait SECM stations
 

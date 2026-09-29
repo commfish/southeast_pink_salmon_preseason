@@ -1,12 +1,10 @@
 # SECM Pink salmon forecast models
-# adapted by Sara Miller 10/10/2022
 # last update: September 2026
 # pink_cal_pooled_species
 # http://www.sthda.com/english/articles/40-regression-analysis/166-predict-in-r-model-predictions-and-confidence-intervals/
-# update all data files varyyyy_final.csv
-# Note: summary table 5 needs to be updated manually from the excel sheet model_summary_table_month_year.xlsx
 # https://www.r-bloggers.com/2021/10/multiple-linear-regression-made-simple/
 # load libraries
+# update all data files varyyyy_final.csv
 library("devtools")
 devtools::install_github("commfish/fngr")
 library("fngr")
@@ -29,6 +27,7 @@ library(MetricsWeighted)
 library("RColorBrewer") 
 library(StepReg)
 library(ggh4x)
+library(ggpubr)
 #extrafont::font_import() # only need to run this once, then comment out
 windowsFonts(Times=windowsFont("Times New Roman"))
 theme_set(theme_report(base_size = 14))
@@ -45,20 +44,19 @@ source('2027_forecast/code/functions.r') # source the function file for function
 
 # STEP 1: DATA
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_temp # update file names
-read.csv(file.path(data.directory,'adj_raw_pink.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables_adj_raw_pink # update file names
+read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> variables_temp # update file names
+read.csv(file.path(data.directory,'adj_raw_pink.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> variables_adj_raw_pink # update file names
 
-variables_adj_raw_pink %>%
-  mutate (adj_raw_pink_log = log(adj_raw_pink +1)) %>% # log CPUE variable
-          group_by(JYear, Year, vessel) %>% 
-          summarise(adj_raw_pink_log = max(adj_raw_pink_log)) %>% 
-  merge(., variables_temp, by.x = c("JYear", "Year"), by.y = c("JYear", "Year")) %>%
-  dplyr::filter(adj_raw_pink_log > 0) %>%
-  dplyr::filter(vessel!= 'Steller') %>%
-  dplyr::filter(vessel!= 'Chellissa') %>%
-  mutate (odd_even_factor = ifelse(JYear %% 2 == 0, "odd", "even"),
-          SEAKCatch_log = log(SEAKCatch)) %>%
-  dplyr::select(-c(SEAKCatch)) -> log_data
+log_data <- variables_adj_raw_pink %>%
+  mutate(adj_raw_pink_log = log(adj_raw_pink + 1)) %>%  # log CPUE variable
+  group_by(JYear, Year, vessel) %>% 
+  summarise(adj_raw_pink_log = max(adj_raw_pink_log), .groups = "drop") %>% 
+  inner_join(variables_temp, by = c("JYear", "Year")) %>%  
+  filter(adj_raw_pink_log > 0) %>%
+  filter(!vessel %in% c("Steller", "Chellissa")) %>%
+  mutate(odd_even_factor = ifelse(JYear %% 2 == 0, "odd", "even"),  
+    SEAKCatch_log = log(SEAKCatch)) %>% 
+  dplyr::select(-SEAKCatch)
 
 # data check only  
  log_data %>%
@@ -173,7 +171,7 @@ variables_adj_raw_pink %>%
             rep('m13',nyear+1),rep('m14',nyear+1),rep('m15',nyear+1),rep('m16',nyear+1),
             rep('m17',nyear+1),rep('m18',nyear+1))
  model<-as.data.frame(model)
- cbind(models, model)%>%
+ cbind(models, model) %>%
    dplyr::select(model, term, estimate, std.error, statistic, p.value) %>%
    mutate(Model = model,
           Term =term,
@@ -197,32 +195,30 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
  # then you can use the f_model_one_step_ahead function check.xlsx (in the data folder) to make sure the
  # function is correct for the base CPUE model
  
- read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5_multi.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
+ read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5_multi.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
    dplyr::rename(Terms = 'X') %>%
    mutate(MAPE5 = round(MAPE5,3)) %>%
    dplyr::select(Terms, MAPE5) -> MAPE5
  
- read.csv(file.path(results.directory,'seak_model_summary_multi.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) %>%
+ read.csv(file.path(results.directory,'seak_model_summary_multi.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
    dplyr::rename(Terms = 'X') %>%
    dplyr::select(Terms, fit, fit_UPI, fit_LPI,AdjR2, sigma, AICc) %>%
-   mutate(AdjR2 = round(AdjR2,2)) %>%
-   mutate(Model = c('m1','m2','m3','m4','m5','m6','m7','m8',
-                    'm9','m10','m11','m12','m13','m14','m15','m16','m17',
-                    'm18')) %>%
-   mutate(fit_log = exp(fit)*exp(0.5*sigma*sigma),
-          fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
-          fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma)) %>% # exponentiate the forecast
-   mutate(Fit = round(fit_log,1),
-          Fit_LPI = round(fit_log_LPI,1),
-          Fit_UPI = round(fit_log_UPI,1),
-          AICc = round(AICc, 1)) %>%
+   mutate(AdjR2 = round(AdjR2,2),
+   Model = paste0("m", seq_len(nrow(.))),  # dynamic model labels
+   fit_log = exp(fit)*exp(0.5*sigma*sigma),
+   fit_log_LPI = exp(fit_LPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
+   fit_log_UPI = exp(fit_UPI)*exp(0.5*sigma*sigma), # exponentiate the forecast
+   Fit = round(fit_log,1),
+   Fit_LPI = round(fit_log_LPI,1),
+   Fit_UPI = round(fit_log_UPI,1),
+   AICc = round(AICc, 1)) %>%
    dplyr::select(Model, Terms, Fit, Fit_LPI, Fit_UPI, AdjR2, AICc) %>%
-   merge(., MAPE5, by="Terms") %>%
+   inner_join(MAPE5, by = "Terms") %>%  # tidyverse join
    mutate(MAPE5 = round(MAPE5,1)) %>%
    write.csv(., paste0(results.directory, "/model_summary_table2_multi.csv"), row.names = F)
  
 # STEP #5: CREATE FORECAST FIGURE
- read.csv(file.path(results.directory,'seak_model_summary_multi.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> results
+ read.csv(file.path(results.directory,'seak_model_summary_multi.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> results
  results %>%
    dplyr::rename(Terms = 'X') %>%
    dplyr::select(Terms, fit, fit_LPI, fit_UPI, sigma) %>%
@@ -271,7 +267,7 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
    mutate(MAPE5 = round(MAPE5,1)) %>%
    mutate(change = AICc- min(AICc)) %>%
    dplyr::select(Terms, Model, Fit, Fit_LPI, Fit_UPI,AdjR2, MAPE5, change) %>%
-   rename(AICc = change) %>%
+   rename(AICc_change = change) %>%
    write.csv(., paste0(results.directory, "/model_summary_final_multi.csv"), row.names = F) 
  
  

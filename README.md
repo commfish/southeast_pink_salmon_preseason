@@ -129,8 +129,6 @@ sample_size <-  (year.data-1998)+1 # number of data points in model (this is use
 forecast2022 <- 15.6 # input last year's forecast for the forecast plot
 data.directory <- file.path(year.forecast, 'data', '/')
 results.directory <- file.path(year.forecast,'results', '/')
-results.directory.MAPE <- file.path(year.forecast,  'results/MAPE', '/')
-results.directory.retro <- file.path(year.forecast,  'results/retro', '/')
 source('2023_forecast/code/functions.r') # update to forecast year
 
 # STEP 1: DATA

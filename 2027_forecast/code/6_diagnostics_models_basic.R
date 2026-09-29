@@ -224,7 +224,7 @@ augment(best_model) %>%
   geom_text(aes(x = 1998, y = 1, label="A."),family="Times", colour="black", size=5) -> plot1
 
 # leverage plot
-#  p = number of parameters in the model including intercept
+# p = number of parameters in the model including intercept
 level <- 2*(p/sample_size)
 level # leverage value
 augment(best_model) %>% 
@@ -247,14 +247,6 @@ augment(best_model) %>%
   geom_text(aes(x = 1998, y = 1, label="B."),family="Times", colour="black", size=5)-> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
 ggsave(paste0(results.directory, "influential_m13a.png"), dpi = 500, height = 3, width = 6, units = "in")
-
-
-# read.csv(file.path(data.directory,'var2025_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
-# variables %>%
-#   dplyr::filter(Year== 2009|Year== 2010) %>%
-#   mutate(harvest = SEAKCatch)%>%
-#   mutate(terms = "SEAK pink harvest (not fit)")%>%
-#   dplyr::select(c(harvest, Year, JYear, terms)) -> fig_data
 
 # Extract sigma from the model
 tickryr <- data.frame(Year = 1997:2026)
@@ -300,7 +292,7 @@ augment(best_model) %>%
   cbind(.,log_data_subset)%>%
   mutate(harvest = exp(SEAKCatch_log), 
          fit = as.numeric(exp(.fitted) * exp(0.5*sigma*sigma))) %>%
-  ggplot(aes(x=fit, y=harvest)) +
+  ggplot(aes(x = fit, y = harvest)) +
   geom_point() +
   geom_point(aes(y = harvest), colour = "black", size = 1) +
   scale_color_grey() +theme_bw() + theme(panel.grid.minor = element_blank(),
