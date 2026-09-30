@@ -256,8 +256,8 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
      linewidth = 1,
      colour = "grey30") +
    scale_y_continuous(
-     breaks = seq(0, 80, 10),
-     limits = c(0, 80)) +
+     breaks = seq(0, 140, 10),
+     limits = c(0, 140)) +
    labs(x = "",y = "2027 SEAK Pink Salmon Harvest Forecast (millions)") -> plot1
  ggsave(paste0(results.directory, "forecast_models_multi.png"), dpi = 500, height = 4, width = 10, units = "in")
  

@@ -8,7 +8,7 @@ model <- 'm13a'
 year.forecast <- "2026_forecast" # forecast year
 year.data <- 2025 # last year of data
 year.data.one <- year.data - 1
-sample_size <- 28 # number of data points in model (this is used for Cook's distance)
+sample_size <- 29 # number of data points in model (this is used for Cook's distance)
 
 # best model based on performance metrics (need to update each year)
 lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJ, data = log_data_subset) -> m13a
