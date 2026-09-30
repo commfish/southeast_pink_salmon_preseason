@@ -1,5 +1,5 @@
 # run code 3_summarize_models.R first
-
+# check sample size for Cook's distance
 # best model based on performance metrics
 lm(SEAKCatch_log ~ as.factor(vessel):adj_raw_pink_log + as.factor(odd_even_factor) + as.factor(vessel) + Icy_Strait_SST_May + adj_raw_pink_log, data = log_data_subset) -> m7
 data.directory <- file.path(year.forecast, 'data', '/')

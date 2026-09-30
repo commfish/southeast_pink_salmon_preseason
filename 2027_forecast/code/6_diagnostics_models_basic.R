@@ -1,4 +1,5 @@
 # run code 5_summarize_models_basic.R first
+# check sample size for Cook's distance
 # best model based on performance metrics (need to update each year)
 lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + ISTI20_JJ, data = log_data_subset) -> m2a
 lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor), data = log_data_subset) -> m2a_reduced
