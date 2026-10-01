@@ -58,7 +58,7 @@ The adj_raw_pink_log variable is defined as the natural logarithm of the maximum
 
 The vessel-adjusted CPUE variable is defined as the average natural log transformed CPUE (adjusted to a 20 minute haul) for juvenile pink salmon catches in either June or July, whichever month had the highest catch in a given year, adjusted by the pooled-species vessel calibration coefficient from the R/V Cobb. As there was not a SECM survey in May, temperature data from May was unavailable. Therefore, the temperature variable from the SECM survey (ISTI20_JJ) was the average from June and July. In prior forecasting years, the ISTI variable was the average from May through July.
 
-The model performance metric one-step ahead mean absolute percent error (MAPE) for the last five years (MAPE5; forecast years 2021 through 2025) was used to evaluate the forecast accuracy of the 36 individual models, the AICc values were calculated for each model to prevent over-parameterization of the model, and the adjusted R-squared values, significant terms, and overall p-value of the model were used to the determine fit. Based upon the performance metric the 5-year MAPE, the AICc values, significant parameters in the models, and the adjusted R-squared values, model mxx (a model that included xxx; Appendix C) was the best performing model and the 2027-forecast using this model has a point estimate of xx3 million fish (80% prediction interval: xx to xx million fish).
+The model performance metric one-step ahead mean absolute percent error (MAPE) for the last five years (MAPE5; forecast years 2021 through 2025) was used to evaluate the forecast accuracy of the 36 individual models, the AICc values were calculated for each model to prevent over-parameterization of the model, and the adjusted R-squared values, significant terms, and overall p-value of the model were used to the determine fit. As the model data sets different between the models m1 through m18 and the models m1a through m18a, AICc values can not be compared across these models. The model performance metric MAPE is a standard statistical metric used to measure the accuracy of forecasting and prediction models. It calculates the average of the absolute percentage differences between predicted values and actual outcomes. Because it measures error as a relative percentage rather than a raw number, a lower MAPE indicates higher accuracy, while a higher MAPE indicates a less reliable model. The MAPE value can be compared across the 36 models. Based upon the performance metric the 5-year MAPE, the AICc values, significant parameters in the models, and the adjusted R-squared values, model mxx (a model that included xxx; Appendix C) was the best performing model and the 2027-forecast using this model has a point estimate of xx3 million fish (80% prediction interval: xx to xx million fish).
 
 # Analysis
 
@@ -112,7 +112,6 @@ Based upon the 5-year MAPE performance metric, the AICc values, significant para
 tbls_seak$data %>% 
    knitr::kable(format = 'pandoc', caption = 'Summary of the data used for the 2027-forecast. The Stellar and Chellissa vessels were only used for one year each, 2008 and 2009, respectively, and so those two years are not used in the assessment models that incorporated an adj_raw_pink_log variable. The CPUE variable is the vessel-adjusted CPUE, JYear is the juvenile year, and Year is the calendar year.', row.names = F, align="cccc")
 ```
-
 
 \pagebreak
 
@@ -255,4 +254,3 @@ knitr::include_graphics(here(results.directory, "/forecast_models.png"))
 ```
 
 Figure B2: Bias-corrected forecasts (grey bars) for the 18 regression models (Models m1a-m18a) with 80% prediction intervals (vertical grey lines). A horizontal dotted line at the average model results is placed on the figure for reference only. The 2027-forecast using the model mxx has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
-
