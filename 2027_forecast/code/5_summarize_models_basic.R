@@ -147,7 +147,7 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
 
 read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
   dplyr::rename(Terms = 'X') %>%
-  mutate(MAPE5 = round(MAPE5,3)) %>%
+  mutate(MAPE5 = round(MAPE5,3)*100) %>%
   dplyr::select(Terms, MAPE5) -> MAPE5
 
 # format the file seak_model_summary.csv file

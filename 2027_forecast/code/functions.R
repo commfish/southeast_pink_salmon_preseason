@@ -564,3 +564,50 @@ f_model_one_step_ahead_multiple5 <- function(harvest,variables,model.formulas,mo
 # 
 # 
 # 
+f_model_one_step_ahead_multiple5 <- function(
+    harvest,
+    variables,
+    model.formulas,
+    model.names,
+    start,
+    end,
+    models) {
+  n <- nrow(variables)
+  obs <- harvest[-n]
+  data <- variables[-n, ]
+  
+  data$model1_sim <- NA_real_
+  
+  model.results <- numeric()
+  fit.out <- vector("list", length(model.formulas))
+  
+  for (i in seq_along(model.formulas)) {
+    forecast_years <- (end + 1):tail(data$JYear, 6)[6]
+    
+    for (j in forecast_years) {
+      # Fit model using training data
+      train_data <- data[data$JYear >= start & data$JYear < j, ]
+      fit <- lm(model.formulas[[i]], data = train_data)
+      fit.out[[i]] <- fit
+      
+      # Predict for year j
+      idx <- data$JYear == j
+      data$model1_sim[idx] <- predict(fit, newdata = data[idx, ])
+    }
+    
+    # Evaluate model
+    output <- dplyr::filter(data, JYear > end)
+    MAPE <- Metrics::mape(exp(output$SEAKCatch_log), exp(output$model1_sim))
+    model.results <- rbind(model.results, MAPE = MAPE)
+  }
+  
+  row.names(model.results) <- model.names
+  colnames(model.results)[1] <- "MAPE5"
+  
+  results_df <- as.data.frame(model.results)
+  output_file <- file.path(results.directory,
+                           paste0("seak_model_summary_one_step_ahead5", models, ".csv"))
+  write.csv(results_df, output_file, row.names = TRUE)
+  
+  return(results_df)
+}
