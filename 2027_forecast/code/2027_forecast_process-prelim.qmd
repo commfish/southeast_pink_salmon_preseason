@@ -120,7 +120,9 @@ Hierarchical models were compared with the AICc criterion. The best fit models, 
 The adjusted R-squared is a modified version of the R-squared value that adjusts for the number of predictors in the model and prevents overfitting by balancing model performance and complexity. A higher adjusted R-squared value is preferred. As the adjusted R-squared metric depends on both sample size and the variance of the dependent variable in the data set, the adjusted R-squared can only be compared for the models with the same response variable data set. As the data set for the model set m1-m18 is reduced, the adjusted R-squared can only be compared within the model group (i.e., among m1-m18, m1i-m18i) and not with models m1a through m18a.
 
 # Results
-
+## Models m1-m18
+## Models m1i-m18i
+## Models m2a-m18a
 Based upon the 5-year MAPE performance metric, the AICc values, significant parameters in the models, and the adjusted R-squared values, model mxx (a model that included xxxx Table 5; Appendix C) was the best performing model. The 2027-forecast using this model has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
 
 Explain that the interaction term was not significant by AICc, anova, R squared for m5 and m5i.....
