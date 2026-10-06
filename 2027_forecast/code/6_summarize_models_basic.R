@@ -1,4 +1,4 @@
-# run code 4_diagnostics_models.R first
+# run code 5_diagnostics_models.R first
 # STEP 1: DATA
 # read in data from the csv file  (make sure this is up to date)
 read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> variables # update file names
@@ -145,7 +145,7 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
 # then you can use the f_model_one_step_ahead function check.xlsx (in the data folder) to make sure the
 # function is correct for the base CPUE model
 
-read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
+read.csv(file.path(results.directory,'model_summary_one_step_ahead5.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
   dplyr::rename(Terms = 'X') %>%
   mutate(MAPE5 = round(MAPE5,3)*100) %>%
   dplyr::select(Terms, MAPE5) -> MAPE5
@@ -153,7 +153,7 @@ read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5.csv'), 
 # format the file seak_model_summary.csv file
 # https://stats.stackexchange.com/questions/359088/correcting-log-transformation-bias-in-a-linear-model; Correcting log-transformation bias in a linear model
 # https://stackoverflow.com/questions/40324963/when-predicting-using-model-with-logtarget-do-i-have-to-make-any-changes-to-pr # mase3<-dLagM::MASE(m5)
-read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
+read.csv(file.path(results.directory,'model_summary.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
   dplyr::rename(Terms = 'X') %>%
   dplyr::select(Terms, fit,	fit_LPI,	fit_UPI, AdjR2, sigma, AICc) %>%
   mutate(AdjR2 = round(AdjR2,2),
@@ -173,7 +173,7 @@ read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, str
   write.csv(., paste0(results.directory, "/model_summary_table2.csv"), row.names = F)
 
 # STEP #5: CREATE FORECAST FIGURE
-read.csv(file.path(results.directory,'seak_model_summary.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> results
+read.csv(file.path(results.directory,'model_summary.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> results
 
 model_levels <- c('m1a','m2a','m3a','m4a','m5a','m6a','m7a','m8a','m9a',
                   'm10a','m11a','m12a','m13a','m14a','m15a','m16a','m17a','m18a')

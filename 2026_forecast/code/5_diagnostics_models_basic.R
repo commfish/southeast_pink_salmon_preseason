@@ -1,19 +1,18 @@
-# run code 5_summarize_models_basic.R first
-# check sample size for Cook's distance
-# best model based on performance metrics (need to update each year)
-lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + ISTI20_JJ, data = log_data_subset) -> m2a
-lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor), data = log_data_subset) -> m2a_reduced
-fit_value_model <- 67.5 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
-lwr_pi_80 <- 41.1 # 80% PI from model_summary_table2 in the results folder
-upr_pi_80 <- 110.8 # 80% PI from model_summary_table2 in the results folder
-best_model <- m2a
-model <- 'm2a'
-year.forecast <- "2027_forecast" # forecast year
-year.data <- 2026 # last year of data
+# run code 3_summarize_models_basic.R first
+# inputs
+fit_value_model <- 19.3 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
+lwr_pi_80 <- 12.6 # 80% PI from model_summary_table2 in the results folder
+upr_pi_80 <- 29.8 # 80% PI from model_summary_table2 in the results folder
+best_model <- m13a
+model <- 'm13a'
+year.forecast <- "2026_forecast" # forecast year
+year.data <- 2025 # last year of data
 year.data.one <- year.data - 1
 sample_size <- 29 # number of data points in model (this is used for Cook's distance)
-data.directory <- file.path(year.forecast, 'data', '/')
-results.directory <- file.path(year.forecast,'results', '/')
+
+# best model based on performance metrics (need to update each year)
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + NSEAK_SST_AMJ, data = log_data_subset) -> m13a
+lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor), data = log_data_subset) -> m13a_reduced
 
 # Depends on dplyr
 tickr <- function(
@@ -77,15 +76,12 @@ augment(best_model) %>%
                      panel.border = element_rect(colour = "black", size=1),
                      legend.position=c(0.50,0.87)) +
   geom_point(x=year.data +1, y=fit_value_model, pch=21, size=2.5, colour = "black", fill="grey") +
-  scale_x_continuous(
-    minor_breaks = seq(1998, year.data +1, by = 1),
-    breaks = seq(1998, year.data +1, by = 4), limits = c(1998, year.data+1.5),
-    guide = "axis_minor") + # this is added to the original code
+  scale_x_continuous(limits = c(min(tickryr$Year), max(tickryr$Year)),
+                     breaks = axisf$breaks, labels = axisf$labels) +
   scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  annotate("text", x = 1998, y = 140, label="A.",family="Times New Roman", colour="black", size=5) +
-  annotate ("errorbar", x = year.data + 1, ymin = lwr_pi_80, ymax = upr_pi_80, colour = "black", linewidth = 0.5,
-            width = 0.4)-> plot1
+  geom_text(aes(x = 1998, y = 140, label="A."),family="Times New Roman", colour="black", size=5) +
+  geom_segment(aes(x = year.data + 1, y = lwr_pi_80, yend = upr_pi_80, xend = year.data + 1), size=1, colour="black", lty=1)-> plot1
 
 # plot of observed harvest by fitted values (with one to one line)
 # the year labels are manually put in, so uncomment the geom_text_repel to make sure the correct
@@ -117,14 +113,14 @@ dev.off()
 
 # DIAGNOSTIC PLOTS
 # Diagnostics: test model assumptions (normality, linearity, residuals)
-png(paste0(results.directory, "general_diagnostics_m2a.png"))
+png(paste0(results.directory, "model_figs/general_diagnostics_m13a.png"))
 autoplot(best_model)
 dev.off()
 
 car::outlierTest(best_model) #Bonferroni p-values (term # 24); lack of fit test; https://stats.stackexchange.com/questions/288910/outlier-detection-using-outliertest-function
 #car::residualPlots(best_model) #lack-of fit curvature test; terms that are non-significant suggest a properly specified model
 car::residualPlots(best_model, terms = ~ 1, fitted = T, id.n = 5, smoother = T)
-anova(m2a, m2a_reduced) #Since this p-value is less than .05, we can reject the null hypothesis of the test and conclude that the full model offers a statistically significantly better fit than the reduced model.
+anova(m13a, m13a_reduced) #Since this p-value is less than .05, we can reject the null hypothesis of the test and conclude that the full model offers a statistically significantly better fit than the reduced model.
 
 #https://www.statology.org/lack-of-fit-test-in-r/
 # output diagnostic plots
@@ -132,7 +128,7 @@ augment(best_model) %>%
   mutate(resid = (.std.resid)) %>% 
   ggplot(., aes(x = CPUE, y = resid)) +
   geom_hline(yintercept = 0, lty=2) + 
-  geom_point(color ="grey50") + ggtitle("m2a") +
+  geom_point(color ="grey50") + ggtitle("m13a") +
   geom_smooth(aes(colour = CPUE), colour="black") +
   scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4), limits = c(-4,4)) +
   scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10), limits = c(0,10)) +
@@ -149,7 +145,7 @@ log_data_subset %>%
 augment(best_model) %>% 
   cbind(.,log_data_subset) %>%
   mutate(resid = .std.resid)%>% 
-  ggplot(aes(x = Year, y = resid)) + ggtitle("m2a") +
+  ggplot(aes(x = Year, y = resid)) + ggtitle("m13a") +
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
@@ -167,7 +163,7 @@ augment(best_model) %>%
   mutate(resid = (.resid),
          fit = (.fitted)) %>% 
   ggplot(aes(x = fit, y = resid)) +
-  geom_point(color ="grey50")  + ggtitle("m2a") +
+  geom_point(color ="grey50")  + ggtitle("m13a") +
   geom_smooth(aes(colour = fit,),colour="black") +
   geom_hline(yintercept = 0, lty=2) + 
   scale_y_continuous(breaks = c(-1,-0.5,0,0.5,1), limits = c(-1,1))+
@@ -182,7 +178,7 @@ augment(best_model) %>%
   mutate(resid = (.std.resid),
          temp = .[[4]]) %>% # fourth column should be temperature variable
   ggplot(aes(x = temp, y = resid)) +
-  geom_point(color ="grey50")  + ggtitle("m2a") +
+  geom_point(color ="grey50")  + ggtitle("m13a") +
   geom_smooth(aes(colour = temp),colour="black") +
   geom_hline(yintercept = 0, lty=2) + 
   scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4), limits = c(-4,4)) +
@@ -194,7 +190,7 @@ augment(best_model) %>%
 
 augment(best_model) %>%  
   ggplot(aes(x = CPUE, y = SEAKCatch_log)) +
-  geom_point(color ="grey50") +   ggtitle("m2a") +
+  geom_point(color ="grey50") +   ggtitle("m13a") +
   geom_smooth(aes(colour = CPUE), colour="black") +
   scale_y_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
   scale_x_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
@@ -203,7 +199,7 @@ augment(best_model) %>%
                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
   geom_text(aes(x = 0, y = 6, label="F."),family="Times", colour="black", size=5) -> plot6  
 cowplot::plot_grid(plot1, plot4, plot2, plot3, align = "vh", nrow = 2, ncol=2)
-ggsave(paste0(results.directory, "fitted_m2a.png"), dpi = 500, height = 5, width = 5, units = "in") 
+ggsave(paste0(results.directory, "model_figs/fitted_m13a.png"), dpi = 500, height = 5, width = 5, units = "in") 
 
 # Cook's distance and leverage plot
 k = 3
@@ -213,7 +209,7 @@ augment(best_model) %>%
   cbind(.,log_data_subset) %>% 
   mutate(cooksd = (.cooksd),
          name= ifelse(cooksd >level, Year, "")) %>% 
-  ggplot(aes(x = Year, y = cooksd, label=name)) +ggtitle("m2a") +
+  ggplot(aes(x = Year, y = cooksd, label=name)) +ggtitle("m13a") +
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
@@ -228,14 +224,14 @@ augment(best_model) %>%
   geom_text(aes(x = 1998, y = 1, label="A."),family="Times", colour="black", size=5) -> plot1
 
 # leverage plot
-# p = number of parameters in the model including intercept
+#  p = number of parameters in the model including intercept
 level <- 2*(p/sample_size)
 level # leverage value
 augment(best_model) %>% 
   cbind(.,log_data_subset) %>% 
   mutate(hat= (.hat),
          name= ifelse(hat > level, Year, "")) %>% # may need to adjust value; see hat value equation above
-  ggplot(aes(x = Year, y = hat, label=name)) +ggtitle("m2a") +
+  ggplot(aes(x = Year, y = hat, label=name)) +ggtitle("m13a") +
   geom_bar(stat = "identity", colour = "grey50", 
            fill = "lightgrey",alpha=.7,
            width = 0.8, position = position_dodge(width = 0.2)) + 
@@ -250,7 +246,15 @@ augment(best_model) %>%
                                                        axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))+
   geom_text(aes(x = 1998, y = 1, label="B."),family="Times", colour="black", size=5)-> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "influential_m2a.png"), dpi = 500, height = 3, width = 6, units = "in")
+ggsave(paste0(results.directory, "model_figs/influential_m13a.png"), dpi = 500, height = 3, width = 6, units = "in")
+
+
+# read.csv(file.path(data.directory,'var2025_final.csv'), header=TRUE, as.is=TRUE, strip.white=TRUE) -> variables # update file names
+# variables %>%
+#   dplyr::filter(Year== 2009|Year== 2010) %>%
+#   mutate(harvest = SEAKCatch)%>%
+#   mutate(terms = "SEAK pink harvest (not fit)")%>%
+#   dplyr::select(c(harvest, Year, JYear, terms)) -> fig_data
 
 # Extract sigma from the model
 tickryr <- data.frame(Year = 1997:2026)
@@ -296,7 +300,7 @@ augment(best_model) %>%
   cbind(.,log_data_subset)%>%
   mutate(harvest = exp(SEAKCatch_log), 
          fit = as.numeric(exp(.fitted) * exp(0.5*sigma*sigma))) %>%
-  ggplot(aes(x = fit, y = harvest)) +
+  ggplot(aes(x=fit, y=harvest)) +
   geom_point() +
   geom_point(aes(y = harvest), colour = "black", size = 1) +
   scale_color_grey() +theme_bw() + theme(panel.grid.minor = element_blank(),
@@ -311,6 +315,6 @@ augment(best_model) %>%
   labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL)+
   geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5) -> plot2
 cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
+ggsave(paste0(results.directory, "model_figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
 dev.off()
 

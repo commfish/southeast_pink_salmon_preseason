@@ -195,12 +195,12 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
  # then you can use the f_model_one_step_ahead function check.xlsx (in the data folder) to make sure the
  # function is correct for the base CPUE model
  
- read.csv(file.path(results.directory,'seak_model_summary_one_step_ahead5_multi.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
+ read.csv(file.path(results.directory,'model_summary_one_step_ahead5_multi.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
    dplyr::rename(Terms = 'X') %>%
    mutate(MAPE5 = round(MAPE5,3)*100) %>%
    dplyr::select(Terms, MAPE5) -> MAPE5
  
- read.csv(file.path(results.directory,'seak_model_summary_multi.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
+ read.csv(file.path(results.directory,'model_summary_multi.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) %>%
    dplyr::rename(Terms = 'X') %>%
    dplyr::select(Terms, fit, fit_UPI, fit_LPI,AdjR2, sigma, AICc) %>%
    mutate(AdjR2 = round(AdjR2,2),
@@ -218,7 +218,7 @@ f_model_one_step_ahead_multiple5(harvest=log_data$SEAKCatch_log, variables=log_d
    write.csv(., paste0(results.directory, "/model_summary_table2_multi.csv"), row.names = F)
  
 # STEP #5: CREATE FORECAST FIGURE
- read.csv(file.path(results.directory,'seak_model_summary_multi.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> results
+ read.csv(file.path(results.directory,'model_summary_multi.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> results
  results %>%
    dplyr::rename(Terms = 'X') %>%
    dplyr::select(Terms, fit, fit_LPI, fit_UPI, sigma) %>%

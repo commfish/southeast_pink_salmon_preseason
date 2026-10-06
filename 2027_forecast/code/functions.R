@@ -119,7 +119,7 @@ f_model_summary <- function(harvest, variables, model.formulas, model.names, w, 
   rownames(model.results) <- model.names
   model.results <- as.data.frame(model.results)
   
-  write.csv(model.results, paste0(results.directory, "/seak_model_summary", models, ".csv"), row.names = TRUE)
+  write.csv(model.results, paste0(results.directory, "/model_summary", models, ".csv"), row.names = TRUE)
   
   return(fit.out) # Returns your fitted objects layer out for debugging if needed
 }
@@ -606,7 +606,7 @@ f_model_one_step_ahead_multiple5 <- function(
   
   results_df <- as.data.frame(model.results)
   output_file <- file.path(results.directory,
-                           paste0("seak_model_summary_one_step_ahead5", models, ".csv"))
+                           paste0("model_summary_one_step_ahead5", models, ".csv"))
   write.csv(results_df, output_file, row.names = TRUE)
   
   return(results_df)
