@@ -130,20 +130,13 @@ tbls_seak_results$model_summary_final %>%
 \pagebreak
 
 ```{r best model m7, echo=FALSE}
-knitr::include_graphics(here(results.directory, "/model_figs/catch_plot_pred_m7.png"))
+knitr::include_graphics(here(results.directory, "/model_figs/catch_plot_pred_m5.png"))
 ```
 
-Figure 1: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m7). The predicted 2027 forecast (29.1 million fish) is symbolized as a grey circle with an 80% prediction interval (12.4 to 68.0 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m7 by year. The dotted line is a one to one reference line.
+Figure 1: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m5). The predicted 2027 forecast (62.1 million fish) is symbolized as a grey circle with an 80% prediction interval (35.2 to 109.6 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m5 by year. The dotted line is a one to one reference line.
 
 \pagebreak
 
-```{r best model m11, echo=FALSE}
-knitr::include_graphics(here(results.directory, "/model_figs/catch_plot_pred_m11.png"))
-```
-
-Figure 2: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m11). The predicted 2027 forecast (28.4 million fish) is symbolized as a grey circle with an 80% prediction interval (12.3 to 65.7 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m11 by year. The dotted line is a one to one reference line.
-
-\pagebreak
 
 ```{r best model m2a, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/model_figs/catch_plot_pred_m2a.png"))
