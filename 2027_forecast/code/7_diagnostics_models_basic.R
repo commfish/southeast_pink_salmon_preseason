@@ -1,316 +1,232 @@
 # run code 6_summarize_models_basic.R first
-# check sample size for Cook's distance
-# best model based on performance metrics (need to update each year)
-lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor) + ISTI20_JJ, data = log_data_subset) -> m2a
-lm(SEAKCatch_log ~ CPUE + as.factor(odd_even_factor), data = log_data_subset) -> m2a_reduced
-fit_value_model <- 67.5 #best model outputs (bias-corrected); value of forecast (from model_summary_table2)
-lwr_pi_80 <- 41.1 # 80% PI from model_summary_table2 in the results folder
-upr_pi_80 <- 110.8 # 80% PI from model_summary_table2 in the results folder
-best_model <- m2a
-model <- 'm2a'
+# SECM Pink salmon forecast: diagnostics for the selected model
+# last update: October 2026
+
+# load libraries
+library(tidyverse)  # dplyr, ggplot2
+library(broom)      # augment()
+library(ggfortify)  # autoplot() for lm diagnostics
+library(car)        # outlierTest(), residualPlots()
+library(cowplot)    # plot_grid()
+
+# SELECTED MODEL (update each year) 
+model    <- "m13a"            # label as in model_summary_table2.csv
+temp_var <- "NSEAK_SST_AMJ"   # temperature variable in that model (NULL if none)
+
+# inputs
 year.forecast <- "2027_forecast" # forecast year
 year.data <- 2026 # last year of data
-year.data.one <- year.data - 1
-sample_size <- 29 # number of data points in model (this is used for Cook's distance)
-data.directory <- file.path(year.forecast, 'data', '/')
-results.directory <- file.path(year.forecast,'results', '/')
+data.directory    <- paste0(file.path(year.forecast, "data"), "/")
+results.directory <- paste0(file.path(year.forecast, "results"), "/")
+dir.create(results.directory, showWarnings = FALSE, recursive = TRUE)
+plot_family <- if (.Platform$OS.type == "windows") "Times" else "serif"
+if (.Platform$OS.type == "windows") windowsFonts(Times = windowsFont("Times New Roman"))
 
-# Depends on dplyr
-tickr <- function(
-    data, # dataframe
-    var, # column of interest
-    to # break point definition 
-){
-  
-  VAR <- enquo(var) # makes VAR a dynamic variable
-  
-  data %>% 
+# axis breaks with labels every `to` units (from fngr-style tickr)
+tickr <- function(data, var, to) {
+  VAR <- enquo(var)
+  data %>%
     distinct(!!VAR) %>%
-    #    ungroup(!!VAR) %>% 
     mutate(labels = ifelse(!!VAR %in% seq(to * round(min(!!VAR) / to), max(!!VAR), to),
                            !!VAR, "")) %>%
-    dplyr::select(breaks = UQ(VAR), labels)
+    dplyr::select(breaks = !!VAR, labels)
 }
 
-tickryr <- data.frame(Year = 1997:2026)
-axisf <- tickr(tickryr, Year, 2)
+# shared plot theme
+theme_diag <- function(base_size = 10) {
+  theme_bw(base_size = base_size, base_family = plot_family) +
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border     = element_blank(),
+          axis.line        = element_line(colour = "black"),
+          legend.position  = "none")
+}
 
-# MODEL DIAGNOSTICS TABLES
-as.numeric(sigma(best_model))-> sigma
-augment(best_model) %>% 
-  mutate(Harvest = round((exp(SEAKCatch_log)),2),
-         Residuals = round((.resid),2),
-         'Hat values' = round((.hat),2),
-         'Cooks distance' = round((.cooksd),2),
-         'Std. residuals' = round((.std.resid),2),
-         fitted = round((.fitted),5),
-         Year=1998:year.data,
-         fit = exp(.fitted) * exp(0.5* sigma*sigma),
-         'Fitted values' = round(fit,2),
-         juvenile_year = 1997:year.data.one) %>%
-  dplyr::select(Year, Harvest, Residuals, 'Hat values', 'Cooks distance', 'Std. residuals', 'Fitted values') %>%
-  write.csv(file =paste0(results.directory, "model_summary_table4_", model, ".csv"), row.names = F)
+# panel letter in the top-left corner
+panel_label <- function(letter) {
+  annotate("text", x = -Inf, y = Inf, label = letter, hjust = -0.5, vjust = 1.5,
+           family = plot_family, size = 5)
+}
 
-# plot of harvest by year with prediction error 
-as.numeric(sigma(best_model))-> sigma
-augment(best_model) %>% 
-  mutate(year = 1998:year.data, 
-         harvest = exp(SEAKCatch_log),
-         fit = exp(.fitted) * exp(0.5* sigma*sigma)) %>%
-  ggplot(aes(x=year)) +
-  geom_bar(aes(y = harvest, fill = "SEAK pink harvest"),
-           stat = "identity", colour ="black",
-           width = 1) +
-  geom_line(aes(y = fit, colour = "fit"), linetype = 1, linewidth = 0.75) +
-  scale_colour_manual("", values=c("fit" = "black")) +
-  scale_fill_manual("",values="lightgrey")+
-  theme_bw() + theme(legend.key=element_blank(),
-                     legend.title=element_blank(),
-                     legend.box="horizontal",
-                     #panel.border = element_blank(), panel.grid.major = element_blank(),
-                     panel.grid.minor = element_blank(), 
-                     panel.grid.major = element_blank(), 
-                     axis.line = element_line(colour = "black"),
-                     axis.text.x = element_text(size =9, family="Times New Roman"),
-                     axis.title.y = element_text(size=11, colour="black",family="Times New Roman"),
-                     axis.title.x = element_text(size=11, colour="black",family="Times New Roman"),
-                     panel.border = element_rect(colour = "black", size=1),
-                     legend.position=c(0.50,0.87)) +
-  geom_point(x=year.data +1, y=fit_value_model, pch=21, size=2.5, colour = "black", fill="grey") +
-  scale_x_continuous(
-    minor_breaks = seq(1998, year.data +1, by = 1),
-    breaks = seq(1998, year.data +1, by = 4), limits = c(1998, year.data+1.5),
-    guide = "axis_minor") + # this is added to the original code
-  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
-  labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  annotate("text", x = 1998, y = 140, label="A.",family="Times New Roman", colour="black", size=5) +
-  annotate ("errorbar", x = year.data + 1, ymin = lwr_pi_80, ymax = upr_pi_80, colour = "black", linewidth = 0.5,
-            width = 0.4)-> plot1
+# round an axis limit up/down to a multiple of `to`
+up_to   <- function(x, to) ceiling(max(x, na.rm = TRUE) / to) * to
+down_to <- function(x, to) floor(min(x, na.rm = TRUE) / to) * to
 
-# plot of observed harvest by fitted values (with one to one line)
-# the year labels are manually put in, so uncomment the geom_text_repel to make sure the correct
-# labels are there
-as.numeric(sigma(best_model))-> sigma
-augment(best_model) %>% 
-  mutate(year = 1998:year.data, 
-         harvest = exp(SEAKCatch_log), 
-         fit = as.numeric(exp(.fitted) * exp(0.5*sigma*sigma))) %>%
-  ggplot(aes(x=fit, y=harvest)) +
-  geom_point() +
-  geom_point(aes(y = harvest), colour = "black", size = 1) +
-  scale_color_grey() +theme_bw() + theme(panel.grid.minor = element_blank(),
-                                         panel.grid.major = element_blank(), axis.line = element_line(colour = "black"),
-                                         axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
-                                         panel.border = element_rect(colour = "black", fill=NA, size=1),
-                                         axis.title.x = element_text(size=9, colour="black",family="Times New Roman")) +
-  theme(legend.position="none") + theme(legend.title=element_blank())+
-  scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
-  scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
-  geom_abline(intercept = 0, lty=3) +
-  # geom_text_repel(aes(y = harvest, label = year),
-  #                nudge_x = 1, size = 3, show.legend = FALSE) +
-  labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL)+
-  geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5)-> plot2
-cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "model_figs/catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
+# input data
+read.csv(file.path(data.directory, 'var2026_final.csv'), header = TRUE,
+         stringsAsFactors = FALSE, strip.white = TRUE) %>%
+  mutate(odd_even_factor = ifelse(JYear %% 2 == 0, "odd", "even"),  # labels the return year
+         SEAKCatch_log   = log(SEAKCatch)) -> log_data
+
+log_data %>% dplyr::filter(JYear < year.data) -> log_data_subset
+
+# best model
+base_terms   <- "CPUE + as.factor(odd_even_factor)"
+full_formula <- as.formula(paste("SEAKCatch_log ~", base_terms,
+                                 if (!is.null(temp_var)) paste("+", temp_var)))
+best_model   <- lm(full_formula, data = log_data_subset)
+reduced      <- lm(as.formula(paste("SEAKCatch_log ~", base_terms)), data = log_data_subset)
+
+# forecast and 80% PI for this model, from the summary table
+tbl2 <- read.csv(paste0(results.directory, "model_summary_table2.csv"),
+                 header = TRUE, stringsAsFactors = FALSE, strip.white = TRUE)
+sel  <- tbl2[tbl2$Model == model, ]
+stopifnot(nrow(sel) == 1,
+          identical(sel$Terms, if (is.null(temp_var)) "no temperature index included" else temp_var))
+fit_value_model <- sel$Fit
+lwr_pi_80       <- sel$Fit_LPI
+upr_pi_80       <- sel$Fit_UPI
+
+sigma_hat   <- sigma(best_model)
+sample_size <- nobs(best_model)
+p <- length(coef(best_model))   # parameters including intercept
+k <- p - 1                      # predictors excluding intercept
+
+# fitted values, residuals and influence measures, with Year from the data
+diag_df <- augment(best_model, data = log_data_subset) %>%
+  mutate(harvest = exp(SEAKCatch_log),
+         fit     = exp(.fitted + 0.5 * sigma_hat^2))     # bias-corrected
+
+axisf <- tickr(data.frame(Year = seq(min(diag_df$Year), year.data + 1)), Year, 2)
+x_years <- scale_x_continuous(limits = c(min(diag_df$Year) - 0.5, year.data + 1.5),
+                              breaks = axisf$breaks, labels = axisf$labels)
+
+# model diagnostics table
+diag_df %>%
+  transmute(Year,
+            Harvest          = round(harvest, 2),
+            Residuals        = round(.resid, 2),
+            `Hat values`     = round(.hat, 2),
+            `Cooks distance` = round(.cooksd, 2),
+            `Std. residuals` = round(.std.resid, 2),
+            `Fitted values`  = round(fit, 2)) %>%
+  write.csv(paste0(results.directory, "model_summary_table4_", model, ".csv"), row.names = FALSE)
+
+# tests (printed in console only)
+print(car::outlierTest(best_model))   # Bonferroni-adjusted test for the largest studentized residual
+print(anova(reduced, best_model))     # does the temperature term improve on CPUE + odd/even?
+
+png(paste0(results.directory, "residual_plots_", model, ".png"), width = 7, height = 5, units = "in", res = 300)
+car::residualPlots(best_model, terms = ~ 1, fitted = TRUE, id.n = 5, smoother = TRUE)  # lack-of-fit curvature test
 dev.off()
 
-# DIAGNOSTIC PLOTS
-# Diagnostics: test model assumptions (normality, linearity, residuals)
-png(paste0(results.directory, "general_diagnostics_m2a.png"))
-autoplot(best_model)
+png(paste0(results.directory, "general_diagnostics_", model, ".png"), width = 7, height = 7, units = "in", res = 300)
+print(autoplot(best_model))
 dev.off()
 
-car::outlierTest(best_model) #Bonferroni p-values (term # 24); lack of fit test; https://stats.stackexchange.com/questions/288910/outlier-detection-using-outliertest-function
-#car::residualPlots(best_model) #lack-of fit curvature test; terms that are non-significant suggest a properly specified model
-car::residualPlots(best_model, terms = ~ 1, fitted = T, id.n = 5, smoother = T)
-anova(m2a, m2a_reduced) #Since this p-value is less than .05, we can reject the null hypothesis of the test and conclude that the full model offers a statistically significantly better fit than the reduced model.
+# catch figure
+y_max_catch <- up_to(c(diag_df$harvest, diag_df$fit, upr_pi_80), 20)
 
-#https://www.statology.org/lack-of-fit-test-in-r/
-# output diagnostic plots
-augment(best_model) %>% 
-  mutate(resid = (.std.resid)) %>% 
-  ggplot(., aes(x = CPUE, y = resid)) +
-  geom_hline(yintercept = 0, lty=2) + 
-  geom_point(color ="grey50") + ggtitle("m2a") +
-  geom_smooth(aes(colour = CPUE), colour="black") +
-  scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4), limits = c(-4,4)) +
-  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10), limits = c(0,10)) +
-  labs(y = "Standardized residuals", x =  "CPUE") + theme(legend.position="none") +
-  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 0.2, y = 4, label="A."),family="Times", colour="black", size=5) -> plot1
+ggplot(diag_df, aes(x = Year)) +
+  geom_col(aes(y = harvest), fill = "lightgrey", colour = "black", width = 1) +
+  geom_line(aes(y = fit), linewidth = 0.75) +
+  annotate("errorbar", x = year.data + 1, ymin = lwr_pi_80, ymax = upr_pi_80, width = 0.4, linewidth = 0.5) +
+  annotate("point", x = year.data + 1, y = fit_value_model, shape = 21, size = 2.5, fill = "grey") +
+  x_years +
+  scale_y_continuous(breaks = seq(0, y_max_catch, 20), limits = c(0, y_max_catch), expand = c(0, 0)) +
+  labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)") +
+  theme_diag(11) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size = 7),
+        panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  panel_label("A.") -> plot_catch
 
-tickryr <- data.frame(Year = 1997:2026)
-axisf <- tickr(tickryr, Year, 2)
-log_data_subset %>%
-  dplyr::select(JYear, Year) -> log_data_subset  
+y_max_obs <- up_to(c(diag_df$harvest, diag_df$fit), 20)
 
-augment(best_model) %>% 
-  cbind(.,log_data_subset) %>%
-  mutate(resid = .std.resid)%>% 
-  ggplot(aes(x = Year, y = resid)) + ggtitle("m2a") +
-  geom_bar(stat = "identity", colour = "grey50", 
-           fill = "lightgrey",alpha=.7,
-           width = 0.8, position = position_dodge(width = 0.2)) + 
-  scale_x_continuous(limits = c(min(tickryr$Year), max(tickryr$Year)),
-                     breaks = axisf$breaks, labels = axisf$labels) +
-  scale_y_continuous(breaks = c(-4,-3,-2,-1,0, 1,2,3,4), limits = c(-4,4))+
-  labs(y = "Standardized residuals", x =  "Year") + theme_bw () +theme(text = element_text(size=10),
-                                                                                axis.text.x = element_text(angle=90, hjust=1, size=6,vjust=0.5 ),
-                                                                                panel.border = element_blank(), panel.grid.major = element_blank(),
-                                                                                panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 1998, y = 4, label="C."),family="Times", colour="black", size=5) -> plot2
+ggplot(diag_df, aes(x = fit, y = harvest)) +
+  geom_point(size = 1) +
+  geom_abline(intercept = 0, slope = 1, lty = 3) +
+  # geom_text(aes(label = Year), size = 2.5, nudge_x = 2) +   # uncomment to label years
+  scale_x_continuous(breaks = seq(0, y_max_obs, 20), limits = c(0, y_max_obs)) +
+  scale_y_continuous(breaks = seq(0, y_max_obs, 20), limits = c(0, y_max_obs)) +
+  coord_fixed() +
+  labs(x = "Predicted SEAK Pink Salmon Harvest (millions)",
+       y = "Observed SEAK Pink Salmon Harvest (millions)") +
+  theme_diag(9) +
+  theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
+  panel_label("B.") -> plot_obs
 
-# residuals against fitted
-augment(best_model) %>% 
-  mutate(resid = (.resid),
-         fit = (.fitted)) %>% 
-  ggplot(aes(x = fit, y = resid)) +
-  geom_point(color ="grey50")  + ggtitle("m2a") +
-  geom_smooth(aes(colour = fit,),colour="black") +
-  geom_hline(yintercept = 0, lty=2) + 
-  scale_y_continuous(breaks = c(-1,-0.5,0,0.5,1), limits = c(-1,1))+
-  scale_x_continuous(breaks = c(2,3,4,5,5), limits = c(2,5))+
-  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  labs(y = "Residuals", x =  "Fitted values") +
-  geom_text(aes(x = 2.1, y = 1, label="D."),family="Times", colour="black", size=5)-> plot3
+ggsave(paste0(results.directory, "catch_plot_pred_", model, ".png"),
+       plot = plot_grid(plot_catch, plot_obs, align = "h", nrow = 1),
+       dpi = 500, height = 4, width = 7, units = "in")
 
-# residuals against temp
-augment(best_model) %>% 
-  mutate(resid = (.std.resid),
-         temp = .[[4]]) %>% # fourth column should be temperature variable
-  ggplot(aes(x = temp, y = resid)) +
-  geom_point(color ="grey50")  + ggtitle("m2a") +
-  geom_smooth(aes(colour = temp),colour="black") +
-  geom_hline(yintercept = 0, lty=2) + 
-  scale_y_continuous(breaks = c(-4, -3, -2, -1, 0,1,2,3,4), limits = c(-4,4)) +
-  scale_x_continuous(breaks = c(5,6,7,8,9,10,11,12), limits = c(5,12)) +
-  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  labs(y = "Standardized residuals", x =  "Temperature") +
-  geom_text(aes(x = 5.2, y = 4, label="B."),family="Times", colour="black", size=5) -> plot4
+# residual: vs CPUE (A), vs temperature (B), by year (C), vs fitted (D) 
+std_lim   <- max(4, up_to(abs(diag_df$.std.resid), 1))
+std_scale <- scale_y_continuous(breaks = seq(-std_lim, std_lim, 1), limits = c(-std_lim, std_lim))
 
-augment(best_model) %>%  
-  ggplot(aes(x = CPUE, y = SEAKCatch_log)) +
-  geom_point(color ="grey50") +   ggtitle("m2a") +
-  geom_smooth(aes(colour = CPUE), colour="black") +
-  scale_y_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
-  scale_x_continuous(breaks = c(0,1,2,3,4,5,6), limits = c(0,6)) +
-  labs(y = "ln(Harvest)", x =  "CPUE") + theme(legend.position="none") +
-  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_text(aes(x = 0, y = 6, label="F."),family="Times", colour="black", size=5) -> plot6  
-cowplot::plot_grid(plot1, plot4, plot2, plot3, align = "vh", nrow = 2, ncol=2)
-ggsave(paste0(results.directory, "fitted_m2a.png"), dpi = 500, height = 5, width = 5, units = "in") 
+ggplot(diag_df, aes(x = CPUE, y = .std.resid)) +
+  geom_hline(yintercept = 0, lty = 2) +
+  geom_point(colour = "grey50") +
+  geom_smooth(colour = "black", method = "loess", formula = y ~ x) +
+  std_scale +
+  scale_x_continuous(limits = c(0, up_to(diag_df$CPUE, 1))) +
+  labs(x = "CPUE", y = "Standardized residuals", title = model) +
+  theme_diag() + panel_label("A.") -> plot_cpue
 
-# Cook's distance and leverage plot
-k = 3
-p = 4
-level <- 4/(sample_size-k-1) # source: Ren et al. 2016# k = # of predictors in model (not including intercept); p = # of predictors including intercept
-augment(best_model) %>% 
-  cbind(.,log_data_subset) %>% 
-  mutate(cooksd = (.cooksd),
-         name= ifelse(cooksd >level, Year, "")) %>% 
-  ggplot(aes(x = Year, y = cooksd, label=name)) +ggtitle("m2a") +
-  geom_bar(stat = "identity", colour = "grey50", 
-           fill = "lightgrey",alpha=.7,
-           width = 0.8, position = position_dodge(width = 0.2)) + 
-  geom_text(size = 2, position = position_stack(vjust = 1), vjust=-2) + 
-  geom_hline(yintercept = level, lty=2) +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                                                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  scale_x_continuous(limits = c(min(tickryr$Year), max(tickryr$Year)),
-                     breaks = axisf$breaks, labels = axisf$labels) +
-  scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0), limits = c(0,1.0))+
-  labs(y = "Cook's distance", x =  "Year") + theme(text = element_text(size=10),
-                                                            axis.text.x = element_text(angle=90, vjust=0.5))+
-  geom_text(aes(x = 1998, y = 1, label="A."),family="Times", colour="black", size=5) -> plot1
+if (!is.null(temp_var)) {
+  ggplot(diag_df, aes(x = .data[[temp_var]], y = .std.resid)) +
+    geom_hline(yintercept = 0, lty = 2) +
+    geom_point(colour = "grey50") +
+    geom_smooth(colour = "black", method = "loess", formula = y ~ x) +
+    std_scale +
+    scale_x_continuous(limits = c(down_to(diag_df[[temp_var]], 1), up_to(diag_df[[temp_var]], 1))) +
+    labs(x = paste0("Temperature (", temp_var, ")"), y = "Standardized residuals", title = model) +
+    theme_diag() + panel_label("B.") -> plot_temp
+} else {
+  plot_temp <- ggplot() + theme_void()
+}
 
-# leverage plot
-# p = number of parameters in the model including intercept
-level <- 2*(p/sample_size)
-level # leverage value
-augment(best_model) %>% 
-  cbind(.,log_data_subset) %>% 
-  mutate(hat= (.hat),
-         name= ifelse(hat > level, Year, "")) %>% # may need to adjust value; see hat value equation above
-  ggplot(aes(x = Year, y = hat, label=name)) +ggtitle("m2a") +
-  geom_bar(stat = "identity", colour = "grey50", 
-           fill = "lightgrey",alpha=.7,
-           width = 0.8, position = position_dodge(width = 0.2)) + 
-  geom_text(size = 2, position = position_stack(vjust =1.1), vjust=-2) + 
-  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-  geom_hline(yintercept = level, lty=2) +
-  scale_x_continuous(limits = c(min(tickryr$Year), max(tickryr$Year)),
-                     breaks = axisf$breaks, labels = axisf$labels) +
-  scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1.0), limits = c(0,1.0)) +
-  labs(y = "Hat-values", x =  "Year") + theme(text = element_text(size=10),
-                                                       axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))+
-  geom_text(aes(x = 1998, y = 1, label="B."),family="Times", colour="black", size=5)-> plot2
-cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "influential_m2a.png"), dpi = 500, height = 3, width = 6, units = "in")
+ggplot(diag_df, aes(x = Year, y = .std.resid)) +
+  geom_col(colour = "grey50", fill = "lightgrey", alpha = 0.7, width = 0.8) +
+  std_scale + x_years +
+  labs(x = "Year", y = "Standardized residuals", title = model) +
+  theme_diag() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 6)) +
+  panel_label("C.") -> plot_year
 
-# Extract sigma from the model
-tickryr <- data.frame(Year = 1997:2026)
-axisf <- tickr(tickryr, Year, 2)
+res_lim <- up_to(abs(diag_df$.resid), 0.5)
+ggplot(diag_df, aes(x = .fitted, y = .resid)) +
+  geom_hline(yintercept = 0, lty = 2) +
+  geom_point(colour = "grey50") +
+  geom_smooth(colour = "black", method = "loess", formula = y ~ x) +
+  scale_y_continuous(breaks = seq(-res_lim, res_lim, 0.5), limits = c(-res_lim, res_lim)) +
+  scale_x_continuous(limits = c(down_to(diag_df$.fitted, 1), up_to(diag_df$.fitted, 1))) +
+  labs(x = "Fitted values (log scale)", y = "Residuals", title = model) +
+  theme_diag() + panel_label("D.") -> plot_fitted
 
-sigma <- as.numeric(sigma(best_model))
+ggsave(paste0(results.directory, "fitted_", model, ".png"),
+       plot = plot_grid(plot_cpue, plot_temp, plot_year, plot_fitted, align = "hv", nrow = 2),
+       dpi = 500, height = 5, width = 5, units = "in")
 
- augment(best_model) %>% 
-   cbind(.,log_data_subset)%>%
-   mutate(harvest = exp(SEAKCatch_log),
-          fit = exp(.fitted) * exp(0.5* sigma*sigma)) %>%
-   ggplot(aes(x=Year)) +
-   geom_bar(aes(y = harvest, fill = "SEAK pink harvest"),
-            stat = "identity", colour ="black",
-            width = 1) +
-  geom_line(aes(y = fit, colour = "fit"), linetype = 1, linewidth = 0.75) +
-  scale_colour_manual("terms", values=c("fit" = "black")) +
-  scale_fill_manual("terms",values=c("#e7e7e7", "darkgrey"))+
-  theme_bw() + theme(legend.key=element_blank(),
-                     legend.title=element_blank(),
-                     legend.box="horizontal",
-                     panel.grid.minor = element_blank(), 
-                     panel.grid.major = element_blank(), 
-                     axis.line = element_line(colour = "black"),
-                     axis.text.x = element_text(angle=90, hjust=1, size=7,vjust=0.5),
-                     axis.title.y = element_text(size=11, colour="black",family="Times New Roman"),
-                     axis.title.x = element_text(size=11, colour="black",family="Times New Roman"),
-                     panel.border = element_rect(colour = "black", size=1),
-                     legend.position=c(0.4,0.87)) +
-  geom_point(x=year.data +1, y=fit_value_model, pch=21, size=2.5, colour = "black", fill="grey") +
-   scale_x_continuous(limits = c(min(tickryr$Year), max(tickryr$Year)),
-                      breaks = axisf$breaks, labels = axisf$labels) +
-  scale_y_continuous(breaks = c(0,20, 40, 60, 80, 100,120,140), limits = c(0,140))+ theme(legend.title=element_blank())+
-  labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL) +
-  geom_text(aes(x = 1998, y = 140, label="A."),family="Times New Roman", colour="black", size=5) +
-  geom_segment(aes(x = year.data + 1, y = lwr_pi_80, yend = upr_pi_80, xend = year.data + 1), size=1, colour="black", lty=1)-> plot1
+# Iinfluence figure: Cook's distance (A) and leverage (B) ----------------------------
+cook_level <- 4 / (sample_size - k - 1)   # Ren et al. 2016; k = predictors excluding intercept
+hat_level  <- 2 * p / sample_size         # p = parameters including intercept
 
-# plot of observed harvest by fitted values (with one to one line)
-# the year labels are manually put in, so uncomment the geom_text_repel to make sure the correct
-# labels are there
-as.numeric(sigma(best_model))-> sigma
-augment(best_model) %>% 
-  cbind(.,log_data_subset)%>%
-  mutate(harvest = exp(SEAKCatch_log), 
-         fit = as.numeric(exp(.fitted) * exp(0.5*sigma*sigma))) %>%
-  ggplot(aes(x = fit, y = harvest)) +
-  geom_point() +
-  geom_point(aes(y = harvest), colour = "black", size = 1) +
-  scale_color_grey() +theme_bw() + theme(panel.grid.minor = element_blank(),
-                                         panel.grid.major = element_blank(), axis.line = element_line(colour = "black"),
-                                         axis.title.y = element_text(size=9, colour="black",family="Times New Roman"),
-                                         panel.border = element_rect(colour = "black", fill=NA, size=1),
-                                         axis.title.x = element_text(size=9, colour="black",family="Times New Roman")) +
-  theme(legend.position="none") + theme(legend.title=element_blank())+
-  scale_y_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
-  scale_x_continuous(breaks = c(0, 20, 40, 60, 80, 100, 120, 140), limits = c(0,140)) +
-  geom_abline(intercept = 0, lty=3) +
-  labs(y = "Observed SEAK Pink Salmon Harvest (millions)", x = "Predicted SEAK Pink Salmon Harvest (millions)", linetype = NULL, fill = NULL)+
-  geom_text(aes(x = 2, y = 140, label="B."),family="Times New Roman", colour="black", size=5) -> plot2
-cowplot::plot_grid(plot1, plot2,  align = "vh", nrow = 1, ncol=2)
-ggsave(paste0(results.directory, "catch_plot_pred_", model, ".png"), dpi = 500, height = 4, width = 7, units = "in")
-dev.off()
+diag_df %>%
+  mutate(name = ifelse(.cooksd > cook_level, Year, "")) %>%
+  ggplot(aes(x = Year, y = .cooksd, label = name)) +
+  geom_col(colour = "grey50", fill = "lightgrey", alpha = 0.7, width = 0.8) +
+  geom_text(size = 2, vjust = -0.5) +
+  geom_hline(yintercept = cook_level, lty = 2) +
+  x_years +
+  scale_y_continuous(limits = c(0, max(1, up_to(diag_df$.cooksd, 0.25)))) +
+  labs(x = "Year", y = "Cook's distance", title = model) +
+  theme_diag() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size = 6)) +
+  panel_label("A.") -> plot_cook
 
+diag_df %>%
+  mutate(name = ifelse(.hat > hat_level, Year, "")) %>%
+  ggplot(aes(x = Year, y = .hat, label = name)) +
+  geom_col(colour = "grey50", fill = "lightgrey", alpha = 0.7, width = 0.8) +
+  geom_text(size = 2, vjust = -0.5) +
+  geom_hline(yintercept = hat_level, lty = 2) +
+  x_years +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(x = "Year", y = "Hat values", title = model) +
+  theme_diag() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size = 6)) +
+  panel_label("B.") -> plot_hat
+
+ggsave(paste0(results.directory, "influential_", model, ".png"),
+       plot = plot_grid(plot_cook, plot_hat, align = "h", nrow = 1),
+       dpi = 500, height = 3, width = 6, units = "in")
