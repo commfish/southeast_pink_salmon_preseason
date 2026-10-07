@@ -10,14 +10,21 @@ library(here)
 library(fs)
 library(tidyverse)
 library(knitr)
-library(ggplot2)
-knitr::opts_chunk$set(echo = FALSE, warning=FALSE, message = FALSE, error=FALSE,fig.pos = "H", 
-  out.width = "100%", fig.height = 5)
-year.forecast <- "2027_forecast" 
-data.directory       <- fs::path(year.forecast, "data")
-results.directory    <- fs::path(year.forecast, "results")
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, error = FALSE, fig.pos = "H",
+                      out.width = "100%", fig.height = 5)
+year.forecast <- "2027_forecast"
+data.directory         <- fs::path(year.forecast, "data")
+results.directory      <- fs::path(year.forecast, "results")
 results.directory.temp <- fs::path(year.forecast, "results", "temperature_data")
-```
+
+# selected model (update each year; must match the diagnostics script)
+best_model_id <- "m13a"
+k_best <- 3   # predictors in the selected model, excluding the intercept
+p_best <- 4   # parameters in the selected model, including the intercept
+
+fmt1 <- function(x) sprintf("%.1f", x)
+fmt2 <- function(x) sprintf("%.2f", x)
+
 
 ```{r data}
 
@@ -102,30 +109,63 @@ The reference category (i.e., reference intercept) is an even year. The temperat
 
 
 ## Performance Metric: 5-Year One Step Ahead MAPE (MAPE5)
-The model performance metric MAPE is a standard statistical metric used to measure the accuracy of forecasting and prediction models. It calculates the average of the absolute percentage differences between predicted values and actual outcomes. Because it measures error as a relative percentage rather than a raw number, a lower MAPE indicates higher accuracy, while a higher MAPE indicates a less reliable model. The MAPE value can be compared across the 54 models.  
+The model performance metric MAPE is a standard measure of the accuracy of forecasting and prediction models. It is the average of the absolute percentage differences between predicted and observed values. Because error is expressed as a percentage of the observed value rather than in harvest units, MAPE can be compared across all 54 models; a lower MAPE indicates a more accurate model.
 
-The model summary results using the performance metric 5-year one-step ahead MAPE are shown in Table 2, Table 3, and Table 4; the smallest value is the preferred model. The performance metric one-step ahead MAPE was calculated as follows.
+The model summary results for the five-year one-step-ahead MAPE are shown in @tbl-2 and @tbl-3; the model with the smallest value is preferred. The one-step-ahead MAPE was calculated as follows:
 
-1.  Estimate the regression parameters at time $t$-1 from data up to time $t$-1.
+1.  Estimate the regression parameters from data up to year $t-1$.
 
-2.  Make a prediction of ${\hat{Y_t}}$ at time $t$ based on the predictor variables at time $t$ and the estimate of the regression parameters at time $t$-1 (i.e., the fitted regression equation).
+2.  Predict the log harvest $\hat{Y}_t$ for year $t$ from the predictor variables in year $t$ and the regression parameters estimated in step 1.
 
-3.  Calculate the MAPE based on the prediction of ${\hat{Y_t}}$ at time $t$ and the observed value of ${Y_t}$ at time $t$,
+3.  Back-transform the prediction to the harvest scale with a bias correction and calculate the absolute percentage error (APE) relative to the observed log harvest $Y_t$,
 
-$$\text{MAPE} = |\frac{\mathrm exp{(\textit Y_{\textit t})} -\mathrm exp (\hat{\textit Y_{\textit t}} + \frac{{\sigma_t}^2}{2})}{\mathrm exp (\textit Y_{\textit t})}|.\tag{5}$$
+$$
+\text{APE}_t = \left| \frac{\exp(Y_t) - \exp\left(\hat{Y}_t + \frac{\hat{\sigma}^2_{t-1}}{2}\right)}{\exp(Y_t)} \tag{5}\right|,
+$$ {#eq-ape}
 
-4.  For each individual model, average the MAPEs calculated from the forecasts, $$\frac{1}{n} \sum_{t=1}^{n} |\frac{\mathrm exp{(\textit Y_{\textit t})} -\mathrm exp (\hat{\textit Y_{\textit t}} + \frac{{\sigma_t}^2}{2})}{\mathrm exp (\textit Y_{\textit t})}|,\tag{4}$$ where $n$ is the number of forecasts in the average (5 forecasts for the 5-year MAPE and 10 forecasts for the 10-year MAPE). For example, to calculate the five year one-step-ahead MAPE for model m1 for the 2022 forecast, use data up through year 2016 (e.g., data up through year 2016 is $t$ -1 and the forecast is for $t$, or year 2017). Then, calculate a MAPE based on the 2017 forecast and the observed pink salmon harvest in 2017 using equation 3. Next, use data up through year 2017 (e.g., data up through year 2017 is $t$ -1 and the forecast is for year 2018; $t$) and calculate a MAPE based on the 2018 forecast and the observed pink salmon harvest in 2018 using equation 3. Repeat this process for each subsequent year through year 2020 to forecast 2021. Finally, average the five MAPEs to calculate a five year one-step-ahead MAPE for model m1. As the results of the 5-year MAPEs with or without the forecast bias adjustment have been similar (i.e., the model performance order did not change whether the five year one-step-ahead MAPE or the bias-corrected five year one-step-ahead MAPE was compared), for simplicity, the bias adjustment for the forecast was not used in the calculation of the five year one-step-ahead MAPE for model comparison.
+where $\hat{\sigma}_{t-1}$ is the residual standard error of the model fit to data up to year $t-1$.
+
+4.  Average the absolute percentage errors across the forecast years,
+
+$$
+\text{MAPE} = \frac{100}{n} \sum_{t=1}^{n} \text{APE}_t\tag{6},
+$$ {#eq-mape}
+
+where $n$ is the number of one-step-ahead forecasts ($n = 5$ for the five-year MAPE).
+
+For example, to calculate the five-year one-step-ahead MAPE for model m1 for the 2027 forecast, the model is fit to data through juvenile year 2020 and used to predict juvenile year 2021 (harvest year 2022), and the absolute percentage error is calculated from that prediction and the observed harvest using @eq-ape. The model is then refit to data through juvenile year 2021 to predict juvenile year 2022 (harvest year 2023), and so on, until data through juvenile year 2024 are used to predict juvenile year 2025 (harvest year 2026). The five absolute percentage errors are averaged using @eq-mape to give the five-year one-step-ahead MAPE for model m1. The bias-corrected prediction was used in this calculation so that model performance was evaluated on the same quantity reported as the forecast.
+
+## Performance Metric: Leave-One-Out Cross-Validation MAPE (LOOCV) 
+Model performance was also evaluated with leave-one-out cross-validation (LOOCV). For each year $t$ in the time series, the model was refit to the remaining $n-1$ years, and the withheld year's harvest was predicted from that fit. Predictions were back-transformed to the harvest scale with a bias correction,
+
+$$
+\hat{Y}_t = \exp\left(\hat{\mu}_{-t} + \frac{\hat{\sigma}^2_{-t}}{2}\right)\tag{7},
+$$
+
+where $\hat{\mu}_{-t}$ is the predicted log harvest for year $j$ and $\hat{\sigma}_{-t}$ is the residual standard error of the model fit without year $j$. The LOOCV MAPE was then calculated as,
+
+$$
+\text{MAPE}_{\text{LOOCV}} = \frac{100}{n} \sum_{j=1}^{n} \frac{\left| Y_t - \hat{Y}_t \right|}{Y_t}\tag{8},
+$$ {#eq-loocv}
+
+where $Y_t$ is the observed harvest in year $t$ and $n$ is the number of years with observed harvest (27 for the vessel-factor models and 29 for the calibrated CPUE models). Unlike the one-step-ahead MAPE, which forecasts each of the five most recent years from earlier years only, LOOCV uses all remaining years, including later ones, to predict each withheld year. It therefore measures predictive fit across the full time series rather than forward forecasting performance.
 
 ## Akaike Information Criterion Corrected for Small Sample Sizes (AICc)  
-Hierarchical models were compared with the AICc criterion. The best fit models, according to the AICc criterion, is one that explains the greatest amount of variation with the fewest independent variables (i.e., the most parsimonious; Table 2, Table 3, table 4). Lower AICc values are preferred, and the AICc criterion penalizes models that use more parameters. Comparing the AICc values of two hierarchical models, a $\Delta_i \leq 2$ suggests that the two models are essentially the same, and the most parsimonious model should be chosen (Burnham and Anderson 2004). If the $\Delta_i > 2$, the model with the lower AICc value should be chosen. As the data set of the response variable is reduced for the model data set  for models m1-m18 and models m1i-m18i compared to the model set m1a-m18a, AICc can only be used to compare within the nested models (e.g., among m1-m18, m1i-m18i).
+Candidate models were compared with Akaike's information criterion corrected for small sample sizes (AICc),
+
+$$
+\text{AICc} = -2\ln(\hat{L}) + 2K + \frac{2K(K+1)}{n-K-1}\tag{9},
+$$ {#eq-aicc}
+
+where $\hat{L}$ is the maximized likelihood, $K$ is the number of estimated parameters (including the residual variance), and $n$ is the number of years in the model data set. AICc balances goodness of fit against model complexity: lower values are preferred, and models with more parameters are penalized. Models were ranked by $\Delta_i = \text{AICc}_i - \text{AICc}_{\min}$, the difference between the AICc of model $i$ and that of the best model in the comparison (@tbl-2 and @tbl-3). Models with $\Delta_i \leq 2$ have substantial support and are essentially indistinguishable; when they differ in the number of parameters, the most parsimonious is preferred. Models with $\Delta_i$ of 4–7 have considerably less support, and those with $\Delta_i > 10$ have essentially none (Burnham and Anderson 2002).
+
+AICc values are only comparable among models fit to the same response data. Models m1–m18 and m1i–m18i exclude the 2008 (Steller) and 2009 (Chellissa) survey years and were fit to 27 years, so these 36 models were compared with each other (@tbl-2). Models m1a–m18a include those two years and were fit to 29 years, so they were compared only among themselves (@tbl-3).
 
 ## Adjusted R-squared  
 The adjusted R-squared is a modified version of the R-squared value that adjusts for the number of predictors in the model and prevents overfitting by balancing model performance and complexity. A higher adjusted R-squared value is preferred. As the adjusted R-squared metric depends on both sample size and the variance of the dependent variable in the data set, the adjusted R-squared can only be compared for the models with the same response variable data set. As the data set for the models m1-m18 and m1i-m18i is reduced, the adjusted R-squared can only be compared within the model group (i.e., among m1-m18, m1i-m18i) and not with models m1a through m18a.
 
 # Results
-## Models m1-m18
-## Models m1i-m18i
-## Models m2a-m18a
+
 Based upon the 5-year MAPE performance metric, the AICc values, significant parameters in the models, and the adjusted R-squared values, model mxx (a model that included xxxx Table 5; Appendix C) was the best performing model. The 2027-forecast using this model has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
 
 Explain that the interaction term was not significant by AICc, anova, R squared for m5 and m5i.....
@@ -137,38 +177,40 @@ tbls_seak$data %>%
 
 \pagebreak
 
-```{r performance summary inter}
-tbls_seak_results$model_summary_final_inter %>% 
-   knitr::kable(format = 'pandoc', caption = 'Summary of the performance metrics for the 18 regression models with adj_raw_pink_log and a vessel-specific slope. The AICc value is the change in AICc value.', row.names = F, align="cccc")
+```{r}
+#| label: tbl-2
+#| tbl-cap: "Summary of the performance metrics for the 36 regression models that use the uncalibrated juvenile index (adj_raw_pink_log) with a vessel factor. Models ending in i include a vessel × index interaction. Fit is the bias-corrected 2027 harvest forecast (millions of fish) and 80% PI is its prediction interval. The column dAICc is the difference in AICc from the best of the 36 models. MAPE5 is the five-year one-step-ahead MAPE (%) and LOOCV is the leave-one-out cross-validation MAPE (%)."
+
+tbls_seak_results$model_summary_comparison %>%
+  knitr::kable(format = "pandoc", row.names = FALSE,
+               align = c("l", "l", "c", "c", "c", "c", "c", "c"))
+
 ```
 
 \pagebreak
 
-```{r performance summary multi}
-tbls_seak_results$model_summary_final_multi %>% 
-   knitr::kable(format = 'pandoc', caption = 'Summary of the performance metrics for the 18 regression models with adj_raw_pink_log. The AICc value is the change in AICc value.', row.names = F, align="cccc")
-```
+```{r}
+#| label: tbl-3
+#| tbl-cap: "Summary of the performance metrics for the 18 regression models with vessel-adjusted CPUE. Fit is the bias-corrected 2027 harvest forecast (millions of fish) and 80% PI is its prediction interval. The dAICc value is the change in AICc from the best of these 18 models; these models were fit to 29 years of data, so their AICc values are not comparable with the models in @tbl-2. MAPE5 is the one-step-ahead MAPE (%) for the last 5 years and LOOCV is the leave-one-out cross-validation MAPE (%)."
 
-\pagebreak
-
-```{r performance summary}
-tbls_seak_results$model_summary_final %>% 
-   knitr::kable(format = 'pandoc', caption = 'Summary of the performance metrics for the 18 regression models with vessel-adjusted CPUE. The AICc value is the change in AICc value.', row.names = F, align="cccc")
+tbls_seak_results$model_summary_final %>%
+  knitr::kable(format = "pandoc", row.names = FALSE,
+               align = c("l", "l", "c", "c", "c", "c", "c", "c"))
 ```
 
 
 \pagebreak
 
 
-```{r best model m2a, echo=FALSE}
-knitr::include_graphics(here(results.directory, "/model_figs/catch_plot_pred_m2a.png"))
+```{r best model m13a, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/catch_plot_pred_m13a.png"))
 ```
 
-Figure 1: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m2a). The predicted 2027 forecast (67.5 million fish) is symbolized as a grey circle with an 80% prediction interval (41.1 to 110.8 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m2a by year. The dotted line is a one to one reference line.
+Figure 1: A. SEAK pink salmon harvest (millions) by year with the model fit (line) based upon the best performing model (model m13a). The predicted 2027 forecast (66.7 million fish) is symbolized as a grey circle with an 80% prediction interval (41.5-97.5 million fish). B. SEAK pink salmon harvest (millions) against the fitted values from model m2a by year. The dotted line is a one to one reference line.
 
 # References
 
-Burnham, K. P., and D. R. Anderson (2004) Multimodel inference: Understanding AIC and BIC in model selection. Sociological Methods & Research, Vol. 33(2): 261-304.
+Burnham, K. P., and D. R. Anderson. 2002. Model selection and multimodel inference: a practical information-theoretic approach, 2nd edition. Springer-Verlag, New York.
 
 Cook, R. D. (1977) Detection of influential observations in linear regression. Technometrics 19: 15-18.
 
@@ -269,18 +311,57 @@ tbls_seak_results$model_summary_table1 %>%
 knitr::include_graphics(here(results.directory, "/forecast_models_inter.png"))
 ```
 
-Figure B1: Bias-corrected forecasts (grey bars) for the 18 regression models (Models m1i-m18i) with 80% prediction intervals (vertical grey lines). A horizontal dotted line at the average model results is placed on the figure for reference only. The 2027-forecast using the model mxx has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
+Figure B1: Bias-corrected forecasts (grey bars) for the 18 regression models (Models m1i-m18i) with 80% prediction intervals (vertical grey lines). A horizontal dotted line at the average model results is placed on the figure for reference only. 
 
-\pagebreak
 
 ```{r forecast_models_multi, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/forecast_models_multi.png"))
 ```
 
-Figure B2: Bias-corrected forecasts (grey bars) for the 18 regression models (Models m1-m18) with 80% prediction intervals (vertical grey lines). A horizontal dotted line at the average model results is placed on the figure for reference only. The 2027-forecast using the model mxx has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
+Figure B2: Bias-corrected forecasts (grey bars) for the 18 regression models (Models m1-m18) with 80% prediction intervals (vertical grey lines). A horizontal dotted line at the average model results is placed on the figure for reference only. 
 
 ```{r forecast_models, echo=FALSE}
 knitr::include_graphics(here(results.directory, "/forecast_models.png"))
 ```
 
-Figure B3: Bias-corrected forecasts (grey bars) for the 18 regression models (Models m1a-m18a) with 80% prediction intervals (vertical grey lines). A horizontal dotted line at the average model results is placed on the figure for reference only. The 2027-forecast using the model mxx has a point estimate of xx million fish (80% prediction interval: xx to xx million fish).
+Figure B3: Bias-corrected forecasts (grey bars) for the 18 regression models (Models m1a-m18a) with 80% prediction intervals (vertical grey lines). A horizontal dotted line at the average model results is placed on the figure for reference only. 
+
+# Appendix C
+
+## Model Diagnostics
+
+Model m13a included vessel-adjusted CPUE, an odd/even year factor, and satellite-derived SST data from northern SEAK in April, May, and June. Model diagnostics for model m13a included residual plots, the lack of fit test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage plots (@tbl-3; Figure C1; Figure C2). Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016).
+
+```{r details}
+tbls_seak_results$model_summary_table4_m13a %>% 
+   knitr::kable(format = 'pandoc', caption = 'Detailed output for model m13a. Fitted values (in millions of fish) are bias-corrected.')
+```
+
+### Cook's distance
+
+Cook's distance is a measure of influence, or the product of both leverage and outlier. Cook's distance, $$D_i=\ \frac{e_{PSi}^2}{k+1}\ast\frac{h_i}{1-h_i},\tag{5}$$\
+where $e_{PSi}^2$ is the standardized Pearson residuals, $h_i$ are the hat values (measure of leverage), and $k$ is the number of predictor variables in the model, is a measure of overall influence of the $i_{th}$ data point on all $n$ fitted values (Fox and Weisburg 2019). A large value of Cook's distance indicates that the data point is an influential observation. Cook's distance values greater than $4/(n-k-1)$, where $n$ is the number of observations (i.e., 29), was used as a benchmark for identifying the subset of influential observations (Ren et al. 2016). Therefore, a Cook's distance cut-off of 0.16 was used; observations with a Cook's distance greater than 0.16 may be influential observations (Figure C1a).
+
+### Leverage
+
+An observation that is distant from the average covariate pattern is considered to have high leverage or hat-value. If an individual observation has a leverage value $h_i$ greater than 2 or 3 times $p/n$ (Ren et al. 2016), it may be a concern (where $p$ is the number of parameters in the model including the intercept (i.e., 4), and $n$ is the number of observations in the model (i.e., 28); $p/n$ = 4/29 = 0.14 for this study). Therefore, a leverage cut-off of 0.28 was used; observations with a leverage value greater than 0.28 may affect the model properties (e.g., summary statistics, standard errors, predicted values) (Figure C1b).
+
+### Influential datapoints
+
+A lack-of fit test was performed between model m13a (full model) and a reduced model with just the CPUE and odd/even factor. Based on an anova between the full and reduced models, the p-value was less than .05, the null hypothesis of the test is rejected, and it can be concluded that the full model offers a statistically significantly better fit than the reduced model. Diagnostics indicated that one of the data points was above the cut-off value for the Cook's distance (Figure C1a; year 2023). Two observations had high leverage values (Figure C1b; year 1999 and 2017). Based on the Bonferroni outlier test, none of the data points had studentized residuals with a significant Bonferroni $P$-value suggesting that none of the data points impacted the model fitting; although observation 26 was the most extreme (year 2023) based on standardized residuals (Figure C2c; Table 6). Based on the lightly curved fitted lines in the residual versus fitted plot (Figure C2d), the fitted plot shows some lack of fit of the model.
+
+```{r influential, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/influential_m13a.png"))
+```
+
+Figure C1: Diagnostics plots of influential observations including A. Cook's distance (with a cut-off value of 0.16), and B. leverage values (with a cut-off value of 0.28) from model m13a.
+
+```{r predicted3, echo=FALSE}
+knitr::include_graphics(here(results.directory, "/fitted_m13a.png"))
+```
+
+Figure C2: Standardized residuals versus predicted plots for A. CPUE and B. temperature (average April, May, June SST in northern Southeast Alaska) for model m13a. C. Standardized residuals versus juvenile year, and D. residuals versus fitted values for model m13a. Positive residuals indicate that the observed harvest was larger than predicted by the model.
+
+
+
+

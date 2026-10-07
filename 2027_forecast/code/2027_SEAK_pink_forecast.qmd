@@ -1,0 +1,432 @@
+---
+title: "2027 SEAK Pink Salmon Forecast"
+author: "Sara Miller"
+format: pdf
+editor: visual
+---
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE}
+library(here)
+library(fs)
+library(tidyverse)
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, error = FALSE, fig.pos = "H",
+                      out.width = "100%", fig.height = 5)
+year.forecast <- "2027_forecast"
+data.directory         <- fs::path(year.forecast, "data")
+results.directory      <- fs::path(year.forecast, "results")
+results.directory.temp <- fs::path(year.forecast, "results", "temperature_data")
+
+# selected model (update each year; must match the diagnostics script)
+best_model_id <- "m13a"
+k_best <- 3   # predictors in the selected model, excluding the intercept
+p_best <- 4   # parameters in the selected model, including the intercept
+
+fmt1 <- function(x) sprintf("%.1f", x)
+fmt2 <- function(x) sprintf("%.2f", x)
+```
+
+```{r data}
+fs::dir_ls(here::here(data.directory), regexp = "\\.csv$") %>%
+  set_names(nm = (basename(.) %>% tools::file_path_sans_ext())) %>%
+  map(read_csv) -> tbls_seak
+
+fs::dir_ls(here::here(results.directory), regexp = "\\.csv$") %>%
+  set_names(nm = (basename(.) %>% tools::file_path_sans_ext())) %>%
+  map(read_csv) -> tbls_seak_results
+
+# forecast for the selected model
+best <- tbls_seak_results$model_summary_table2 %>% dplyr::filter(Model == best_model_id)
+stopifnot(nrow(best) == 1)
+
+# diagnostics for the selected model
+diag_best  <- tbls_seak_results[[paste0("model_summary_table4_", best_model_id)]]
+n_best     <- nrow(diag_best)
+cook_cut   <- 4 / (n_best - k_best - 1)
+hat_cut    <- 2 * p_best / n_best
+cook_years <- diag_best$Year[diag_best$`Cooks distance` > cook_cut]
+hat_years  <- diag_best$Year[diag_best$`Hat values` > hat_cut]
+
+# captions that use the values above (defined here because YAML chunk options
+# cannot hold R code containing ": ")
+cap_fig_catch <- paste0("A. SEAK pink salmon harvest (millions) by year with the model fit (line) from the selected model (", best_model_id, "). The 2027 forecast (", fmt1(best$Fit), " million fish) is shown as a grey circle with its 80% prediction interval (", fmt1(best$Fit_LPI), "-", fmt1(best$Fit_UPI), " million fish). B. Observed SEAK pink salmon harvest (millions) against the bias-corrected fitted values from model ", best_model_id, ". The dotted line is a one-to-one reference line.")
+cap_tbl_diag <- paste0("Detailed output for model ", best_model_id, ". Year is the harvest year. Fitted values (millions of fish) are bias-corrected.")
+cap_fig_influential <- paste0("Diagnostic plots of influential observations from model ", best_model_id, ": A. Cook's distance (cut-off ", fmt2(cook_cut), ") and B. leverage values (cut-off ", fmt2(hat_cut), "). Year is the harvest year.")
+cap_fig_residuals <- paste0("Standardized residuals for model ", best_model_id, " versus A. CPUE and B. temperature (", best$Terms, "); C. standardized residuals by harvest year; and D. residuals versus fitted values (log scale). Positive residuals indicate that the observed harvest was larger than predicted by the model.")
+```
+
+# Objective
+
+To forecast the Southeast Alaska (SEAK) pink salmon commercial harvest in 2027. This document is for guidance as to what was done for the current forecast year. It is for internal use only.
+
+# Executive Summary
+
+Forecasts were developed using an approach originally described in Wertheimer et al. (2006), and modified in Orsi et al. (2016) and Murphy et al. (2019), but assuming a log-normal error structure (Miller et al. 2022). This approach is based on a multiple linear regression model with either 1) the raw juvenile pink salmon CPUE (adj_raw_pink_log) or 2) the vessel-adjusted juvenile pink salmon CPUE (i.e., adjusted by the pooled-species vessel calibration coefficient for the Cobb; vessel-adjusted CPUE) as a proxy for abundance. Additional variables included a vessel factor to account for the survey vessels through time, an odd and even year factor to account for potential odd and even year cycles of abundance, and temperature data from either the Southeast Alaska Coastal Monitoring Survey (SECM; Piston et al. 2021; ISTI20_JJ) or from satellite-derived sea surface temperature (SST) data (Huang et al. 2017).
+
+There were 54 individual models considered:
+
+- adj_raw_pink_log, an odd/even year factor, and a vessel factor (m1);
+
+- adj_raw_pink_log, an odd/even year factor, a vessel factor, and temperature data from the SECM survey (m2);
+
+- adj_raw_pink_log, an odd/even year factor, a vessel factor, and satellite-derived SST data (m3-m18);
+
+- adj_raw_pink_log with a vessel interaction, an odd/even year factor, and a vessel factor (m1i);
+
+- adj_raw_pink_log with a vessel interaction, an odd/even year factor, a vessel factor, and temperature data from the SECM survey (m2i);
+
+- adj_raw_pink_log with a vessel interaction, an odd/even year factor, a vessel factor, and satellite-derived SST data (m3i-m18i);
+
+- vessel-adjusted CPUE and an odd/even year factor (m1a);
+
+- vessel-adjusted CPUE, an odd/even year factor, and temperature data from the SECM survey (m2a); and
+
+- vessel-adjusted CPUE, an odd/even year factor, and satellite-derived SST data (m3a-m18a).
+
+<!-- TODO: confirm how the station values are combined. This paragraph says "averaged over all 8 stations"; Appendix A says the maximum value is used. Make the two match. -->
+
+The adj_raw_pink_log variable is defined as the natural log transformed juvenile pink salmon catches (ln(CPUE + 1)) by haul, standardized to a 20-minute trawl set. The CPUE values were averaged over all 8 stations by month; data from whichever month (June or July) had the highest log transformed CPUE is then used as the juvenile abundance index for that particular year. This CPUE variable is not vessel-calibrated. The Steller and Chellissa vessels were only used for one year each, 2008 and 2009, respectively, and so those two years are not used in the models that incorporated the adj_raw_pink_log variable (@tbl-1).
+
+The vessel-adjusted CPUE variable is defined as the natural log transformed juvenile pink salmon catches (ln(CPUE + 1)) by haul, standardized to a 20-minute trawl set. The CPUE was then multiplied by a pooled-species vessel calibration coefficient, based on calibration of the fishing power of various vessels used in the SECM project to the fishing power of the NOAA ship John N. Cobb, the vessel used for the initial 11 years of the project. The CPUE values were averaged over all 8 stations by month; data from whichever month (June or July) had the highest log transformed CPUE is then used as the juvenile abundance index for that particular year (@tbl-1). As there was not a SECM survey in May of 2025 or 2026, temperature data from May were unavailable. Therefore, the temperature variable from the SECM survey (ISTI20_JJ) was the average from June and July. In prior forecasting years, the ISTI variable was the average from May through July.
+
+The model performance metric one-step-ahead mean absolute percentage error (MAPE) for the last five years (MAPE5; juvenile years 2021 through 2025, harvest years 2022 through 2026) was used to evaluate the forecast accuracy of the 54 individual models. Leave-one-out cross-validation MAPE (LOOCV) was used as a second measure of predictive performance, AICc values were calculated for each model to guard against over-parameterization, and the adjusted R-squared values, significant terms, and overall *p*-value of each model were used to evaluate fit.
+
+Based upon the 5-year MAPE, the AICc values, significant parameters in the models, and the adjusted R-squared values, model `r best_model_id` (vessel-adjusted CPUE, an odd/even year factor, and `r best$Terms`; Appendix C) was selected. The 2027 forecast using this model has a point estimate of `r fmt1(best$Fit)` million fish (80% prediction interval: `r fmt1(best$Fit_LPI)` to `r fmt1(best$Fit_UPI)` million fish).
+
+# Analysis
+
+## Individual, Multiple Linear Regression Models
+
+Biophysical variables based on data from Southeast Alaska (@tbl-1) were used to forecast the harvest of adult pink salmon in Southeast Alaska, one year in advance, using individual, multiple linear regression models with two main structures (structure 1: models m1-m18 and m1i-m18i; structure 2: models m1a-m18a). The response variable was the natural log of the Southeast Alaska adult pink salmon harvest, $Y_t = \ln(C_t)$, where $C_t$ is the harvest in year $t$ (millions of fish). The juvenile abundance indices (adj_raw_pink_log and vessel-adjusted CPUE) are already on a log scale, ln(CPUE + 1), and were not transformed further; temperature data were not transformed. The forecast $\hat{Y}_i$ and 80% prediction intervals (based on output from program R; R Core Team 2025) from the 54 regression models were exponentiated, and the point forecast was bias-corrected (Miller 1984),
+
+$$
+\hat{F}_i = \exp\left(\hat{Y}_i + \frac{\hat{\sigma}_i^2}{2}\right),
+$$ {#eq-forecast}
+
+where $\hat{F}_i$ is the preseason forecast for model $i$ in millions of fish and $\hat{\sigma}_i$ is the residual standard error of model $i$ (i.e., $\hat{\sigma}_i^2$ is the residual variance). The prediction interval bounds were exponentiated without the bias correction.
+
+In the equations below, $V_{1,t}$ and $V_{2,t}$ are indicator variables for the Medeia and the NW Explorer (the reference vessel is the Cobb), $O_t$ is an indicator for an odd return year (the reference is an even return year), $\text{CPUE}_t$ is the juvenile abundance index, and $\epsilon_t \sim N(0, \sigma^2)$. Models with a temperature variable add a term $\beta_T T_t$, where $T_t$ is the temperature index.
+
+### Model structure 1 with a vessel interaction (m1i-m18i)
+
+The first model, m1i, consisted of the juvenile abundance index adj_raw_pink_log with a vessel interaction, an odd/even year factor, and a vessel factor,
+
+$$
+Y_t = \beta_0 + \beta_1 V_{1,t} + \beta_2 V_{2,t} + \beta_3 O_t + \beta_4 \text{CPUE}_t + \beta_5 \left(V_{1,t} \times \text{CPUE}_t\right) + \beta_6 \left(V_{2,t} \times \text{CPUE}_t\right) + \epsilon_t.
+$$ {#eq-m1i}
+
+The vessel factor and odd/even year factor adjust the intercept, and the vessel interaction terms adjust the slope; vessel-specific slopes for the juvenile abundance index plus additive effects of vessel and the odd/even year factor. For example, during even return years when the research vessel is the Cobb, the model simplifies to $Y_t = \beta_0 + \beta_4 \text{CPUE}_t + \epsilon_t$. Although the simplest model does not contain a temperature variable, including temperature data with CPUE has been shown to result in a substantial improvement in the accuracy of model predictions (Murphy et al. 2019). The temperature index for models m2i-m18i was either the SECM survey Icy Strait temperature index (ISTI20_JJ; Murphy et al. 2019) or one of the 16 satellite-derived SST variables (Huang et al. 2017; definitions in Appendix A).
+
+### Model structure 1 without a vessel interaction (m1-m18)
+
+Models m1 through m18 were a simplified version of models m1i through m18i without the vessel interaction terms,
+
+$$
+Y_t = \beta_0 + \beta_1 V_{1,t} + \beta_2 V_{2,t} + \beta_3 O_t + \beta_4 \text{CPUE}_t + \epsilon_t.
+$$ {#eq-m1}
+
+Models m1 through m18 estimate a single common slope plus the same additive effects.
+
+### Model structure 2 (m1a-m18a)
+
+The second model structure, model m1a, consisted of the vessel-adjusted CPUE and an odd/even year factor,
+
+$$
+Y_t = \beta_0 + \beta_1 O_t + \beta_2 \text{CPUE}_t + \epsilon_t.
+$$ {#eq-m1a}
+
+The reference category (i.e., reference intercept) is an even return year. The temperature index for models m2a-m18a was either the SECM survey Icy Strait temperature index (ISTI20_JJ; Murphy et al. 2019) or one of the 16 satellite-derived SST variables (Huang et al. 2017).
+
+## Performance Metric: 5-Year One-Step-Ahead MAPE (MAPE5)
+
+The model performance metric MAPE is a standard measure of the accuracy of forecasting and prediction models. It is the average of the absolute percentage differences between predicted and observed values. Because error is expressed as a percentage of the observed value rather than in harvest units, MAPE can be compared across all 54 models; a lower MAPE indicates a more accurate model.
+
+The model summary results for the five-year one-step-ahead MAPE are shown in @tbl-2 and @tbl-3; the model with the smallest value is preferred. The one-step-ahead MAPE was calculated as follows:
+
+1.  Estimate the regression parameters from data up to year $t-1$.
+
+2.  Predict the log harvest $\hat{Y}_t$ for year $t$ from the predictor variables in year $t$ and the regression parameters estimated in step 1.
+
+3.  Back-transform the prediction to the harvest scale with a bias correction and calculate the absolute percentage error (APE) relative to the observed harvest $C_t$,
+
+$$
+\text{APE}_t = \left| \frac{C_t - \exp\left(\hat{Y}_t + \frac{\hat{\sigma}^2_{t-1}}{2}\right)}{C_t} \right|,
+$$ {#eq-ape}
+
+where $\hat{\sigma}_{t-1}$ is the residual standard error of the model fit to data up to year $t-1$.
+
+4.  Average the absolute percentage errors across the forecast years,
+
+$$
+\text{MAPE} = \frac{100}{n} \sum_{t=1}^{n} \text{APE}_t,
+$$ {#eq-mape}
+
+where $n$ is the number of one-step-ahead forecasts ($n = 5$ for the five-year MAPE).
+
+For example, to calculate the five-year one-step-ahead MAPE for model m1 for the 2027 forecast, the model is fit to data through juvenile year 2020 and used to predict juvenile year 2021 (harvest year 2022), and the absolute percentage error is calculated from that prediction and the observed harvest using @eq-ape. The model is then refit to data through juvenile year 2021 to predict juvenile year 2022 (harvest year 2023), and so on, until data through juvenile year 2024 are used to predict juvenile year 2025 (harvest year 2026). The five absolute percentage errors are averaged using @eq-mape to give the five-year one-step-ahead MAPE for model m1. The bias-corrected prediction was used in this calculation so that model performance was evaluated on the same quantity reported as the forecast.
+
+## Performance Metric: Leave-One-Out Cross-Validation MAPE (LOOCV)
+
+Model performance was also evaluated with leave-one-out cross-validation (LOOCV). For each year $t$ in the time series, the model was refit to the remaining $n-1$ years, and the withheld year's harvest was predicted from that fit. Predictions were back-transformed to the harvest scale with a bias correction,
+
+$$
+\hat{C}_t = \exp\left(\hat{Y}_{-t} + \frac{\hat{\sigma}^2_{-t}}{2}\right),
+$$ {#eq-loo-pred}
+
+where $\hat{Y}_{-t}$ is the predicted log harvest for year $t$ and $\hat{\sigma}_{-t}$ is the residual standard error of the model fit without year $t$. The LOOCV MAPE was then calculated as,
+
+$$
+\text{MAPE}_{\text{LOOCV}} = \frac{100}{n} \sum_{t=1}^{n} \frac{\left| C_t - \hat{C}_t \right|}{C_t},
+$$ {#eq-loocv}
+
+where $C_t$ is the observed harvest in year $t$ and $n$ is the number of years with observed harvest (27 for the models in structure 1 and 29 for the models in structure 2). Unlike the one-step-ahead MAPE, which forecasts each of the five most recent years from earlier years only, LOOCV uses all remaining years, including later ones, to predict each withheld year. It therefore measures predictive fit across the full time series rather than forward forecasting performance.
+
+## Akaike Information Criterion Corrected for Small Sample Sizes (AICc)
+
+Candidate models were compared with Akaike's information criterion corrected for small sample sizes (AICc),
+
+$$
+\text{AICc} = -2\ln(\hat{L}) + 2K + \frac{2K(K+1)}{n-K-1},
+$$ {#eq-aicc}
+
+where $\hat{L}$ is the maximized likelihood, $K$ is the number of estimated parameters (including the residual variance), and $n$ is the number of years in the model data set. AICc balances goodness of fit against model complexity: lower values are preferred, and models with more parameters are penalized. Models were ranked by $\Delta_i = \text{AICc}_i - \text{AICc}_{\min}$, the difference between the AICc of model $i$ and that of the best model in the comparison (@tbl-2 and @tbl-3; dAICc). Models with $\Delta_i \leq 2$ have substantial support and are essentially indistinguishable; when they differ in the number of parameters, the most parsimonious is preferred. Models with $\Delta_i$ of 4-7 have considerably less support, and those with $\Delta_i > 10$ have essentially no support (Burnham and Anderson 2002).
+
+AICc values are only comparable among models fit to the same response data. Models m1-m18 and m1i-m18i exclude the 2008 (Steller) and 2009 (Chellissa) survey years and were fit to 27 years, so these 36 models were compared with each other (@tbl-2). Models m1a-m18a include those two years and were fit to 29 years, so they were compared only among themselves (@tbl-3).
+
+## Adjusted R-squared
+
+The adjusted R-squared is a modified version of the R-squared value that adjusts for the number of predictors in the model, balancing model fit against complexity. A higher adjusted R-squared value is preferred. Because the adjusted R-squared depends on the sample size and on the variance of the response variable in the data set, it can only be compared among models fit to the same response data. The 36 models m1-m18 and m1i-m18i share the same 27 years and can be compared with each other (@tbl-2), but not with models m1a-m18a, which were fit to 29 years (@tbl-3).
+
+# Results
+
+Based upon the 5-year MAPE, the AICc values, significant parameters in the models, and the adjusted R-squared values, model `r best_model_id` (vessel-adjusted CPUE, an odd/even year factor, and `r best$Terms`; @fig-catch; Appendix C) was selected. The 2027 forecast using this model has a point estimate of `r fmt1(best$Fit)` million fish (80% prediction interval: `r fmt1(best$Fit_LPI)` to `r fmt1(best$Fit_UPI)` million fish).
+
+Adding vessel-specific CPUE slopes (i.e., models with an interation term; m1i-m18i) did not improve the models. For example, for model m5i relative to m5, neither interaction term was significant (Medeia: *p* = 0.27; NW Explorer: *p* = 0.33), an *F*-test of the two terms together was not significant (*F* = 1.47, *p* = 0.25), and AICc increased by 4.8 units. Adjusted R-squared increased slightly (0.78 vs. 0.77), but this did not offset the added parameters. Across all 18 temperature variables, each interaction model had a higher AICc than its additive counterpart (@tbl-2).
+
+The models with the raw CPUE (i.e., adj_raw_pink_log variable) 
+
+```{r}
+#| label: tbl-1
+#| tbl-cap: "Summary of the data used for the 2027 forecast. The Steller and Chellissa vessels were only used for one year each, 2008 and 2009, respectively, and so those two years are not used in the models that incorporated the adj_raw_pink_log variable. The CPUE variable is the vessel-adjusted CPUE, JYear is the juvenile year, and Year is the harvest year."
+
+tbls_seak$data %>%
+  knitr::kable(format = "pandoc", row.names = FALSE, align = "c")
+```
+
+\pagebreak
+
+```{r}
+#| label: tbl-2
+#| tbl-cap: "Summary of the performance metrics for the 36 regression models that use the uncalibrated juvenile index (adj_raw_pink_log) with a vessel factor. Models ending in i include a vessel × index interaction. Fit is the bias-corrected 2027 harvest forecast (millions of fish) and 80% PI is its prediction interval. dAICc is the difference in AICc from the best of the 36 models. MAPE5 is the five-year one-step-ahead MAPE (%) and LOOCV is the leave-one-out cross-validation MAPE (%)."
+
+tbls_seak_results$model_summary_comparison %>%
+  knitr::kable(format = "pandoc", row.names = FALSE,
+               align = c("l", "l", "c", "c", "c", "c", "c", "c"))
+```
+
+\pagebreak
+
+```{r}
+#| label: tbl-3
+#| tbl-cap: "Summary of the performance metrics for the 18 regression models with vessel-adjusted CPUE. Fit is the bias-corrected 2027 harvest forecast (millions of fish) and 80% PI is its prediction interval. dAICc is the difference in AICc from the best of these 18 models; these models were fit to 29 years of data, so their AICc values are not comparable with the models in @tbl-2. MAPE5 is the five-year one-step-ahead MAPE (%) and LOOCV is the leave-one-out cross-validation MAPE (%)."
+
+tbls_seak_results$model_summary_final %>%
+  knitr::kable(format = "pandoc", row.names = FALSE,
+               align = c("l", "l", "c", "c", "c", "c", "c", "c"))
+```
+
+\pagebreak
+
+```{r}
+#| label: fig-catch
+#| fig-cap: !expr cap_fig_catch
+
+knitr::include_graphics(here::here(results.directory, paste0("catch_plot_pred_", best_model_id, ".png")))
+```
+
+# References
+
+Burnham, K. P., and D. R. Anderson. 2002. Model selection and multimodel inference: a practical information-theoretic approach, 2nd edition. Springer-Verlag, New York.
+
+Cook, R. D. 1977. Detection of influential observations in linear regression. Technometrics 19:15-18.
+
+Fox, J., and S. Weisberg. 2019. An R companion to applied regression, 3rd edition. Sage Publications, Thousand Oaks, California.
+
+Huang, B., P. W. Thorne, V. F. Banzon, T. Boyer, G. Chepurin, J. H. Lawrimore, M. J. Menne, T. M. Smith, R. S. Vose, and H. M. Zhang. 2017. Extended reconstructed sea surface temperature, version 5 (ERSSTv5): upgrades, validations, and intercomparisons. Journal of Climate 30:8179-8205.
+
+Miller, D. M. 1984. Reducing transformation bias in curve fitting. The American Statistician 38:124-126.
+
+Miller, S. E., J. M. Murphy, S. C. Heinl, A. W. Piston, E. A. Fergusson, R. E. Brenner, W. W. Strasburger, and J. H. Moss. 2022. Southeast Alaska pink salmon forecasting models. Alaska Department of Fish and Game, Fishery Manuscript No. 22-03, Anchorage.
+
+Murphy, J. M., E. A. Fergusson, A. Piston, A. Gray, and E. Farley. 2019. Southeast Alaska pink salmon growth and harvest forecast models. North Pacific Anadromous Fish Commission Technical Report No. 15:75-81.
+
+Orsi, J. A., E. A. Fergusson, A. C. Wertheimer, E. V. Farley, and P. R. Mundy. 2016. Forecasting pink salmon production in Southeast Alaska using ecosystem indicators in times of climate change. North Pacific Anadromous Fish Commission Bulletin 6:483-499. (Available at https://npafc.org)
+
+Piston, A. W., J. Murphy, J. Moss, W. Strasburger, S. C. Heinl, E. Fergusson, S. Miller, A. Gray, and C. Waters. 2021. Operational plan: Southeast coastal monitoring, 2021. Alaska Department of Fish and Game, Regional Operational Plan No. ROP.CF.1J.2021.02, Douglas.
+
+R Core Team. 2025. R: a language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. <https://www.R-project.org/>.
+
+Ren, Y. Y., L. C. Zhou, L. Yang, P. Y. Liu, B. W. Zhao, and H. X. Liu. 2016. Predicting the aquatic toxicity mode of action using logistic regression and linear discriminant analysis. SAR and QSAR in Environmental Research. DOI: 10.1080/1062936X.2016.1229691
+
+Tukey, J. W. 1949. One degree of freedom for non-additivity. Biometrics 5:232-242.
+
+Weisberg, S. 2014. Applied linear regression, 4th edition. John Wiley & Sons, Hoboken, New Jersey.
+
+Wertheimer, A. C., J. A. Orsi, M. V. Sturdevant, and E. A. Fergusson. 2006. Forecasting pink salmon harvest in Southeast Alaska from juvenile salmon abundance and associated environmental parameters. Pages 65-72 *in* H. Geiger, rapporteur. Proceedings of the 22nd Northeast Pacific Pink and Chum Workshop. Pacific Salmon Commission, Vancouver, British Columbia.
+
+Zhang, Z. 2016. Residuals and regression diagnostics: focusing on logistic regression. Annals of Translational Medicine 4:195.
+
+\pagebreak
+
+# Appendix A
+
+## Variable definitions
+
+<!-- TODO: confirm "maximum value" vs. the "averaged over all 8 stations" wording in the Executive Summary. -->
+
+**adj_raw_pink_log:** First, the raw juvenile pink salmon catch by year, month, haul, and area was adjusted to a 20-minute haul (raw_pink_catch). Then, these values were log-transformed (i.e., ln(raw_pink_catch + 1)). Next, the maximum value in either June or July, whichever month had the highest in a given year, was used as the adj_raw_pink_log value for the year (i.e., adj_raw_pink_log = maximum(ln(raw_pink_catch + 1)) in either June or July).
+
+**vessel-adjusted CPUE:** The average ln(CPUE + 1) for juvenile pink salmon catches in either June or July, whichever month had the highest average in a given year, where effort was a standard trawl haul (20 minutes). The juvenile CPUE data were adjusted using vessel calibration factors to account for differences in fishing power among vessels.
+
+**ISTI20_JJ:** The average 20-m integrated water column temperature at the eight stations in Icy Strait (Icy Strait and Upper Chatham transects) sampled during the SECM surveys in June and July of each year (in degrees Celsius). There was no survey in May in 2025 or 2026. Therefore, this temperature index no longer includes May in the time series.
+
+### Satellite SST variables
+
+**Icy_Strait_SST_May:** The Icy Strait region encompasses waters of Icy Strait from the east end of Lemesurier Island to a line from Point Couverden south to Point Augusta. This variable is the average SST in May.
+
+**Icy_Strait_SST_MJJ:** The Icy Strait region (as above). This variable is the average SST in May through July.
+
+**Icy_Strait_SST_AMJ:** The Icy Strait region (as above). This variable is the average SST in April through June.
+
+**Icy_Strait_SST_AMJJ:** The Icy Strait region (as above). This variable is the average SST in April through July.
+
+**Chatham_SST_May:** The Chatham and Icy Straits region encompasses waters of Chatham and Icy Straits east of Lemesurier Island to Point Couverden, and south to the approximate latitude of 56.025 degrees north (roughly Cape Decision off Kuiu Island). This variable is the average SST in May.
+
+**Chatham_SST_MJJ:** The Chatham and Icy Straits region (as above). This variable is the average SST in May through July.
+
+**Chatham_SST_AMJ:** The Chatham and Icy Straits region (as above). This variable is the average SST in April through June. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**Chatham_SST_AMJJ:** The Chatham and Icy Straits region (as above). This variable is the average SST in April through July.
+
+**NSEAK_SST_May:** The NSEAK region encompasses northern Southeast Alaska from 59.475 to 56.075 degrees north latitude (approximately Districts 9 through 15, and District 13 inside area only; northern Southeast Inside subregion for Southeast Alaska (NSEI)). This variable is the average SST in May.
+
+**NSEAK_SST_MJJ:** The NSEAK region (as above). This variable is the average SST in May through July.
+
+**NSEAK_SST_AMJ:** The NSEAK region (as above). This variable is the average SST in April through June.
+
+**NSEAK_SST_AMJJ:** The NSEAK region (as above). This variable is the average SST in April through July.
+
+**SEAK_SST_May:** The SEAK region encompasses Southeast Alaska from 59.475 to 54.725 degrees north latitude. This variable is the average SST in May. The last time this variable was incorporated in the forecasting process was the 2023 forecast.
+
+**SEAK_SST_MJJ:** The SEAK region (as above). This variable is the average SST in May through July.
+
+**SEAK_SST_AMJ:** The SEAK region (as above). This variable is the average SST in April through June.
+
+**SEAK_SST_AMJJ:** The SEAK region (as above). This variable is the average SST in April through July.
+
+\pagebreak
+
+# Appendix B
+
+```{r}
+#| label: tbl-param-inter
+#| tbl-cap: "Parameter estimates for the 18 individual models m1i-m18i."
+
+tbls_seak_results$model_summary_table1_inter %>%
+  knitr::kable(format = "pandoc", row.names = FALSE, align = "c")
+```
+
+\pagebreak
+
+```{r}
+#| label: tbl-param-multi
+#| tbl-cap: "Parameter estimates for the 18 individual models m1-m18."
+
+tbls_seak_results$model_summary_table1_multi %>%
+  knitr::kable(format = "pandoc", row.names = FALSE, align = "c")
+```
+
+\pagebreak
+
+```{r}
+#| label: tbl-param-cal
+#| tbl-cap: "Parameter estimates for the 18 individual models m1a-m18a."
+
+tbls_seak_results$model_summary_table1 %>%
+  knitr::kable(format = "pandoc", row.names = FALSE, align = "c")
+```
+
+\pagebreak
+
+```{r}
+#| label: fig-forecast-inter
+#| fig-cap: "Bias-corrected forecasts (grey bars) for the 18 regression models m1i-m18i with 80% prediction intervals (vertical lines). A horizontal dashed line at the average of the model forecasts is shown for reference only."
+
+knitr::include_graphics(here::here(results.directory, "forecast_models_inter.png"))
+```
+
+```{r}
+#| label: fig-forecast-multi
+#| fig-cap: "Bias-corrected forecasts (grey bars) for the 18 regression models m1-m18 with 80% prediction intervals (vertical lines). A horizontal dashed line at the average of the model forecasts is shown for reference only."
+
+knitr::include_graphics(here::here(results.directory, "forecast_models_multi.png"))
+```
+
+```{r}
+#| label: fig-forecast-cal
+#| fig-cap: "Bias-corrected forecasts (grey bars) for the 18 regression models m1a-m18a with 80% prediction intervals (vertical lines). A horizontal dashed line at the average of the model forecasts is shown for reference only."
+
+knitr::include_graphics(here::here(results.directory, "forecast_models.png"))
+```
+
+\pagebreak
+
+# Appendix C
+
+## Model Diagnostics
+
+Model `r best_model_id` included vessel-adjusted CPUE, an odd/even year factor, and satellite-derived SST data from northern Southeast Alaska in April, May, and June (`r best$Terms`). Model diagnostics for model `r best_model_id` included residual plots, a curvature (lack-of-fit) test, and influential observation diagnostics using Cook's distance (Cook 1977), the Bonferroni outlier test, and leverage (@tbl-diag; @fig-influential; @fig-residuals). Model diagnostics were used to identify observations that were potential outliers, had high leverage, or were influential (Zhang 2016).
+
+```{r}
+#| label: tbl-diag
+#| tbl-cap: !expr cap_tbl_diag
+
+diag_best %>%
+  knitr::kable(format = "pandoc", row.names = FALSE, align = "c")
+```
+
+### Cook's distance
+
+Cook's distance is a measure of influence that combines leverage and the size of the residual,
+
+$$
+D_i = \frac{e_{PSi}^2}{k+1} \cdot \frac{h_i}{1-h_i},
+$$ {#eq-cook}
+
+where $e_{PSi}$ is the standardized Pearson residual, $h_i$ is the hat value (a measure of leverage), and $k$ is the number of predictor variables in the model (Fox and Weisberg 2019). It measures the overall influence of the $i$th data point on all $n$ fitted values; a large value indicates an influential observation. Cook's distance values greater than $4/(n-k-1)$, where $n$ is the number of observations (`r n_best`) and $k$ = `r k_best`, were used as a benchmark for identifying potentially influential observations (Ren et al. 2016). Therefore, a cut-off of `r fmt2(cook_cut)` was used (@fig-influential A).
+
+### Leverage
+
+An observation that is distant from the average covariate pattern has high leverage (hat value). An observation with a leverage value $h_i$ greater than 2 or 3 times $p/n$ may be a concern (Ren et al. 2016), where $p$ is the number of parameters in the model including the intercept (`r p_best`) and $n$ is the number of observations (`r n_best`); here $p/n$ = `r fmt2(p_best / n_best)`. Therefore, a leverage cut-off of 2*p*/*n* = `r fmt2(hat_cut)` was used; observations above this value may affect the model properties (e.g., summary statistics, standard errors, predicted values; @fig-influential B).
+
+### Significance of the temperature term
+
+An *F*-test compared model `r best_model_id` (full model) with a reduced model containing only the CPUE and odd/even year factor. The full model fit significantly better than the reduced model (*F* = 17.3, *p* \< 0.001), indicating that the temperature term improves the model.
+
+### Influential observations, outliers, and lack of fit
+
+Cook's distance was above the cut-off value for `r length(cook_years)` year (@fig-influential A; `r paste(cook_years, collapse = " and ")`) and `r length(hat_years)` observation(s) had high leverage values (@fig-influential B; `r paste(hat_years, collapse = " and ")`). Based on the Bonferroni outlier test, none of the observations had a studentized residual with a significant Bonferroni-adjusted *p*-value (smallest adjusted *p* = 0.53, year 2023), suggesting that no single observation unduly affected the model fit; 2023 had the most extreme standardized residual (@fig-residuals C; @tbl-diag). Tukey's test for nonadditivity (Tukey 1949; Weisburg 2014) indicated some curvature in the residuals versus fitted values (*t* = -2.25, *p* = 0.024), consistent with the slightly curved smoother in @fig-residuals D, suggesting some lack of fit.
+
+```{r}
+#| label: fig-influential
+#| fig-cap: !expr cap_fig_influential
+
+knitr::include_graphics(here::here(results.directory, paste0("influential_", best_model_id, ".png")))
+```
+
+```{r}
+#| label: fig-residuals
+#| fig-cap: !expr cap_fig_residuals
+
+knitr::include_graphics(here::here(results.directory, paste0("fitted_", best_model_id, ".png")))
+```
