@@ -208,22 +208,21 @@ results %>%
   labs(x="", y = "2027 SEAK Pink Salmon Harvest Forecast (millions)") -> plot1 # update forecast year
 ggsave(paste0(results.directory, "forecast_models.png"), dpi = 500, height = 4, width = 10, units = "in")
 
+# read in data from the csv file  (make sure this is up to date)
+read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE)  %>%
+  arrange(MAPE5) %>%
+  mutate(MAPE5 = round(MAPE5,1)) %>%
+  mutate(change = AICc- min(AICc)) %>%
+  dplyr::select(Terms, Model, Fit, Fit_LPI, Fit_UPI,AdjR2, MAPE5, change) %>%
+  rename(AICc_change = change) %>%
+  write.csv(., paste0(results.directory, "/model_summary_final.csv"), row.names = F) 
+
 # STEP 6: CREATE DATASET FOR WRITE-UP
 # read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> variables_temp # update file names
-read.csv(file.path(data.directory,'adj_raw_pink.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> variables_adj_raw_pink # update file names
+read.csv(file.path(data.directory,'var2026_final.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE) -> variables
 
-variables_adj_raw_pink %>%
-  mutate (adj_raw_pink_log = log(adj_raw_pink +1)) %>% # log CPUE variable
-  group_by(JYear, Year, vessel) %>% 
-  summarise(adj_raw_pink_log = max(adj_raw_pink_log), .groups = "drop") %>%
-  inner_join(variables_temp, by = c("JYear", "Year")) %>%
-  dplyr::filter(adj_raw_pink_log > 0) %>%
-  dplyr::select(JYear, Year, SEAKCatch, vessel, adj_raw_pink_log) -> multi
-
-variables_temp %>%
+variables %>%
   mutate(odd_even_factor = ifelse(JYear %% 2 == 0, "odd", "even")) %>% # log catch variable
-  left_join(multi, by = c("JYear", "Year", "SEAKCatch")) %>%
   dplyr::select(JYear, Year, SEAKCatch, odd_even_factor, vessel, adj_raw_pink_log, CPUE) %>%
   mutate(Harvest = round(SEAKCatch,1),
          Factor = odd_even_factor,
@@ -233,13 +232,4 @@ variables_temp %>%
   write.csv(., paste0(data.directory, "/data.csv"), row.names = F)   
 
 
-# STEP 7: CREATE PERFORMANCE SUMMARY
-# read in data from the csv file  (make sure this is up to date)
-read.csv(file.path(results.directory,'model_summary_table2.csv'), header=TRUE, stringsAsFactors = FALSE, strip.white=TRUE)  %>%
-  arrange(MAPE5) %>%
-  mutate(MAPE5 = round(MAPE5,1)) %>%
-  mutate(change = AICc- min(AICc)) %>%
-  dplyr::select(Terms, Model, Fit, Fit_LPI, Fit_UPI,AdjR2, MAPE5, change) %>%
-  rename(AICc_change = change) %>%
-  write.csv(., paste0(results.directory, "/model_summary_final.csv"), row.names = F) 
 
