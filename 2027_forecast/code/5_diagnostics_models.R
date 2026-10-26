@@ -1,6 +1,9 @@
 # # run code 3_summarize_models.R  and 4_summarize_inter_models. R first
 # # check sample size for Cook's distance
 # # best model based on performance metrics
+
+# This code is only needed if running diagnostics on a final chosen odel
+
 # lm(SEAKCatch_log ~ as.factor(odd_even_factor) + as.factor(vessel) + Chatham_SST_AMJ + adj_raw_pink_log, data = log_data_subset) -> m5
 # data.directory <- file.path(year.forecast, 'data', '/')
 # results.directory <- file.path(year.forecast,'results', '/')

@@ -8,6 +8,7 @@ library(broom)      # augment()
 library(ggfortify)  # autoplot() for lm diagnostics
 library(car)        # outlierTest(), residualPlots()
 library(cowplot)    # plot_grid()
+library(patchwork)
 
 # SELECTED MODEL (update each year) 
 model    <- "m13a"            # label as in model_summary_table2.csv
@@ -60,7 +61,7 @@ read.csv(file.path(data.directory, 'var2026_final.csv'), header = TRUE,
 
 log_data %>% dplyr::filter(JYear < year.data) -> log_data_subset
 
-# best model
+# best model (model 13a; model structure 2)
 base_terms   <- "CPUE + as.factor(odd_even_factor)"
 full_formula <- as.formula(paste("SEAKCatch_log ~", base_terms,
                                  if (!is.null(temp_var)) paste("+", temp_var)))
@@ -115,6 +116,70 @@ print(autoplot(best_model))
 dev.off()
 
 # catch figure
+base_size     <- 10
+forecast_year <- year.data + 1
+
+panel_border <- theme(
+  panel.border = element_rect(colour = "black", fill = NA, linewidth = 1))
+
+y_max_catch <- up_to(c(diag_df$harvest, diag_df$fit, upr_pi_80), 20)
+
+plot_catch <- ggplot(diag_df, aes(x = Year)) +
+  geom_col(aes(y = harvest), fill = "lightgrey", colour = "black",
+           width = 1, na.rm = TRUE) +
+  geom_line(aes(y = fit), colour = "black", linewidth = 0.6, na.rm = TRUE) +
+  geom_point(aes(y = fit), colour = "black", size = 1, na.rm = TRUE) +
+  annotate("errorbar", x = forecast_year, ymin = lwr_pi_80, ymax = upr_pi_80,
+           width = 0.4, linewidth = 0.5) +
+  annotate("point", x = forecast_year, y = fit_value_model,
+           shape = 21, size = 2.5, fill = "grey") +
+  x_years +
+  scale_y_continuous(breaks = seq(0, y_max_catch, 20), expand = c(0, 0)) +
+  coord_cartesian(ylim = c(0, y_max_catch)) +
+  labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)") +
+  theme_diag(base_size) +
+  panel_border +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size = 7)) +
+  panel_label("A.")
+
+y_max_obs <- up_to(c(diag_df$harvest, diag_df$fit), 20)
+
+plot_obs <- ggplot(diag_df, aes(x = fit, y = harvest)) +
+  geom_abline(intercept = 0, slope = 1, linetype = 3) +
+  geom_point(size = 1, na.rm = TRUE) +
+  scale_x_continuous(breaks = seq(0, y_max_obs, 20)) +
+  scale_y_continuous(breaks = seq(0, y_max_obs, 20)) +
+  coord_cartesian(xlim = c(0, y_max_obs), ylim = c(0, y_max_obs), expand = FALSE) +
+  labs(x = "Predicted SEAK Pink Salmon Harvest (millions)",
+       y = "Observed SEAK Pink Salmon Harvest (millions)") +
+  theme_diag(base_size) +
+  panel_border +
+  panel_label("B.")
+
+
+ggsave(filename = file.path(results.directory, paste0("catch_plot_pred_", model, ".png")),
+  plot     = plot_catch + plot_obs + plot_layout(widths = c(1, 1)),
+  dpi = 500, height = 4, width = 7, units = "in")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 y_max_catch <- up_to(c(diag_df$harvest, diag_df$fit, upr_pi_80), 20)
 
 ggplot(diag_df, aes(x = Year)) +
@@ -125,7 +190,7 @@ ggplot(diag_df, aes(x = Year)) +
   x_years +
   scale_y_continuous(breaks = seq(0, y_max_catch, 20), limits = c(0, y_max_catch), expand = c(0, 0)) +
   labs(x = "Year", y = "SEAK Pink Salmon Harvest (millions)") +
-  theme_diag(11) +
+  theme_diag(10) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size = 7),
         panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   panel_label("A.") -> plot_catch
@@ -141,7 +206,7 @@ ggplot(diag_df, aes(x = fit, y = harvest)) +
   coord_fixed() +
   labs(x = "Predicted SEAK Pink Salmon Harvest (millions)",
        y = "Observed SEAK Pink Salmon Harvest (millions)") +
-  theme_diag(9) +
+  theme_diag(10) +
   theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 1)) +
   panel_label("B.") -> plot_obs
 
@@ -197,7 +262,7 @@ ggsave(paste0(results.directory, "fitted_", model, ".png"),
        plot = plot_grid(plot_cpue, plot_temp, plot_year, plot_fitted, align = "hv", nrow = 2),
        dpi = 500, height = 5, width = 5, units = "in")
 
-# Iinfluence figure: Cook's distance (A) and leverage (B) ----------------------------
+# Iinfluence figure: Cook's distance (A) and leverage (B) 
 cook_level <- 4 / (sample_size - k - 1)   # Ren et al. 2016; k = predictors excluding intercept
 hat_level  <- 2 * p / sample_size         # p = parameters including intercept
 

@@ -6,6 +6,7 @@
 * Andy Piston (ADF&G; CF Salmon Research Supervisor) andrew.piston@alaska.gov
 * Wes Strasburger (NOAA; biologist) wes.strasburger@noaa.gov
 * Randy Peterson (ADF&G, biologist) randy.peterson@adfg.gov
+* Justin Priest (ADF&G, biologist) justin.priest@adfg.gov
 
 ## Assessment links:
 The current assessment follows Miller et al. 2022.

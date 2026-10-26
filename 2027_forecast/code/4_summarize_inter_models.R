@@ -1,4 +1,6 @@
 # run code 3_summarize_models.R first/
+# DESCRIPTION: Model structure 1 with a vessel interaction (m1i-m18i); juvenile abundance index adj_raw_pink_log with a vessel interaction, an odd/even year factor, and a vessel factor, and temperature index
+
 if (!requireNamespace("fngr", quietly = TRUE)) devtools::install_github("commfish/fngr")
 library("fngr") # theme report
 library(broom)

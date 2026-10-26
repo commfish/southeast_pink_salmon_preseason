@@ -1,4 +1,6 @@
 # run code 5_diagnostics_models.R first
+# DESCRIPTION: Model structure 2 (m1a-m18a); vessel-adjusted CPUE and an odd/even year factor with a temp. index
+
 # STEP 1: DATA
 # SECM Pink salmon forecast models: calibrated CPUE (m1a-m18a)
 # last update: October 2026

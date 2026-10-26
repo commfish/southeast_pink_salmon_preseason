@@ -4,6 +4,9 @@
 # http://www.sthda.com/english/articles/40-regression-analysis/166-predict-in-r-model-predictions-and-confidence-intervals/
 # https://www.r-bloggers.com/2021/10/multiple-linear-regression-made-simple/
 
+# DESCRIPTION: Model structure 1 without a vessel interaction (m1-m18); Models m1 through m18 were a simplified version of models m1i through m18i without the
+# vessel interaction terms, and estimate a single common slope plus additive effects of vessel and the odd/even year factor and temp. index
+
 # load libraries
 if (!requireNamespace("fngr", quietly = TRUE)) devtools::install_github("commfish/fngr")
 library("fngr") # theme report
